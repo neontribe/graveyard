@@ -1,0 +1,14 @@
+---
+- name: "Setting prompt for desktop user"
+  lineinfile:
+    dest: ~/.bashrc state=present
+    regexp: "^function parse_git_branch"
+    line: "function parse_git_branch {\n  git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'\n}"
+  when: server_type == 'desktop'
+- name: "Setting prompt for live server user"
+  lineinfile: dest=/home/vagrant/.bashrc state=present regexp='^export PS1' line='export PS1="\[\033[01;32m\]\u\[\033[00m\]@\[\033[01;32m\]\h\[\033[00m\] \[\033[01;31m\](Live)\[\033[00m\] $ "'
+  when: server_type == 'live'
+- name: "Setting prompt for test server user"
+  lineinfile: dest=/home/vagrant/.bashrc state=present regexp='^export PS1' line='export PS1="\[\033[01;32m\]\u\[\033[00m\]@\[\033[01;32m\]\h\[\033[00m\] (Test) $ "'
+  when: server_type == 'test'
+
