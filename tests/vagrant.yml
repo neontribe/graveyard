@@ -1,0 +1,8 @@
+---
+- hosts: all
+  vars:
+      php_packages: ["php5-cli","php-pear","php5-curl","php5-imagick","php5-common","php5-gd","php5-mcrypt","php5-mysql","php5-xsl","php5-xmlrpc","php5-intl","php5-readline","php5-xdebug","php-apc","php5-imagick"]
+      ecl_packages: ["jsmin"]
+      timezone: Europe/London
+  roles:
+      - php5
