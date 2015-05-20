@@ -33,12 +33,15 @@
   file: src=/usr/share/zoneinfo/{{timezone}} dest=/etc/localtime state=link force=yes backup=yes
 
 - name: Set the hostname in /etc/hostname
+  sudo: yes
   shell: echo {{ hostname }} > /etc/hostname
   when: hostname is defined
 
 - name: Set the hostname
+  sudo: yes
   shell: hostname {{ hostname }}
   when: hostname is defined
 
 - name: Update /etc/hosts
+  sudo: yes
   lineinfile: dest=/etc/hosts regexp='^127\.0\.0\.1' line='127.0.0.1 localhost {{ hostname }}' owner=root group=root mode=0644
