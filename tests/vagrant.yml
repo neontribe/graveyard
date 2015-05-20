@@ -1,0 +1,20 @@
+---
+- hosts: all
+  sudo: true
+  vars:
+    neon_user: neonzz
+    cottage_alias_name: neonzz
+    cottage_brand_code: zz
+    cottage_target: /var/www/latest
+    remote_host: 192.168.21.44
+    remote_user: ansible
+    mysql:
+        root_password: rootpass
+    drupal:
+        dbname: live_zz
+        dbuser: live_zz
+  vars_prompt:
+        - name: drupal.dbpass
+          prompt: "Enter password for upstream drupal"
+          private: true
+
