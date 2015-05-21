@@ -83,12 +83,13 @@
 - name: Enable http vhosts
   sudo: yes
   file: src=/etc/apache2/sites-available/010.http.conf dest=/etc/apache2/sites-enabled/010.http.conf owner=root group=root state=link
-  sudo: yes
+  notify: restart apache
 
 - name: Enable ssl vhosts
   sudo: yes
   file: src=/etc/apache2/sites-available/000.ssl.conf dest=/etc/apache2/sites-enabled/000.ssl.conf owner=root group=root state=link
   sudo: yes
+  notify: restart apache
   when: server_type != 'desktop'
 
 - name: Enable wildcard vhosts
