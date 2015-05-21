@@ -2,6 +2,7 @@
 - name: Update apt
   sudo: yes
   apt: update_cache=yes
+  cache_valid_time: 3600
 
 - name: Install System Packages
   sudo: yes
@@ -18,6 +19,7 @@
 - name: Update apt
   sudo: yes
   apt: update_cache=yes
+  cache_valid_time: 3600
 
 - name: Install Extra Packages
   sudo: yes
