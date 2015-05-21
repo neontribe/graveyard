@@ -20,6 +20,7 @@
 
 - name: Check ownership of /var/www
   file: path=/var/www state=directory owner={{ neon_user }} group={{ neon_user }} mode=0775
+  sudo: yes
 
 - name: Copying cottage files
   shell: "drush -y rsync @{{cottage_alias_name}} {{ cottage_target }} --progress --include-conf --include-vcs"
@@ -35,6 +36,7 @@
 
 - name: Create latest symlink
   file: src={{ cottage_target }} dest={{ doc_root }} state=link
+  sudo: yes
 
 - name: Fix permissions
   shell: "/usr/local/share/Shelltools/ntdrchown -u {{ neon_user }}:{{ neon_user }} -w www-data:www-data {{ cottage_target }}"
