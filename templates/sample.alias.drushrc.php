@@ -13,7 +13,7 @@ $aliases["{{ cottage_alias_name }}"] = array (
       array (
         'database' => '{{ drupal.dbname }}',
         'username' => '{{ drupal.dbname }}',
-        'password' => '{{ drupal.dbpass }}',
+        'password' => '{{ drupal_dbpass }}',
         'host' => 'localhost',
         'port' => '',
         'driver' => 'mysql',
