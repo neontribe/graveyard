@@ -39,3 +39,15 @@
 - name: Fix permissions
   shell: "/usr/local/share/Shelltools/ntdrchown -u {{ neon_user }}:{{ neon_user }} -w www-data:www-data {{ cottage_target }}"
   sudo: yes
+
+- name: Clear rewrite bas
+  lineinfile: dest={{ cottage_target }}/.htaccess
+      regexp="((^[ ]+)|^)RewriteBase"
+      state=absent
+      # line="  # RewriteBase /"
+
+# TODO switch this to be a 'handler'
+- name: Restart apache
+  shell: "service apache2 restart"
+  sudo: yes
+
