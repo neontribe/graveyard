@@ -45,7 +45,7 @@ Ansible should ab at verion 1.8 or higher, 14.04 ships with 1.5.4:
 
 
 
-    git submodule add git@github.com:neontribe-ansible/cottage.git roles/cottage
+    git submodule add git@github.com:neontribe-ansible/cottage-deploy.git roles/cottage-deploy
     git submodule add git@github.com:neontribe-ansible/cottage-apache.git roles/cottage-apache
     git submodule add git@github.com:neontribe-ansible/mysql.git roles/mysql
     git submodule add git@github.com:neontribe-ansible/php5.git roles/php5

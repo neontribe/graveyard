@@ -1,6 +1,3 @@
-[submodule "roles/cottage"]
-	path = roles/cottage
-	url = git@github.com:neontribe-ansible/cottage.git
 [submodule "roles/cottage-apache"]
 	path = roles/cottage-apache
 	url = git@github.com:neontribe-ansible/cottage-apache.git
@@ -43,3 +40,6 @@
 [submodule "roles/bashrc"]
 	path = roles/bashrc
 	url = git@github.com:neontribe-ansible/bashrc.git
+[submodule "roles/cottage-deploy"]
+	path = roles/cottage-deploy
+	url = git@github.com:neontribe-ansible/cottage-deploy.git
