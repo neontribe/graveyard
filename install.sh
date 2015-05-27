@@ -1,15 +1,15 @@
-#!/bin/bash
+#!/bin/bash +x
 
-CWD=`dirname $0`
 BR=$1
 
+echo 'Enter brand code (in lower case)'
 while [ -z "$BR" ]; do
     read BR
 done
 
-git clone https://github.com/neontribe-ansible/cottage $CWD/$BR
-cd $CWD/$BR
-echo git submodule init
-echo git submodule update
+git clone https://github.com/neontribe-ansible/cottage ansible-$BR
+cd ansible-$BR
+git submodule init
+git submodule update
 
 echo vagrant up
