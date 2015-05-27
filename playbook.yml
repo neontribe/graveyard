@@ -29,7 +29,7 @@
       - ssh
       - shelltools
       - ansible-postfix
-      - ansible-drush
       - php5
+      - ansible-drush
       - cottage-apache
       - cottage

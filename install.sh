@@ -3,13 +3,13 @@
 CWD=`dirname $0`
 BR=$1
 
-if [ -z "$BR" ]; then
-    echo Usage: $0 BRANDCODE
-    exit 1
-fi
+while [ -z "$BR" ]; do
+    read BR
+done
 
-cd $CWD
-git submodule init
-git submodule update
+git clone https://github.com/neontribe-ansible/cottage $CWD/$BR
+cd $CWD/$BR
+echo git submodule init
+echo git submodule update
 
-vagrant up
+echo vagrant up
