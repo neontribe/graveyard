@@ -6,7 +6,7 @@ Quick start
 
 This will fail if you haven't fulfilled the dependencies below:
 
-    $ wget -O - -q https://raw.githubusercontent.com/neontribe-ansible/ly/master/install.sh | bash
+    $ wget -O - -q https://raw.githubusercontent.com/neontribe-ansible/cottage-PAS/master/install.sh | bash
 
 This will ask for the brandcode, enter it in lower case.
 

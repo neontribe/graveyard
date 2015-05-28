@@ -16,8 +16,10 @@
   - name: ssl_passphrase
     prompt: "Enter SSL/SSH Certificate Passphrase (snake oil password = password)"
     private: true
+    when: ssl_passphrase is not defined
   - name: drupal_dbpass
     prompt: "Enter password for upstream drupal"
+    when: drupal_dbpass is not defined
     private: true
   roles:
       - init
@@ -32,4 +34,4 @@
       - php5
       - ansible-drush
       - cottage-apache
-      - cottage
+      - cottage-deploy
