@@ -11,4 +11,4 @@ cd ansible-$BC
 git submodule init
 git submodule update
 
-echo vagrant up
+vagrant up
