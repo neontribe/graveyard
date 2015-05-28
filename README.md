@@ -6,6 +6,7 @@ Quick start
 
 This will fail if you haven't fulfilled the dependencies below:
 
+    $ export BC=BRANDCODE # << This should be the brand code you are cloning
     $ wget -O - -q https://raw.githubusercontent.com/neontribe-ansible/cottage-PAS/master/install.sh | bash
 
 This will ask for the brandcode, enter it in lower case.
