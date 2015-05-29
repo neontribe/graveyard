@@ -1,0 +1,37 @@
+---
+- hosts: all
+  vars:
+      drush_install_mode: git
+      php_ppa: php5-5.6
+      sys_packages: ["imagemagick","vim","git","htop","mc","ccze","realpath","jpegoptim","optipng","gifsicle","yui-compressor"]
+      mysql:
+          root_password: CHANGEME
+          user: drupal
+          password: drupal
+          database: drupal
+      php_packages: ["php5-cli","php-pear","php5-curl","php5-imagick","php5-common","php5-gd","php5-mcrypt","php5-mysql","php5-xsl","php5-xmlrpc","php5-intl","php5-readline","php5-xdebug","php-apc","php5-imagick"]
+      pecl_packages: ["jsmin"]
+      timezone: Europe/London
+      ssl:
+          key: "ssl-cert-snakeoil.key"
+          crt: "ssl-cert-snakeoil.pem"
+          chain: "chain.crt"
+  vars_prompt:
+  - name: ssl_passphrase
+    prompt: "Enter SSL/SSH Certificate Passphrase (snake oil password = password)"
+    private: true
+    when: ssl_passphrase is not defined
+  roles:
+      - init
+      - bashrc
+      - clamav
+      - rkhunter
+      - firewall
+      - mysql
+      - ssh
+      - shelltools
+      - ansible-postfix
+      - php5
+      - ansible-drush
+      - cottage-apache
+

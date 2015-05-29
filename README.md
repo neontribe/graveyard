@@ -44,3 +44,20 @@ Ansible should ab at verion 1.8 or higher, 14.04 ships with 1.5.4:
     $ echo deb-src http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main | sudo tee --append /etc/apt/sources.list.d/ansible-ubuntu-ansible-utopic.list
     $ sudo apt-get update
     $ sudo apt-get install ansible
+
+Live deployment
+---------------
+
+    $ sudo apt-get install software-properties-common
+    $ echo deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main | sudo tee --append /etc/apt/sources.list.d/ansible-ubuntu-ansible-utopic.list
+    $ echo deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main | sudo tee --append /etc/apt/sources.list.d/ansible-ubuntu-ansible-utopic.list
+    $ echo deb-src http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main | sudo tee --append /etc/apt/sources.list.d/ansible-ubuntu-ansible-utopic.list
+    $ sudo apt-get update
+    $ sudo apt-get install ansible
+    $ apt-get install git
+    $ git clone https://github.com/neontribe-ansible/cottage-PAS.git
+    $ cd cottage-PAS/
+    $ git submodule init
+    $ git submodule update
+    $ sed -i 's/CHANGEME/SOME_NEW_PASSWORD/g' playbook.wild.yml
+    $ ansible-playbook -vv -i "localhost," -c local /root/cottage-PAS/playbook.wild.yml --extra-vars "sudo=yes hostname=heritagehideaways.com server_type=live cottage_brand_code=hr admin_email=info@neontribe.co.uk servername=heritagehideaways.com doc_root=/var/www/latest ssl_passphrase=password"
