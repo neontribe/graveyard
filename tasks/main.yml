@@ -41,7 +41,9 @@
   sudo: yes
   shell: hostname {{ hostname }}
   when: hostname is defined
+  ignore_errors: True # Needed for docker
 
 - name: Update /etc/hosts
   sudo: yes
   lineinfile: dest=/etc/hosts regexp='^127\.0\.0\.1' line='127.0.0.1 localhost {{ hostname }}' owner=root group=root mode=0644
+  ignore_errors: True # Needed for docker
