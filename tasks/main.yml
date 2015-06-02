@@ -64,3 +64,20 @@
     state: started
     enabled: yes
   tags: [configuration, postfix, postfix-start-enable-service]
+
+- name: Tighten Postfix
+  sudo: true
+  shell: sudo postconf -e 'disable_vrfy_command=yes'
+  shell: sudo postconf -e 'smtp_tls_security_level = may'
+  shell: sudo postconf -e 'smtpd_tls_security_level = may'
+  shell: sudo postconf -e 'smtpd_tls_auth_only = no'
+  shell: sudo postconf -e 'smtp_tls_note_starttls_offer = yes'
+  shell: sudo postconf -e 'smtpd_tls_key_file = /etc/apache2/ssl/ssl.key'
+  shell: sudo postconf -e 'smtpd_tls_cert_file = /etc/apache2/ssl/ssl.crt'
+  shell: sudo postconf -e 'smtpd_tls_CAfile = /etc/apache2/ssl/chain.crt'
+  shell: sudo postconf -e 'smtpd_tls_loglevel = 1'
+  shell: sudo postconf -e 'smtpd_tls_received_header = yes'
+  shell: sudo postconf -e 'smtpd_tls_session_cache_timeout = 3600s'
+  shell: sudo postconf -e 'tls_random_source = dev:/dev/urandom'
+  shell: sudo postconf -e 'myhostname = {{ servername }}'
+  shell: sudo postconf -e 'mydestination = localhost.localdomain, localhost'
