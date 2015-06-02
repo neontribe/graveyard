@@ -1,3 +1,7 @@
+- name: Install UFW
+  sudo: yes
+  apt: pkg=ufw state=latest
+
 - name: UFW deny from all
   sudo: yes
   ufw: state=enabled policy=deny
