@@ -5,7 +5,7 @@
       php_ppa: php5-5.6
       sys_packages: ["imagemagick","vim","git","htop","mc","ccze","realpath","jpegoptim","optipng","gifsicle","yui-compressor"]
       mysql:
-          root_password: CHANGEME
+          root_password: bobcatpilerootsoil
           user: drupal
           password: drupal
           database: drupal
@@ -34,4 +34,3 @@
       - php5
       - ansible-drush
       - cottage-apache
-

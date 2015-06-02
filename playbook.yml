@@ -23,6 +23,7 @@
     private: true
   roles:
       - init
+      - cottage-users
       - bashrc
       - clamav
       - rkhunter
@@ -31,6 +32,7 @@
       - ssh
       - shelltools
       - ansible-postfix
+      - apache
       - php5
       - ansible-drush
       - cottage-apache
