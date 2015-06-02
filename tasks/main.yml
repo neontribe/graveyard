@@ -1,3 +1,7 @@
 ---
 - name: "Setting propmt for {{server_type}} user"
   copy: src={{ server_type}}.bashrc dest=~/.bashrc mode=0775 backup=yes
+
+- name: "Setting propmt for {{server_type}} {{ cottage_brand_code }}"
+  copy: src={{ server_type}}.bashrc dest=/home/{{ cottage_brand_code }}/.bashrc mode=0775 backup=yes
+  when: cottage_brand_code is defined
