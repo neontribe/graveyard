@@ -5,10 +5,19 @@ role = File.basename(File.expand_path(File.dirname(__FILE__)))
 brand = role.split("-").pop()
 
 boxes = [
+#  {
+#    :name => "ubuntu-1404",
+#    :box => "opscode-ubuntu-14.04",
+#    :url => "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_ubuntu-14.04_chef-provisionerless.box",
+#    :ip => '10.0.0.12',
+#    :cpu => "50",
+#    :cpus => 4,
+#    :ram => "4096"
+#  },
   {
-    :name => "ubuntu-1404",
-    :box => "opscode-ubuntu-14.04",
-    :url => "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_ubuntu-14.04_chef-provisionerless.box",
+    :name => "ubuntu-1404-libvrt",
+    :box => "trusty64",
+    :url => "https://vagrantcloud.com/ubuntu/boxes/trusty64/versions/14.04/providers/virtualbox.box",
     :ip => '10.0.0.12',
     :cpu => "50",
     :cpus => 4,
