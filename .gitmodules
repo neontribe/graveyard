@@ -43,3 +43,9 @@
 [submodule "roles/cottage-deploy"]
 	path = roles/cottage-deploy
 	url = git@github.com:neontribe-ansible/cottage-deploy.git
+[submodule "roles/cottage-users"]
+	path = roles/cottage-users
+	url = https://github.com/neontribe-ansible/cottage-users.git
+[submodule "roles/apache"]
+	path = roles/apache
+	url = https://github.com/neontribe-ansible/apache.git
