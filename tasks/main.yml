@@ -5,6 +5,7 @@
 
 - name: Install Apache Modules
   apache2_module: state=present name={{ item }}
+  sudo: yes
   notify: restart apache
   with_items:
     - rewrite
