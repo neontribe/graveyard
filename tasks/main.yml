@@ -1,5 +1,5 @@
 ---
 # uid=1000(neonbr) gid=1000(neonbr) groups=1000(neonbr),27(sudo),33(www-data)
-- user: name=neon{{ cottage_brand_code }} shell=/bin/bash group=neon{{ cottage_brand_code }} groups=neonbr,sudo,www-data append=yes
+- user: name=neon{{ cottage_brand_code }} shell=/bin/bash group=www-data groups=neonbr,sudo,www-data append=yes
   when: cottage_brand_code is defined
 
