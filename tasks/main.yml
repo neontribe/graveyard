@@ -44,6 +44,7 @@
   ignore_errors: True # Needed for docker
 
 - name: Set editor to vi
+  sudo: yes
   alternatives: name=editor path=/usr/bin/vim
 
 - name: Update /etc/hosts
