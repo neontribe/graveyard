@@ -19,9 +19,9 @@ boxes = [
     :box => "trusty64",
     :url => "https://vagrantcloud.com/ubuntu/boxes/trusty64/versions/14.04/providers/virtualbox.box",
 #    :ip => '10.0.0.12',
-    :cpu => "50",
-    :cpus => 4,
-    :ram => "4096"
+    :cpu => "80",
+    :cpus => 2,
+    :ram => "2048"
   },
 ]
 
