@@ -18,7 +18,7 @@ boxes = [
     :name => "ubuntu-1404-libvrt",
     :box => "trusty64",
     :url => "https://vagrantcloud.com/ubuntu/boxes/trusty64/versions/14.04/providers/virtualbox.box",
-    :ip => '10.0.0.12',
+#    :ip => '10.0.0.12',
     :cpu => "50",
     :cpus => 4,
     :ram => "4096"
@@ -38,14 +38,14 @@ Vagrant.configure("2") do |config|
         v.customize ["modifyvm", :id, "--cpus", box[:cpus]]
       end
 
-      vms.vm.network :private_network, ip: box[:ip]
+#      vms.vm.network :private_network, ip: box[:ip]
 
       vms.vm.provision :ansible do |ansible|
         ansible.playbook = "playbook.yml"
         ansible.verbose = "vv"
         ansible.limit = 'all'
         ansible.extra_vars = {
-            private_interface: box[:ip],
+#            private_interface: box[:ip],
             hostname: "#{role}",
             server_type: "desktop",
             cottage_alias_name: "neon#{brand}",
