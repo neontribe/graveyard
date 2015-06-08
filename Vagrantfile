@@ -39,6 +39,7 @@ Vagrant.configure("2") do |config|
       end
 
 #      vms.vm.network :private_network, ip: box[:ip]
+      vms.vm.network :forwarded_port, host: 8090, guest: 80
 
       vms.vm.provision :ansible do |ansible|
         ansible.playbook = "playbook.yml"
