@@ -65,6 +65,17 @@
     enabled: yes
   tags: [configuration, postfix, postfix-start-enable-service]
 
+- name: add email alias for root@
+  sudo: true
+  template:
+    src: etc/postfix/generic.j2
+    dest: /etc/postfix/generic
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart postfix
+  tags: [configuration, postfix, postfix-configuration]
+
 - name: Tighten Postfix
   sudo: true
   shell: sudo postconf -e 'disable_vrfy_command=yes'
