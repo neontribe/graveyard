@@ -81,3 +81,4 @@
   shell: sudo postconf -e 'tls_random_source = dev:/dev/urandom'
   shell: sudo postconf -e 'myhostname = {{ servername }}'
   shell: sudo postconf -e 'mydestination = localhost.localdomain, localhost'
+  shell: sudo postconf -e 'smtp_generic_maps = hash:/etc/postfix/generic'
