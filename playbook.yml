@@ -35,5 +35,6 @@
       - apache
       - php5
       - ansible-drush
+      - imageopti
       - cottage-apache
       - cottage-deploy

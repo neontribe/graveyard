@@ -1,51 +1,54 @@
 [submodule "roles/cottage-apache"]
 	path = roles/cottage-apache
-	url = git@github.com:neontribe-ansible/cottage-apache.git
+	url = https://github.com/neontribe-ansible/cottage-apache.git
 [submodule "roles/mysql"]
 	path = roles/mysql
-	url = git@github.com:neontribe-ansible/mysql.git
+	url = https://github.com/neontribe-ansible/mysql.git
 [submodule "roles/php5"]
 	path = roles/php5
-	url = git@github.com:neontribe-ansible/php5.git
+	url = https://github.com/neontribe-ansible/php5.git
 [submodule "roles/ansible-drush"]
 	path = roles/ansible-drush
-	url = git@github.com:neontribe-ansible/ansible-drush.git
+	url = https://github.com/neontribe-ansible/ansible-drush.git
 [submodule "roles/shelltools"]
 	path = roles/shelltools
-	url = git@github.com:neontribe-ansible/shelltools.git
+	url = https://github.com/neontribe-ansible/shelltools.git
 [submodule "roles/clamav"]
 	path = roles/clamav
-	url = git@github.com:neontribe-ansible/clamav.git
+	url = https://github.com/neontribe-ansible/clamav.git
 [submodule "roles/rkhunter"]
 	path = roles/rkhunter
-	url = git@github.com:neontribe-ansible/rkhunter.git
+	url = https://github.com/neontribe-ansible/rkhunter.git
 [submodule "roles/ntpd"]
 	path = roles/ntpd
-	url = git@github.com:neontribe-ansible/ntpd.git
+	url = https://github.com/neontribe-ansible/ntpd.git
 [submodule "roles/firewall"]
 	path = roles/firewall
-	url = git@github.com:neontribe-ansible/firewall.git
+	url = https://github.com/neontribe-ansible/firewall.git
 [submodule "roles/ssh"]
 	path = roles/ssh
-	url = git@github.com:neontribe-ansible/ssh.git
+	url = https://github.com/neontribe-ansible/ssh.git
 [submodule "roles/cottage-cron"]
 	path = roles/cottage-cron
-	url = git@github.com:neontribe-ansible/cottage-cron.git
+	url = https://github.com/neontribe-ansible/cottage-cron.git
 [submodule "roles/ansible-postfix"]
 	path = roles/ansible-postfix
-	url = git@github.com:neontribe-ansible/ansible-postfix.git
+	url = https://github.com/neontribe-ansible/ansible-postfix.git
 [submodule "roles/init"]
 	path = roles/init
-	url = git@github.com:neontribe-ansible/init.git
+	url = https://github.com/neontribe-ansible/init.git
 [submodule "roles/bashrc"]
 	path = roles/bashrc
-	url = git@github.com:neontribe-ansible/bashrc.git
+	url = https://github.com/neontribe-ansible/bashrc.git
 [submodule "roles/cottage-deploy"]
 	path = roles/cottage-deploy
-	url = git@github.com:neontribe-ansible/cottage-deploy.git
+	url = https://github.com/neontribe-ansible/cottage-deploy.git
 [submodule "roles/cottage-users"]
 	path = roles/cottage-users
 	url = https://github.com/neontribe-ansible/cottage-users.git
 [submodule "roles/apache"]
 	path = roles/apache
 	url = https://github.com/neontribe-ansible/apache.git
+[submodule "imageopti"]
+	path = imageopti
+	url = https://github.com/neontribe-ansible/imageopti.git
