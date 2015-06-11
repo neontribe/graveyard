@@ -3,7 +3,7 @@
   vars:
       drush_install_mode: git
       php_ppa: php5-5.6
-      sys_packages: ["imagemagick","vim","git","htop","mc","ccze","realpath","jpegoptim","optipng","gifsicle","yui-compressor"]
+      sys_packages: ["imagemagick","vim","git","htop","mc","ccze","realpath","jpegoptim","optipng","gifsicle","yui-compressor","nagios-plugins-basic","nagios-plugins-common","nagios-plugins-contrib"]
       mysql:
           root_password: bobcatpilerootsoil
           user: drupal
