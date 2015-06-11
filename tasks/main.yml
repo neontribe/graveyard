@@ -1,0 +1,16 @@
+---
+- name: Update apt
+  sudo: yes
+  apt: update_cache=yes cache_valid_time=3600
+              
+- name: Install Clamav packages
+  sudo: yes
+  apt: pkg="{{ item }}" state=latest
+  with_items:
+      - jpegoptim optipng gifsicle
+  register: imageopti_install
+
+- name: Copy daily cronjob
+  sudo: yes
+  template: src=daily.j2 dest="/etc/cron.daily/imageopti" mode=0755 owner=root group=root
+
