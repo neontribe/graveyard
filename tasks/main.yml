@@ -36,6 +36,10 @@
   copy: src=redirects.conf dest=/etc/apache2/redirects.conf owner=root group=root mode=0775 backup=yes
   sudo: yes
   
+- name: Install mpm_prefork.conf (Apache memory tuning)
+  copy: src=mpm_prefork.conf dest=/etc/apache2/mods-available/ owner=root group=root mode=0775 backup=yes
+  sudo: yes
+
 - name: Create ssl dir
   sudo: yes
   file: path=/etc/apache2/ssl state=directory owner=root group=root mode=0775
