@@ -3,11 +3,11 @@
   sudo: yes
   apt: update_cache=yes cache_valid_time=3600
               
-- name: Install Clamav packages
+- name: Install image optimisation packages
   sudo: yes
   apt: pkg="{{ item }}" state=latest
   with_items:
-      - jpegoptim optipng gifsicle
+      - jpegoptim,optipng,gifsicle
   register: imageopti_install
 
 - name: Copy daily cronjob
