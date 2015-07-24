@@ -7,7 +7,9 @@
   sudo: yes
   apt: pkg="{{ item }}" state=latest
   with_items:
-      - jpegoptim,optipng,gifsicle
+      - jpegoptim
+      - optipng
+      - gifsicle
   register: imageopti_install
 
 - name: Copy daily cronjob
