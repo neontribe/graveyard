@@ -49,6 +49,6 @@
 [submodule "roles/apache"]
 	path = roles/apache
 	url = https://github.com/neontribe-ansible/apache.git
-[submodule "imageopti"]
-	path = imageopti
+[submodule "roles/imageopti"]
+	path = roles/imageopti
 	url = https://github.com/neontribe-ansible/imageopti.git
