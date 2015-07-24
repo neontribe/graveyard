@@ -25,9 +25,6 @@
       - init
       - cottage-users
       - bashrc
-      - clamav
-      - rkhunter
-      - firewall
       - mysql
       - ssh
       - shelltools
