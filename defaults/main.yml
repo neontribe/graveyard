@@ -1,2 +1,4 @@
 ---
-users: {{ ansible_ssh_user }}
+users:
+    - "{{ ansible_ssh_user }}"
+servertype: dev
