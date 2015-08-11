@@ -6,9 +6,24 @@
 A simple web interface for tasks such as deployment with Ansible, with the aim
 of making the process more intuitive.
 
+####################
+###    Usage     ###
+####################
+
+  $ python app.py
+
 
 ####################
 ### Installation ###
 ####################
 
-> steps will be added as they are taken in development <
+1. Install Python 2.7.x
+     $ sudo apt-get install python2.7
+
+2. Install Flask
+     $ sudo apt-get install python-flask
+
+3. Configure the HTTP server as desired
+     $ cd neontower
+     $ cp server.default.json server.json
+     $ vim server.json
