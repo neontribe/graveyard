@@ -1,0 +1,14 @@
+                          __
+.-----.-----.-----.-----.|  |_.-----.--.--.--.-----.----.
+|     |  -__|  _  |     ||   _|  _  |  |  |  |  -__|   _|
+|__|__|_____|_____|__|__||____|_____|________|_____|__|
+
+A simple web interface for tasks such as deployment with Ansible, with the aim
+of making the process more intuitive.
+
+
+####################
+### Installation ###
+####################
+
+> steps will be added as they are taken in development <
