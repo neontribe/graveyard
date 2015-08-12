@@ -17,7 +17,10 @@ of making the process more intuitive.
 ### Installation ###
 ####################
 
-/NOTE: this process may be altered to use virtualenv in the future/
+Notes:
+* This process may be changed to use virtualenv
+* This process may form the basis of an Ansible script
+* Installation required to run the Ansible scripts is not, as of yet, included
 
 1. Install Python (2.7.x required)
      $ sudo apt-get install python2.7
@@ -31,7 +34,18 @@ of making the process more intuitive.
 4. Install Ansible (v1.9 [stable] required)
      $ sudo pip install ansible
 
-5. Configure the HTTP server as desired
+5. Clone ntdr-pas
+     $ git clone https://github.com/neontribe/ntdr-pas.git
+
+6. Clone neontower
+     $ git clone https://github.com/Hoolean/neontower.git
+
+7. Configure the settings as desired - if comments are not available,
+   documentation should have been provided in a similarly named file containing
+   "help"
      $ cd neontower
-     $ cp server.default.json server.json
-     $ vim server.json
+     $ for config in config/*; do cp $config `echo "$config" | sed "s/.default//"`; done
+     $ vim config/ansible.json
+     $ vim config/playbooks.json
+     $ vim config/playbooksConfig.json
+     $ vim config/server.json

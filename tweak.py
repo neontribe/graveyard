@@ -42,3 +42,11 @@ def load_config(path):
 def get_script_directory():
     # return the directory of this script
     return os.path.dirname(os.path.realpath(__file__))
+
+def get_project_directory():
+    # reserved for potential future usage, if this file is moved to a different module
+    return get_script_directory()
+
+def get_config_directory():
+    # return the directory of config files
+    return get_project_directory() + '/config'

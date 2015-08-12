@@ -15,6 +15,7 @@ from threading import Thread
 from ansible.runner import Runner
 from ansible.playbook import PlayBook
 from ansible.inventory import Inventory
+from ansible.inventory.ini import InventoryParser
 from ansible import callbacks # don't change the order of this import, somehow that breaks it
 
 from tachyon.queue_callbacks import QueueCallbacks
@@ -43,6 +44,9 @@ def _run_yielding_events(ansible_object):
 def run_playbook(playbook_path, inventory_path, limits, extra_vars):
     '''Instantiate and run a PlayBook object with Ansible's API, yielding
     events in the process.
+
+    Yields:
+    dict    The event represented in dict form.
 
     Parameters:
     * playbook_path     str     The path of the YML PlayBook file.
@@ -98,6 +102,9 @@ def run_task(module_path, inventory_path, limits, extra_vars):
     * limits            str[]   The servers to limit the task to (can be None to do all servers)
     * extra_vars        dict    String keys and values of variables to pass into the task.
 
+    Yields:
+    dict    The event represented in dict form.
+
     Example Usage:
       event_generator = tachyon.run_task(
           '/home/harryd/ntdr-pas/playbooks/library/ntdr_get_filetree.py',
@@ -136,3 +143,22 @@ def run_task(module_path, inventory_path, limits, extra_vars):
 
     for callback_data in iter(_run_yielding_events(runner)):
         yield callback_data
+
+def get_host_names(inventory_path):
+    '''Read the names of servers from an Inventory file with Ansible's API.
+
+    Parameters:
+    * inventory_path    str     The path of the inventory file to read hosts
+                                from.
+
+    Returns:
+    str[]   Returns a list of host names as strings. Ignores group names.
+
+    Example Usage:
+      hosts = tachyon.get_host_names('/home/harryd/ntdr-pas/playbooks/inventory/cottage-servers')
+    '''
+    inventory_parser = InventoryParser(filename=inventory_path)
+    hosts = []
+    for host in inventory_parser.hosts:
+        hosts.append(host)
+    return hosts
