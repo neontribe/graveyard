@@ -17,13 +17,21 @@ of making the process more intuitive.
 ### Installation ###
 ####################
 
-1. Install Python 2.7.x
+/NOTE: this process may be altered to use virtualenv in the future/
+
+1. Install Python (2.7.x required)
      $ sudo apt-get install python2.7
 
-2. Install Flask
-     $ sudo apt-get install python-flask
+2. Install Pip
+     $ sudo apt-get install python-pip
 
-3. Configure the HTTP server as desired
+3. Install Flask (v0.10 used in development)
+     $ sudo pip install flask
+
+4. Install Ansible (v1.9 [stable] required)
+     $ sudo pip install ansible
+
+5. Configure the HTTP server as desired
      $ cd neontower
      $ cp server.default.json server.json
      $ vim server.json
