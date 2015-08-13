@@ -141,6 +141,7 @@ def get_filetree():
     
     if 'refresh' in request.args:
         if request.args['refresh'].lower() == 'true':
+            # runs the get filetree task for each server
             server_codes = bridge.get_host_names(ansible_config['inventory_path'])
             event_generator = bridge.run_task(
                 os.path.sep.join([ansible_config['ntdr_pas_path'], 'playbooks','library','ntdr_get_filetree.py']),
@@ -149,6 +150,7 @@ def get_filetree():
                 { 'path': '/var/www' }
             )
             
+            # reformats raw response into the form we want with meta data attached
             cached_info = {}
             for event in iter(event_generator):
                 print event
@@ -161,13 +163,15 @@ def get_filetree():
                 if event['event'] != 'complete':
                     cached_info[event['host']] = entry
             
-
+            # updates the global variable filetree_cache with any updates having run the task again
             global filetree_cache
             filetree_cache = cached_info
 
+            # saves the filetree to filetree.cache
             filetree_cache_file = open(os.path.sep.join([tweak.get_cache_directory(), 'filetree.cache']),'w')
             filetree_cache_file.write(json.dumps(cached_info))
             filetree_cache_file.close()
+
             return json.dumps(cached_info)
 
         else:
@@ -176,10 +180,11 @@ def get_filetree():
         return jsonify(filetree_cache)
  
 def get_filetree_info(hostname,flat=True):
+    # an empty array will be return if hostname was previously unreachable
     if flat:
         if hostname in filetree_cache:
             if filetree_cache[hostname]['data'] != {}:
-                return [ x['name'] for x in filetree_cache[hostname]['data']['flat']]
+                return sorted([x['name'] for x in filetree_cache[hostname]['data']['flat']])
             else:
                 return []
         else:
