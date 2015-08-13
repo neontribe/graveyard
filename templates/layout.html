@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>neontower</title>
+    <title>neontower - {% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="/static/css/neontower.css">
+    {% block resources %}{% endblock %}
   </head>
   <body>
     <h1>neontower</h1>
+    {% block content %}{% endblock %}
   </body>
 </html>
