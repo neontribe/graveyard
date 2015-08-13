@@ -4,6 +4,8 @@ import json
 from flask import Flask
 from flask import jsonify
 from flask import request
+from flask import url_for
+from flask import redirect
 from flask import Response
 from flask import render_template
 
@@ -14,6 +16,9 @@ HTTP_NOT_ACCEPTABLE = 406
 HTTP_UNPROCESSABLE_ENTITY = 422
 
 app = Flask(__name__)
+
+# TODO: definitively decide what should be cached and what should be loaded
+#       every time
 server_config = tweak.load_config(os.path.sep.join([tweak.get_config_directory(), 'server']))
 ansible_config = tweak.load_config(os.path.sep.join([tweak.get_config_directory(), 'ansible']))
 playbooks_schemas = tweak.load_config(os.path.sep.join([tweak.get_config_directory(), 'playbooks']))
@@ -21,7 +26,48 @@ playbooks_config = tweak.load_config(os.path.sep.join([tweak.get_config_director
 
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('index.html')
+    return redirect(url_for('choose_task'))
+
+@app.route('/choose_task', methods=['GET'])
+def choose_task():
+    data = {}
+
+    if 'error' in request.args:
+        data['error'] = request.args['error']
+
+    data['hosts'] = sorted(bridge.get_host_names(ansible_config['inventory_path']))
+    data['playbooks'] = playbooks_schemas['playbooks']
+
+    return render_template('choose_task.html', **data)
+
+@app.route('/setup_task', methods=['POST'])
+def setup_task():
+    if not 'host' in request.form:
+        return redirect(url_for('choose_task', error='The \'host\' parameter is required'))
+    host = request.form['host']
+    if not host in bridge.get_host_names(ansible_config['inventory_path']):
+        return redirect(url_for('choose_task', error='Host \'' + host + '\' does not exist'))
+
+    if not 'playbook' in request.form:
+        return redirect(url_for('choose_task', error='The \'playbook\' parameter is required'))
+    playbook_name = request.form['playbook']
+    for potential_schema in playbooks_schemas['playbooks']:
+        if playbook_name == potential_schema['name']:
+            playbook_schema = potential_schema
+            break
+    else:
+        return redirect(url_for('choose_task', error='Playbook \'' + playbook_name + '\' does not exist'))
+
+    data = { 'host': host, 'playbook': playbook_schema }
+
+    # TODO: this is the worst way of checking types in a template engine ever,
+    #       there must be a better way
+    data['is_string'] = lambda obj : type(obj) in [str, unicode]
+    data['is_boolean'] = lambda obj : type(obj) == bool
+    data['is_list'] = lambda obj : type(obj) == list
+    data['is_dictionary'] = lambda obj : type(obj) == dict
+
+    return render_template('setup_task.html', **data)
 
 @app.route('/run_playbook', methods=['GET'])
 def run_playbook():

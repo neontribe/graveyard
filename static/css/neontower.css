@@ -37,3 +37,26 @@ h1::after
 {
   content: " >>>";
 }
+
+hr
+{
+  border: none;
+  border-bottom: 1px gray dashed;
+}
+
+p.error
+{
+  color: red;
+}
+
+div.log
+{
+  border: 1px gray dashed;
+  min-height: 5em;
+}
+
+button.submit
+{
+  display: block;
+  margin-left: auto;
+}

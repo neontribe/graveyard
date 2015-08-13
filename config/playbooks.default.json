@@ -8,28 +8,22 @@
 				{
 					"name":	"local",
 					"label": "Local directory to save in",
-					"type": "text",
 					"returnType": "string",
-					"defaultValue": "/var/tmp"
+					"value": "/var/tmp"
 				},
 				{
 					"name": "source",
 					"label": "Select remote folder to pull",
-					"type": "select",
 					"returnType": "string",
-					"valueType": "api",
-					"remoteValues": {
-						"method": "GET",
-						"path": "/get-flat-file-tree"
+					"value": {
+						"helperFunction": "get-flat-file-tree"
 					}
 				},
 				{
 					"name": "withdb",
 					"label": "Create new DB?",
-					"type": "checkbox",
 					"returnType": "boolean",
-					"defaultValue": false,
-					"required": false
+					"value": false
 				}
 			],
 			"configNodes": [

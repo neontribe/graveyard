@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block title %}Choose Task{% endblock %}
+{% block content %}
+<form action="setup_task" method="POST">
+  <label>Host: </label>{{ host }}
+  <br />
+  <label>PlayBook: </label>{{ playbook.label }}</p>
+  <hr>
+  <input type="hidden" name="host" value="{{ host }}">
+  <input type="hidden" name="playbook" value="{{ playbook.name }}">
+  {% for field in playbook.fields %}
+    <label for="{{ field.name }}">{{ field.label }}</label>
+    {% if is_string(field.value) %}
+      <input type="text" name="{{ field.name }}" value="{{ field.value }}">
+    {% elif is_boolean(field.value) %}
+      {% if field.value %}
+        <input type="checkbox" name="{{ field.name }}" checked>
+      {% else %}
+        <input type="checkbox" name="{{ field.name }}">
+      {% endif %}
+    {% elif is_list(field.value) %}
+      <select name="{{ field.name }}">
+        {% for option in field.value %}
+          <option value="{{ option }}">{{ option }}</option>
+        {% endfor %}
+      </select>
+    {% elif is_dictionary(field.value) %}
+      <!-- TODO: implement -->
+    {% endif %}
+    <br>
+  {% endfor %}
+  <button class="submit" action="choose_host">Run</button>
+</form>
+<hr>
+<p>Log:</p>
+<div class="log"></div>
+{% endblock %}
