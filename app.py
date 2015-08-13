@@ -19,6 +19,9 @@ ansible_config = tweak.load_config(os.path.sep.join([tweak.get_config_directory(
 playbooks_schemas = tweak.load_config(os.path.sep.join([tweak.get_config_directory(), 'playbooks']))
 playbooks_config = tweak.load_config(os.path.sep.join([tweak.get_config_directory(), 'playbooksConfig']))
 
+filetree_cache = tweak.load_cache(os.path.sep.join([tweak.get_cache_directory(), 'filetree']))
+
+
 @app.route('/', methods=['GET'])
 def index():
     return render_template('index.html')
@@ -87,6 +90,60 @@ def run_playbook():
             jsonify(error="The response is not of content type text/event-stream and, hence, this must be rejected"),
             HTTP_NOT_ACCEPTABLE
         )
+@app.route('/get-filetree', methods=['GET'])
+def get_filetree():
+    if 'refresh' in request.args:
+        if request.args['refresh'].lower() == 'true':
+            server_codes = bridge.get_host_names(ansible_config['inventory_path'])
+            event_generator = bridge.run_task(
+                os.path.sep.join([ansible_config['ntdr_pas_path'], 'playbooks','library','ntdr_get_filetree.py']),
+                ansible_config['inventory_path'],
+                server_codes,
+                { 'path': '/var/www' }
+            )
+            
+            cached_info = {}
+            for event in iter(event_generator):
+                print event
+                entry = {'meta':{'status':event['event']}}
+                if entry['meta']['status'] == 'ok':
+                    entry['data'] = event['res']['stat']['files']
+                else:
+                    entry['data'] = {}
+                
+                if event['event'] != 'complete':
+                    cached_info[event['host']] = entry
+            filetree_cache_file = open(os.path.sep.join([tweak.get_cache_directory(), 'filetree.cache']),'w')
+            filetree_cache_file.write(json.dumps(cached_info))
+            filetree_cache_file.close()
+            return json.dumps(cached_info)
+
+        else:
+            return jsonify(filetree_cache)
+    else:
+        return jsonify(filetree_cache)
+ 
+def get_filetree_info(flat,stuctured,hostname):
+    if flat == True:
+        if hostname in filetree_cache:
+            if data != {}:
+                return filetree_cache[hostname]['data']['flat']
+            else:
+                return []
+        else:
+            return 'no such hostname'
+
+    if structured == True:
+        if hostname in filetree_cache:
+            if data != {}:
+                return [ x.name for x in filetree_cache[hostname]['data']['path']]
+            else:
+                return []
+        else:
+            return 'no such hostname'
+
+
+
 
 
 if __name__ == '__main__':
