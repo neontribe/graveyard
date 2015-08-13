@@ -92,6 +92,7 @@ def run_playbook():
         )
 @app.route('/get-filetree', methods=['GET'])
 def get_filetree():
+    
     if 'refresh' in request.args:
         if request.args['refresh'].lower() == 'true':
             server_codes = bridge.get_host_names(ansible_config['inventory_path'])
@@ -129,9 +130,9 @@ def get_filetree():
         return jsonify(filetree_cache)
  
 def get_filetree_info(hostname,flat=True):
-    if flat == True:
+    if flat:
         if hostname in filetree_cache:
-            if data != {}:
+            if filetree_cache[hostname]['data'] != {}:
                 return [ x['name'] for x in filetree_cache[hostname]['data']['flat']]
             else:
                 return []
@@ -140,7 +141,7 @@ def get_filetree_info(hostname,flat=True):
 
     else:
         if hostname in filetree_cache:
-            if data != {}:
+            if filetree_cache[hostname]['data'] != {}:
                 return filetree_cache[hostname]['data']['path']
             else:
                 return []
