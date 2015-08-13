@@ -123,20 +123,20 @@ def get_filetree():
     else:
         return jsonify(filetree_cache)
  
-def get_filetree_info(flat,stuctured,hostname):
+def get_filetree_info(hostname,flat=True):
     if flat == True:
         if hostname in filetree_cache:
             if data != {}:
-                return filetree_cache[hostname]['data']['flat']
+                return [ x['name'] for x in filetree_cache[hostname]['data']['flat']]
             else:
                 return []
         else:
             return 'no such hostname'
 
-    if structured == True:
+    else:
         if hostname in filetree_cache:
             if data != {}:
-                return [ x.name for x in filetree_cache[hostname]['data']['path']]
+                return filetree_cache[hostname]['data']['path']
             else:
                 return []
         else:
