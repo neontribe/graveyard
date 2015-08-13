@@ -113,6 +113,11 @@ def get_filetree():
                 
                 if event['event'] != 'complete':
                     cached_info[event['host']] = entry
+            
+
+            global filetree_cache
+            filetree_cache = cached_info
+
             filetree_cache_file = open(os.path.sep.join([tweak.get_cache_directory(), 'filetree.cache']),'w')
             filetree_cache_file.write(json.dumps(cached_info))
             filetree_cache_file.close()
