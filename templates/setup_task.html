@@ -8,11 +8,12 @@
 <script src="/static/js/setup-task.js"></script>
 {% endblock %}
 {% block content %}
+<label>Host: </label>{{ host }}
+<br />
+<label>Playbook: </label>{{ playbook.label }}
+<br />
+<hr>
 <form id="playbookForm">
-  <label>Host: </label>{{ host }}
-  <br />
-  <label>PlayBook: </label>{{ playbook.label }}
-  <hr>
   <input type="hidden" name="host" value="{{ host }}">
   <input type="hidden" name="name" value="{{ playbook.name }}">
   {% for field in playbook.fields %}

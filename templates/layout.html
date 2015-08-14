@@ -3,10 +3,19 @@
   <head>
     <title>neontower - {% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="/static/css/neontower.css">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jstree/3.0.9/themes/default/style.min.css" />
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jstree/3.0.9/jstree.min.js"></script>
     {% block resources %}{% endblock %}
   </head>
   <body>
-    <h1>neontower</h1>
+  	<a href='/'><h1>neontower</h1></a>
+	<hr>
+	<nav>
+		<a href='/choose_task'>Run New Task</a>
+		<a href='/see-filetree'>See Filetree</a>
+	</nav>
+	<hr>
     {% block content %}{% endblock %}
     {% block scripts %}{% endblock %}
   </body>

@@ -9,7 +9,7 @@ html
 
 body
 {
-  max-width: 512px;
+  max-width: 750px;
   margin: auto;
 
   margin-top: 1em;
@@ -36,6 +36,27 @@ h1::before
 h1::after
 {
   content: " >>>";
+}
+
+nav
+{
+	text-align: center;
+}
+
+nav a
+{
+	padding-left: 2em;
+	padding-right: 2em;
+}
+
+nav a::before
+{
+	content: "<< ";
+}
+
+nav a::after
+{
+	content: " >>";
 }
 
 hr
