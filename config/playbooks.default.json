@@ -16,7 +16,7 @@
 					"label": "Select remote folder to pull",
 					"returnType": "string",
 					"value": {
-						"helperFunction": "get-flat-file-tree"
+						"helperFunction": "get_filetree_info"
 					}
 				},
 				{
