@@ -88,7 +88,7 @@ def get_filetree_info(hostname, flat=True):
 
 @app.route('/', methods=['GET'])
 def index():
-    return redirect(url_for('choose_task'))
+    return render_template('index.html')
 
 @app.route('/see-filetree', methods=['GET'])
 def see_filetree():

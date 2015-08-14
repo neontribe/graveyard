@@ -24,9 +24,8 @@ body
 
 h1
 {
-  font-size: 3em;
+  font-size: 1em;
   text-align: center;
-  margin:5px;
 }
 
 h1::before
@@ -39,23 +38,26 @@ h1::after
   content: " >>>";
 }
 
-h2
+nav
 {
-  font-size: 1em;
-  text-align: center;
-  margin:5px;
+	text-align: center;
 }
 
-h2::before
+nav a
 {
-  content: "<< ";
+	padding-left: 2em;
+	padding-right: 2em;
 }
 
-h2::after
+nav a::before
 {
-  content: " >>";
+	content: "<< ";
 }
 
+nav a::after
+{
+	content: " >>";
+}
 
 hr
 {
