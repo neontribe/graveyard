@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block title %}Choose Task{% endblock %}
+{% block content %}
+<form action="setup_task" method="POST">
+	{% if error %}
+	<p class="error">{{ error }}</p>
+	{% endif %}
+	<div id="container"></div>
+	<script>
+		$.ajax({
+			type:'GET',
+			url	:'/get-filetree',
+			data:'forDisplay=true&refresh=true',
+			success: function(data){
+				console.log(data)
+				$('#container').jstree({
+					'core': data	
+				});
+			}	
+		});
+	</script>
+	<button type="submit" class="submit">Check for filetree changes</button>
+</form>
+{% endblock %}
+

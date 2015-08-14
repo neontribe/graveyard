@@ -10,7 +10,7 @@
 					"label": "Choose folder to upload new site to",
 					"returnType": "string",
 					"value": {
-						"helperFunction": "get-flat-file-tree"
+						"helperFunction": "get_filetree_info"
 					}
 				},
 				{
@@ -44,7 +44,7 @@
 					"label":"Which directory to freshen",
 					"returnType":"string",
 					"value": {
-						"helperFunction": "get-flat-file-tree"
+						"helperFunction": "get_filetree_info"
 					}
 				},
 				{
@@ -74,7 +74,7 @@
 					"label":"Pull from which remote folder",
 					"returnType":"string",
 					"value": {
-						"helperFunction": "get-flat-file-tree"
+						"helperFunction": "get_filetree_info"
 					}
 				},
 				{
@@ -136,7 +136,7 @@
 					"label":"Pull from which remote folder",
 					"returnType":"string",
 					"value":{
-						"helperFunction":"get-flat-file-tree"
+						"helperFunction":"get_filetree_info"
 					}
 				}
 			],
@@ -165,7 +165,7 @@
 					"label":"Pull from which remote folder",
 					"returnType":"string",
 					"value":{
-						"helperFunction":"get-flat-file-tree"
+						"helperFunction":"get_filetree_info"
 					}
 				}
 			],
@@ -193,7 +193,7 @@
 					"label":"name of source folder",
 					"returnType":"string",
 					"value":{
-						"helperFunction":"get-flat-file-tree"
+						"helperFunction":"get_filetree_info"
 					}
 				}
 			],
@@ -216,7 +216,7 @@
 					"label":"folder to fresehn from",
 					"returnType": "string",
 					"value":{
-						"helperFunction":"get-flat-file-tree"
+						"helperFunction":"get_filetree_info"
 					}					
 				
 				},
@@ -225,7 +225,7 @@
 					"label":"folder to recieve new files",
 					"returnType":"string",
 					"value":{
-						"helperFunction":"get-flat-file-tree"
+						"helperFunction":"get_filetree_info"
 					}
 				}	
 				
@@ -243,7 +243,7 @@
 					"label":"select the latest version",
 					"returnType":"string",
 					"value":{
-						"helperFunction":"get-flat-file-tree"
+						"helperFunction":"get_filetree_info"
 					}
 				},
 				{
@@ -251,7 +251,7 @@
 					"label":"Select the release candidate",
 					"returnType":"string",
 					"value":{
-						"helperFunction":"get-flat-file-tree"
+						"helperFunction":"get_filetree_info"
 					}
 				}
 			]

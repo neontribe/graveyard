@@ -1,3 +1,4 @@
+
 import os
 import json
 
@@ -27,9 +28,71 @@ playbooks_config = tweak.load_config(os.path.sep.join([tweak.get_config_director
 filetree_cache = tweak.load_cache(os.path.sep.join([tweak.get_cache_directory(), 'filetree']))
 
 
+def display_tree_helper(current_json):
+    level_json =[]
+    for key in current_json.keys():
+        node_json = {}
+        node_json['text'] = key
+        node_json['children'] =[]
+        for child in current_json[key].keys():
+            if child != 'version':
+                node_json['children'].append(display_tree_helper(current_json[key][child]))
+            else:
+                node_json['children'].append('version -- ' + current_json[key][child])
+
+
+        level_json.append(node_json)
+    return level_json
+
+#Renders our cached display tree into a form for the jquery library we are using to display it nicely
+def display_tree(json_input):
+    new_json ={'data':[]}
+    for server in json_input.keys():
+        print server
+        if json_input[server]['data'] != {}: 
+            print json_input[server]['data']['path']
+            new_node = display_tree_helper(json_input[server]['data']['path'])
+            new_json['data'].append({'text':server,'children':new_node})
+        else:
+            new_json['data'].append(server)
+
+
+    return new_json
+        
+
+
+
+
+
+
+def get_filetree_info(hostname, flat=True):
+    if flat:
+        if hostname in filetree_cache:
+            if filetree_cache[hostname]['data'] != {}:
+                return sorted([ x['name'] for x in filetree_cache[hostname]['data']['flat']])
+            else:
+                return []
+        else:
+            return 'no such hostname'
+
+    else:
+        if hostname in filetree_cache:
+            if filetree_cache[hostname]['data'] != {}:
+                return filetree_cache[hostname]['data']['path']
+            else:
+                return []
+        else:
+            return 'no such hostname'
+
+
+
 @app.route('/', methods=['GET'])
 def index():
     return redirect(url_for('choose_task'))
+
+@app.route('/see-filetree', methods=['GET'])
+def see_filetree():
+    return render_template('see-filetree.html')
 
 @app.route('/choose_task', methods=['GET'])
 def choose_task():
@@ -177,33 +240,23 @@ def get_filetree():
             filetree_cache_file.write(json.dumps(cached_info))
             filetree_cache_file.close()
 
-            return json.dumps(cached_info)
+            if 'forDisplay' in request.args and request.args['forDisplay'].lower() =='true':
+                return jsonify(display_tree(cached_info))
+            else:
+                return jsonify(cached_info)
 
+        else:
+            if 'forDisplay' in request.args and request.args['forDisplay'].lower() =='true':
+                return jsonify(display_tree(filetree_cache))
+            else:
+                return jsonify(filetree_cache)
+
+    
+    else:
+        if 'forDisplay' in request.args and request.args['forDisplay'].lower() =='true':
+            return jsonify(display_tree(filetree_cache))
         else:
             return jsonify(filetree_cache)
-    else:
-        return jsonify(filetree_cache)
-
- 
-
-def get_filetree_info(hostname, flat=True):
-    if flat:
-        if hostname in filetree_cache:
-            if filetree_cache[hostname]['data'] != {}:
-                return sorted([ x['name'] for x in filetree_cache[hostname]['data']['flat']])
-            else:
-                return []
-        else:
-            return 'no such hostname'
-
-    else:
-        if hostname in filetree_cache:
-            if filetree_cache[hostname]['data'] != {}:
-                return filetree_cache[hostname]['data']['path']
-            else:
-                return []
-        else:
-            return 'no such hostname'
 
 
 

@@ -3,9 +3,15 @@
 {% block content %}
 <form action="setup_task" method="POST">
   <label>Host: </label>{{ host }}
+  <form action="/" method="GET">
+  	<a href='/'><button>Re-choose host</button></a>
+  </form>
   <br />
-  <label>PlayBook: </label>{{ playbook.label }}</p>
-  <hr>
+  <label>Playbook: </label>{{ playbook.label }}
+  <form action="/" method="GET">
+  	<a href='/'><button>Re-choose playbook</button></a>
+  </form>
+  <br />
   <input type="hidden" name="host" value="{{ host }}">
   <input type="hidden" name="playbook" value="{{ playbook.name }}">
   {% for field in playbook.fields %}
@@ -32,7 +38,7 @@
     {% endif %}
     <br>
   {% endfor %}
-  <button class="submit" action="choose_host">Run</button>
+  <button class="submit">Run</button>
 </form>
 <hr>
 <p>Log:</p>
