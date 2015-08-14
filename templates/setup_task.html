@@ -10,22 +10,25 @@
   <input type="hidden" name="playbook" value="{{ playbook.name }}">
   {% for field in playbook.fields %}
     <label for="{{ field.name }}">{{ field.label }}</label>
-    {% if is_string(field.value) %}
-      <input type="text" name="{{ field.name }}" value="{{ field.value }}">
-    {% elif is_boolean(field.value) %}
-      {% if field.value %}
+    {% if is_dictionary(field.value) %}
+      {% set value = helpers[field.value.helperFunction](host) %}
+    {% else %}
+      {% set value = field.value %}
+    {% endif %}
+    {% if is_string(value) %}
+      <input type="text" name="{{ field.name }}" value="{{ value }}">
+    {% elif is_boolean(value) %}
+      {% if value %}
         <input type="checkbox" name="{{ field.name }}" checked>
       {% else %}
         <input type="checkbox" name="{{ field.name }}">
       {% endif %}
-    {% elif is_list(field.value) %}
+    {% elif is_list(value) %}
       <select name="{{ field.name }}">
-        {% for option in field.value %}
+        {% for option in value %}
           <option value="{{ option }}">{{ option }}</option>
         {% endfor %}
       </select>
-    {% elif is_dictionary(field.value) %}
-      <!-- TODO: implement -->
     {% endif %}
     <br>
   {% endfor %}

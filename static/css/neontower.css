@@ -44,6 +44,13 @@ hr
   border-bottom: 1px gray dashed;
 }
 
+label
+{
+  display: inline-block;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
 p.error
 {
   color: red;

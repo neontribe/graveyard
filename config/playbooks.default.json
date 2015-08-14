@@ -108,7 +108,7 @@
 					"label":"Pull from which remote folder",
 					"returnType":"string",
 					"value": {
-						"helperFunction": "get-flat-file-tree"
+						"helperFunction": "get_filetree_info"
 					}
 				},
 				{

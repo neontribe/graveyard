@@ -70,6 +70,9 @@ def setup_task():
     data['is_list'] = lambda obj : type(obj) == list
     data['is_dictionary'] = lambda obj : type(obj) == dict
 
+    data['helpers'] = {}
+    data['helpers']['get_filetree_info'] = get_filetree_info
+
     return render_template('setup_task.html', **data)
 
 
@@ -139,7 +142,7 @@ def run_playbook():
         )
 @app.route('/get-filetree', methods=['GET'])
 def get_filetree():
-    
+
     if 'refresh' in request.args:
         if request.args['refresh'].lower() == 'true':
             # runs the get filetree task for each server
@@ -152,6 +155,7 @@ def get_filetree():
             )
             
             # reformats raw response into the form we want with meta data attached
+
             cached_info = {}
             for event in iter(event_generator):
                 print event
@@ -160,7 +164,7 @@ def get_filetree():
                     entry['data'] = event['res']['stat']['files']
                 else:
                     entry['data'] = {}
-                
+
                 if event['event'] != 'complete':
                     cached_info[event['host']] = entry
             
@@ -179,13 +183,14 @@ def get_filetree():
             return jsonify(filetree_cache)
     else:
         return jsonify(filetree_cache)
+
  
-def get_filetree_info(hostname,flat=True):
-    # an empty array will be return if hostname was previously unreachable
+
+def get_filetree_info(hostname, flat=True):
     if flat:
         if hostname in filetree_cache:
             if filetree_cache[hostname]['data'] != {}:
-                return sorted([x['name'] for x in filetree_cache[hostname]['data']['flat']])
+                return sorted([ x['name'] for x in filetree_cache[hostname]['data']['flat']])
             else:
                 return []
         else:
