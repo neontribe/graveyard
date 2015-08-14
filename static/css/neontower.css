@@ -56,12 +56,6 @@ p.error
   color: red;
 }
 
-div.log
-{
-  border: 1px gray dashed;
-  min-height: 5em;
-}
-
 button.submit
 {
   display: block;

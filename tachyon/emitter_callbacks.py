@@ -13,7 +13,7 @@ class EmitterCallbacks(object):
     Called when task in playbook fails.
     '''
     def on_failed(self, host, res, ignore_errors=False):
-        return_dict = {"event": "failed", "host": host, "res": res, "ignore_error": ignore_errors}
+        return_dict = {"event": "failed", "host": host, "res": res, "ignore_errors": ignore_errors}
         self.emitter(return_dict)
 
     '''
@@ -139,7 +139,10 @@ class EmitterCallbacks(object):
 
 
     '''
-    TODO.
+    Called when the running of a Play begins.
+
+    Parameters:
+    * name      str     The name of the Play
     '''
     def on_play_start(self, name):
         return_dict = {"event": "play_start", "name": name}

@@ -130,7 +130,7 @@ def run_playbook():
         def events():
             # yield events as they arrive
             for event in bridge.run_playbook(playbook_path, inventory_path, [ limit ], extra_vars):
-                yield 'data: ' + json.dumps(event) + '\n'
+                yield 'data: ' + json.dumps(event) + '\n\n'
         # give Flask the event data generator
         return Response(events(), content_type='text/event-stream')
     else:
@@ -139,6 +139,7 @@ def run_playbook():
             jsonify(error="The response is not of content type text/event-stream and, hence, this must be rejected"),
             HTTP_NOT_ACCEPTABLE
         )
+
 @app.route('/get-filetree', methods=['GET'])
 def get_filetree():
 
