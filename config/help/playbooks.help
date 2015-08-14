@@ -1,0 +1,22 @@
+|-playbooks: ARRAY of playbook objects	
+|	|
+|	|-	name: The display name used by the website 
+|	|-	shortname: The sensible variable name used
+|	|-	yaml: The name of the playbook file in the ansible folder (path found in config)
+|	|-	fields: ARRAY of json objects needed to describe the inputs needed for the playbook
+|	|	  |
+|	|	  |- name: The parameter name that the information has when it is send back to the server
+|	|	  |- label: The label that the field is displayed with in the HTML
+|	|	  |- returnType: The type the server should expect from this parameter, can have values string/boolean/integer
+|	|	  |- value: TODO harry to explain wtf this thing is
+|	|
+|	|- configNodes: ARRAY of objects any nodes pulled from config.
+|	|	  |
+|	|	  |- argName: the name the variable is given when passed into Ansible playbook in extra-vars
+|	|	  |- node: which node in the config to pull the data from
+|	|
+|	|- constants: ARRAY of objects with constant values.
+|	|	  |
+|	|	  |- argName: the name the variable is given when passed into Ansible playbook in extra-vars
+|	|	  |- node: the value desired 
+

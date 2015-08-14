@@ -72,6 +72,7 @@ def setup_task():
 
     return render_template('setup_task.html', **data)
 
+
 @app.route('/run_playbook', methods=['GET'])
 def run_playbook():
     # check the id of the PlayBook schema is present
