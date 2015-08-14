@@ -24,8 +24,9 @@ body
 
 h1
 {
-  font-size: 1em;
+  font-size: 3em;
   text-align: center;
+  margin:5px;
 }
 
 h1::before
@@ -37,6 +38,24 @@ h1::after
 {
   content: " >>>";
 }
+
+h2
+{
+  font-size: 1em;
+  text-align: center;
+  margin:5px;
+}
+
+h2::before
+{
+  content: "<< ";
+}
+
+h2::after
+{
+  content: " >>";
+}
+
 
 hr
 {
