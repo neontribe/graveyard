@@ -175,7 +175,7 @@ def run_playbook():
 
     # add PlayBook's constants
     for constant_object in playbook_schema['constants']:
-        extra_vars[constant_object['argName']] = config_object['value']
+        extra_vars[constant_object['argName']] = constant_object['value']
 
     # work out the values to call tachyon with
     playbook_path = os.path.sep.join([ansible_config['ntdr_pas_path'], 'playbooks', playbook_schema['yaml']])
@@ -194,6 +194,7 @@ def run_playbook():
         def events():
             # yield events as they arrive
             for event in bridge.run_playbook(playbook_path, inventory_path, [ limit ], extra_vars):
+                print 'data: ' + json.dumps(event) + '\n\n'
                 yield 'data: ' + json.dumps(event) + '\n\n'
         # give Flask the event data generator
         return Response(events(), content_type='text/event-stream')
