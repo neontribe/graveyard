@@ -58,33 +58,16 @@ def display_tree(json_input):
 
 
     return new_json
-        
 
+def get_filetree_info(hostname):
+    if not hostname in filetree_cache:
+       return flask.jsonify(error='No such hostname'), 404 
+    
+    if not filetree_cache[hostname]['data'] != {}:
+        return [] if flat else {}
 
-
-
-
-
-def get_filetree_info(hostname, flat=True):
-    if flat:
-        if hostname in filetree_cache:
-            if filetree_cache[hostname]['data'] != {}:
-                return sorted([ x['name'] for x in filetree_cache[hostname]['data']['flat']])
-            else:
-                return []
-        else:
-            return 'no such hostname'
-
-    else:
-        if hostname in filetree_cache:
-            if filetree_cache[hostname]['data'] != {}:
-                return filetree_cache[hostname]['data']['path']
-            else:
-                return []
-        else:
-            return 'no such hostname'
-
-
+    paths = [x['name'] for x in filetree_cache[hostname]['data']['flat']]
+    return [os.path.sep.join([ansible_config['remote_site_root'], path]) for path in paths]
 
 @app.route('/', methods=['GET'])
 def index():
@@ -194,7 +177,6 @@ def run_playbook():
         def events():
             # yield events as they arrive
             for event in bridge.run_playbook(playbook_path, inventory_path, [ limit ], extra_vars):
-                print 'data: ' + json.dumps(event) + '\n\n'
                 yield 'data: ' + json.dumps(event) + '\n\n'
         # give Flask the event data generator
         return Response(events(), content_type='text/event-stream')
@@ -216,7 +198,7 @@ def get_filetree():
                 os.path.sep.join([ansible_config['ntdr_pas_path'], 'playbooks','library','ntdr_get_filetree.py']),
                 ansible_config['inventory_path'],
                 server_codes,
-                { 'path': '/var/www' }
+                { 'path': ansibleConfig['remote_site_root']}
             )
             
             # reformats raw response into the form we want with meta data attached
