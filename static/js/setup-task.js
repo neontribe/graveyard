@@ -13,11 +13,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     source.addEventListener('open', function (event) {
       logger.log([new Date().toLocaleTimeString(), 'Connected']);
-      // TODO: this is literally the worst hack I have ever written. It stops
-      //       the web browser from trying to repeatedly connect after the
-      //       connection has been closed. I don't know why. I'm sorry if you
-      //       have to read this or - worse - change this.
-      throw Error();
     });
 
     source.addEventListener('message', function (event) {
@@ -28,10 +23,15 @@ document.addEventListener('DOMContentLoaded', function () {
         toLog.push(JSON.stringify(jsonEvent.res));
       }
       logger.log(toLog);
+
+      if (jsonEvent.event === 'complete')
+      {
+        source.close();
+      }
     }, false);
 
     source.addEventListener('error', function (event) {
-      logger.log([new Date().toLocaleTimeString(), 'Disconnected']);
+      logger.log([new Date().toLocaleTimeString(), 'Error: Disconnected']);
     });
   });
 });
