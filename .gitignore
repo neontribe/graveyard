@@ -36,3 +36,9 @@ pip-delete-this-directory.txt
 
 config/*.json
 !config/*.default.json
+
+#############
+### Cache ###
+#############
+
+cache/
