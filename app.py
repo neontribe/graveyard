@@ -27,7 +27,7 @@ playbooks_config = tweak.load_config(os.path.sep.join([tweak.get_config_director
 
 filetree_cache = tweak.load_cache(os.path.sep.join([tweak.get_cache_directory(), 'filetree']))
 
-
+#the function to be used recursively in displaytree
 def display_tree_helper(current_json):
     level_json =[]
     for key in current_json.keys():
@@ -44,13 +44,11 @@ def display_tree_helper(current_json):
         level_json.append(node_json)
     return level_json
 
-#Renders our cached display tree into a form for the jquery library we are using to display it nicely
+#Renders our cached display tree into a form for the jquery library (jsTree) we are using to display it nicely
 def display_tree(json_input):
     new_json ={'data':[]}
     for server in json_input.keys():
-        print server
         if json_input[server]['data'] != {}: 
-            print json_input[server]['data']['path']
             new_node = display_tree_helper(json_input[server]['data']['path'])
             new_json['data'].append({'text':server,'children':new_node})
         else:
@@ -67,7 +65,9 @@ def get_filetree_info(hostname):
         return [] if flat else {}
 
     paths = [x['name'] for x in filetree_cache[hostname]['data']['flat']]
-    return [os.path.sep.join([ansible_config['remote_site_root'], path]) for path in paths]
+    return [os.path.sep.join([ansible_config['remote_site_root'], path[1:]]) for path in paths]
+
+
 
 @app.route('/', methods=['GET'])
 def index():
@@ -198,14 +198,13 @@ def get_filetree():
                 os.path.sep.join([ansible_config['ntdr_pas_path'], 'playbooks','library','ntdr_get_filetree.py']),
                 ansible_config['inventory_path'],
                 server_codes,
-                { 'path': ansibleConfig['remote_site_root']}
+                { 'path': ansible_config['remote_site_root']}
             )
             
             # reformats raw response into the form we want with meta data attached
 
             cached_info = {}
             for event in iter(event_generator):
-                print event
                 entry = {'meta':{'status':event['event']}}
                 if entry['meta']['status'] == 'ok':
                     entry['data'] = event['res']['stat']['files']
