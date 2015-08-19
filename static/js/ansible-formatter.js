@@ -112,12 +112,12 @@ var _formatters = {
     if (item)
     {
       message = '[%host%] => (item=%item%) => %results%';
-      log(message, { host: host, item: item, results: JSON.stringify(results) }, 'FAIL');
+      log(message, { host: host, item: item, results: JSON.stringify(res) }, 'FAIL');
     }
     else
     {
       message = '[%host%] => %results%';
-      log(message, { host: host, results: JSON.stringify(results) }, 'FAIL');
+      log(message, { host: host, results: JSON.stringify(res) }, 'FAIL');
     }
 
     if (stderr)
