@@ -100,7 +100,7 @@ class EmitterCallbacks(object):
     TODO.
     '''
     def on_task_start(self, name, is_conditional):
-        return_dict = {"event": "ok", "name": name, "conditional": is_conditional}
+        return_dict = {"event": "task_start", "name": name, "conditional": is_conditional}
         self.emitter(return_dict)
 
 
@@ -109,7 +109,7 @@ class EmitterCallbacks(object):
     **NOTE** This will NOT be used in our code since we are doing the playbook calls from the website the user won't have a chance to input things.
     '''
     def on_vars_prompt(self, varname, private=True, prompt=None, encrypt=None, confirm=False, salt_size=None, salt=None, default=None):
-        return_dict = {"event": "prompt", "varname": varname, "private": private, "prompt": None, "encrypt": None, "confirm": confirm, "salt_size": salt_size, "salt": salt, "default": default}
+        return_dict = {"event": "prompt", "varname": varname, "private": private, "prompt": prompt, "encrypt": encrypt, "confirm": confirm, "salt_size": salt_size, "salt": salt, "default": default}
         self.emitter(return_dict)
 
 

@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var form = document.getElementById('playbookForm');
   var log = document.getElementById('playbookLog');
 
-  var logger = new Logger(log);
+  var logger = new Logger(log, 4);
 
   form.addEventListener('submit', function (event) {
     event.preventDefault();
@@ -17,12 +17,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
     source.addEventListener('message', function (event) {
       var jsonEvent = JSON.parse(event.data);
-      var toLog = [new Date().toLocaleTimeString(), jsonEvent.event];
-      if (jsonEvent.res)
+      var logTemplate = [new Date().toLocaleTimeString(), jsonEvent.event];
+
+      var eventOutput = formatEvent(jsonEvent);
+      for (var lineIndex = 0; lineIndex < eventOutput.length; lineIndex++)
       {
-        toLog.push(JSON.stringify(jsonEvent.res));
+        var line = eventOutput[lineIndex];
+        var toLog = logTemplate.slice();
+
+        for (var linePartIndex = 0; linePartIndex < line.msg.length; linePartIndex++)
+        {
+          var linePart = line.msg[linePartIndex];
+          toLog.push(linePart);
+        }
+
+        logger.log(toLog, line.color);
       }
-      logger.log(toLog);
 
       if (jsonEvent.event === 'complete')
       {
