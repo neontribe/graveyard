@@ -254,7 +254,10 @@
 						"helperFunction":"get_filetree_info"
 					}
 				}
-			]
+			],
+			"configNodes":[],
+			"constants":[]
+			
 		}
 	]
 }

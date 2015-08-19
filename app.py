@@ -58,33 +58,16 @@ def display_tree(json_input):
 
 
     return new_json
-        
 
+def get_filetree_info(hostname):
+    if not hostname in filetree_cache:
+       return flask.jsonify(error='No such hostname'), 404 
+    
+    if not filetree_cache[hostname]['data'] != {}:
+        return [] if flat else {}
 
-
-
-
-
-def get_filetree_info(hostname, flat=True):
-    if flat:
-        if hostname in filetree_cache:
-            if filetree_cache[hostname]['data'] != {}:
-                return sorted([ x['name'] for x in filetree_cache[hostname]['data']['flat']])
-            else:
-                return []
-        else:
-            return 'no such hostname'
-
-    else:
-        if hostname in filetree_cache:
-            if filetree_cache[hostname]['data'] != {}:
-                return filetree_cache[hostname]['data']['path']
-            else:
-                return []
-        else:
-            return 'no such hostname'
-
-
+    paths = [x['name'] for x in filetree_cache[hostname]['data']['flat']]
+    return [os.path.sep.join([ansible_config['remote_site_root'], path]) for path in paths]
 
 @app.route('/', methods=['GET'])
 def index():
@@ -175,7 +158,7 @@ def run_playbook():
 
     # add PlayBook's constants
     for constant_object in playbook_schema['constants']:
-        extra_vars[constant_object['argName']] = config_object['value']
+        extra_vars[constant_object['argName']] = constant_object['value']
 
     # work out the values to call tachyon with
     playbook_path = os.path.sep.join([ansible_config['ntdr_pas_path'], 'playbooks', playbook_schema['yaml']])
@@ -215,7 +198,7 @@ def get_filetree():
                 os.path.sep.join([ansible_config['ntdr_pas_path'], 'playbooks','library','ntdr_get_filetree.py']),
                 ansible_config['inventory_path'],
                 server_codes,
-                { 'path': '/var/www' }
+                { 'path': ansibleConfig['remote_site_root']}
             )
             
             # reformats raw response into the form we want with meta data attached
