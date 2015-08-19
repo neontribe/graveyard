@@ -173,8 +173,18 @@ var _formatters = {
     var host = event.host;
     var item = event.item;
 
-    // we don't need to show skipped hosts for the user to know that their
-    // limits are being followed
+    var message;
+    if (item)
+    {
+      message = 'Skipping [%host%] => (item=%item%)';
+      log(message, { host: host, item: item }, 'INFO');
+    }
+    else
+    {
+      message = 'Skipping [%host%]';
+      log(message, { host: host }, 'INFO');
+    }
+
     return;
   },
 
