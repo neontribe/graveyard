@@ -263,20 +263,20 @@ var _formatters = {
     var host = event.host;
     var importedFile = event.importedFile;
 
-    log(''%host%': importing '%importedFile%'', { host: host, importedFile: importedFile }, 'INFO');
+    log('"%host%": importing "%importedFile%"', { host: host, importedFile: importedFile }, 'INFO');
   },
 
   'not_import_for_host': function (log, event) {
     var host = event.host;
     var missingFile = event.missing_file;
 
-    log(''%host%': NOT importing '%missingFile%'', { host: host, missingFile: missingFile }, 'INFO');
+    log('"%host%": NOT importing "%missingFile%"', { host: host, missingFile: missingFile }, 'INFO');
   },
 
   'play_start': function (log, event) {
     var name = event.name;
 
-    log('Starting play '%name%'', { name: name }, 'STATUS');
+    log('Starting play "%name%"', { name: name }, 'STATUS');
   },
 
   'stats': function (log, event) {
