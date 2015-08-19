@@ -31,7 +31,7 @@
 				{
 					"argName":"withdb",
 					"value":true
-				}	
+				}
 			]
 		},
 		{
@@ -94,7 +94,7 @@
 				{
 					"argName":"withdb",
 					"value":true
-				}	
+				}
 			]
 
 		},
@@ -150,10 +150,10 @@
 				{
 					"argName":"withdb",
 					"value":true
-				}	
+				}
 			]
-			
-			
+
+
 		},
 		{
 			"label":"Freshen local, files folder, without DB",
@@ -209,7 +209,7 @@
 		{
 			"label":"Freshen remote from live",
 			"name": "freshenRemoteFromLive",
-			"yaml": "freshen-remote.yml",
+			"yaml": "freshen-remote-site.yml",
 			"fields":[
 				{
 					"name":"target",
@@ -217,8 +217,8 @@
 					"returnType": "string",
 					"value":{
 						"helperFunction":"get_filetree_info"
-					}					
-				
+					}
+
 				},
 				{
 					"name":"source",
@@ -227,8 +227,8 @@
 					"value":{
 						"helperFunction":"get_filetree_info"
 					}
-				}	
-				
+				}
+
 			],
 			"configNodes":[],
 			"constants":[]
@@ -257,37 +257,7 @@
 			],
 			"configNodes":[],
 			"constants":[]
-			
+
 		}
 	]
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
