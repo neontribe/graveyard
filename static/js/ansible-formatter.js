@@ -7,8 +7,8 @@ var colors = {
   'FAIL': 'orange',
   'INFO': 'blue',
   'STATUS': 'black',
-  'SAME': 'yellow',
-  'DIFFERENT': 'green'
+  'SAME': 'green',
+  'DIFFERENT': 'gold'
 }
 
 function formatEvent(event)
@@ -152,9 +152,7 @@ var _formatters = {
 
     var item = _get(res, 'item', null);
     _pop(res, 'invocation', null);
-    var verboseAlways = _pop(res, 'verbose_always', false)
-    var changed = _get(res, 'changed', false)
-    var okOrChanged = changed ? 'changed' : 'ok';
+    var changed = _get(res, 'changed', false);
 
     var message = '';
     if (item)
@@ -162,7 +160,7 @@ var _formatters = {
       message = '[%host%] => (item=%item%)';
       log(message, { host: host, item: item }, changed ? 'DIFFERENT' : 'SAME');
     }
-    else if ((!'ansible_job_id' in res) || 'finished' in res)
+    else if ((!('ansible_job_id' in res)) || 'finished' in res)
     {
       message = '[%host%]';
       log(message, { host: host }, changed ? 'DIFFERENT' : 'SAME');
@@ -234,7 +232,7 @@ var _formatters = {
   },
 
   'no_hosts_remaining': function (log, event) {
-    log('All hosts have already failed, aborting', 'FATAL');
+    log('All hosts have already failed, aborting', {}, 'FATAL');
   },
 
   'task_start': function (log, event) {
@@ -273,20 +271,20 @@ var _formatters = {
     var host = event.host;
     var importedFile = event.importedFile;
 
-    log(''%host%': importing '%importedFile%'', { host: host, importedFile: importedFile }, 'INFO');
+    log('"%host%": importing "%importedFile%"', { host: host, importedFile: importedFile }, 'INFO');
   },
 
   'not_import_for_host': function (log, event) {
     var host = event.host;
     var missingFile = event.missing_file;
 
-    log(''%host%': NOT importing '%missingFile%'', { host: host, missingFile: missingFile }, 'INFO');
+    log('"%host%": NOT importing "%missingFile%"', { host: host, missingFile: missingFile }, 'INFO');
   },
 
   'play_start': function (log, event) {
     var name = event.name;
 
-    log('Starting play '%name%'', { name: name }, 'STATUS');
+    log('Starting play "%name%"', { name: name }, 'STATUS');
   },
 
   'stats': function (log, event) {
