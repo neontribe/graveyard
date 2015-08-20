@@ -16,10 +16,12 @@ body
   margin-bottom: 1em;
 
   padding: 1em;
-  border: 1px gray dashed;
+  border: 1px  dashed; 
 
   font-family: monospace;
   font-size: 1.2em;
+  color:#00ff00;
+  background-color:#000000;
 }
 
 h1
@@ -62,7 +64,7 @@ nav a::after
 hr
 {
   border: none;
-  border-bottom: 1px gray dashed;
+  border-bottom: 1px #00ff00 dashed;
 }
 
 label
@@ -77,22 +79,23 @@ p.error
   color: red;
 }
 
+.red_text{color:red}
+.orange_text{ color:orange}
+.blue_text{color:blue}
+.black_text{color:white}
+.green_text{color:green}
+.gold_text{color:gold}
+
+
 button.submit
 {
   display: block;
   margin-left: auto;
 }
 
-.red_text{color:red}
-.orange_text{ color:orange}
-.blue_text{color:blue}
-.black_text{color:black}
-.green_text{color:green}
-.gold_text{color:gold}
-
 div.log
 {
-  border: 1px gray dashed;
+  border: 1px #00ff00 dashed;
   min-height: 5em;
   display: table;
   width: 100%;
@@ -108,8 +111,8 @@ div.log .message .part
   display: table-cell;
   padding-right: .5em;
 
-  border-bottom: 1px gray dotted;
-  border-right: 1px gray dotted;
+  border-bottom: 1px #00ff00 dotted;
+  border-right: 1px #00ff00 dotted;
 }
 
 div.log .message:last-child .part
@@ -131,4 +134,6 @@ div.log .message .part.long::after
 {
   content: " ↓";
 }
-
+a,a:visited{
+	color: #00ff00;
+}

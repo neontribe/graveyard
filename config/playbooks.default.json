@@ -7,26 +7,29 @@
 			"fields":[
 				{
 					"name": "target",
-					"label": "Choose folder to upload new site to",
+					"label": "Name new folder to upload site too",
 					"returnType": "string",
-					"value": {
-						"helperFunction": "get_filetree_info"
-					}
+					"value": "/var/www/zz_0.3"
+					
 				},
 				{
 					"name":"source",
 					"label":"Choose folder to upload",
 					"returnType":"string",
 					"value":"/home/tobias/workspace/Cottaging/sites/zz"
+				},
+				{ 
+					"name":"mysql_root_pw",
+					"label":"My Sql root password",
+					"returnType":"string",
+					"value":
+					{
+						"helperFunction":"get_remote_passwords"
+					}
+				
 				}
-
 			],
-			"configNodes": [
-				{
-					"argName": "mysql_root_pw",
-					"node": "localMySqlRootPassword"
-				}
-			],
+			"configNodes": [],
 			"constants":[
 				{
 					"argName":"withdb",
@@ -135,9 +138,16 @@
 					"name":"source",
 					"label":"Pull from which remote folder",
 					"returnType":"string",
-					"value":{
+					"value":
+					{
 						"helperFunction":"get_filetree_info"
 					}
+				},
+				{
+					"name":"local",
+					"label":"Path to local file to freshen",
+					"returnType":"string",
+					"value":"/var/tmp/zz_0.1"
 				}
 			],
 			"configNodes": [
@@ -164,10 +174,19 @@
 					"name":"source",
 					"label":"Pull from which remote folder",
 					"returnType":"string",
-					"value":{
+					"value":
+					{
 						"helperFunction":"get_filetree_info"
 					}
+				},
+
+				{
+					"name":"local",
+					"label":"Path to local file to freshen",
+					"returnType":"string",
+					"value":"/var/tmp/zz_0.1"
 				}
+
 			],
 			"configNodes": [
 				{
@@ -195,7 +214,19 @@
 					"value":{
 						"helperFunction":"get_filetree_info"
 					}
+				},
+				{ 
+					"name":"mysql_root_pw",
+					"label":"My Sql root password",
+					"returnType":"string",
+					"value":
+					{
+						"helperFunction":"get_remote_passwords"
+
+					}
+				
 				}
+
 			],
 			"configNodes": [
 				{
@@ -253,6 +284,12 @@
 					"value":{
 						"helperFunction":"get_filetree_info"
 					}
+				},
+				{
+					"name":"newrc",
+					"label":"Name of new RC site folder",
+					"returnType":"string",
+					"value":"/var/www/zz_0.3"
 				}
 			],
 			"configNodes":[],

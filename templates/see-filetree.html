@@ -26,10 +26,13 @@
 				url	:'/get-filetree',
 				data:'forDisplay=true&refresh=true',
 				success: function(data){
-					console.log(data)
+					alert('success')
 					$('#container').jstree({
 						'core': data	
 					});
+				},
+				failure: function(data){
+					alert('failure')
 				}	
 			});
 		});

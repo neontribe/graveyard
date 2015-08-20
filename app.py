@@ -2,6 +2,7 @@
 import os
 import json
 
+from flask import g
 from flask import Flask
 from flask import jsonify
 from flask import request
@@ -15,6 +16,7 @@ from tachyon import bridge
 
 HTTP_NOT_ACCEPTABLE = 406
 HTTP_UNPROCESSABLE_ENTITY = 422
+THEME = 'neontower' 
 
 app = Flask(__name__)
 
@@ -26,6 +28,8 @@ playbooks_schemas = tweak.load_config(os.path.sep.join([tweak.get_config_directo
 playbooks_config = tweak.load_config(os.path.sep.join([tweak.get_config_directory(), 'playbooksConfig']))
 
 filetree_cache = tweak.load_cache(os.path.sep.join([tweak.get_cache_directory(), 'filetree']))
+
+
 
 #the function to be used recursively in displaytree
 def display_tree_helper(current_json):
@@ -62,19 +66,26 @@ def get_filetree_info(hostname):
        return flask.jsonify(error='No such hostname'), 404 
     
     if not filetree_cache[hostname]['data'] != {}:
-        return [] if flat else {}
+        return []
 
     paths = [x['name'] for x in filetree_cache[hostname]['data']['flat']]
     return [os.path.sep.join([ansible_config['remote_site_root'], path[1:]]) for path in paths]
+
+def get_remote_passwords(hostname):
+    return bridge.get_host_passwords(ansible_config['inventory_path'])[hostname]
+
+
 
 
 
 @app.route('/', methods=['GET'])
 def index():
+    g.theme = THEME # makes theme accessible to templates 
     return render_template('index.html')
 
 @app.route('/see-filetree', methods=['GET'])
 def see_filetree():
+    g.theme = THEME # makes theme accessible to templates 
     return render_template('see-filetree.html')
 
 @app.route('/choose_task', methods=['GET'])
@@ -86,6 +97,7 @@ def choose_task():
 
     data['hosts'] = sorted(bridge.get_host_names(ansible_config['inventory_path']))
     data['playbooks'] = playbooks_schemas['playbooks']
+    g.theme = THEME # makes theme accessible to templates 
 
     return render_template('choose_task.html', **data)
 
@@ -118,7 +130,9 @@ def setup_task():
 
     data['helpers'] = {}
     data['helpers']['get_filetree_info'] = get_filetree_info
+    data['helpers']['get_remote_passwords'] = get_remote_passwords
 
+    g.theme = THEME # makes theme accessible to templates 
     return render_template('setup_task.html', **data)
 
 

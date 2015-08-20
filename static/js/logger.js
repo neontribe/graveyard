@@ -22,7 +22,8 @@ Logger.prototype.log = function (parts, color)
 
   if (color)
   {
-    rowElement.style.color = color;
+    //rowElement.style.color = color;
+	rowElement.classList.add(color + '_text')
   }
 
   this.logElement.appendChild(rowElement);

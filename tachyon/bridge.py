@@ -143,6 +143,7 @@ def run_task(module_path, inventory_path, limits, extra_vars):
 
     for callback_data in iter(_run_yielding_events(runner)):
         yield callback_data
+        print callback_data
 
 def get_host_names(inventory_path):
     '''Read the names of servers from an Inventory file with Ansible's API.
@@ -162,3 +163,22 @@ def get_host_names(inventory_path):
     for host in inventory_parser.hosts:
         hosts.append(host)
     return hosts
+
+def get_host_passwords(inventory_path):
+    hosts = InventoryParser(filename=inventory_path).hosts
+    
+    passwords ={}
+
+    for host in hosts:
+        if 'mysql_root_pw' in hosts[host].vars:
+            passwords[host] = hosts[host].vars['mysql_root_pw']
+        else:
+            passwords[host] = "Remote root password is not in the ansible inventory file"
+    return passwords
+
+
+
+
+    return inventory_parser
+
+    
