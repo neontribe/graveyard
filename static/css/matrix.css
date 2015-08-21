@@ -16,7 +16,7 @@ body
   margin-bottom: 1em;
 
   padding: 1em;
-  border: 1px  dashed; 
+  border: 1px  dashed;
 
   font-family: monospace;
   font-size: 1.2em;
@@ -125,15 +125,6 @@ div.log .message .part:last-child
   border-right: 0;
 }
 
-div.log .message .part.long::before
-{
-  content: "↓ ";
-}
-
-div.log .message .part.long::after
-{
-  content: " ↓";
-}
 a,a:visited{
   color: #00ff00;
 }

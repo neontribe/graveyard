@@ -3,14 +3,12 @@ Exposed API.
 ************/
 
 
-function formatEvent(event)
-{
+function formatEvent(event) {
   // get formatter for event type
   var eventFormatter = _formatters[event.event];
 
   var logged = [];
-  function log(template, parameters, level)
-  {
+  function log(template, parameters, level) {
     var msg = ['<' + level + '>', _formatString(template, parameters)];
     logged.push({ 'msg': msg, 'level': level });
   }
@@ -25,12 +23,9 @@ function formatEvent(event)
 Ported python util functions to make porting easier.
 ***************************************************/
 
-function _formatString(toFormat, replacements)
-{
-  for (var toReplace in replacements)
-  {
-    if (!replacements.hasOwnProperty(toReplace))
-    {
+function _formatString(toFormat, replacements) {
+  for (var toReplace in replacements) {
+    if (!replacements.hasOwnProperty(toReplace)) {
       continue;
     }
 
@@ -47,10 +42,8 @@ function _formatString(toFormat, replacements)
 /**
 A function used in place of python's dict.get function.
 */
-function _get(dict, property, defValue)
-{
-  if (property in dict)
-  {
+function _get(dict, property, defValue) {
+  if (property in dict) {
     return dict[property];
   }
 
@@ -60,8 +53,7 @@ function _get(dict, property, defValue)
 /**
 A function used in place of python's dict.pop function.
 */
-function _pop(dict, property, defValue)
-{
+function _pop(dict, property, defValue) {
   var value = _get(dict, property, defValue);
   delete dict[property];
   return value;
@@ -91,8 +83,7 @@ var _formatters = {
     var item = _get(res, 'item', null);
     var parsed = _get(res, 'parsed', true);
     var moduleMsg = '';
-    if (!parsed)
-    {
+    if (!parsed) {
       moduleMsg = _pop(res, 'msg', null);
     }
     var stderr = _pop(res, 'stderr', null);
@@ -100,39 +91,31 @@ var _formatters = {
     var returnedMsg = _pop(res, 'msg', null);
 
     var message;
-    if (item)
-    {
+    if (item) {
       message = '[%host%] => (item=%item%) => %results%';
       log(message, { host: host, item: item, results: JSON.stringify(res) }, 'FAIL');
-    }
-    else
-    {
+    } else {
       message = '[%host%] => %results%';
       log(message, { host: host, results: JSON.stringify(res) }, 'FAIL');
     }
 
-    if (stderr)
-    {
+    if (stderr) {
       log('stderr: %output%', { output: stderr }, 'FAIL');
     }
 
-    if (stdout)
-    {
+    if (stdout) {
       log('stdout: %output%', { output: stdout }, 'FAIL');
     }
 
-    if (returnedMsg)
-    {
+    if (returnedMsg) {
       log('msg: %text%', { text: returnedMsg }, 'FAIL');
     }
 
-    if (!parsed && moduleMsg)
-    {
+    if (!parsed && moduleMsg) {
       log(moduleMsg, {}, 'FAIL');
     }
 
-    if (ignoreErrors)
-    {
+    if (ignoreErrors) {
       log('...ignoring', {}, 'INFO');
     }
   },
@@ -146,13 +129,10 @@ var _formatters = {
     var changed = _get(res, 'changed', false);
 
     var message = '';
-    if (item)
-    {
+    if (item) {
       message = '[%host%] => (item=%item%)';
       log(message, { host: host, item: item }, changed ? 'DIFFERENT' : 'SAME');
-    }
-    else if ((!('ansible_job_id' in res)) || 'finished' in res)
-    {
+    } else if ((!('ansible_job_id' in res)) || 'finished' in res) {
       message = '[%host%]';
       log(message, { host: host }, changed ? 'DIFFERENT' : 'SAME');
     }
@@ -163,13 +143,10 @@ var _formatters = {
     var item = event.item;
 
     var message;
-    if (item)
-    {
+    if (item) {
       message = 'Skipping [%host%] => (item=%item%)';
       log(message, { host: host, item: item }, 'INFO');
-    }
-    else
-    {
+    } else {
       message = 'Skipping [%host%]';
       log(message, { host: host }, 'INFO');
     }
@@ -183,17 +160,13 @@ var _formatters = {
 
     var item = null;
 
-    if (typeof(res) === 'object')
-    {
+    if (typeof(res) === 'object') {
       item = _get(results, 'item', null);
     }
 
-    if (item)
-    {
+    if (item) {
       log('[%host%] => (item=%item%) => %res%', { host: host, item: item, res: res }, 'FATAL');
-    }
-    else
-    {
+    } else {
       log('[%host%] => %res%', { host: host, res: res }, 'FATAL');
     }
   },
@@ -230,10 +203,9 @@ var _formatters = {
     var name = event.name;
     var conditional = event.conditional;
 
-    var message = "TASK: [%name%]";
-    if (conditional)
-    {
-      message = "NOTIFIED: [%name%]";
+    var message = 'TASK: [%name%]';
+    if (conditional) {
+      message = 'NOTIFIED: [%name%]';
     }
 
     log(message, { name: name }, 'STATUS');

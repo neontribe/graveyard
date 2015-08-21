@@ -105,13 +105,3 @@ div.log .message .part:last-child
 {
   border-right: 0;
 }
-
-div.log .message .part.long::before
-{
-  content: "↓ ";
-}
-
-div.log .message .part.long::after
-{
-  content: " ↓";
-}

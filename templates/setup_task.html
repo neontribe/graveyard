@@ -13,13 +13,13 @@
 <label>Playbook: </label>{{ playbook.label }}
 <br />
 <hr>
-<form id="playbookForm">
+<form id="playbook-form">
   <input type="hidden" name="host" value="{{ host }}">
   <input type="hidden" name="name" value="{{ playbook.name }}">
   {% for field in playbook.fields %}
     <label for="{{ field.name }}">{{ field.label }}</label>
     {% if is_dictionary(field.value) %}
-      {% set value = helpers[field.value.helperFunction](host) %}
+      {% set value = helpers[field.value.helper_function](host) %}
     {% else %}
       {% set value = field.value %}
     {% endif %}
@@ -44,5 +44,5 @@
 </form>
 <hr>
 <p>Log:</p>
-<div id="playbookLog" class="log"></div>
+<div id="playbook-log" class="log"></div>
 {% endblock %}

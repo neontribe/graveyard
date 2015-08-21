@@ -166,19 +166,11 @@ def get_host_names(inventory_path):
 
 def get_host_passwords(inventory_path):
     hosts = InventoryParser(filename=inventory_path).hosts
-    
-    passwords ={}
 
+    passwords ={}
     for host in hosts:
         if 'mysql_root_pw' in hosts[host].vars:
             passwords[host] = hosts[host].vars['mysql_root_pw']
         else:
-            passwords[host] = "Remote root password is not in the ansible inventory file"
+            passwords[host] = 'Remote root password is not in the ansible inventory file'
     return passwords
-
-
-
-
-    return inventory_parser
-
-    

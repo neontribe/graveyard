@@ -122,16 +122,6 @@ div.log .message .part:last-child
   border-right: 0;
 }
 
-div.log .message .part.long::before
-{
-  content: "↓ ";
-}
-
-div.log .message .part.long::after
-{
-  content: " ↓";
-}
-
 button
 {
   background-color:white;
@@ -163,4 +153,3 @@ input
   font-family: monospace;
   font-size: 1.2em;
 }
-

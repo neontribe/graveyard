@@ -5,8 +5,9 @@ Useful utility functions for loading configuration files.
 import os
 import json
 
-DEFAULT_CONFIG_EXTENSION = '.default.json'
+CREATED_CACHE_EXTENSION = '.json'
 CREATED_CONFIG_EXTENSION = '.json'
+DEFAULT_CONFIG_EXTENSION = '.default.json'
 
 def load_config(path):
     # remove any suffixes, so they can be added programmatically as necessary
@@ -52,21 +53,23 @@ def get_config_directory():
     return get_project_directory() + '/config'
 
 def load_cache(path):
+    # append path if it is not already a suffix
+    if not path.endswith(CREATED_CACHE_EXTENSION):
+        path += CREATED_CACHE_EXTENSION
 
-    DEFAULT_EXTENSION = '.cache'
     # attempt to read a user created config
     try:
-        with open(path + DEFAULT_EXTENSION, 'r') as cache_file:
+        with open(path, 'r') as cache_file:
             raw = cache_file.read()
             data = json.loads(raw)
             return data
     except IOError as e:
         # the file did not exist, or could not be read
         # we will proceed to attempt to read the default
-        raise IOError('Cannot find the cache file' + path + DEFAULT_EXTENSION + ':' + str(e))
+        raise IOError('Cannot find the cache file "' + path + '": ' + str(e))
     except ValueError as e:
         # the JSON in the file was malformed
-        raise ValueError('Cache file for ' + path + DEFAULT_EXTENSION + 'cannot be parsed :' + str(e))
+        raise ValueError('Cache file for "' + path + '" cannot be parsed : ' + str(e))
 
 
 def get_script_directory():
@@ -80,4 +83,3 @@ def get_project_directory():
 def get_cache_directory():
     # return the directory of config files
     return get_project_directory() + '/cache'
-
