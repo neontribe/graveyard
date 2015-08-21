@@ -83,12 +83,12 @@ button.submit
   margin-left: auto;
 }
 
-.red_text{color:red}
-.orange_text{ color:orange}
-.blue_text{color:blue}
-.black_text{color:black}
-.green_text{color:green}
-.gold_text{color:gold}
+.red_text{color:red;}
+.orange_text{ color:orange;}
+.blue_text{color:blue;}
+.black_text{color:black;}
+.green_text{color:green;}
+.gold_text{color:gold;}
 
 div.log
 {
@@ -131,4 +131,3 @@ div.log .message .part.long::after
 {
   content: " ↓";
 }
-
