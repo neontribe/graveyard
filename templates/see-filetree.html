@@ -1,41 +1,10 @@
 {% extends "layout.html" %}
 {% block title %}See filetree{% endblock %}
-{% block content %}
-	{% if error %}
-	<p class="error">{{ error }}</p>
-	{% endif %}
-	<div id="container"></div>
-	<script>
-		$.ajax({
-			type:'GET',
-			url	:'/get-filetree',
-			data:'forDisplay=true&refresh=false',
-			success: function(data){
-				console.log(data)
-				$('#container').jstree({
-					'core': data	
-				});
-			}	
-		});
-	</script>
-	<button id='refresh' class="submit">Check for filetree changes</button>
-	<script>
-		$("#refresh").click(function(){
-			$.ajax({
-				type:'GET',
-				url	:'/get-filetree',
-				data:'forDisplay=true&refresh=true',
-				success: function(data){
-					alert('success')
-					$('#container').jstree({
-						'core': data	
-					});
-				},
-				failure: function(data){
-					alert('failure')
-				}	
-			});
-		});
-	</script>
+{% block scripts %}
+<script src="/static/js/see-filetree.js"></script>
 {% endblock %}
-
+{% block content %}
+	<p id="status" class="error"></p>
+	<div id="container"></div>
+	<button id='refresh' class="submit">Check for filetree changes</button>
+{% endblock %}
