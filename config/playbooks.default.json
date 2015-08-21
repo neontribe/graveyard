@@ -200,13 +200,13 @@
 			"fields":[
 				{
 					"name":"target",
-					"label": "name of new folder??",
+					"label": "Path to new remote RC folder",
 					"returnType":"string",
 					"value":"/var/www/zz_0_1"
 				},
 				{
 					"name":"source",
-					"label":"name of source folder",
+					"label":"Path to remote source folder",
 					"returnType":"string",
 					"value":{
 						"helperFunction":"get_filetree_info"
