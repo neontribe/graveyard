@@ -1,0 +1,133 @@
+html
+{
+  width: 100%;
+  height: 100%;
+
+  margin: 0;
+  padding: 0;
+}
+
+body
+{
+  max-width: 750px;
+  margin: auto;
+
+  margin-top: 1em;
+  margin-bottom: 1em;
+
+  padding: 1em;
+  border: 1px gray dashed;
+
+  font-family: monospace;
+  font-size: 1.2em;
+}
+
+h1
+{
+  font-size: 1em;
+  text-align: center;
+}
+
+h1::before
+{
+  content: "<<< ";
+}
+
+h1::after
+{
+  content: " >>>";
+}
+
+nav
+{
+	text-align: center;
+}
+
+nav a
+{
+	padding-left: 2em;
+	padding-right: 2em;
+}
+
+nav a::before
+{
+	content: "<< ";
+}
+
+nav a::after
+{
+	content: " >>";
+}
+
+hr
+{
+  border: none;
+  border-bottom: 1px gray dashed;
+}
+
+label
+{
+  display: inline-block;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+p.error
+{
+  color: red;
+}
+
+button.submit
+{
+  display: block;
+  margin-left: auto;
+}
+
+.red_text{color:red;}
+.orange_text{ color:orange;}
+.blue_text{color:blue;}
+.black_text{color:black;}
+.green_text{color:green;}
+.gold_text{color:gold;}
+
+div.log
+{
+  border: 1px gray dashed;
+  min-height: 5em;
+  display: table;
+  width: 100%;
+}
+
+div.log .message
+{
+  display: table-row;
+}
+
+div.log .message .part
+{
+  display: table-cell;
+  padding-right: .5em;
+
+  border-bottom: 1px gray dotted;
+  border-right: 1px gray dotted;
+}
+
+div.log .message:last-child .part
+{
+  border-bottom: 0;
+}
+
+div.log .message .part:last-child
+{
+  border-right: 0;
+}
+
+div.log .message .part.long::before
+{
+  content: "↓ ";
+}
+
+div.log .message .part.long::after
+{
+  content: " ↓";
+}

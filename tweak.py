@@ -50,3 +50,34 @@ def get_project_directory():
 def get_config_directory():
     # return the directory of config files
     return get_project_directory() + '/config'
+
+def load_cache(path):
+
+    DEFAULT_EXTENSION = '.cache'
+    # attempt to read a user created config
+    try:
+        with open(path + DEFAULT_EXTENSION, 'r') as cache_file:
+            raw = cache_file.read()
+            data = json.loads(raw)
+            return data
+    except IOError as e:
+        # the file did not exist, or could not be read
+        # we will proceed to attempt to read the default
+        raise IOError('Cannot find the cache file' + path + DEFAULT_EXTENSION + ':' + str(e))
+    except ValueError as e:
+        # the JSON in the file was malformed
+        raise ValueError('Cache file for ' + path + DEFAULT_EXTENSION + 'cannot be parsed :' + str(e))
+
+
+def get_script_directory():
+    # return the directory of this script
+    return os.path.dirname(os.path.realpath(__file__))
+
+def get_project_directory():
+    # reserved for potential future usage, if this file is moved to a different module
+    return get_script_directory()
+
+def get_cache_directory():
+    # return the directory of config files
+    return get_project_directory() + '/cache'
+

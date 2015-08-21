@@ -1,0 +1,29 @@
+Key: Fieldname (input types allowed) [list of allowed values if applicable]  Description of field
+
+
+|-playbooks:(array) The list of objects describing each of the playbooks.	
+|	|
+|	|-	name: (string) The display name used by the website.
+|	|-	shortname: (string) The short variable name used by the front end.
+|	|-	yaml: (string) The name of the yaml file in the ntdr_pas/playbooks directory.
+|	|-	fields: (array) The list of objects describing each of the fields.
+|	|	  |
+|	|	  |- name: (string) The name of the parameter that needs to be passed into "extra_vars" when used in a playbook.
+|	|	  |- label: (string) The label that the website displays next the field.
+|	|	  |- returnType: (string) [string/boolean/integer] The type that the server should expect. 
+|	|	  |- value: (string/array/boolean) If value is string or boolean it is the default value for the field, if value
+|	|	  			is a list then it denotes the options for the dropdown.
+|	|
+|	|- configNodes: (array) The list of parameters which should be pull from playbooksConfig.json.
+|	|	  |
+|	|	  |- argName: (string) The name of the parameter that needs to be passed into "extra_vars" when used in a playbook.
+|	|	  |- node: (string) The node of the node in playbooksConfig.json where the info should be pulled from.
+|	|
+|	|- constants: (array) The list of parameters which remain constant, don't need user input and aren't pull from config.
+|	|	  |
+|	|	  |- argName: (string) The name of the parameter that needs to be passed into "extra_vars" when used in a playbook.
+|	|	  |- value: (string/object) If it value is a string then it is value that is passed into extra_vars, if value is a 
+|	|	  |	  |		dictionary it requires a helper function to get the value.
+|	|	  |	  | 
+|	|	  |   |- helperFunction: (string) [must be the name of a helper function in the python] The helper function that takes
+|	|	  |   | 				 the host as its only argument and returns the value desired.

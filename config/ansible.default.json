@@ -1,4 +1,5 @@
 {
-  "ntdr_pas_path": ">> CHANGE THIS TO THE PATH OF NTDR-PAS <<",
-  "inventory_path": ">> CHANGE THIS TO THE PATH OF YOUR FILE WITH SERVER HOSTS <<"
+  "ntdr_pas_path": ">> CHANGE THIS TO THE PATH OF YOUR LOCAL NTDR-PAS <<",
+  "inventory_path": ">> CHANGE THIS TO THE PATH OF YOUR LOCAL FILE WITH SERVER HOSTS <<",
+  "remote_site_root": ">> CHANGE THIS TO THE PATH OF YOUR REMOTE ROOT WEBSITE FOLDER (E.G. /var/www) <<"
 }
