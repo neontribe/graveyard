@@ -1,16 +1,13 @@
-function Logger(logElement, rows)
-{
+function Logger(logElement, rows) {
   this.rows = rows || 3;
   this.logElement = logElement;
 }
 
-Logger.prototype.log = function (parts, color)
-{
+Logger.prototype.log = function (parts, color) {
   var rowElement = document.createElement('p');
   rowElement.classList.add('message');
 
-  for (var i = 0; i < this.rows; i++)
-  {
+  for (var i = 0; i < this.rows; i++) {
     var part = i < parts.length ? parts[i] : '';
 
     var partElement = document.createElement('span');
@@ -20,8 +17,7 @@ Logger.prototype.log = function (parts, color)
     rowElement.appendChild(partElement);
   }
 
-  if (color)
-  {
+  if (color) {
     //rowElement.style.color = color;
 	rowElement.classList.add(color + '_text')
   }

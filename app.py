@@ -1,4 +1,3 @@
-
 import os
 import json
 
@@ -14,6 +13,7 @@ from flask import render_template
 import tweak
 from tachyon import bridge
 
+
 HTTP_NOT_ACCEPTABLE = 406
 HTTP_UNPROCESSABLE_ENTITY = 422
 
@@ -24,10 +24,9 @@ app = Flask(__name__)
 server_config = tweak.load_config(os.path.sep.join([tweak.get_config_directory(), 'server']))
 ansible_config = tweak.load_config(os.path.sep.join([tweak.get_config_directory(), 'ansible']))
 playbooks_schemas = tweak.load_config(os.path.sep.join([tweak.get_config_directory(), 'playbooks']))
-playbooks_config = tweak.load_config(os.path.sep.join([tweak.get_config_directory(), 'playbooksConfig']))
+playbooks_config = tweak.load_config(os.path.sep.join([tweak.get_config_directory(), 'playbooks_config']))
 website_config = tweak.load_config(os.path.sep.join([tweak.get_config_directory(), 'website']))
 filetree_cache = tweak.load_cache(os.path.sep.join([tweak.get_cache_directory(), 'filetree']))
-
 
 
 #the function to be used recursively in displaytree
@@ -36,56 +35,56 @@ def display_tree_helper(current_json):
     for key in current_json.keys():
         node_json = {}
         node_json['text'] = key
-        node_json['children'] =[]
+        node_json['children'] = []
         for child in current_json[key].keys():
             if child != 'version':
                 node_json['children'].append(display_tree_helper(current_json[key][child]))
             else:
-                node_json['children'].append('version -- ' + current_json[key][child])
-
+                node_json['children'].append('version __ ' + current_json[key][child])
 
         level_json.append(node_json)
     return level_json
 
+
 #Renders our cached display tree into a form for the jquery library (jsTree) we are using to display it nicely
 def display_tree(json_input):
-    new_json ={'data':[]}
+    new_json ={ 'data': [] }
     for server in json_input.keys():
-        if json_input[server]['data'] != {}: 
+        if json_input[server]['data'] != {}:
             new_node = display_tree_helper(json_input[server]['data']['path'])
-            new_json['data'].append({'text':server,'children':new_node})
+            new_json['data'].append({ 'text': server, 'children': new_node })
         else:
             new_json['data'].append(server)
 
-
     return new_json
+
 
 def get_filetree_info(hostname):
     if not hostname in filetree_cache:
-       return flask.jsonify(error='No such hostname'), 404 
-    
+        return flask.jsonify(error='No such hostname'), 404
+
     if not filetree_cache[hostname]['data'] != {}:
         return []
 
-    paths = [x['name'] for x in filetree_cache[hostname]['data']['flat']]
-    return [os.path.sep.join([ansible_config['remote_site_root'], path[1:]]) for path in paths]
+    paths = [ x['name'] for x in filetree_cache[hostname]['data']['flat'] ]
+    return [ os.path.sep.join([ansible_config['remote_site_root'], path[1:]]) for path in paths ]
+
 
 def get_remote_passwords(hostname):
     return bridge.get_host_passwords(ansible_config['inventory_path'])[hostname]
 
 
-
-
-
 @app.route('/', methods=['GET'])
 def index():
-    g.theme = website_config['theme'] # makes theme accessible to templates 
+    g.theme = website_config['theme'] # makes theme accessible to templates
     return render_template('index.html')
 
-@app.route('/see-filetree', methods=['GET'])
+
+@app.route('/see_filetree', methods=['GET'])
 def see_filetree():
-    g.theme = website_config['theme'] # makes theme accessible to templates 
-    return render_template('see-filetree.html')
+    g.theme = website_config['theme'] # makes theme accessible to templates
+    return render_template('see_filetree.html')
+
 
 @app.route('/choose_task', methods=['GET'])
 def choose_task():
@@ -96,9 +95,10 @@ def choose_task():
 
     data['hosts'] = sorted(bridge.get_host_names(ansible_config['inventory_path']))
     data['playbooks'] = playbooks_schemas['playbooks']
-    g.theme = website_config['theme'] # makes theme accessible to templates 
+    g.theme = website_config['theme'] # makes theme accessible to templates
 
     return render_template('choose_task.html', **data)
+
 
 @app.route('/setup_task', methods=['POST'])
 def setup_task():
@@ -131,7 +131,7 @@ def setup_task():
     data['helpers']['get_filetree_info'] = get_filetree_info
     data['helpers']['get_remote_passwords'] = get_remote_passwords
 
-    g.theme = website_config['theme'] # makes theme accessible to templates 
+    g.theme = website_config['theme'] # makes theme accessible to templates
     return render_template('setup_task.html', **data)
 
 
@@ -158,22 +158,22 @@ def run_playbook():
             return jsonify(error='Missing required parameter for PlayBook \'' + field['name'] + '\''), HTTP_UNPROCESSABLE_ENTITY
         value = request.args[field['name']]
         return_types = { 'string': str, 'boolean': bool, 'integer': int }
-        return_type_caster = return_types[field['returnType']]
+        return_type_caster = return_types[field['return_type']]
         try:
             casted = return_type_caster(value)
         except ValueError as e:
-            return jsonify(error='\'' + value + '\' is not a valid \'' + field['returnType'] + '\''), HTTP_UNPROCESSABLE_ENTITY
+            return jsonify(error='\'' + value + '\' is not a valid \'' + field['return_type'] + '\''), HTTP_UNPROCESSABLE_ENTITY
         extra_vars[field['name']] = casted
 
     # add PlayBook's configurable variables
-    for config_object in playbook_schema['configNodes']:
-        extra_vars[config_object['argName']] = playbooks_config[config_object['node']]
+    for config_object in playbook_schema['config_nodes']:
+        extra_vars[config_object['arg_name']] = playbooks_config[config_object['node']]
 
     # add PlayBook's constants
     for constant_object in playbook_schema['constants']:
         # if the constant is just a string add it to the extra vars as is.
         if type(constant_object['value']) is str:
-            extra_vars[constant_object['argName']] = constant_object['value']
+            extra_vars[constant_object['arg_name']] = constant_object['value']
 
         # if the constant is a dictionary it indicates that a helper function is going
         # to be used, therefore extra work is needed
@@ -181,8 +181,8 @@ def run_playbook():
             if not 'host' in request.args:
                 return jsonify(error='The \'host\' parameter is required'), HTTP_UNPROCESSABLE_ENTITY
             else:
-                 extra_vars[constant_object['argName']] = eval(constant_object['value']['helperFunction'] + '("' + request.args['host'] + '")')
-        
+                  extra_vars[constant_object['arg_name']] = eval(constant_object['value']['helper_function'] + '("' + request.args['host'] + '")')
+
 
     # work out the values to call tachyon with
     playbook_path = os.path.sep.join([ansible_config['ntdr_pas_path'], 'playbooks', playbook_schema['yaml']])
@@ -196,7 +196,7 @@ def run_playbook():
     if not limit in potential_hosts:
         return jsonify(error='The host \'' + limit + '\' is not known'), HTTP_UNPROCESSABLE_ENTITY
 
-    # check that the client accepts server-side-events
+    # check that the client accepts server_side_events
     if request.headers.get('accept') == 'text/event-stream':
         def events():
             # yield events as they arrive
@@ -207,11 +207,11 @@ def run_playbook():
     else:
         # let the client know that we don't dig their Accept header
         return (
-            jsonify(error="The response is not of content type text/event-stream and, hence, this must be rejected"),
-            HTTP_NOT_ACCEPTABLE
+            jsonify(error='The response is not of content type text/event-stream and, hence, this must be rejected'), HTTP_NOT_ACCEPTABLE
         )
 
-@app.route('/get-filetree', methods=['GET'])
+
+@app.route('/get_filetree', methods=['GET'])
 def get_filetree():
 
     if 'refresh' in request.args:
@@ -219,17 +219,17 @@ def get_filetree():
             # runs the get filetree task for each server
             server_codes = bridge.get_host_names(ansible_config['inventory_path'])
             event_generator = bridge.run_task(
-                os.path.sep.join([ansible_config['ntdr_pas_path'], 'playbooks','library','ntdr_get_filetree.py']),
+                os.path.sep.join([ ansible_config['ntdr_pas_path'], 'playbooks', 'library', 'ntdr_get_filetree.py' ]),
                 ansible_config['inventory_path'],
                 server_codes,
-                { 'path': ansible_config['remote_site_root']}
+                { 'path': ansible_config['remote_site_root'] }
             )
-            
+
             # reformats raw response into the form we want with meta data attached
 
             cached_info = {}
             for event in iter(event_generator):
-                entry = {'meta':{'status':event['event']}}
+                entry = { 'meta': { 'status': event['event'] } }
                 if entry['meta']['status'] == 'ok':
                     entry['data'] = event['res']['stat']['files']
                 else:
@@ -237,36 +237,33 @@ def get_filetree():
 
                 if event['event'] != 'complete':
                     cached_info[event['host']] = entry
-            
+
             # updates the global variable filetree_cache with any updates having run the task again
             global filetree_cache
             filetree_cache = cached_info
 
             # saves the filetree to filetree.cache
-            filetree_cache_file = open(os.path.sep.join([tweak.get_cache_directory(), 'filetree.cache']),'w')
+            filetree_cache_file = open(os.path.sep.join([tweak.get_cache_directory(), 'filetree.json']), 'w')
             filetree_cache_file.write(json.dumps(cached_info))
             filetree_cache_file.close()
 
-            if 'forDisplay' in request.args and request.args['forDisplay'].lower() =='true':
+            if 'for_display' in request.args and request.args['for_display'].lower() == 'true':
                 return jsonify(display_tree(cached_info))
             else:
                 return jsonify(cached_info)
 
         else:
-            if 'forDisplay' in request.args and request.args['forDisplay'].lower() =='true':
+            if 'for_display' in request.args and request.args['for_display'].lower() == 'true':
                 return jsonify(display_tree(filetree_cache))
             else:
                 return jsonify(filetree_cache)
 
-    
+
     else:
-        if 'forDisplay' in request.args and request.args['forDisplay'].lower() =='true':
+        if 'for_display' in request.args and request.args['for_display'].lower() == 'true':
             return jsonify(display_tree(filetree_cache))
         else:
             return jsonify(filetree_cache)
-
-
-
 
 
 if __name__ == '__main__':

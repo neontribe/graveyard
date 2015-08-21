@@ -4,32 +4,32 @@
 			"label": "Create whole new site on a remote site with DB",
 			"name": "newSite",
 			"yaml": "push-local-to-remote.yml",
-			"fields":[
+			"fields": [
 				{
 					"name": "target",
 					"label": "Path of new folder to upload site to",
-					"returnType": "string",
+					"return_type": "string",
 					"value": "/var/www/zz_0.3"
-					
+
 				},
 				{
-					"name":"source",
-					"label":"Path to local folder to upload",
-					"returnType":"string",
-					"value":"/home/tobias/workspace/Cottaging/sites/zz"
+					"name": "source",
+					"label": "Path to local folder to upload",
+					"return_type": "string",
+					"value": "/home/tobias/workspace/Cottaging/sites/zz"
 				}
 			],
-			"configNodes": [],
-			"constants":[
+			"config_nodes": [],
+			"constants": [
 				{
-					"argName":"withdb",
-					"value":true
+					"arg_name": "withdb",
+					"value": true
 				},
 				{
-					"argName":"mysql_root_pw",
+					"arg_name": "mysql_root_pw",
 					"value":
 					{
-						"helperFunction":"get_remote_passwords"
+						"helper_function": "get_remote_passwords"
 					}
 				}
 			]
@@ -38,157 +38,157 @@
 			"label": "Freshen a remote site with local files without DB",
 			"name": "freshenRemoteNoDB",
 			"yaml": "push-local-to-remote.yml",
-			"fields":[
+			"fields": [
 				{
-					"name":"target",
-					"label":"Path to remote folder to freshen",
-					"returnType":"string",
+					"name": "target",
+					"label": "Path to remote folder to freshen",
+					"return_type": "string",
 					"value": {
-						"helperFunction": "get_filetree_info"
+						"helper_function": "get_filetree_info"
 					}
 				},
 				{
-					"name":"source",
-					"label":"Path to local folder to freshen from",
-					"returnType":"string",
-					"value":"/home/tobias/workspace/Cottaging/sites/zz"
+					"name": "source",
+					"label": "Path to local folder to freshen from",
+					"return_type": "string",
+					"value": "/home/tobias/workspace/Cottaging/sites/zz"
 				}
 			],
-			"configNodes":[
+			"config_nodes": [
 				{
-					"argName": "mysql_root_pw",
-					"node": "localMySqlRootPassword"
+					"arg_name": "mysql_root_pw",
+					"node": "local_my_sql_root_password"
 				}
 
 			],
-			"constants":[]
+			"constants": []
 
 		},
 		{
-			"label":"Pull a remote site to local with DB",
+			"label": "Pull a remote site to local with DB",
 			"name": "pullLocalDB",
-			"yaml":"pull-full-copy.yml",
-			"fields":[
+			"yaml": "pull-full-copy.yml",
+			"fields": [
 				{
-					"name":"source",
-					"label":"Path to remote folder to pull from",
-					"returnType":"string",
+					"name": "source",
+					"label": "Path to remote folder to pull from",
+					"return_type": "string",
 					"value": {
-						"helperFunction": "get_filetree_info"
+						"helper_function": "get_filetree_info"
 					}
 				},
 				{
-					"name":"local",
-					"label":"Path to destination for pulled files",
-					"returnType":"string",
-					"value":"/var/tmp"
+					"name": "local",
+					"label": "Path to destination for pulled files",
+					"return_type": "string",
+					"value": "/var/tmp"
 				}
 			],
-			"configNodes": [
+			"config_nodes": [
 				{
-					"argName": "mysql_root_pw",
-					"node": "localMySqlRootPassword"
-				}
-			],
-			"constants":[
-				{
-					"argName":"withdb",
-					"value":true
-				}
-			]
-
-		},
-		{
-			"label":"Pull a remote site to local without DB",
-			"name": "pullLocalNoDB",
-			"yaml":"pull-full-copy.yml",
-			"fields":[
-				{
-					"name":"source",
-					"label":"Path to remote folder to pull from",
-					"returnType":"string",
-					"value": {
-						"helperFunction": "get_filetree_info"
-					}
-				},
-				{
-					"name":"local",
-					"label":"Path to destination for pulled files",
-					"returnType":"string",
-					"value":"/var/tmp"
-				}
-			],
-			"configNodes": [
-				{
-					"argName": "mysql_root_pw",
-					"node": "localMySqlRootPassword"
-				}
-			],
-			"constants":[]
-		},
-		{
-			"label":"Freshen local, files folder, with DB",
-			"name":"freshenLocalDB",
-			"yaml":"freshen-local.yml",
-			"fields":[
-				{
-					"name":"source",
-					"label":"Pull from which remote folder",
-					"returnType":"string",
-					"value":
-					{
-						"helperFunction":"get_filetree_info"
-					}
-				},
-				{
-					"name":"local",
-					"label":"Path to local file to freshen",
-					"returnType":"string",
-					"value":"/var/tmp/zz_0.1"
-				}
-			],
-			"configNodes": [
-				{
-					"argName": "mysql_root_pw",
-					"node": "localMySqlRootPassword"
+					"arg_name": "mysql_root_pw",
+					"node": "local_my_sql_root_password"
 				}
 			],
 			"constants": [
 				{
-					"argName":"withdb",
-					"value":true
+					"arg_name": "withdb",
+					"value": true
+				}
+			]
+
+		},
+		{
+			"label": "Pull a remote site to local without DB",
+			"name": "pullLocalNoDB",
+			"yaml": "pull-full-copy.yml",
+			"fields": [
+				{
+					"name": "source",
+					"label": "Path to remote folder to pull from",
+					"return_type": "string",
+					"value": {
+						"helper_function": "get_filetree_info"
+					}
+				},
+				{
+					"name": "local",
+					"label": "Path to destination for pulled files",
+					"return_type": "string",
+					"value": "/var/tmp"
+				}
+			],
+			"config_nodes": [
+				{
+					"arg_name": "mysql_root_pw",
+					"node": "local_my_sql_root_password"
+				}
+			],
+			"constants": []
+		},
+		{
+			"label": "Freshen local, files folder, with DB",
+			"name": "freshenLocalDB",
+			"yaml": "freshen-local.yml",
+			"fields": [
+				{
+					"name": "source",
+					"label": "Pull from which remote folder",
+					"return_type": "string",
+					"value":
+					{
+						"helper_function": "get_filetree_info"
+					}
+				},
+				{
+					"name": "local",
+					"label": "Path to local file to freshen",
+					"return_type": "string",
+					"value": "/var/tmp/zz_0.1"
+				}
+			],
+			"config_nodes": [
+				{
+					"arg_name": "mysql_root_pw",
+					"node": "local_my_sql_root_password"
+				}
+			],
+			"constants": [
+				{
+					"arg_name": "withdb",
+					"value": true
 				}
 			]
 
 
 		},
 		{
-			"label":"Freshen local, files folder, without DB",
-			"name":"freshenLocalNoDB",
-			"yaml":"freshen-local.yml",
-			"fields":[
+			"label": "Freshen local, files folder, without DB",
+			"name": "freshenLocalNoDB",
+			"yaml": "freshen-local.yml",
+			"fields": [
 				{
-					"name":"source",
-					"label":"Pull from which remote folder",
-					"returnType":"string",
+					"name": "source",
+					"label": "Pull from which remote folder",
+					"return_type": "string",
 					"value":
 					{
-						"helperFunction":"get_filetree_info"
+						"helper_function": "get_filetree_info"
 					}
 				},
 
 				{
-					"name":"local",
-					"label":"Path to local file to freshen",
-					"returnType":"string",
-					"value":"/var/tmp/zz_0.1"
+					"name": "local",
+					"label": "Path to local file to freshen",
+					"return_type": "string",
+					"value": "/var/tmp/zz_0.1"
 				}
 
 			],
-			"configNodes": [
+			"config_nodes": [
 				{
-					"argName": "mysql_root_pw",
-					"node": "localMySqlRootPassword"
+					"arg_name": "mysql_root_pw",
+					"node": "local_my_sql_root_password"
 				}
 			],
 			"constants": []
@@ -197,98 +197,97 @@
 			"label": "Create a new RC site, minor version bump",
 			"name": "newRCminor",
 			"yaml": "provision-new-release.yml",
-			"fields":[
+			"fields": [
 				{
-					"name":"target",
+					"name": "target",
 					"label": "name of new folder??",
-					"returnType":"string",
-					"value":"/var/www/zz_0_1"
+					"return_type": "string",
+					"value": "/var/www/zz_0_1"
 				},
 				{
-					"name":"source",
-					"label":"name of source folder",
-					"returnType":"string",
-					"value":{
-						"helperFunction":"get_filetree_info"
+					"name": "source",
+					"label": "name of source folder",
+					"return_type": "string",
+					"value": {
+						"helper_function": "get_filetree_info"
 					}
 				}
 
 			],
-			"configNodes": [
+			"config_nodes": [
 				{
-					"argName": "mysql_root_pw",
-					"node": "localMySqlRootPassword"
+					"arg_name": "mysql_root_pw",
+					"node": "local_my_sql_root_password"
 				}
 			],
 			"constants": [
 				{
-					"argName":"mysql_root_pw",
-					"value":{
-						"helperFunction":"get_remote_passwords"
+					"arg_name": "mysql_root_pw",
+					"value": {
+						"helper_function": "get_remote_passwords"
 					}
-				}	
+				}
 			]
 
 		},
 		{
-			"label":"Freshen remote from live",
+			"label": "Freshen remote from live",
 			"name": "freshenRemoteFromLive",
 			"yaml": "freshen-remote-site.yml",
-			"fields":[
+			"fields": [
 				{
-					"name":"target",
-					"label":"Path to remote folder to freshen from",
-					"returnType": "string",
-					"value":{
-						"helperFunction":"get_filetree_info"
+					"name": "target",
+					"label": "Path to remote folder to freshen from",
+					"return_type": "string",
+					"value": {
+						"helper_function": "get_filetree_info"
 					}
 
 				},
 				{
-					"name":"source",
-					"label":"Path to remote folder to recieve fresh files",
-					"returnType":"string",
-					"value":{
-						"helperFunction":"get_filetree_info"
+					"name": "source",
+					"label": "Path to remote folder to recieve fresh files",
+					"return_type": "string",
+					"value": {
+						"helper_function": "get_filetree_info"
 					}
 				}
 
 			],
-			"configNodes":[],
-			"constants":[]
+			"config_nodes": [],
+			"constants": []
 		},
 		{
-			"label":"Send Live",
-			"name":"sendLive",
-			"yaml":"swap-rc-to-live.yml",
-			"fields":[
+			"label": "Send Live",
+			"name": "sendLive",
+			"yaml": "swap-rc-to-live.yml",
+			"fields": [
 				{
-					"name":"latest",
-					"label":"Path to remote latest version",
-					"returnType":"string",
-					"value":{
-						"helperFunction":"get_filetree_info"
+					"name": "latest",
+					"label": "Path to remote latest version",
+					"return_type": "string",
+					"value": {
+						"helper_function": "get_filetree_info"
 					}
 				},
 				{
-					"name":"testing",
-					"label":"Path to remote release candidate",
-					"returnType":"string",
-					"value":{
-						"helperFunction":"get_filetree_info"
+					"name": "testing",
+					"label": "Path to remote release candidate",
+					"return_type": "string",
+					"value": {
+						"helper_function": "get_filetree_info"
 					}
 				},
 				{
-					"name":"newrc",
-					"label":"Path of new remote release candidate folder",
-					"returnType":"string",
-					"value":"/var/www/zz_0.3"
+					"name": "newrc",
+					"label": "Path of new remote release candidate folder",
+					"return_type": "string",
+					"value": "/var/www/zz_0.3"
 				}
 			],
-			"configNodes":[],
-			"constants":[]
+			"config_nodes": [],
+			"constants": []
 
 		}
 	]
 }
-

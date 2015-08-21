@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
-  var form = document.getElementById('playbookForm');
-  var log = document.getElementById('playbookLog');
+  var form = document.getElementById('playbook-form');
+  var log = document.getElementById('playbook-log');
 
   var logger = new Logger(log, 4);
 
@@ -20,13 +20,11 @@ document.addEventListener('DOMContentLoaded', function () {
       var logTemplate = [new Date().toLocaleTimeString(), jsonEvent.event];
 
       var eventOutput = formatEvent(jsonEvent);
-      for (var lineIndex = 0; lineIndex < eventOutput.length; lineIndex++)
-      {
+      for (var lineIndex = 0; lineIndex < eventOutput.length; lineIndex++) {
         var line = eventOutput[lineIndex];
         var toLog = logTemplate.slice();
 
-        for (var linePartIndex = 0; linePartIndex < line.msg.length; linePartIndex++)
-        {
+        for (var linePartIndex = 0; linePartIndex < line.msg.length; linePartIndex++) {
           var linePart = line.msg[linePartIndex];
           toLog.push(linePart);
         }
@@ -34,8 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
         logger.log(toLog, line.color);
       }
 
-      if (jsonEvent.event === 'complete')
-      {
+      if (jsonEvent.event === 'complete') {
         source.close();
       }
     }, false);
@@ -51,10 +48,8 @@ function buildUrl(path, params)
   path += '?';
 
   var pairs = [];
-  for (var key in params)
-  {
-    if (!params.hasOwnProperty(key))
-    {
+  for (var key in params) {
+    if (!params.hasOwnProperty(key)) {
       continue;
     }
 
@@ -67,40 +62,29 @@ function buildUrl(path, params)
   return path;
 }
 
-function extractFormValues(form)
-{
+function extractFormValues(form) {
   var valuesFound = {};
   var children = Array.prototype.slice.call(form.children)
 
-  if (children.length > 0)
-  {
-    for (var childrenIndex = 0; childrenIndex < children.length; childrenIndex++)
-    {
+  if (children.length > 0) {
+    for (var childrenIndex = 0; childrenIndex < children.length; childrenIndex++) {
       var child = children[childrenIndex];
 
-      if (child.name && child.value)
-      {
+      if (child.name && child.value) {
         var value = null;
 
-        if (child.type && child.type === 'checkbox')
-        {
+        if (child.type && child.type === 'checkbox') {
           value = child.checked;
-        }
-        else
-        {
+        } else {
           value = child.value;
         }
 
         valuesFound[child.name] = value;
-      }
-      else
-      {
+      } else {
         var childValues = extractFormValues(child);
 
-        for (var key in childValues)
-        {
-          if (!childValues.hasOwnProperty(key))
-          {
+        for (var key in childValues) {
+          if (!childValues.hasOwnProperty(key)) {
             continue;
           }
 
