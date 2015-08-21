@@ -38,7 +38,7 @@ Notes:
      $ git clone https://github.com/neontribe/ntdr-pas.git
 
 6. Clone neontower
-     $ git clone https://github.com/Hoolean/neontower.git
+     $ git clone https://github.com/neontribe-ansible/neontower.git
 
 7. Configure the settings as desired - if comments are not available,
    documentation should have been provided in a similarly named file containing
