@@ -18,5 +18,7 @@
 |	|- constants: ARRAY of objects with constant values.
 |	|	  |
 |	|	  |- argName: the name the variable is given when passed into Ansible playbook in extra-vars
-|	|	  |- node: the value desired 
-
+|	|	  |- value: the value desired (can be string or bool) OR an object containing the helper function used to get value
+|	|	  |	  | 
+|	|	  |   |- helperFunction: The helper function that takes the host as an argument and returns the value desired,
+								 note, this is only used if value is an object

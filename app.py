@@ -16,7 +16,6 @@ from tachyon import bridge
 
 HTTP_NOT_ACCEPTABLE = 406
 HTTP_UNPROCESSABLE_ENTITY = 422
-THEME = 'neontower' 
 
 app = Flask(__name__)
 
@@ -26,7 +25,7 @@ server_config = tweak.load_config(os.path.sep.join([tweak.get_config_directory()
 ansible_config = tweak.load_config(os.path.sep.join([tweak.get_config_directory(), 'ansible']))
 playbooks_schemas = tweak.load_config(os.path.sep.join([tweak.get_config_directory(), 'playbooks']))
 playbooks_config = tweak.load_config(os.path.sep.join([tweak.get_config_directory(), 'playbooksConfig']))
-
+website_config = tweak.load_config(os.path.sep.join([tweak.get_config_directory(), 'website']))
 filetree_cache = tweak.load_cache(os.path.sep.join([tweak.get_cache_directory(), 'filetree']))
 
 
@@ -80,12 +79,12 @@ def get_remote_passwords(hostname):
 
 @app.route('/', methods=['GET'])
 def index():
-    g.theme = THEME # makes theme accessible to templates 
+    g.theme = website_config['theme'] # makes theme accessible to templates 
     return render_template('index.html')
 
 @app.route('/see-filetree', methods=['GET'])
 def see_filetree():
-    g.theme = THEME # makes theme accessible to templates 
+    g.theme = website_config['theme'] # makes theme accessible to templates 
     return render_template('see-filetree.html')
 
 @app.route('/choose_task', methods=['GET'])
@@ -97,7 +96,7 @@ def choose_task():
 
     data['hosts'] = sorted(bridge.get_host_names(ansible_config['inventory_path']))
     data['playbooks'] = playbooks_schemas['playbooks']
-    g.theme = THEME # makes theme accessible to templates 
+    g.theme = website_config['theme'] # makes theme accessible to templates 
 
     return render_template('choose_task.html', **data)
 
@@ -132,7 +131,7 @@ def setup_task():
     data['helpers']['get_filetree_info'] = get_filetree_info
     data['helpers']['get_remote_passwords'] = get_remote_passwords
 
-    g.theme = THEME # makes theme accessible to templates 
+    g.theme = website_config['theme'] # makes theme accessible to templates 
     return render_template('setup_task.html', **data)
 
 
@@ -172,7 +171,18 @@ def run_playbook():
 
     # add PlayBook's constants
     for constant_object in playbook_schema['constants']:
-        extra_vars[constant_object['argName']] = constant_object['value']
+        # if the constant is just a string add it to the extra vars as is.
+        if type(constant_object['value']) is str:
+            extra_vars[constant_object['argName']] = constant_object['value']
+
+        # if the constant is a dictionary it indicates that a helper function is going
+        # to be used, therefore extra work is needed
+        if type(constant_object['value']) is dict:
+            if not 'host' in request.args:
+                return jsonify(error='The \'host\' parameter is required'), HTTP_UNPROCESSABLE_ENTITY
+            else:
+                 extra_vars[constant_object['argName']] = eval(constant_object['value']['helperFunction'] + '("' + request.args['host'] + '")')
+        
 
     # work out the values to call tachyon with
     playbook_path = os.path.sep.join([ansible_config['ntdr_pas_path'], 'playbooks', playbook_schema['yaml']])

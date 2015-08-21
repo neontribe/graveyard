@@ -17,16 +17,6 @@
 					"label":"Choose folder to upload",
 					"returnType":"string",
 					"value":"/home/tobias/workspace/Cottaging/sites/zz"
-				},
-				{ 
-					"name":"mysql_root_pw",
-					"label":"My Sql root password",
-					"returnType":"string",
-					"value":
-					{
-						"helperFunction":"get_remote_passwords"
-					}
-				
 				}
 			],
 			"configNodes": [],
@@ -34,6 +24,13 @@
 				{
 					"argName":"withdb",
 					"value":true
+				},
+				{
+					"argName":"mysql_root_pw",
+					"value":
+					{
+						"helperFunction":"get_remote_passwords"
+					}
 				}
 			]
 		},
@@ -214,17 +211,6 @@
 					"value":{
 						"helperFunction":"get_filetree_info"
 					}
-				},
-				{ 
-					"name":"mysql_root_pw",
-					"label":"My Sql root password",
-					"returnType":"string",
-					"value":
-					{
-						"helperFunction":"get_remote_passwords"
-
-					}
-				
 				}
 
 			],
@@ -234,7 +220,14 @@
 					"node": "localMySqlRootPassword"
 				}
 			],
-			"constants": []
+			"constants": [
+				{
+					"argName":"mysql_root_pw",
+					"value":{
+						"helperFunction":"get_remote_passwords"
+					}
+				}	
+			]
 
 		},
 		{
