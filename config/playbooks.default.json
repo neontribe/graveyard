@@ -7,14 +7,14 @@
 			"fields":[
 				{
 					"name": "target",
-					"label": "Name new folder to upload site too",
+					"label": "Path of new folder to upload site to",
 					"returnType": "string",
 					"value": "/var/www/zz_0.3"
 					
 				},
 				{
 					"name":"source",
-					"label":"Choose folder to upload",
+					"label":"Path to local folder to upload",
 					"returnType":"string",
 					"value":"/home/tobias/workspace/Cottaging/sites/zz"
 				}
@@ -41,7 +41,7 @@
 			"fields":[
 				{
 					"name":"target",
-					"label":"Which directory to freshen",
+					"label":"Path to remote folder to freshen",
 					"returnType":"string",
 					"value": {
 						"helperFunction": "get_filetree_info"
@@ -49,7 +49,7 @@
 				},
 				{
 					"name":"source",
-					"label":"Local directory with source data",
+					"label":"Path to local folder to freshen from",
 					"returnType":"string",
 					"value":"/home/tobias/workspace/Cottaging/sites/zz"
 				}
@@ -71,7 +71,7 @@
 			"fields":[
 				{
 					"name":"source",
-					"label":"Pull from which remote folder",
+					"label":"Path to remote folder to pull from",
 					"returnType":"string",
 					"value": {
 						"helperFunction": "get_filetree_info"
@@ -79,7 +79,7 @@
 				},
 				{
 					"name":"local",
-					"label":"Where to pull remote folder to",
+					"label":"Path to destination for pulled files",
 					"returnType":"string",
 					"value":"/var/tmp"
 				}
@@ -105,7 +105,7 @@
 			"fields":[
 				{
 					"name":"source",
-					"label":"Pull from which remote folder",
+					"label":"Path to remote folder to pull from",
 					"returnType":"string",
 					"value": {
 						"helperFunction": "get_filetree_info"
@@ -113,7 +113,7 @@
 				},
 				{
 					"name":"local",
-					"label":"Where to pull remote folder to",
+					"label":"Path to destination for pulled files",
 					"returnType":"string",
 					"value":"/var/tmp"
 				}
@@ -237,7 +237,7 @@
 			"fields":[
 				{
 					"name":"target",
-					"label":"folder to fresehn from",
+					"label":"Path to remote folder to freshen from",
 					"returnType": "string",
 					"value":{
 						"helperFunction":"get_filetree_info"
@@ -246,7 +246,7 @@
 				},
 				{
 					"name":"source",
-					"label":"folder to recieve new files",
+					"label":"Path to remote folder to recieve fresh files",
 					"returnType":"string",
 					"value":{
 						"helperFunction":"get_filetree_info"
@@ -264,7 +264,7 @@
 			"fields":[
 				{
 					"name":"latest",
-					"label":"select the latest version",
+					"label":"Path to remote latest version",
 					"returnType":"string",
 					"value":{
 						"helperFunction":"get_filetree_info"
@@ -272,7 +272,7 @@
 				},
 				{
 					"name":"testing",
-					"label":"Select the release candidate",
+					"label":"Path to remote release candidate",
 					"returnType":"string",
 					"value":{
 						"helperFunction":"get_filetree_info"
@@ -280,7 +280,7 @@
 				},
 				{
 					"name":"newrc",
-					"label":"Name of new RC site folder",
+					"label":"Path of new remote release candidate folder",
 					"returnType":"string",
 					"value":"/var/www/zz_0.3"
 				}

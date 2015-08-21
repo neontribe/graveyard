@@ -1,24 +1,29 @@
-|-playbooks: ARRAY of playbook objects	
+Key: Fieldname (input types allowed) [list of allowed values if applicable]  Description of field
+
+
+|-playbooks:(array) The list of objects describing each of the playbooks.	
 |	|
-|	|-	name: The display name used by the website 
-|	|-	shortname: The sensible variable name used
-|	|-	yaml: The name of the playbook file in the ansible folder (path found in config)
-|	|-	fields: ARRAY of json objects needed to describe the inputs needed for the playbook
+|	|-	name: (string) The display name used by the website.
+|	|-	shortname: (string) The short variable name used by the front end.
+|	|-	yaml: (string) The name of the yaml file in the ntdr_pas/playbooks directory.
+|	|-	fields: (array) The list of objects describing each of the fields.
 |	|	  |
-|	|	  |- name: The parameter name that the information has when it is send back to the server
-|	|	  |- label: The label that the field is displayed with in the HTML
-|	|	  |- returnType: The type the server should expect from this parameter, can have values string/boolean/integer
-|	|	  |- value: TODO harry to explain wtf this thing is
+|	|	  |- name: (string) The name of the parameter that needs to be passed into "extra_vars" when used in a playbook.
+|	|	  |- label: (string) The label that the website displays next the field.
+|	|	  |- returnType: (string) [string/boolean/integer] The type that the server should expect. 
+|	|	  |- value: (string/array/boolean) If value is string or boolean it is the default value for the field, if value
+|	|	  			is a list then it denotes the options for the dropdown.
 |	|
-|	|- configNodes: ARRAY of objects any nodes pulled from config.
+|	|- configNodes: (array) The list of parameters which should be pull from playbooksConfig.json.
 |	|	  |
-|	|	  |- argName: the name the variable is given when passed into Ansible playbook in extra-vars
-|	|	  |- node: which node in the config to pull the data from
+|	|	  |- argName: (string) The name of the parameter that needs to be passed into "extra_vars" when used in a playbook.
+|	|	  |- node: (string) The node of the node in playbooksConfig.json where the info should be pulled from.
 |	|
-|	|- constants: ARRAY of objects with constant values.
+|	|- constants: (array) The list of parameters which remain constant, don't need user input and aren't pull from config.
 |	|	  |
-|	|	  |- argName: the name the variable is given when passed into Ansible playbook in extra-vars
-|	|	  |- value: the value desired (can be string or bool) OR an object containing the helper function used to get value
+|	|	  |- argName: (string) The name of the parameter that needs to be passed into "extra_vars" when used in a playbook.
+|	|	  |- value: (string/object) If it value is a string then it is value that is passed into extra_vars, if value is a 
+|	|	  |	  |		dictionary it requires a helper function to get the value.
 |	|	  |	  | 
-|	|	  |   |- helperFunction: The helper function that takes the host as an argument and returns the value desired,
-								 note, this is only used if value is an object
+|	|	  |   |- helperFunction: (string) [must be the name of a helper function in the python] The helper function that takes
+|	|	  |   | 				 the host as its only argument and returns the value desired.
