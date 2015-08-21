@@ -2,14 +2,6 @@
 Exposed API.
 ************/
 
-var colors = {
-  'FATAL': 'red',
-  'FAIL': 'orange',
-  'INFO': 'blue',
-  'STATUS': 'black',
-  'SAME': 'green',
-  'DIFFERENT': 'gold'
-}
 
 function formatEvent(event)
 {
@@ -20,8 +12,7 @@ function formatEvent(event)
   function log(template, parameters, level)
   {
     var msg = ['<' + level + '>', _formatString(template, parameters)];
-    var color = level in colors ? colors[level] : colors.NEUTRAL;
-    logged.push({ 'msg': msg, 'color': color });
+    logged.push({ 'msg': msg, 'level': level });
   }
 
   eventFormatter(log, event)

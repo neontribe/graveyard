@@ -4,7 +4,7 @@ function Logger(logElement, rows)
   this.logElement = logElement;
 }
 
-Logger.prototype.log = function (parts, color)
+Logger.prototype.log = function (parts, level)
 {
   var rowElement = document.createElement('p');
   rowElement.classList.add('message');
@@ -20,10 +20,9 @@ Logger.prototype.log = function (parts, color)
     rowElement.appendChild(partElement);
   }
 
-  if (color)
+  if (level)
   {
-    //rowElement.style.color = color;
-	rowElement.classList.add(color + '_text')
+	rowElement.classList.add('level-' + level.toLowerCase())
   }
 
   this.logElement.appendChild(rowElement);

@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
           toLog.push(linePart);
         }
 
-        logger.log(toLog, line.color);
+        logger.log(toLog, line.level);
       }
 
       if (jsonEvent.event === 'complete')
