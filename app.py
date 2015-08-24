@@ -10,7 +10,7 @@ from flask import redirect
 from flask import Response
 from flask import render_template
 
-import tweak
+import loader
 from tachyon import bridge
 
 
@@ -21,12 +21,12 @@ app = Flask(__name__)
 
 # TODO: definitively decide what should be cached and what should be loaded
 #       every time
-server_config = tweak.load_config(os.path.sep.join([tweak.get_config_directory(), 'server']))
-ansible_config = tweak.load_config(os.path.sep.join([tweak.get_config_directory(), 'ansible']))
-playbooks_schemas = tweak.load_config(os.path.sep.join([tweak.get_config_directory(), 'playbooks']))
-playbooks_config = tweak.load_config(os.path.sep.join([tweak.get_config_directory(), 'playbooks_config']))
-website_config = tweak.load_config(os.path.sep.join([tweak.get_config_directory(), 'website']))
-filetree_cache = tweak.load_cache(os.path.sep.join([tweak.get_cache_directory(), 'filetree']))
+server_config = loader.load_config(os.path.sep.join([loader.get_config_directory(), 'server']))
+ansible_config = loader.load_config(os.path.sep.join([loader.get_config_directory(), 'ansible']))
+playbooks_schemas = loader.load_config(os.path.sep.join([loader.get_config_directory(), 'playbooks']))
+playbooks_config = loader.load_config(os.path.sep.join([loader.get_config_directory(), 'playbooks_config']))
+website_config = loader.load_config(os.path.sep.join([loader.get_config_directory(), 'website']))
+filetree_cache = loader.load_cache(os.path.sep.join([loader.get_cache_directory(), 'filetree']))
 
 
 #the function to be used recursively in displaytree
@@ -61,7 +61,7 @@ def display_tree(json_input):
 
 def get_filetree_info(hostname):
     if not hostname in filetree_cache:
-        return flask.jsonify(error='No such hostname'), 404
+        return flask.jsonify(error='no such hostname'), 404
 
     if not filetree_cache[hostname]['data'] != {}:
         return []
@@ -243,7 +243,7 @@ def get_filetree():
             filetree_cache = cached_info
 
             # saves the filetree to filetree.cache
-            filetree_cache_file = open(os.path.sep.join([tweak.get_cache_directory(), 'filetree.json']), 'w')
+            filetree_cache_file = open(os.path.sep.join([loader.get_cache_directory(), 'filetree.json']), 'w')
             filetree_cache_file.write(json.dumps(cached_info))
             filetree_cache_file.close()
 

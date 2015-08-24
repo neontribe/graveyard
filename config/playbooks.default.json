@@ -214,12 +214,7 @@
 				}
 
 			],
-			"config_nodes": [
-				{
-					"arg_name": "mysql_root_pw",
-					"node": "local_my_sql_root_password"
-				}
-			],
+			"config_nodes": [],
 			"constants": [
 				{
 					"arg_name": "mysql_root_pw",
