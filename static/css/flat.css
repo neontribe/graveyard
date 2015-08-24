@@ -1,3 +1,5 @@
+@import url(http://fonts.googleapis.com/css?family=Roboto:400,300);
+
 html
 {
   width: 100%;
@@ -16,9 +18,8 @@ body
   margin-bottom: 1em;
 
   padding: 1em;
-  border: 1px gray dashed;
 
-  font-family: monospace;
+  font-family: 'Roboto', sans-serif;
   font-size: 1.2em;
 }
 
@@ -28,15 +29,6 @@ h1
   text-align: center;
 }
 
-h1::before
-{
-  content: "<<< ";
-}
-
-h1::after
-{
-  content: " >>>";
-}
 
 nav
 {
@@ -49,20 +41,10 @@ nav a
 	padding-right: 2em;
 }
 
-nav a::before
-{
-	content: "<< ";
-}
-
-nav a::after
-{
-	content: " >>";
-}
 
 hr
 {
   border: none;
-  border-bottom: 1px gray dashed;
 }
 
 label
@@ -74,7 +56,7 @@ label
 
 p.error
 {
-  color: red;
+  color: blue;
 }
 
 button.submit
@@ -88,11 +70,13 @@ button.submit
 .level-info{color:blue;}
 .level-status{color:black;}
 .level-same{color:green;}
-.level-different{color:#CCCC00;}
+.level-different{color:gold;}
+
+
 
 div.log
 {
-  border: 1px gray dashed;
+  border: 1px blue solid;
   min-height: 5em;
   display: table;
   width: 100%;
@@ -108,8 +92,8 @@ div.log .message .part
   display: table-cell;
   padding-right: .5em;
 
-  border-bottom: 1px gray dotted;
-  border-right: 1px gray dotted;
+  border-bottom: 1px blue solid;
+  border-right: 1px blue solid;
 }
 
 div.log .message:last-child .part
@@ -120,36 +104,4 @@ div.log .message:last-child .part
 div.log .message .part:last-child
 {
   border-right: 0;
-}
-
-button
-{
-  background-color:white;
-  color: black;
-  border-color: gray;
-  border-style: dotted;
-  border-width: 1px;
-  font-size:1.2em;
-}
-
-select
-{
-  background-color:white;
-  color:black;
-  border-color: grey;
-  border-style: dotted;
-  border-width: 1px;
-  font-family: monospace;
-  font-size: 1.2em;
-}
-
-input
-{
-  background-color:white;
-  color:black;
-  border-color: grey;
-  border-style: dotted;
-  border-width: 1px;
-  font-family: monospace;
-  font-size: 1.2em;
 }

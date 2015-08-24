@@ -47,18 +47,18 @@ nav
 
 nav a
 {
-	padding-left: 2em;
-	padding-right: 2em;
+  padding-left: 2em;
+  padding-right: 2em;
 }
 
 nav a::before
 {
-	content: "<< ";
+  content: "<< ";
 }
 
 nav a::after
 {
-	content: " >>";
+  content: " >>";
 }
 
 hr
@@ -79,12 +79,12 @@ p.error
   color: red;
 }
 
-.red_text{color:red}
-.orange_text{ color:orange}
-.blue_text{color:blue}
-.black_text{color:white}
-.green_text{color:green}
-.gold_text{color:gold}
+.level-fatal{color:red;}
+.level-fail{ color:orange;}
+.level-info{color:#0099FF;}
+.level-status{color:white;}
+.level-same{color:#00FF00;}
+.level-different{color:gold;}
 
 
 button.submit
@@ -125,7 +125,40 @@ div.log .message .part:last-child
   border-right: 0;
 }
 
-a, a:visited
+a,a:visited{
+  color: #00ff00;
+}
+
+button
 {
-	color: #00ff00;
+  background-color:#000000;
+  color: #00ff00;
+  border-color: #00ff00;
+  border-style: dotted;
+  border-width: 1px;
+  font-size:18px;
+}
+
+select
+{
+  background-color:#000000;
+  color:#00ff00;
+  font-size: 12px;
+  border-color: #00ff00;
+  border-style: dotted;
+  border-width: 1px;
+  font-family: monospace;
+  font-size: 1.2em;
+}
+
+input
+{
+  background-color:#000000;
+  color:#00ff00;
+  font-size: 12px;
+  border-color: #00ff00;
+  border-style: dotted;
+  border-width: 1px;
+  font-family: monospace;
+  font-size: 1.2em;
 }

@@ -10,7 +10,7 @@ from flask import redirect
 from flask import Response
 from flask import render_template
 
-import tweak
+import loader
 from tachyon import bridge
 
 
@@ -21,45 +21,18 @@ app = Flask(__name__)
 
 # TODO: definitively decide what should be cached and what should be loaded
 #       every time
-server_config = tweak.load_config(os.path.sep.join([tweak.get_config_directory(), 'server']))
-ansible_config = tweak.load_config(os.path.sep.join([tweak.get_config_directory(), 'ansible']))
-playbooks_schemas = tweak.load_config(os.path.sep.join([tweak.get_config_directory(), 'playbooks']))
-playbooks_config = tweak.load_config(os.path.sep.join([tweak.get_config_directory(), 'playbooks_config']))
-website_config = tweak.load_config(os.path.sep.join([tweak.get_config_directory(), 'website']))
-filetree_cache = tweak.load_cache(os.path.sep.join([tweak.get_cache_directory(), 'filetree']))
-
-
-#the function to be used recursively in displaytree
-def display_tree_helper(current_json):
-    level_json =[]
-    for key in current_json.keys():
-        node_json = {}
-        node_json['text'] = key
-        node_json['children'] = []
-        for child in current_json[key].keys():
-            if child != 'version':
-                node_json['children'].append(display_tree_helper(current_json[key][child]))
-            else:
-                node_json['children'].append('version __ ' + current_json[key][child])
-
-        level_json.append(node_json)
-    return level_json
-
-
-#Renders our cached display tree into a form for the jquery library (jsTree) we are using to display it nicely
-def display_tree(json_input):
-    new_json ={ 'data': [] }
-    for server in json_input.keys():
-        if json_input[server]['data'] != {}:
-            new_node = display_tree_helper(json_input[server]['data']['path'])
-            new_json['data'].append({ 'text': server, 'children': new_node })
-        else:
-            new_json['data'].append(server)
-
-    return new_json
+server_config = loader.load_config(os.path.sep.join([loader.get_config_directory(), 'server']))
+ansible_config = loader.load_config(os.path.sep.join([loader.get_config_directory(), 'ansible']))
+playbooks_schemas = loader.load_config(os.path.sep.join([loader.get_config_directory(), 'playbooks']))
+playbooks_config = loader.load_config(os.path.sep.join([loader.get_config_directory(), 'playbooks_config']))
+website_config = loader.load_config(os.path.sep.join([loader.get_config_directory(), 'website']))
 
 
 def get_filetree_info(hostname):
+    cache_path = os.path.sep.join([loader.get_cache_directory(), 'filetree'])
+    default = fetch_filetree
+    filetree_cache = loader.load_cache(cache_path, default)
+
     if not hostname in filetree_cache:
         return flask.jsonify(error='No such hostname'), 404
 
@@ -211,59 +184,42 @@ def run_playbook():
         )
 
 
+def fetch_filetree():
+    # runs the get filetree task for each server
+    server_codes = bridge.get_host_names(ansible_config['inventory_path'])
+    event_generator = bridge.run_task(
+        os.path.sep.join([ ansible_config['ntdr_pas_path'], 'playbooks', 'library', 'ntdr_get_filetree.py' ]),
+        ansible_config['inventory_path'],
+        server_codes,
+        { 'path': ansible_config['remote_site_root'] }
+    )
+
+    # reformats raw response into the form we want with meta data attached
+
+    formatted = {}
+    for event in iter(event_generator):
+        entry = { 'meta': { 'status': event['event'] } }
+        if entry['meta']['status'] == 'ok':
+            entry['data'] = event['res']['stat']['files']
+        else:
+            entry['data'] = {}
+
+        if event['event'] != 'complete':
+            formatted[event['host']] = entry
+
+    return formatted
+
+
 @app.route('/get_filetree', methods=['GET'])
 def get_filetree():
-
+    cache_path = os.path.sep.join([loader.get_cache_directory(), 'filetree'])
+    default = fetch_filetree
     if 'refresh' in request.args:
-        if request.args['refresh'].lower() == 'true':
-            # runs the get filetree task for each server
-            server_codes = bridge.get_host_names(ansible_config['inventory_path'])
-            event_generator = bridge.run_task(
-                os.path.sep.join([ ansible_config['ntdr_pas_path'], 'playbooks', 'library', 'ntdr_get_filetree.py' ]),
-                ansible_config['inventory_path'],
-                server_codes,
-                { 'path': ansible_config['remote_site_root'] }
-            )
-
-            # reformats raw response into the form we want with meta data attached
-
-            cached_info = {}
-            for event in iter(event_generator):
-                entry = { 'meta': { 'status': event['event'] } }
-                if entry['meta']['status'] == 'ok':
-                    entry['data'] = event['res']['stat']['files']
-                else:
-                    entry['data'] = {}
-
-                if event['event'] != 'complete':
-                    cached_info[event['host']] = entry
-
-            # updates the global variable filetree_cache with any updates having run the task again
-            global filetree_cache
-            filetree_cache = cached_info
-
-            # saves the filetree to filetree.cache
-            filetree_cache_file = open(os.path.sep.join([tweak.get_cache_directory(), 'filetree.json']), 'w')
-            filetree_cache_file.write(json.dumps(cached_info))
-            filetree_cache_file.close()
-
-            if 'for_display' in request.args and request.args['for_display'].lower() == 'true':
-                return jsonify(display_tree(cached_info))
-            else:
-                return jsonify(cached_info)
-
-        else:
-            if 'for_display' in request.args and request.args['for_display'].lower() == 'true':
-                return jsonify(display_tree(filetree_cache))
-            else:
-                return jsonify(filetree_cache)
-
-
+        refresh = request.args['refresh'].lower() == 'true'
+        filetree = loader.load_cache(cache_path, default, refresh)
     else:
-        if 'for_display' in request.args and request.args['for_display'].lower() == 'true':
-            return jsonify(display_tree(filetree_cache))
-        else:
-            return jsonify(filetree_cache)
+        filetree = loader.load_cache(cache_path, default)
+    return jsonify(filetree)
 
 
 if __name__ == '__main__':
