@@ -1,6 +1,6 @@
 ---
 - name: "Setting propmt for {{server_type}} user"
-  copy: src=root.{{ server_type}}.bashrc dest=~/.bashrc mode=0775 backup=yes
+  copy: src=user.{{ server_type}}.bashrc dest=~/.bashrc mode=0775 backup=yes
 
 - name: "Setting propmt for {{server_type}} {{ cottage_brand_code }}"
   sudo: true
