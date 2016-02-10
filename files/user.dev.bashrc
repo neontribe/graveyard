@@ -1,3 +1,4 @@
+export PATH="$HOME/.composer/vendor/bin:$PATH"
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
@@ -113,5 +114,10 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# user prompt for Test
-export PS1='\[\033[01;32m\]\u\[\033[00m\]@\[\033[01;32m\]\h\[\033[00m\] (Test) $ '
+function parse_git_branch {
+  git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+}
+
+export PS1="\[\e]0;\u@\h:\w\a\]\[\033[01;32m\]\u\[\033[00m\]@\[\033[01;34m\]\h\[\033[00m\] \[\033[01;36m\]\W\[\033[00m\] \[\033[01;33m\]\$(parse_git_branch)\[\033[00m\] \[\033[01;37m\]$\[\033[00m\] "
+
+PATH=$PATH:$HOME/bin:/usr/local/share/Shelltools/
