@@ -2,6 +2,7 @@ name = nt2_module
 description = A wrapper for cottages
 core = 7.x
 dependencies[] = field
+files[] = Nt2EntityEntityController.class.php
 package = nt2
 
 ; Information added by Drupal.org packaging script on 2016-05-22

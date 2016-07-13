@@ -1,39 +1,8 @@
 <?php
 
-error_reporting(E_ALL);
-ini_set('display_errors', TRUE);
-ini_set('display_startup_errors', TRUE);
-
-class nt2EntityEntityController extends EntityAPIController {
-	
-	//Override buildContent
-	public function buildContent($entity, $view_mode = 'full', $langcode = NULL, $content = array()) {
-		//Invoke parent and grab return so we can modify for output.
-		$build = parent::buildContent($entity, $view_mode, $langcode, $content);
-
-		$build['reference'] = array(
-			'#type' => 'markup',
-			'#markup' => check_plain($entity->reference),
-			'#prefix' => '<div class="cottage-reference"><p>Reference:',
-			'#suffix' => '</p></div>',
-		);
-		$build['brandcode'] = array(
-			'#type' => 'markup',
-			'#markup' => check_plain($entity->brandcode),
-			'#prefix' => '<div class="cottage-brandcode"><p>Cottage Code: ',
-			'#suffix' => '</p></div>',
-		);
-		$build['name'] = array(
-			'#type' => 'markup',
-			'#markup' => check_plain($entity->name),
-			'#prefix' => '<div class="cottage-name"><p>Name: ',
-			'#suffix' => '</p></div>',
-		);
-
-		return $build;
-	}
-}
-
+// error_reporting(E_ALL);
+// ini_set('display_errors', TRUE);
+// ini_set('display_startup_errors', TRUE);
 
 function nt2_entity_entity_info() {
 	$info = array();
@@ -64,6 +33,24 @@ function nt2_entity_menu() {
 	return $items;
 }
 
+/**
+ * Create a taxonomy term and return the tid.
+ */
+function create_taxonomy_term($name, $vid) {
+	$term = new stdClass();
+	$term->name = $name;
+	$term->vid = $vid;
+	taxonomy_term_save($term);
+	return $term->tid;
+}
+
+function create_vocabulary_from_attrib_list($attribs) {
+	foreach ($attribs as $attrib) {
+		dpm($attrib);
+		create_taxonomy_term($attrib["label"], variable_get('nt2_entity_vocab_id'));
+	}
+}
+
 function nt2_entity_test_view() {
 	$items = array();
 
@@ -73,6 +60,11 @@ function nt2_entity_test_view() {
 	// dpm($data);
 
 
+	$data = NeontabsIO::getInstance()->get("/");
+
+	dpm($data["constants"]["attributes"]);
+
+	create_vocabulary_from_attrib_list($data["constants"]["attributes"]);
 
 	//Load the first cottage in the database (added manually)
 	$cottages = entity_load('cottage', array(1, 2, 3));
