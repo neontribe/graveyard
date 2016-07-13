@@ -2,12 +2,9 @@ name = nt2_module
 description = A wrapper for cottages
 core = 7.x
 dependencies[] = field
+<<<<<<< HEAD
 files[] = Nt2EntityEntityController.class.php
+=======
+dependencies[] = entity
+>>>>>>> simple-admin-page
 package = nt2
-
-; Information added by Drupal.org packaging script on 2016-05-22
-version = "7.x-1.x-dev"
-core = "7.x"
-project = "nt2"
-datestamp = "1463958243"
-
