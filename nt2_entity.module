@@ -1,0 +1,95 @@
+<?php
+
+error_reporting(E_ALL);
+ini_set('display_errors', TRUE);
+ini_set('display_startup_errors', TRUE);
+
+class nt2EntityEntityController extends EntityAPIController {
+	
+	//Override buildContent
+	public function buildContent($entity, $view_mode = 'full', $langcode = NULL, $content = array()) {
+		//Invoke parent and grab return so we can modify for output.
+		$build = parent::buildContent($entity, $view_mode, $langcode, $content);
+
+		$build['reference'] = array(
+			'#type' => 'markup',
+			'#markup' => check_plain($entity->reference),
+			'#prefix' => '<div class="cottage-reference"><p>Reference:',
+			'#suffix' => '</p></div>',
+		);
+		$build['brandcode'] = array(
+			'#type' => 'markup',
+			'#markup' => check_plain($entity->brandcode),
+			'#prefix' => '<div class="cottage-brandcode"><p>Cottage Code: ',
+			'#suffix' => '</p></div>',
+		);
+		$build['name'] = array(
+			'#type' => 'markup',
+			'#markup' => check_plain($entity->name),
+			'#prefix' => '<div class="cottage-name"><p>Name: ',
+			'#suffix' => '</p></div>',
+		);
+
+		return $build;
+	}
+}
+
+
+function nt2_entity_entity_info() {
+	$info = array();
+
+	$info['cottage'] = array(
+		'label' => t('Cottage Entity'),
+		'base table' => 'cottages',
+		'entity keys' => array(
+			'id' => 'id',
+			'label' => 'name'
+		),
+		'module' => 'nt2_entity',
+		'entity class' => 'Entity',
+		'controller class' => 'nt2EntityEntityController',
+	);
+
+	return $info;
+};
+
+function nt2_entity_menu() {
+	$items['nt2_test'] = array(
+		'title' => 'nt2_test',
+		'page callback' => 'nt2_entity_test_view',
+		'access arguments' => array('access content'),
+		'type' => MENU_NORMAL_ITEM
+	);
+
+	return $items;
+}
+
+function nt2_entity_test_view() {
+	$items = array();
+
+	//Test that the api works
+	// $path = sprintf('property/' . strtoupper("A241") . '_ZZ');
+	// $data = NeontabsIO::getInstance()->get($path);
+	// dpm($data);
+
+
+
+	//Load the first cottage in the database (added manually)
+	$cottages = entity_load('cottage', array(1, 2, 3));
+	$list = entity_view('cottage', $cottages);
+
+	foreach ($list['cottage'] as $cottage) {
+		$items[] = drupal_render($cottage);
+	}
+
+
+	// if(!isset($cottages[1000])) {
+	// 	$entity = entity_create('cottage', array('id' => 1000));
+	// 	$entity->reference = t('6969');
+	// 	$entity->brandcode = t('6969');
+	// 	$entity->name = t('Spring House');
+	// 	$entity->save();		
+	// }
+
+	return implode($items);
+}

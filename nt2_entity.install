@@ -1,0 +1,41 @@
+<?php
+
+//Hook onto the entity schema creation method and define how the data should be laid out.
+//Keeping the number of properties to the bare minimum for now so as to determine whether it will work appropriately.
+function nt2_entity_schema() {
+	$schema = array();
+	
+	$schema['cottages'] = array(
+		'description' => 'The base table for cottage entities',
+		'fields' => array(
+			'id' => array(
+				'description' => 'Cottage Primary Key',
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => TRUE,
+			),
+			'reference' => array(
+				'description' => 'Cottage Reference',
+				'type' => 'varchar',
+				'length' => 255,
+			),
+			'brandcode' => array(
+				'description' => 'Cottage Brandcode',
+				'type' => 'varchar',
+				'length' => 255,
+			),
+			'name' => array(
+				'description' => 'Cottage Name',
+				'type' => 'text',
+				'size' => 'big',
+				// 'default' => 'Default Cottage',
+			)
+		),
+		'primary key' => array('id'),
+	);
+
+	return $schema;
+};
+
+				
+				
