@@ -8,36 +8,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', TRUE);
 ini_set('display_startup_errors', TRUE);
 
-class nt2EntityEntityController extends EntityAPIController {
-
-	//Override buildContent
-	public function buildContent($entity, $view_mode = 'full', $langcode = NULL, $content = array()) {
-		//Invoke parent and grab return so we can modify for output.
-		$build = parent::buildContent($entity, $view_mode, $langcode, $content);
-
-		$build['reference'] = array(
-			'#type' => 'markup',
-			'#markup' => check_plain($entity->reference),
-			'#prefix' => '<div class="cottage-reference"><p>Reference:',
-			'#suffix' => '</p></div>',
-		);
-		$build['brandcode'] = array(
-			'#type' => 'markup',
-			'#markup' => check_plain($entity->brandcode),
-			'#prefix' => '<div class="cottage-brandcode"><p>Cottage Code: ',
-			'#suffix' => '</p></div>',
-		);
-		$build['name'] = array(
-			'#type' => 'markup',
-			'#markup' => check_plain($entity->name),
-			'#prefix' => '<div class="cottage-name"><p>Name: ',
-			'#suffix' => '</p></div>',
-		);
-
-		return $build;
-	}
-}
-
+define("COTTAGE_TAG_VOCAB_MACHINE_NAME", "cottage_tag_vocab");
 
 function nt2_entity_entity_info() {
 	$info = array();
@@ -97,10 +68,28 @@ function create_taxonomy_term($name, $vid) {
 	return $term->tid;
 }
 
+function taxonomy_term_exists($name) {
+	$term = taxonomy_get_term_by_name($name, COTTAGE_TAG_VOCAB_MACHINE_NAME);
+	
+	if(sizeof($term) > 0) {
+		return TRUE;
+	}
+	
+	return FALSE;
+}
+
 function create_vocabulary_from_attrib_list($attribs) {
+	$vid = variable_get('nt2_entity_vocab_id');
+
 	foreach ($attribs as $attrib) {
-		dpm($attrib);
-		create_taxonomy_term($attrib["label"], variable_get('nt2_entity_vocab_id'));
+		$exists = taxonomy_term_exists($attrib["group"]);
+		
+		#Check if group parent of hierarchy exists; if it doesn't then add it to the hierarchy.
+		if(!$exists) {
+			create_taxonomy_term($attrib["group"], $vid);
+		}
+
+
 	}
 }
 
@@ -120,7 +109,7 @@ function nt2_entity_test_view() {
 	create_vocabulary_from_attrib_list($data["constants"]["attributes"]);
 
 	//Load the first cottage in the database (added manually)
-	$cottages = entity_load('cottage', array(1, 2, 3));
+	$cottages = entity_load('cottage', FALSE);
 	$list = entity_view('cottage', $cottages);
 
 	foreach ($list['cottage'] as $cottage) {

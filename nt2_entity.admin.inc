@@ -37,6 +37,15 @@ function nt2_entity_admin_form_submit($form, &$form_state) {
   if (!empty($values['nt2_entity_propref'])) {
     $propref = $values['nt2_entity_propref'];
     // TODO: Call entity refresh here.
+
+
+
+    
+
+
+
+
+    
     // Now unset the value so it doesn't get saved below.
     unset($form_state['values']['nt2_entity_propref']);
   }
