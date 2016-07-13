@@ -1,28 +1,15 @@
 <?php
 
-define("COTTAGE_TAG_VOCAB_MACHINE_NAME", "cottage_tag_vocab");
-
 function nt2_entity_install() {
-	$vocab = array(
-		'name' => 'Cottage Tag Vocab',
-		'machine_name' => COTTAGE_TAG_VOCAB_MACHINE_NAME,
-		'description' => t('vocabulary of available cottage tags'),
-		'module' => 'nt2_entity',
-		'hierarchy' => 0,
-	);
-
-	taxonomy_vocabulary_save((object) $vocab);
-
-	$vocab = taxonomy_vocabulary_machine_name_load(COTTAGE_TAG_VOCAB_MACHINE_NAME);
-	$vid = $vocab->vid;
-
-	//Set 'nt2_entity_vocab_id' to the ID of the vocabulary created for the entity.
-	variable_set('nt2_entity_vocab_id', $vid);
+	variable_set("COTTAGE_TAG_VOCAB_MACHINE_NAME", "cottage_tag_vocab");
+	create_vocabulary();
 };
 
 function nt2_entity_disable() {
 	taxonomy_vocabulary_delete(variable_get('nt2_entity_vocab_id'));
+
 	variable_del('nt2_entity_vocab_id');
+	variable_del('cottage_tag_vocab');
 };
 
 function nt2_entity_taxonomy_schema() {
