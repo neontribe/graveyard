@@ -2,7 +2,7 @@
 
 function nt2_entity_install() {
 	variable_set("COTTAGE_TAG_VOCAB_MACHINE_NAME", "cottage_tag_vocab");
-	create_vocabulary();
+	nt2EntityEntityController::create_vocabulary();
 };
 
 function nt2_entity_disable() {

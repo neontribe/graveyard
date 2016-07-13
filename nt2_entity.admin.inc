@@ -64,10 +64,10 @@ function nt2_entity_admin_form_reload_tax($form, &$form_state) {
   taxonomy_vocabulary_delete(variable_get('nt2_entity_vocab_id'));
 
   #Recreate Table
-  create_vocabulary();
+  nt2EntityEntityController::create_vocabulary();
 
   #Setup the vocabulary with terms fetched from the API root.
-  $result = setup_vocabulary_from_api("/");
+  $result = nt2EntityEntityController::setup_vocabulary_from_api("/");
 
   #Display a message displaying the result of the vocabulary creation
   $message = t('Taxonomy has been refreshed (:module). :records Changed.', array(':module' => __METHOD__, ':records' => $result));

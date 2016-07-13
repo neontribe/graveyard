@@ -4,10 +4,9 @@
  * @file
  * NT2 Entity Module File
  */
- error_reporting(E_ALL);
-// ini_set('display_errors', TRUE);
-// ini_set('display_startup_errors', TRUE);
-
+error_reporting(E_ALL);
+ini_set('display_errors', TRUE);
+ini_set('display_startup_errors', TRUE);
 
 
 function nt2_entity_entity_info() {
@@ -57,110 +56,13 @@ function nt2_entity_menu() {
   return $items;
 }
 
-/**
- * Create a taxonomy term and return the tid.
- */
-function create_taxonomy_term($name, $vid, $parentTID = NULL) {
-	$term = new stdClass();
-	$term->name = $name;
-	$term->vid = $vid;
-
-	if($parentTID != NULL) {
-		$term->parent = array($parentTID);
-	}
-
-	taxonomy_term_save($term);
-	return $term->tid;
-}
-
-function taxonomy_term_exists($name) {
-	$term = get_term_from_name($name);
-
-	if($term != NULL) {
-		return TRUE;
-	}
-	
-	return FALSE;
-}
-
-function get_term_from_name($name) {
-	$tid = taxonomy_get_term_by_name($name, variable_get("cottage_tag_vocab"));
-	
-	if(sizeof($tid) == 0) {
-		return NULL;
-	}
-
-	return array_shift($tid)->tid;
-}
-
-function create_vocabulary() {
-	$vocab = array(
-		'name' => 'Cottage Tag Vocabulary',
-		'machine_name' => variable_get("COTTAGE_TAG_VOCAB_MACHINE_NAME"),
-		'description' => t('Vocabulary of available cottage tags'),
-		'module' => 'nt2_entity',
-		'hierarchy' => 1,
-	);
-
-	taxonomy_vocabulary_save((object) $vocab);
-
-	$vocab = taxonomy_vocabulary_machine_name_load(variable_get("COTTAGE_TAG_VOCAB_MACHINE_NAME"));
-	$vid = $vocab->vid;
-
-	//Set 'nt2_entity_vocab_id' to the ID of the vocabulary created for the entity.
-	variable_set('nt2_entity_vocab_id', $vid);
-}
-
-function setup_vocabulary_from_api($path) {
-	#Construct request string.
-	$data = NeontabsIO::getInstance()->get($path);
-
-	#Create the vocabulary using the attributes contained in the data.
-	$result = create_vocabulary_from_attrib_list($data["constants"]["attributes"]);
-
-	return $result;
-}
-
-/**
- *	Create a vocabulary from a provided list of attributes from the API.	
- */
-function create_vocabulary_from_attrib_list($attribs) {
-	#Get the Vocabulary ID for cottages.
-	$vid = variable_get('nt2_entity_vocab_id');
-
-	foreach ($attribs as $attrib) {
-		#Set the group variable.
-		$currentGroup = $attrib["group"];
-		#Set the term variable (label).
-		$currentTerm = $attrib["label"];
-
-		#Check if group parent of hierarchy exists; if it doesn't then add it to the hierarchy.
-		$groupExists = taxonomy_term_exists($currentGroup);
-		if(!$groupExists) {
-			#Create a new primary term (parent set to NULL).
-			create_taxonomy_term($currentGroup, $vid);
-		};
-
-		#Check if child element exists; if it doesn't then add it to the hierarchy.
-		$labelExists = taxonomy_term_exists($currentTerm);
-		if(!$labelExists) {
-			#Create a new term with the parent being set to the current group.
-			create_taxonomy_term($currentTerm, $vid, get_term_from_name($currentGroup));	
-		};	
-	};
-
-	return sizeof($attribs);
-}
 
 function nt2_entity_test_view() {
 	$items = array();
-
 	//Test that the api works
 	// $path = sprintf('property/' . strtoupper("A241") . '_ZZ');
 	// $data = NeontabsIO::getInstance()->get($path);
 	// dpm($data);
-
-
 
 	//Load the first cottage in the database (added manually)
 	// $cottages = entity_load('cottage', FALSE);
@@ -172,7 +74,6 @@ function nt2_entity_test_view() {
 	// 	}
 		
 	// }
-
 
 	// if(!isset($cottages[1000])) {
 	// 	$entity = entity_create('cottage', array('id' => 1000));

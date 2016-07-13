@@ -3,5 +3,8 @@ description = A wrapper for cottages
 core = 7.x
 dependencies[] = field
 dependencies[] = entity
+dependencies[] = neontabs_io
+dependencies[] = neontabs
+
 files[] = Nt2EntityEntityController.class.php
 package = nt2
