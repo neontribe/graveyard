@@ -1,11 +1,14 @@
 <?php
-
+/**
+ * @file
+ * NT2 Entity Module File
+ */
 error_reporting(E_ALL);
 ini_set('display_errors', TRUE);
 ini_set('display_startup_errors', TRUE);
 
 class nt2EntityEntityController extends EntityAPIController {
-	
+
 	//Override buildContent
 	public function buildContent($entity, $view_mode = 'full', $langcode = NULL, $content = array()) {
 		//Invoke parent and grab return so we can modify for output.
@@ -54,14 +57,32 @@ function nt2_entity_entity_info() {
 };
 
 function nt2_entity_menu() {
-	$items['nt2_test'] = array(
+  $items = array();
+
+  $items['nt2_test'] = array(
 		'title' => 'nt2_test',
 		'page callback' => 'nt2_entity_test_view',
 		'access arguments' => array('access content'),
 		'type' => MENU_NORMAL_ITEM
 	);
 
-	return $items;
+  $items['admin/config/nt2_entity'] = array(
+    'title' => 'NT2 Entity',
+    'position' => 'right',
+    'weight' => -25,
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('access administration pages'),
+  );
+
+  $items['admin/config/nt2_entity/entity'] = array(
+    'title' => 'NT2 Entity',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('nt2_entity_admin_form'),
+    'access arguments' => array('access administration pages'),
+    'file' => 'nt2_entity.admin.inc',
+  );
+
+  return $items;
 }
 
 function nt2_entity_test_view() {
@@ -88,7 +109,7 @@ function nt2_entity_test_view() {
 	// 	$entity->reference = t('6969');
 	// 	$entity->brandcode = t('6969');
 	// 	$entity->name = t('Spring House');
-	// 	$entity->save();		
+	// 	$entity->save();
 	// }
 
 	return implode($items);
