@@ -1,0 +1,27 @@
+<?php
+
+
+/*
+* Implement hook_install.
+*/
+
+define("COTTAGE_NODE_TYPE_MACHINE_NAME", "cottage_entity");
+
+function nt2_node_type_install() {
+	#Register the node type with Drupal.
+	$cottage_type_creation_status = CottageNodeManager::registerCottageNodeTypeEntity(COTTAGE_NODE_TYPE_MACHINE_NAME);
+
+	if($cottage_type_creation_status == FALSE) {
+		// throw new Exception("Cottage type already exists.");
+		dpm("There was an error relating to the cottage entity type creation.");
+	}
+}
+
+function nt2_node_type_disable() {
+
+	#Delete the node_type: `COTTAGE_NODE_TYPE_MACHINE_NAME` if it currently exists in the DB.
+	if(CottageNodeManager::nodeTypeExists(COTTAGE_NODE_TYPE_MACHINE_NAME)) {
+		// node_type_delete(COTTAGE_NODE_TYPE_MACHINE_NAME);
+		node_type_delete("cottage_entity");
+	}
+}

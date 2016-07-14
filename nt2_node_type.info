@@ -1,0 +1,12 @@
+name = nt2_node_type
+description = A wrapper for cottages
+core = 7.x
+
+dependencies[] = field
+dependencies[] = entity
+dependencies[] = neontabs_io
+dependencies[] = neontabs
+
+files[] = CottageNodeManager.class.php
+
+package = nt2
