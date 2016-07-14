@@ -31,11 +31,27 @@ function nt2_entity_menu() {
   $items = array();
 
   $items['nt2_test'] = array(
-		'title' => 'nt2_test',
-		'page callback' => 'nt2_entity_test_view',
-		'access arguments' => array('access content'),
-		'type' => MENU_NORMAL_ITEM
-	);
+    'title' => 'nt2_test',
+    'page callback' => 'nt2_entity_test_view',
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM
+  );
+
+  $items['nt2_test/%/node'] = array(
+    'title' => 'nt2_test',
+    'page callback' => 'nt2_entity_test_view',
+    'page arguments' => array(1, 2),
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM
+  );
+
+  $items['nt2_test/%/teaser'] = array(
+    'title' => 'nt2_test',
+    'page callback' => 'nt2_entity_test_view',
+    'page arguments' => array(1, 2),
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM
+  );
 
   $items['admin/config/nt2_entity'] = array(
     'title' => 'NT2 Entity',
@@ -57,8 +73,8 @@ function nt2_entity_menu() {
 }
 
 
-function nt2_entity_test_view() {
-	$items = array();
+function nt2_entity_test_view($propref, $type) {
+  $items = array();
 	//Test that the api works
 	// $path = sprintf('property/' . strtoupper("A241") . '_ZZ');
 	// $data = NeontabsIO::getInstance()->get($path);
@@ -67,12 +83,12 @@ function nt2_entity_test_view() {
 	//Load the first cottage in the database (added manually)
 	// $cottages = entity_load('cottage', FALSE);
 	// $list = entity_view('cottage', $cottages);
-	
+
 	// if(array_key_exists('cottage', $list)) {
 	// 	foreach ($list['cottage'] as $cottage) {
 	// 		$items[] = drupal_render($cottage);
 	// 	}
-		
+
 	// }
 
 	// if(!isset($cottages[1000])) {
@@ -83,5 +99,42 @@ function nt2_entity_test_view() {
 	// 	$entity->save();
 	// }
 
-	return implode($items);
+  if ($type == 'node') {
+    $theme_fn = 'nt2_entity_node';
+  }
+  elseif ($type == 'teaser') {
+    $theme_fn = 'nt2_entity_teaser';
+  }
+  else {
+    return implode($items);
+  }
+
+  $widget = array(
+    '#theme' => $theme_fn,
+    '#property' => entity_load($propref),
+  );
+
+  return $widget;
+}
+
+/**
+ * https://api.drupal.org/api/drupal/modules%21system%21system.api.php/function/hook_theme/7.x
+ *
+ * Implements hook_theme().
+ */
+function nt2_entity_theme() {
+  return array(
+    'nt2_entity_node' => array(
+      'variables' => array(
+        'property' => NULL
+      ),
+      'template' => 'templates/nt2_entity_node',
+    ),
+    'nt2_entity_teaser' => array(
+      'variables' => array(
+        'property' => NULL
+      ),
+      'template' => 'templates/nt2_entity_tesaer',
+    ),
+  );
 }
