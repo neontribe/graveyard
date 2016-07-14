@@ -102,19 +102,19 @@ function nt2_entity_test_view($propref, $type) {
   if ($type == 'node') {
     $theme_fn = 'nt2_entity_node';
   }
-  elseif ($type == 'node') {
+  elseif ($type == 'teaser') {
     $theme_fn = 'nt2_entity_teaser';
   }
   else {
     return implode($items);
   }
 
-  $params = array(
-    'property' => entity_load($propref),
+  $widget = array(
+    '#theme' => $theme_fn,
+    '#property' => entity_load($propref),
   );
-  $node_html = theme($theme_fn, $params);
 
-  return $node_html;
+  return $widget;
 }
 
 /**
