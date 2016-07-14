@@ -8,6 +8,20 @@
 define("COTTAGE_NODE_TYPE_MACHINE_NAME", "cottage_entity");
 
 function nt2_node_type_install() {
+	#Define the cottage entity fields.
+	$cottage_fields = array(
+		'cottage_reference' => array(
+			'field_name' => 'cottage_reference',
+			'type' => 'text',
+
+		),
+		'cottage_brandcode' => array(
+			'field_name' => 'cottage_brandcode',
+			'type' => 'text',
+		),
+
+	);
+
 	#Register the node type with Drupal.
 	$cottage_type_creation_status = CottageNodeManager::registerCottageNodeTypeEntity(COTTAGE_NODE_TYPE_MACHINE_NAME);
 
@@ -15,6 +29,11 @@ function nt2_node_type_install() {
 		// throw new Exception("Cottage type already exists.");
 		dpm("There was an error relating to the cottage entity type creation.");
 	}
+
+	//watchdog("foo", $cottage_fields, NULL, WATCHDOG_ERROR);
+
+	#Register the requisite fields
+	$cottage_field_creation_status = CottageNodeManager::registerCottageFieldDefinitionInstances(COTTAGE_NODE_TYPE_MACHINE_NAME, $cottage_fields);
 }
 
 function nt2_node_type_disable() {
