@@ -5,26 +5,72 @@ class CottageNodeManager {
 	/*
 	* Creates a new property reference node when given returned data from the API as a parameter: $data.
 	*/
-	public static function createNewPropertyReference($type_machine_name, $data = NULL) {
-		$node = new stdClass();
-		
-		#Set type to custom type which is supplied to the function.
-		$node->type = $type_machine_name;
-		
-		#Set drupal defaults for the new node before we apply the custom attribute data.
-		node_object_prepare($node);
+	public static function setPropertyReference($propref, $type_machine_name, $data = NULL) {
+		$result = self::getNodesFromPropertyReference($propref);
 
-		#Set node data
-		if( is_array($data) ) {
-			foreach ($data as $key => $value) {
-				$node->$key = $value;
+		#If existing nodes exist for this property reference modify them.
+		if(is_array($result) && $result != NULL) {
+			
+			#For each existing node set the relevant data provided by the $data array.
+			foreach ($result as $key => $node) {
+				if( is_array($data) ) {
+					foreach ($data as $key => $value) {
+						$node->$key = $value;
+					}
+				}
+			}
+
+			return $result;
+
+		} else { #Else create a new node for the current property reference.
+			$node = new stdClass();
+			
+			#Set type to custom type which is supplied to the function.
+			$node->type = $type_machine_name;
+			
+			#Set drupal defaults for the new node before we apply the custom attribute data.
+			node_object_prepare($node);
+
+			#Set node data
+			if( is_array($data) ) {
+				foreach ($data as $key => $value) {
+					$node->$key = $value;
+				}
 			}
 		}
-		
+
 		return $node;
 	}
 
+	public static function getNodesFromPropertyReference($ref) {
+		#Compose a new entity query which will ascertain whether node entries exist with the same reference as provided in $ref.
+		$query = new EntityFieldQuery();
+		$query->entityCondition('entity_type', 'node')
+  			->entityCondition('bundle', variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"))
+  			->fieldCondition('cottage_reference', 'value', $ref, '=');
+
+  		#Assign the value of the reuslt of executing the query to the variable $result.
+  		$result = $query->execute();
+  		
+  		if (isset($result['node'])) {
+			$items_imploded = array_keys($result['node']);
+			$items_imploded = entity_load('node', $items_imploded);
+
+			return $items_imploded;
+		}
+
+		return NULL;
+	}
+
 	public static function savePropertyReference($ref) {
+		if(is_array($ref)) {
+			foreach ($ref as $key => $propRef) {
+				if( is_object($propRef) ) {
+					node_save($propRef);
+				}		
+			}
+		}
+
 		#Save the reference.
 		if( is_object($ref) ) {
 			node_save($ref);
@@ -81,7 +127,7 @@ class CottageNodeManager {
 				'field_name' => $field_key,
 				'entity_type' => 'node',
 				'bundle' => $name,
-				'description' => '.',
+				'description' => 'Cottage data field.',
 				'label' => $field_key,
 				'widget' => array(
 					'type' => 'textfield',
