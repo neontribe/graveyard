@@ -2,6 +2,73 @@
 
 
 class CottageNodeManager {
+	/*
+	* Creates a new property reference node when given returned data from the API as a parameter: $data.
+	*/
+	public static function createNewPropertyReference($type_machine_name, $data = NULL) {
+		$node = new stdClass();
+		
+		#Set type to custom type which is supplied to the function.
+		$node->type = $type_machine_name;
+		
+		#Set drupal defaults for the new node before we apply the custom attribute data.
+		node_object_prepare($node);
+
+		#Set node data
+		if( is_array($data) ) {
+			foreach ($data as $key => $value) {
+				$node->$key = $value;
+			}
+		}
+		
+		return $node;
+	}
+
+	public static function savePropertyReference($ref) {
+		#Save the reference.
+		if( is_object($ref) ) {
+			node_save($ref);
+		}
+	}
+
+	public static function parseAPIReturnData($data) {
+		$return_data = array(
+			'title' => $data["name"],
+			'language' => LANGUAGE_NONE,
+			'body' => array(
+				'und' => array(
+					0 => array(
+						'value' => 'This is the body content.',
+					),
+				),
+			),
+			'cottage_reference' => array(
+				'und' => array(
+					0 => array(
+						'value' => $data["propertyRef"],
+					),
+				),
+			),
+			'cottage_brandcode'=> array(
+				'und' => array(
+					0 => array(
+						'value' => $data["brandCode"],
+					),
+				),
+			),
+		);
+
+		return $return_data;
+	}
+
+	public static function fetchPropertyFromAPI($propref) {
+		$path = sprintf('property/' . strtoupper($propref) . '_ZZ');
+		$data = NeontabsIO::getInstance()->get($path);
+
+		return $data;
+	}
+
+
 	public static function registerCottageFieldDefinitionInstances($name, $cottage_fields) {
 		foreach ($cottage_fields as $field_key => $field_options) {
 			if(field_info_field($field_key)) {
@@ -9,7 +76,7 @@ class CottageNodeManager {
 			}
 
 			$field_options = field_create_field($field_options);
-			
+
 			$instance = array(
 				'field_name' => $field_key,
 				'entity_type' => 'node',
@@ -25,8 +92,6 @@ class CottageNodeManager {
 		}
 	}
 
-
-
 	public static function nodeTypeExists($name) {
 		#Check to see if cottage_node type exists
 		if ( in_array( $name, node_type_get_names() ) ) {
@@ -36,7 +101,7 @@ class CottageNodeManager {
 		return FALSE;
 	}
 
-	public static function registerCottageNodeTypeEntity($name = 'cottage_entry') {
+	public static function registerCottageNodeTypeEntity($name = 'cottage_entity') {
 		$cottage_type_defintion_array = self::generateTypeDefinitionArray($name);
 
 		node_type_save($cottage_type_defintion_array);
