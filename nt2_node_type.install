@@ -6,6 +6,7 @@
 function nt2_node_type_install() {
 	#Setup constants
 	variable_set("COTTAGE_NODE_TYPE_MACHINE_NAME", "cottage_entity");
+	variable_set("COTTAGE_VOCAB_MACHINE_NAME", "cottage_vocab");
 
 	#Define the cottage entity fields.
 	$cottage_fields = array(
@@ -17,7 +18,72 @@ function nt2_node_type_install() {
 			'field_name' => 'cottage_brandcode',
 			'type' => 'text',
 		),
-
+		'cottage_url' => array(
+			'field_name' => 'cottage_url',
+			'type' => 'text',
+		),
+		'cottage_slug' => array(
+			'field_name' => 'cottage_slug',
+			'type' => 'text',
+		),
+		'cottage_name' => array(
+			'field_name' => 'cottage_name',
+			'type' => 'text',
+		),
+		'cottage_accomodates' => array(
+			'field_name' => 'cottage_accomodates',
+			'type' => 'number_integer',
+		),
+		'cottage_accommodationdescription' => array(
+			'field_name' => 'cottage_accommodationdescription',
+			'type' => 'text',
+		),
+		'cottage_bedrooms' => array(
+			'field_name' => 'cottage_bedrooms',
+			'type' => 'number_integer',
+		),
+		'cottage_changeoverday' => array(
+			'field_name' => 'cottage_changeoverday',
+			'type' => 'text',
+		),
+		'cottage_rating' => array(
+			'field_name' => 'cottage_rating',
+			'type' => 'number_integer',
+		),
+		'cottage_pets' => array(
+			'field_name' => 'cottage_pets',
+			'type' => 'number_integer',
+		),
+		'cottage_promote' => array(
+			'field_name' => 'cottage_promote',
+			'type' => 'number_integer',
+		),
+		'cottage_booking' => array(
+			'field_name' => 'cottage_booking',
+			'type' => 'text'
+ 		),
+ 		'cottage_ownercode' => array( 
+ 			'field_name' => 'cottage_ownercode',
+ 			'type' => 'text',
+ 		),
+ 		'cottage_images' => array(
+ 			'field_name' => 'cottage_images',
+ 			'type' => 'text',
+ 			'cardinality' => -1,
+		),
+		'cottage_term_reference' => array(
+			'field_name' => 'cottage_term_reference',
+			'type' => 'taxonomy_term_reference',
+			'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+			'settings' => array(
+				'allowed_values' => array(
+					array(	
+						'vocabulary' => variable_get("COTTAGE_VOCAB_MACHINE_NAME"),
+						'parent' => 0,
+					),
+				),
+			),
+		)
 	);
 
 	#Register the node type with Drupal.
@@ -25,20 +91,45 @@ function nt2_node_type_install() {
 
 	if($cottage_type_creation_status == FALSE) {
 		// throw new Exception("Cottage type already exists.");
-		dpm("There was an error relating to the cottage entity type creation.");
+		//drupal_set_message(t('Unable to create the new content_type of: `cottage_entity`.'), 'error');
+		var_dump($cottage_type_creation_status);
 	}
 
-	#Register the requisite fields
+	#Register the requisite fields.
 	$cottage_field_creation_status = CottageNodeManager::registerCottageFieldDefinitionInstances(variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"), $cottage_fields);
+
+	#Create the cottage tag vocabulary.
+	$cottage_vocab_tag_creation_status = CottageNodeManager::createCottageTagVocabulary(variable_get("COTTAGE_VOCAB_MACHINE_NAME"));
+
+	// if($cottage_vocab_tag_creation_status == FALSE || !isset($cottage_vocab_tag_creation_status)) {
+	// 	var_dump("ERROR");
+	// }
+
+	// #Set the global vocab ID to the returned vocabulary
+	// variable_set("COTTAGE_TAG_VID", $cottage_vocab_tag_creation_status->vid);
+
+	CottageNodeManager::setup_vocabulary_from_api(variable_get("COTTAGE_VOCAB_MACHINE_NAME"), "/");
+
 }
 
 function nt2_node_type_disable() {
-
+	#Delete global variables.
+	variable_del("COTTAGE_NODE_TYPE_MACHINE_NAME");
+	variable_del("COTTAGE_VOCAB_MACHINE_NAME");
 	#Delete the node_type: `COTTAGE_NODE_TYPE_MACHINE_NAME` if it currently exists in the DB.
 	if(CottageNodeManager::nodeTypeExists(variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"))) {
-		variable_del("COTTAGE_NODE_TYPE_MACHINE_NAME");
+		#Delete the node_type
+		node_type_delete(variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"));
+	}
 
-		// node_type_delete(COTTAGE_NODE_TYPE_MACHINE_NAME);
-		node_type_delete("cottage_entity");
+	$vocab = CottageNodeManager::vocabTypeExists(variable_get("COTTAGE_VOCAB_MACHINE_NAME"));
+	if($vocab) {
+		#Delete each individual term.
+		foreach (taxonomy_get_tree($vocab->vid) as $term) {
+  			taxonomy_term_delete($term->tid);
+		}
+
+		#Delete the vocabulary
+		taxonomy_vocabulary_delete(variable_get("COTTAGE_VOCAB_MACHINE_NAME"));		
 	}
 }

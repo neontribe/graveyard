@@ -47,22 +47,7 @@ function nt2_node_type_menu() {
 }
 
 function nt2_node_type_test_view($propref, $type) {
-
-  dpm($propref);
   $items = array();
-	//Test that the api works
-	// $path = sprintf('property/' . strtoupper("A241") . '_ZZ');
-	// $data = NeontabsIO::getInstance()->get($path);
-	// dpm($data);
-
-
-	// cottage(!isset($cottages[1000])) {
-	// 	$entity = entity_create('cottage', array('id' => 1000));
-	// 	$entity->reference = t('6969');
-	// 	$entity->brandcode = t('6969');
-	// 	$entity->name = t('Spring House');
-	// 	$entity->save();
-	// }
 
   if ($type == 'node') {
     $theme_fn = 'nt2_entity_node';
@@ -74,13 +59,19 @@ function nt2_node_type_test_view($propref, $type) {
     return implode($items);
   }
 
-  $params = array(
-   //  'property' => entity_load($propref),
-  );
-  // $node_html = theme($theme_fn, $params);
+  $node_html = "";
+  //$node_html = theme($theme_fn, $params);
+  $propData = CottageNodeManager::getNodesFromPropertyReference(variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"), $propref);
+  $propInfo = array_keys($propData);
+  
+  foreach ($propInfo as $key => $value) {
+    $node_output = node_view($propData[$value]);
+    if(isset($node_output)) {
+      break;
+    }
+  }
 
-  // return $node_html;
-  return implode($items);
+  return $node_output;
 }
 
 /**
@@ -100,7 +91,7 @@ function nt2_node_type_theme() {
       'variables' => array(
         'property' => NULL
       ),
-      'template' => 'templates/nt2_entity_tesaer',
+      'template' => 'templates/nt2_entity_teaser',
     ),
   );
 }
