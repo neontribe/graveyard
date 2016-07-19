@@ -1,0 +1,97 @@
+<?php
+
+function nt2_node_type_menu() {
+  $items = array();
+
+  $items['nt2_node_type_test'] = array(
+    'title' => 'nt2_node_type_test',
+    'page arguments' => array(1, 2),
+    'page callback' => 'nt2_node_type_test_view',
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM
+  );
+
+  $items['nt2_node_type_test/%/node'] = array(
+    'title' => 'nt2_node_type_test',
+    'page callback' => 'nt2_node_type_test_view',
+    'page arguments' => array(1, 2),
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM
+  );
+
+  $items['nt2_node_type_test/%/teaser'] = array(
+    'title' => 'nt2_node_type_test',
+    'page callback' => 'nt2_node_type_test_view',
+    'page arguments' => array(1, 2),
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM
+  );
+
+  $items['admin/config/nt2_node_type_test'] = array(
+    'title' => 'NT2 Entity',
+    'position' => 'right',
+    'weight' => -25,
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('access administration pages'),
+  );
+
+  $items['admin/config/nt2_node_type_test/entity'] = array(
+    'title' => 'NT2 Entity',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('nt2_node_type_admin_form'),
+    'access arguments' => array('access administration pages'),
+    'file' => 'nt2_node_type.admin.inc',
+  );
+
+  return $items;
+}
+
+function nt2_node_type_test_view($propref, $type) {
+  $items = array();
+
+  if ($type == 'node') {
+    $theme_fn = 'nt2_entity_node';
+  }
+  elseif ($type == 'teaser') {
+    $theme_fn = 'nt2_entity_teaser';
+  }
+  else {
+    return implode($items);
+  }
+
+  $node_html = "";
+  //$node_html = theme($theme_fn, $params);
+  $propData = CottageNodeManager::getNodesFromPropertyReference(variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"), $propref);
+  $propInfo = array_keys($propData);
+  
+  foreach ($propInfo as $key => $value) {
+    $node_output = node_view($propData[$value]);
+    if(isset($node_output)) {
+      break;
+    }
+  }
+
+  return $node_output;
+}
+
+/**
+ * https://api.drupal.org/api/drupal/modules%21system%21system.api.php/function/hook_theme/7.x
+ *
+ * Implements hook_theme().
+ */
+function nt2_node_type_theme() {
+  return array(
+    'nt2_entity_node' => array(
+      'variables' => array(
+        'property' => NULL
+      ),
+      'template' => 'templates/nt2_entity_node',
+    ),
+    'nt2_entity_teaser' => array(
+      'variables' => array(
+        'property' => NULL
+      ),
+      'template' => 'templates/nt2_entity_teaser',
+    ),
+  );
+}
