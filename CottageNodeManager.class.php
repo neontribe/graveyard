@@ -1,9 +1,6 @@
 <?php
 
-
 class CottageNodeManager {
-	private $machine_name;
-
 	/*
 	* Creates a new property reference node when given returned data from the API as a parameter: $data.
 	*/
@@ -42,110 +39,6 @@ class CottageNodeManager {
 		}
 
 		return $node;
-	}
-
-	/*
-	* Create a vocabulary used to store cottage tag entries.
-	*/
-	public static function createCottageTagVocabulary($machine_name) {
-		#If vocabulary already exists.
-		if(self::vocabTypeExists($machine_name)) {
-			return TRUE;
-		}
-
-		$vocab = (object) array(
-			'name' => 'Cottage Tag Vocab',
-			'machine_name' => $machine_name,
-			'description' => 'A vocabulary used to store cottage tags.',
-			'weight' => 0,
-		);
-		
-		taxonomy_vocabulary_save($vocab);
-
-		$return_object = taxonomy_vocabulary_machine_name_load($machine_name);
-
-		#If the vocabulary doesn't exist after we've saved it an error has occured so return FALSE.
-		if(!isset($return_object)) {
-			return FALSE;
-		}
-
-		return $return_object;
- 	}
-
- 	public static function addTermToVocabulary($machine_name, $term_name, $parent = NULL) {
- 		$vocab_info = self::vocabTypeExists($machine_name);
- 		
- 		#If the term already exists quit the function quickly.
- 		if(self::taxonomy_term_exists($machine_name, $term_name)) {
- 			return FALSE;
- 		}
-
- 		#If the vocabulary exists continue to term creation.
- 		if($vocab_info) {
- 			$term = (object) array(
-				'name' => $term_name,
-				'description' => 'This is the description of the term.',
-				'format' => filter_default_format(),
-				'vid' => $vocab_info->vid,
-				'parent' => $parent,
-		  	);
-			
-			taxonomy_term_save($term);
- 		}
- 	}
-
- 	public static function setup_vocabulary_from_api($machine_name, $path) {
-		#Construct request string.
-		$data = NeontabsIO::getInstance()->get($path);
-		#Create the vocabulary using the attributes contained in the data.
-		$result = self::create_vocabulary_from_attrib_list($machine_name, $data["constants"]["attributes"]);
-		return $result;
-	}
-
-
- 	/**
-	 *	Create a vocabulary from a provided list of attributes from the API.	
-	 */
-	public static function create_vocabulary_from_attrib_list($machine_name, $attribs) {
-		#Get the Vocabulary ID for cottages.
-		$vid = variable_get('nt2_entity_vocab_id');
-		foreach ($attribs as $attrib) {
-			#Set the group variable.
-			$currentGroup = $attrib["group"];
-			#Set the term variable (label).
-			$currentTerm = $attrib["label"];
-			#Check if group parent of hierarchy exists; if it doesn't then add it to the hierarchy.
-			$groupExists = self::taxonomy_term_exists($machine_name, $currentGroup);
-			if(!$groupExists) {
-				#Create a new primary term (parent set to NULL).
-				self::addTermToVocabulary($machine_name, $currentGroup);
-			};
-			#Check if child element exists; if it doesn't then add it to the hierarchy.
-			$labelExists = self::taxonomy_term_exists($machine_name, $currentTerm);
-			if(!$labelExists) {
-				#Create a new term with the parent being set to the current group.
-				self::addTermToVocabulary($machine_name, $currentTerm, self::get_term_from_name($machine_name, $currentGroup));	
-			};	
-		};
-		return sizeof($attribs);
-	}
-
- 	public static function taxonomy_term_exists($machine_name, $name) {
-		$term = self::get_term_from_name($machine_name, $name);
-		if($term != NULL) {
-			return TRUE;
-		}
-		
-		return FALSE;
-	}
-
-	public static function get_term_from_name($machine_name, $name) {
-		$tid = taxonomy_get_term_by_name($name, variable_get("cottage_tag_vocab"));
-		
-		if(sizeof($tid) == 0) {
-			return NULL;
-		}
-		return array_shift($tid)->tid;
 	}
 
  	/*
@@ -218,12 +111,10 @@ class CottageNodeManager {
 		foreach ($data["attributes"] as $key => $value) {
 			if($value) {
 				$keysToKeep[] = array(
-					'tid' => self::get_term_from_name($machine_name, $key),
+					'tid' => CottageVocabManager::get_term_from_name($machine_name, $key),
 				);
 			}
 		};
-	
-		
 
 		$images = self::parsePropertyValueArray($data["images"], array('alt', 'title', 'url'));
 		
@@ -343,8 +234,6 @@ class CottageNodeManager {
 			),
 		);
 		
-		
-
 		return $return_data;
 	}
 
@@ -391,20 +280,6 @@ class CottageNodeManager {
 		#Check to see if cottage_node type exists
 		if ( in_array( $name, node_type_get_names() ) ) {
     		return TRUE;
-		}
-
-		return FALSE;
-	}
-
-	/*
-	* Check whether a node of the $name provided already exists.
-	*/
-	public static function vocabTypeExists($name) {
-		//Check to see if the vocabulary already exists.
-		$vocabulary = taxonomy_vocabulary_machine_name_load($name);
-		//If it exists then exit the function as there is nothing more to do.
-		if ($vocabulary) {
-			return $vocabulary;
 		}
 
 		return FALSE;

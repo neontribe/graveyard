@@ -24,18 +24,18 @@ function nt2_node_type_admin_form() {
 }
 
 function nt2_entity_admin_form_reload_tax() {
-  $vocab = CottageNodeManager::vocabTypeExists(variable_get("COTTAGE_VOCAB_MACHINE_NAME"));
-  if($vocab) {
-    #Delete each individual term.
-    foreach (taxonomy_get_tree($vocab->vid) as $term) {
-        taxonomy_term_delete($term->tid);
-    }
-  }
-  $message = t('Taxonomy vocabulary data reloaded.');
-  drupal_set_message($message);
+ // $vocab = CottageVocabManager::vocabTypeExists(variable_get("COTTAGE_VOCAB_MACHINE_NAME"));
+  // if($vocab) {
+  //   #Delete each individual term.
+  //   foreach (taxonomy_get_tree($vocab->vid) as $term) {
+  //       taxonomy_term_delete($term->tid);
+  //   }
+  // }
+  // $message = t('Taxonomy vocabulary data reloaded.');
+  // drupal_set_message($message);
 
   #Create the cottage tag vocabulary.
-  CottageNodeManager::setup_vocabulary_from_api(variable_get("COTTAGE_VOCAB_MACHINE_NAME"), "/");
+  CottageVocabManager::setup_vocabulary_from_api(variable_get("COTTAGE_VOCAB_MACHINE_NAME"), "/");
 }
 
 function nt2_node_type_admin_form_submit($form, &$form_state) {
@@ -49,8 +49,6 @@ function nt2_node_type_admin_form_submit($form, &$form_state) {
 
   	#Fetch Property data from the API
   	$api_response = CottageNodeManager::fetchPropertyFromAPI($propref, "_ZZ");
-
-    dpm($api_response);
 
   	#Parse the returned data.
   	$parsed_data = CottageNodeManager::parseAPIPropertyReturnData(variable_get("COTTAGE_VOCAB_MACHINE_NAME"), $api_response);

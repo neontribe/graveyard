@@ -8,5 +8,6 @@ dependencies[] = neontabs_io
 dependencies[] = neontabs
 
 files[] = CottageNodeManager.class.php
+files[] = CottageVocabManager.class.php
 
 package = nt2
