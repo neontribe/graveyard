@@ -59,19 +59,39 @@ function nt2_node_type_test_view($propref, $type) {
     return implode($items);
   }
 
-  $node_html = "";
-  //$node_html = theme($theme_fn, $params);
-  $propData = CottageNodeManager::getNodesFromPropertyReference(variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"), $propref);
-  $propInfo = array_keys($propData);
-  
-  foreach ($propInfo as $key => $value) {
-    $node_output = node_view($propData[$value]);
-    if(isset($node_output)) {
-      break;
-    }
-  }
+  // $propData = CottageNodeManager::getNodesFromPropertyReference(variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"), $propref);
+  // $propInfo = array_keys($propData);
+
+  // foreach ($propInfo as $key => $value) {
+    // $node_output = node_view($propData[$value]);
+    // if(isset($node_output)) {
+      // break;
+    // }
+  // }
+  $node_output = nt2_node_type_node_render_array($node);
 
   return $node_output;
+}
+
+function nt2_node_type_node_render_array($node) {
+    $render_array = array();
+
+    $render_array['cottage_name'] = array(
+        '#markup' => $node->cottage_name['und']['0'],
+        '#prefix' => '<h2>',
+        '#suffix' => '</h2>',
+    );
+
+    $render_array['images'] = array();
+    $images = $node->cottage_images;
+    foreach ($images as $image) {
+        list($title, $alt, $url) = explode("\n", $image['und'][0]);
+    }
+
+
+    return array(
+        'property' => $render_array,
+    );
 }
 
 /**
