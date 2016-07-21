@@ -83,7 +83,26 @@ function nt2_node_type_install() {
 					),
 				),
 			),
-		)
+		),
+		'cottage_fieldaddress' => array(	
+			'active' => 1,
+		    'cardinality' => 1,
+		    'deleted' => 0,
+		    'entity_types' => array(),
+		    'field_name' => 'cottage_fieldaddress',
+		    'indexes' => array(),
+		    'locked' => 0,
+		    'module' => 'addressfield',
+		    'settings' => array(),
+		    'translatable' => 0,
+		    'type' => 'addressfield',
+		),
+		'cottage_coordinates' => array(
+			'field_name' => 'cottage_coordinates',
+			'type' => 'number_float',
+			'cardinality' => 2,
+			'precision' => 10.0,
+		),
 	);
 
 	$vocab_fields = array(	
@@ -97,6 +116,62 @@ function nt2_node_type_install() {
 		),
 	);
 
+	$custom_instances = array(
+		'cottage_fieldaddress' => array(
+			'bundle' => 'cottage_entity',
+		    'default_value' => NULL,
+		    'deleted' => 0,
+		    'description' => '',
+		    'display' => array(
+		      'default' => array(
+		        'label' => 'above',
+		        'module' => 'addressfield',
+		        'settings' => array(
+		          'format_handlers' => array(
+		            0 => 'address',
+		          ),
+		          'use_widget_handlers' => 1,
+		        ),
+		        'type' => 'addressfield_default',
+		        'weight' => 17,
+		      ),
+		      'teaser' => array(
+		        'label' => 'above',
+		        'settings' => array(),
+		        'type' => 'hidden',
+		        'weight' => 0,
+		      ),
+		    ),
+		    'entity_type' => 'node',
+		    'field_name' => 'cottage_fieldaddress',
+		    'label' => 'cottage_fieldaddress',
+		    'required' => 0,
+		    'settings' => array(
+		      'user_register_form' => FALSE,
+		    ),
+		    'widget' => array(
+		      'active' => 1,
+		      'module' => 'addressfield',
+		      'settings' => array(
+		        'available_countries' => array(),
+		        'default_country' => 'site_default',
+		        'format_handlers' => array(
+		          'address' => 'address',
+		          'address-hide-postal-code' => 0,
+		          'address-hide-street' => 0,
+		          'address-hide-country' => 0,
+		          'organisation' => 0,
+		          'name-full' => 0,
+		          'name-oneline' => 0,
+		          'address-optional' => 0,
+		        ),
+		      ),
+		      'type' => 'addressfield_standard',
+		      'weight' => 13,
+		    ),
+		)
+	);
+
 	#Register the node type with Drupal.
 	$cottage_type_creation_status = CottageNodeManager::registerCottageNodeTypeEntity(variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"));
 
@@ -107,7 +182,7 @@ function nt2_node_type_install() {
 	}
 
 	#Register the requisite fields.
-	$cottage_field_creation_status = CottageNodeManager::registerCottageFieldDefinitionInstances(variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"), $cottage_fields);
+	$cottage_field_creation_status = CottageNodeManager::registerCottageFieldDefinitionInstances(variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"), $cottage_fields, $custom_instances);
 
 	#Create the cottage tag vocabulary.
 	$cottage_vocab_tag_creation_status = CottageVocabManager::createCottageTagVocabulary(variable_get("COTTAGE_VOCAB_MACHINE_NAME"), $vocab_fields);

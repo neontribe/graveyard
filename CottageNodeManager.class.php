@@ -92,6 +92,11 @@ class CottageNodeManager {
 		foreach ($array_of_values as $key => $value) {
 			$value_carry = array();
 			foreach ($values_to_keep as $value_keep) {
+				dpm($value[$value_keep]);
+				if(empty($value[$value_keep])) {
+					$value[$value_keep] = "no_".$value_keep;
+				}
+
 				array_push($value_carry, $value[$value_keep]);	
 			}
 			$output[$key] = array('value' => implode("\n", $value_carry));
@@ -107,14 +112,34 @@ class CottageNodeManager {
 	public static function parseAPIPropertyReturnData($machine_name, $data) {
 
 		#Find which tags to retain
-		$keysToKeep = array();
+		$tagKeysToKeep = array();
 		foreach ($data["attributes"] as $key => $value) {
 			if($value) {
-				$keysToKeep[] = array(
+				$tagKeysToKeep[] = array(
 					'tid' => CottageVocabManager::get_term_from_name($machine_name, $key),
 				);
 			}
 		};
+
+		$address = array(
+			'thoroughfare' => $data["address"]["addr1"],
+			'premise' => $data["address"]["addr2"],
+			'locality' => $data["address"]["town"],
+			'administrative_area' => $data["address"]["county"],
+			'postal_code' => $data["address"]["postcode"],
+			'country' => $data["address"]["country"],
+		);
+
+		dpm($data);
+
+		$coordinates = array(
+			0 => array(
+				'value' => $data["coordinates"]["latitude"],
+			),
+			1 => array(
+				'value' => $data["coordinates"]["longitude"],
+			),
+		);
 
 		$images = self::parsePropertyValueArray($data["images"], array('alt', 'title', 'url'));
 		
@@ -230,7 +255,15 @@ class CottageNodeManager {
 				'und' => $images,
 			),
 			'cottage_term_reference' => array(
-				'und' => $keysToKeep,
+				'und' => $tagKeysToKeep,
+			),
+			'cottage_fieldaddress' => array(
+				'und' => array(
+					0 => $address,
+				),
+			),
+			'cottage_coordinates' => array(
+				'und' => $coordinates,
 			),
 		);
 		
@@ -250,7 +283,7 @@ class CottageNodeManager {
 	/*
 	* Register the instances for each of the fields (attach them to the custom cottage node type via the bundle system).
 	*/
-	public static function registerCottageFieldDefinitionInstances($name, $cottage_fields) {
+	public static function registerCottageFieldDefinitionInstances($name, $cottage_fields, $custom_instances) {
 		foreach ($cottage_fields as $field_key => $field_options) {
 			if(field_info_field($field_key)) {
 				continue;
@@ -268,6 +301,10 @@ class CottageNodeManager {
 					'type' => 'textfield',
 				) 
 			);
+
+			if(array_key_exists($field_key, $custom_instances)) {
+				$instance = $custom_instances[$field_key];
+			}
 
 			field_create_instance($instance);
 		}

@@ -6,6 +6,7 @@ dependencies[] = field
 dependencies[] = entity
 dependencies[] = neontabs_io
 dependencies[] = neontabs
+dependencies[] = addressfield
 
 files[] = CottageNodeManager.class.php
 files[] = CottageVocabManager.class.php
