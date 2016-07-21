@@ -64,7 +64,10 @@ function nt2_node_type_node_render_array($node) {
         '#suffix' => '</h2>',
     );
 
-    $render_array['images'] = array();
+    $render_array['images'] = array(
+        '#prefix' => '<ul>',
+        '#suffix' => '</ul>',
+    );
     $images = $node->cottage_images['und'];
     $index = 0;
     foreach ($images as $image) {
@@ -75,6 +78,8 @@ function nt2_node_type_node_render_array($node) {
             '#style_name' => 'medium',
             '#alt' => $alt,
             '#title' => $title,
+            '#prefix' => '<li>',
+            '#suffix' => '</li>',
         );
         $render_array['images']['image' . sprintf('%02d', $index++)] = $_image;
     }
@@ -104,17 +109,38 @@ function nt2_node_type_node_view($node, $view_mode, $langcode) {
  */
 function nt2_node_type_theme() {
   return array(
-    'nt2_entity_node' => array(
+    'nt2_node_type_slideshow' => array(
       'variables' => array(
-        'property' => NULL
+        'images' => NULL
       ),
-      'template' => 'templates/nt2_entity_node',
-    ),
-    'nt2_entity_teaser' => array(
-      'variables' => array(
-        'property' => NULL
-      ),
-      'template' => 'templates/nt2_entity_teaser',
+      'template' => 'templates/nt2_node_type_slider',
     ),
   );
+}
+
+function nt2_node_type_preprocess_nt2_node_type_slideshow(&$vars) {
+    // This function SHOULD be used to tweak variables but we will use it to inject JS.
+    // We could do thei in the entity load hook or a page alter hook.
+
+    // We should check if the flex slider js all ready in scope.  Most site include it by default.
+    drupal_add_js(
+        drupal_get_path('module', 'nt2_node_type') . '/javascript/jquery.flexslider.js',
+        array(
+            'type' => 'file',
+            'scope' => 'footer',
+            'weight' => 100,
+        )
+    );
+    drupal_add_js(
+        drupal_get_path('module', 'nt2_node_type') . '/javascript/nt2_node_type.js',
+        array(
+            'type' => 'file',
+            'scope' => 'footer',
+            'weight' => 110,
+        )
+    );
+    drupal_add_css(
+        drupal_get_path('module', 'nt2_node_type') . '/javascript/flexslider.css',
+        array('group' => CSS_DEFAULT, 'every_page' => FALSE)
+    );
 }
