@@ -5,28 +5,29 @@ class CottageNodeManager {
 	* Creates a new property reference node when given returned data from the API as a parameter: $data.
 	*/
 	public static function setPropertyReference($propref, $type_machine_name, $data = NULL) {
-		$result = self::getNodesFromPropertyReference($type_machine_name, $propref);
+		$result = self::getNode($propref);
 
 		#If existing nodes exist for this property reference modify them.
-		if(is_array($result) && $result != NULL) {
-			
-			#For each existing node set the relevant data provided by the $data array.
-			foreach ($result as $key => $node) {
-				if( is_array($data) ) {
-					foreach ($data as $key => $value) {
-						$node->$key = $value;
-					}
+		if($result != NULL) {
+
+            dpm($result, 'Result');
+            dpm($data, 'Data');
+			if( is_array($data) ) {
+				foreach ($data as $key => $value) {
+                    // dpm($value, $key);
+					$node->$key = $value;
 				}
 			}
 
+            dpm($node, 'Updated Property');
 			return $result;
 
 		} else { #Else create a new node for the current property reference.
 			$node = new stdClass();
-			
+
 			#Set type to custom type which is supplied to the function.
 			$node->type = $type_machine_name;
-			
+
 			#Set drupal defaults for the new node before we apply the custom attribute data.
 			node_object_prepare($node);
 
@@ -37,28 +38,47 @@ class CottageNodeManager {
 				}
 			}
 		}
+        dpm($node, 'New Property');
 
 		return $node;
 	}
 
- 	/*
- 	* Perform a DB query for nodes of the same reference as the one provided in the $ref variable. Return the nodes in the form of an array.
- 	*/
-	public static function getNodesFromPropertyReference($node_machine_name, $ref) {
+    /**
+     * Get a single property node.
+     *
+     * @param string $propref
+     * @param string $node_machine_name
+     *
+     * @static
+     * @access public
+     *
+     * @return Object
+     *   The loaded object or NULL.
+     */
+	public static function getNode($propref, $node_machine_name = 'cottage_entity') {
 		#Compose a new entity query which will ascertain whether node entries exist with the same reference as provided in $ref.
 		$query = new EntityFieldQuery();
 		$query->entityCondition('entity_type', 'node')
   			->entityCondition('bundle', $node_machine_name)
-  			->fieldCondition('cottage_reference', 'value', $ref, '=');
+  			->fieldCondition('cottage_reference', 'value', $propref, '=');
 
   		#Assign the value of the result of executing the query to the variable $result.
   		$result = $query->execute();
-  		
-  		if (isset($result['node'])) {
-			$items_imploded = array_keys($result['node']);
-			$items_imploded = entity_load('node', $items_imploded);
 
-			return $items_imploded;
+  		if (isset($result['node'])) {
+			$refs = array_keys($result['node']);
+			$props = entity_load('node', $refs);
+
+            if (count($props) == 1) {
+                return array_pop($props);
+            }
+            elseif (count($props) == 0) {
+                watchdog(__METHOD__, 'Property not found ' . $propref);
+            }
+            else {
+                watchdog(__METHOD__, count($props) . ' properties not found ' . $propref);
+                return array_pop($props);
+            }
 		}
 
 		return NULL;
@@ -73,7 +93,7 @@ class CottageNodeManager {
 			foreach ($ref as $key => $propRef) {
 				if( is_object($propRef) ) {
 					node_save($propRef);
-				}		
+				}
 			}
 		}
 
@@ -92,19 +112,18 @@ class CottageNodeManager {
 		foreach ($array_of_values as $key => $value) {
 			$value_carry = array();
 			foreach ($values_to_keep as $value_keep) {
-				dpm($value[$value_keep]);
 				if(empty($value[$value_keep])) {
 					$value[$value_keep] = "no_".$value_keep;
 				}
 
-				array_push($value_carry, $value[$value_keep]);	
+				array_push($value_carry, $value[$value_keep]);
 			}
 			$output[$key] = array('value' => implode("\n", $value_carry));
 		}
 
 		return $output;
 	}
- 
+
 	/*
 	* Takes an array of data (the data returned by the API for a property request) as input and returns an array
 	* which is in the correct format to be saved as an instance of the custom cottage node_type.
@@ -130,8 +149,6 @@ class CottageNodeManager {
 			'country' => $data["address"]["country"],
 		);
 
-		dpm($data);
-
 		$coordinates = array(
 			0 => array(
 				'value' => $data["coordinates"]["latitude"],
@@ -142,7 +159,7 @@ class CottageNodeManager {
 		);
 
 		$images = self::parsePropertyValueArray($data["images"], array('alt', 'title', 'url'));
-		
+
 		$return_data = array(
 			'title' => $data["name"],
 			'language' => LANGUAGE_NONE,
@@ -266,7 +283,7 @@ class CottageNodeManager {
 				'und' => $coordinates,
 			),
 		);
-		
+
 		return $return_data;
 	}
 
@@ -299,7 +316,7 @@ class CottageNodeManager {
 				'label' => $field_key,
 				'widget' => array(
 					'type' => 'textfield',
-				) 
+				)
 			);
 
 			if(array_key_exists($field_key, $custom_instances)) {
@@ -312,7 +329,7 @@ class CottageNodeManager {
 
 	/*
 	* Check whether a node of the $name provided already exists.
-	*/	
+	*/
 	public static function nodeTypeExists($name) {
 		#Check to see if cottage_node type exists
 		if ( in_array( $name, node_type_get_names() ) ) {

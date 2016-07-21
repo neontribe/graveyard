@@ -71,7 +71,7 @@ class CottageVocabManager {
 				'label' => $vocab_key,
 				'widget' => array(
 					'type' => 'textfield',
-				) 
+				)
 			);
 
 			#Invoke the field_create_instance function with the description of the instance created prior.
@@ -85,23 +85,23 @@ class CottageVocabManager {
  	public static function addTermToVocabulary($machine_name, $term_name, $term_data = NULL, $parent = NULL) {
 
  		$vocab_info = self::vocabTypeExists($machine_name);
- 		
+
  		#If the term already exists update it then return.
- 		
- 		#This is messy, should be refactored. 
+
+ 		#This is messy, should be refactored.
 
  		if(self::taxonomy_term_exists($machine_name, $term_name)) {
- 			
+
  			$terms = self::get_terms_from_name($machine_name, $term_name);
-			
+
 			if(isset($terms) && is_array($terms)) {
-			
+
 				if(is_array($term_data)) {
  					#For each term stored in the DB with the same name check if values differ between the values to be modified and update accordingly.
  					foreach ($terms as $key => $value) {
  						$modified = FALSE;
-						
-						foreach ($term_data as $data_key => $data_value) {	
+
+						foreach ($term_data as $data_key => $data_value) {
 							$accessed_array = $value->$data_key;
 
 							#Check if values differ (currently only checks for arrays, as arrays need to be handled differently).
@@ -143,7 +143,7 @@ class CottageVocabManager {
 							$new_term->$data_key = $data_value;
 					}
 				}
-				
+
 				taxonomy_term_save($new_term);
 	 		}
  		}
@@ -156,13 +156,14 @@ class CottageVocabManager {
 		#Construct request string.
 		$data = NeontabsIO::getInstance()->get($path);
 		#Create the vocabulary using the attributes contained in the data.
+        dd($data);
 		$result = self::create_vocabulary_from_attrib_list($machine_name, $data["constants"]["attributes"]);
 		return $result;
 	}
 
 
  	/*
-	* Create a vocabulary from a provided list of attributes from the API.	
+	* Create a vocabulary from a provided list of attributes from the API.
 	*/
 	public static function create_vocabulary_from_attrib_list($machine_name, $attribs) {
 		#Get the Vocabulary ID for cottages.
@@ -170,7 +171,7 @@ class CottageVocabManager {
 		foreach ($attribs as $attrib) {
 			#Set the group variable.
 			$currentGroup = $attrib["group"];
-			
+
 			#Set the term variable (label).
 			$currentTerm = $attrib["label"];
 
@@ -192,26 +193,26 @@ class CottageVocabManager {
 				'description' => $attrib["label"],
 			);
 
-			
+
 			#Check if group parent of hierarchy exists; if it doesn't then add it to the ppphierarchy.
 			$groupExists = self::taxonomy_term_exists($machine_name, $currentGroup);
-			
+
 			if(!$groupExists) {
 				#Create a new primary term (parent set to NULL).
 				self::addTermToVocabulary($machine_name, $currentGroup);
 			} else {
 				self::addTermToVocabulary($machine_name, $currentGroup);
 			};
-			
+
 			#Check if child element exists; if it doesn't then add it to the hierarchy.
 			$labelExists = self::taxonomy_term_exists($machine_name, $currentTerm);
-			
+
 			if(!$labelExists) {
 				#Create a new term with the parent being set to the current group.
-				self::addTermToVocabulary($machine_name, $currentTerm, $field_data, self::get_term_from_name($machine_name, $currentGroup));	
+				self::addTermToVocabulary($machine_name, $currentTerm, $field_data, self::get_term_from_name($machine_name, $currentGroup));
 			} else {
 				self::addTermToVocabulary($machine_name, $currentTerm, $field_data, self::get_term_from_name($machine_name, $currentGroup));
-			};	
+			};
 		};
 		return sizeof($attribs);
 	}
@@ -224,7 +225,7 @@ class CottageVocabManager {
 		if($term != NULL) {
 			return TRUE;
 		}
-		
+
 		return FALSE;
 	}
 
@@ -233,7 +234,7 @@ class CottageVocabManager {
 	*/
 	public static function get_term_from_name($machine_name, $name) {
 		$tid = taxonomy_get_term_by_name($name, $machine_name);
-		
+
 		if(sizeof($tid) == 0) {
 			return NULL;
 		}
@@ -242,7 +243,7 @@ class CottageVocabManager {
 
 	public static function get_terms_from_name($machine_name, $name) {
 		$tid = taxonomy_get_term_by_name($name, $machine_name);
-		
+
 		if(sizeof($tid) == 0) {
 			return NULL;
 		}
