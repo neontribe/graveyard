@@ -48,7 +48,7 @@ function nt2_node_type_menu() {
 
 function nt2_node_type_test_view($propref, $type) {
 
-  $node = CottageNodeManager::getNode('cottage_entity', $propref);
+  $node = CottageNodeManager::getNode($propref);
   $node_output = nt2_node_type_node_render_array($node);
 
   return $node_output;
@@ -68,18 +68,21 @@ function nt2_node_type_node_render_array($node) {
         '#prefix' => '<ul>',
         '#suffix' => '</ul>',
     );
+
     $images = $node->cottage_images['und'];
     $index = 0;
     foreach ($images as $image) {
-        list($title, $alt, $url) = explode("\n", $image['value']);
+
+        list($alt, $title, $url) = explode("\n", $image['value']);
+
         $_image = array(
-            '#theme' => 'imagecache_external',
-            '#path' => $url,
-            '#style_name' => 'medium',
-            '#alt' => $alt,
-            '#title' => $title,
             '#prefix' => '<li>',
             '#suffix' => '</li>',
+            '#theme' => 'imagecache_external',
+            '#path' => 'http://goodyear.rebeluncut.co.uk/images/partners.svg',
+            '#style_name' => 'thumbnail',
+            '#alt' => $alt,
+            '#title' => $title,
         );
         $render_array['images']['image' . sprintf('%02d', $index++)] = $_image;
     }
@@ -87,7 +90,7 @@ function nt2_node_type_node_render_array($node) {
     $render = array(
         'property' => $render_array,
     );
-    dpm($render);
+
 
     return $render;
 }
@@ -111,7 +114,7 @@ function nt2_node_type_theme() {
   return array(
     'nt2_node_type_slideshow' => array(
       'variables' => array(
-        'images' => NULL
+        'items' => NULL,
       ),
       'template' => 'templates/nt2_node_type_slider',
     ),

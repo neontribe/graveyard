@@ -15,11 +15,11 @@ class CottageNodeManager {
 			if( is_array($data) ) {
 				foreach ($data as $key => $value) {
                     // dpm($value, $key);
-					$node->$key = $value;
+					$result->$key = $value;
 				}
 			}
 
-            dpm($node, 'Updated Property');
+            dpm($result, 'Updated Property');
 			return $result;
 
 		} else { #Else create a new node for the current property reference.
