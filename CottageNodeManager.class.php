@@ -368,7 +368,7 @@ class CottageNodeManager {
 			'description' => st("Defines a cottage entry node."),
 			'custom' => 1,
 			'modified' => 1,
-			'locked' => 0,
+			'locked' => 0, #TESTING
 		);
 
 		#Apply Drupal defaults to initial type definition array.

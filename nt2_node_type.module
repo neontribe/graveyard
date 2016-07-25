@@ -71,15 +71,16 @@ function nt2_node_type_node_render_array($node) {
 
     $images = $node->cottage_images['und'];
     $index = 0;
+
     foreach ($images as $image) {
 
         list($alt, $title, $url) = explode("\n", $image['value']);
-
+        dpm($url);
         $_image = array(
             '#prefix' => '<li>',
             '#suffix' => '</li>',
             '#theme' => 'imagecache_external',
-            '#path' => 'http://goodyear.rebeluncut.co.uk/images/partners.svg',
+            '#path' => $url,
             '#style_name' => 'thumbnail',
             '#alt' => $alt,
             '#title' => $title,

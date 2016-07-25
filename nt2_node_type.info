@@ -8,6 +8,8 @@ dependencies[] = neontabs_io
 dependencies[] = neontabs
 dependencies[] = addressfield
 dependencies[] = imagecache_external
+;We only need this for development purposes
+dependencies[] = devel
 
 files[] = CottageNodeManager.class.php
 files[] = CottageVocabManager.class.php
