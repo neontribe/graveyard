@@ -21,7 +21,12 @@ We'll re-assess here, we have co-ordinates, brands, address to consider
 ## Install Guide (Ubuntu)
 1. [Install the LAMP stack](https://help.ubuntu.com/community/ApacheMySQLPHP) and ensure permissions for `/var/www` are set appropriately
 1. [Install Drush](http://docs.drush.org/en/master/install/)
-1. [Create drupal instance in /var/www/html/$drupal_name](https://www.drupal.org/documentation/install/developers)
+1. Install drupal dependencies: ```apt-get install php-xml```
+1. Create a new drupal instance:
+  * ```cd /var/www/$drupal_name```
+  * ```drupal_name="nt2_test"``` (can be any appropriate name)
+  * ```drush dl drupal-7.40 --drupal-project-rename=$drupal_name```
+  * Navigate to http://localhost/$drupal_name follow the GUI steps (create db in mysql)
 1. [Get access to neontabs then clone into /var/www/html/$drupal_name/sites/all/modules/neontabs](https://bitbucket.org/neontabs/neontabs)
 1. [Clone this repo into your modules folder](https://github.com/ob6160/nt2_entity)
 1. Carry out drupal install steps @ `http://localhost/$drupal_name`
