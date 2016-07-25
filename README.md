@@ -19,7 +19,7 @@ We'll re-assess here, we have co-ordinates, brands, address to consider
 
 
 ## Install Guide (Ubuntu)
-1. [Install the LAMP stack](https://help.ubuntu.com/community/ApacheMySQLPHP)
+1. [Install the LAMP stack](https://help.ubuntu.com/community/ApacheMySQLPHP) and ensure permissions for `/var/www` are set appropriately
 1. [Install Drush](http://docs.drush.org/en/master/install/)
 1. [Create drupal instance in /var/www/html/$drupal_name](https://www.drupal.org/documentation/install/developers)
 1. [Get access to neontabs then clone into /var/www/html/$drupal_name/sites/all/modules/neontabs](https://bitbucket.org/neontabs/neontabs)
