@@ -7,6 +7,7 @@ function nt2_node_type_install() {
 	#Setup constants
 	variable_set("COTTAGE_NODE_TYPE_MACHINE_NAME", "cottage_entity");
 	variable_set("COTTAGE_VOCAB_MACHINE_NAME", "cottage_vocab");
+	variable_set("COTTAGE_LOC_VOCAB_MACHINE_NAME", "cottage_loc_vocab");
 
 	#Define the cottage entity fields.
 	$cottage_fields = array(
@@ -103,18 +104,13 @@ function nt2_node_type_install() {
 			'cardinality' => 2,
 			'precision' => 10.0,
 		),
+		'cottage_pricing' => array(
+			'field_name' => 'cottage_pricing',
+			'type' => 'text',
+			'cardinality' => 1,
+		)
 	);
 
-	$vocab_fields = array(	
-		'tag_code' => array(
-			'field_name' => 'tag_code',
-			'type' => 'text',
-		),
-		'tag_brand' => array(
-			'field_name' => 'tag_brand',
-			'type' => 'text',
-		),
-	);
 
 	$custom_instances = array(
 		'cottage_fieldaddress' => array(
@@ -184,12 +180,8 @@ function nt2_node_type_install() {
 	#Register the requisite fields.
 	$cottage_field_creation_status = CottageNodeManager::registerCottageFieldDefinitionInstances(variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"), $cottage_fields, $custom_instances);
 
-	#Create the cottage tag vocabulary.
-	$cottage_vocab_tag_creation_status = CottageVocabManager::createCottageTagVocabulary(variable_get("COTTAGE_VOCAB_MACHINE_NAME"), $vocab_fields);
-
-	#Populate the vocabulary from the API
-	CottageVocabManager::setup_vocabulary_from_api(variable_get("COTTAGE_VOCAB_MACHINE_NAME"), "/");
-
+	#Create our custom vocabularies.
+	nt2_node_type_create_and_populate_vocabs();
 }
 
 function nt2_node_type_disable() {

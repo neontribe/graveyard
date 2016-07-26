@@ -9,10 +9,16 @@ function nt2_node_type_admin_form() {
   	'#description' => t('If a prop ref is entered here it will trigger an import/refresh on the propref.'),
   );
 
-  $form['reload_tax'] = array(
+  $form['reload_tax_tag'] = array(
     '#type' => 'submit',
     '#value' => 'Reload Tags',
-    '#submit' => array('nt2_entity_admin_form_reload_tax'),
+    '#submit' => array('nt2_entity_admin_form_reload_tax_tag'),
+  );
+
+  $form['reload_tax_loc'] = array(
+    '#type' => 'submit',
+    '#value' => 'Reload Locations',
+    '#submit' => array('nt2_entity_admin_form_reload_tax_loc')
   );
 
   $form['submit'] = array(
@@ -23,19 +29,57 @@ function nt2_node_type_admin_form() {
   return $form;
 }
 
-function nt2_entity_admin_form_reload_tax() {
- // $vocab = CottageVocabManager::vocabTypeExists(variable_get("COTTAGE_VOCAB_MACHINE_NAME"));
-  // if($vocab) {
-  //   #Delete each individual term.
-  //   foreach (taxonomy_get_tree($vocab->vid) as $term) {
-  //       taxonomy_term_delete($term->tid);
-  //   }
-  // }
-  // $message = t('Taxonomy vocabulary data reloaded.');
-  // drupal_set_message($message);
+function nt2_entity_admin_form_reload_tax_tag() {
 
-  #Create the cottage tag vocabulary.
-  CottageVocabManager::setup_vocabulary_from_api(variable_get("COTTAGE_VOCAB_MACHINE_NAME"), "/");
+  $vocab_tag_fields = array(  
+    'tag_code' => array(
+      'field_name' => 'tag_code',
+      'data_key_name' => 'code',
+      'type' => 'text',
+    ),
+    'tag_brand' => array(
+      'field_name' => 'tag_brand',
+      'data_key_name' => 'brand',
+      'type' => 'text',
+    ),
+  );
+
+  #Update the cottage tag vocabulary.
+  $data = NeontabsIO::getInstance()->get("/");
+
+  $result = CottageVocabManager::create_vocabulary_from_attrib_list(variable_get("COTTAGE_VOCAB_MACHINE_NAME"), $data["constants"]["attributes"], $vocab_tag_fields, "group", "label");
+}
+
+function nt2_entity_admin_form_reload_tax_loc() {
+  
+    $vocab_loc_fields = array(  
+        'loc_code' => array(
+          'field_name' => 'loc_code',
+          'data_key_name' => 'code',
+          'type' => 'text',
+        ),
+        'loc_name' => array(
+          'field_name' => 'loc_name',
+          'data_key_name' => 'name',
+          'type' => 'text',
+        ),
+        'loc_brand' => array(
+          'field_name' => 'loc_brand',
+          'data_key_name' => 'brandcode',
+          'type' => 'text',
+        ),
+        // 'loc_coordinates' => array(
+        //   'field_name' => 'loc_coordinates',
+        //   'data_key_name' => 'coordinates',
+        //   'type' => 'text',
+        // ),
+    );
+
+
+  #Update the cottage location vocabulary.
+  $data = NeontabsIO::getInstance()->get("/utility/area");
+
+  CottageVocabManager::create_vocabulary_from_attrib_list(variable_get("COTTAGE_LOC_VOCAB_MACHINE_NAME"), $data, $vocab_loc_fields, 'code', "locations");
 }
 
 function nt2_node_type_admin_form_submit($form, &$form_state) {
@@ -43,7 +87,7 @@ function nt2_node_type_admin_form_submit($form, &$form_state) {
 
   $values = $form_state['values'];
 
-  // Here you can process transitional values (e.g. refresh an entity.
+  #Here you can process transitional values (e.g. refresh an entity.
   if (!empty($values['nt2_node_type_propref'])) {
   	$propref = $values['nt2_node_type_propref'];
 

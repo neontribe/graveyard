@@ -18,24 +18,17 @@ class CottageVocabManager {
 	/*
 	* Create a vocabulary used to store cottage tag entries.
 	*/
-	public static function createCottageTagVocabulary($machine_name, $vocab_fields) {
+	public static function createCottageTagVocabulary($machine_name, $vocab_definition, $vocab_fields) {
 		#If vocabulary already exists.
 		if(self::vocabTypeExists($machine_name)) {
 			return TRUE;
 		}
 
-		$vocab = (object) array(
-			'name' => 'Cottage Tag Vocab',
-			'machine_name' => $machine_name,
-			'description' => 'A vocabulary used to store cottage tags.',
-			'weight' => 0,
-		);
-
 		#Setup field definitions and attach to the $machine_name type bundle.
 		self::registerVocabularyFieldDefinitionInstances($machine_name, $vocab_fields);
 
 		#Save the defined vocabulary in the database.
-		taxonomy_vocabulary_save($vocab);
+		taxonomy_vocabulary_save($vocab_definition);
 
 		#Set the return value to the taxonomy generated and subsequently stored in the DB.
 		$return_object = taxonomy_vocabulary_machine_name_load($machine_name);
@@ -88,7 +81,7 @@ class CottageVocabManager {
 
  		#If the term already exists update it then return.
 
- 		#This is messy, should be refactored.
+ 		#TODO: This is messy, should be refactored.
 
  		if(self::taxonomy_term_exists($machine_name, $term_name)) {
 
@@ -150,71 +143,94 @@ class CottageVocabManager {
  	}
 
  	/*
- 	* Bootstraps the creation of a vocabulary from the specified `$api` path.
- 	*/
- 	public static function setup_vocabulary_from_api($machine_name, $path) {
-		#Construct request string.
-		$data = NeontabsIO::getInstance()->get($path);
-		#Create the vocabulary using the attributes contained in the data.
-        dd($data);
-		$result = self::create_vocabulary_from_attrib_list($machine_name, $data["constants"]["attributes"]);
-		return $result;
-	}
-
-
- 	/*
 	* Create a vocabulary from a provided list of attributes from the API.
 	*/
-	public static function create_vocabulary_from_attrib_list($machine_name, $attribs) {
-		#Get the Vocabulary ID for cottages.
-		$vid = variable_get('nt2_entity_vocab_id');
-		foreach ($attribs as $attrib) {
+	public static function create_vocabulary_from_attrib_list($machine_name, $api_attribs, $vocab_definitions, $nested_parent_id = "group", $nested_item_id = "label") {
+		foreach ($api_attribs as $attrib) {
+
+			#Build the data array for the current attrib.
+			$field_data = array();
+			$entry_names = array_keys($vocab_definitions);
+
+			foreach ($entry_names as $key) {
+				$field_data[$key] = array(
+					'und' => array(
+						0 => array(
+							'value' => $attrib[$vocab_definitions[$key]["data_key_name"]],
+						),
+					),
+				);
+			};
+
 			#Set the group variable.
-			$currentGroup = $attrib["group"];
+			$currentGroup = $attrib[$nested_parent_id];
+			$currentTerm = $attrib[$nested_item_id];
 
-			#Set the term variable (label).
-			$currentTerm = $attrib["label"];
+			self::addTermToVocabulary($machine_name, $currentGroup, $field_data);
+			
+			if(is_array($currentTerm)) {
 
-			$field_data = array(
-				'tag_code' => array(
-					'und' => array(
-						0 => array(
-							'value' => $attrib["code"],
-						),
-					),
-				),
-				'tag_brand' => array(
-					'und' => array(
-						0 => array(
-							'value' => $attrib["brand"],
-						),
-					),
-				),
-				'description' => $attrib["label"],
-			);
+				foreach($currentTerm as $child_value) {
+					
+					$field_data = array();
+				
+					$cur_child_term = $child_value[$nested_parent_id];
 
+					foreach ($entry_names as $key) {
+			
+						$field_data[$key] = array(
+							'und' => array(
+								0 => array(
+									'value' => $child_value[$vocab_definitions[$key]["data_key_name"]],
+								),
+							),
+						);
+				
+					};
 
-			#Check if group parent of hierarchy exists; if it doesn't then add it to the ppphierarchy.
-			$groupExists = self::taxonomy_term_exists($machine_name, $currentGroup);
+					#TEMPORARY SET COORDINATES TO NOTHING
+					// $field_data["loc_coordinates"] = array(
+					// 	'und' => array(
+					// 		0 => array(
+					// 			'value' => "TO BE FILLED",
+					// 		),
+					// 	),
+					// );
 
-			if(!$groupExists) {
-				#Create a new primary term (parent set to NULL).
-				self::addTermToVocabulary($machine_name, $currentGroup);
+					self::addTermToVocabulary($machine_name, $cur_child_term, $field_data, self::get_term_from_name($machine_name, $currentGroup));
+
+				}	
 			} else {
-				self::addTermToVocabulary($machine_name, $currentGroup);
-			};
+				self::addTermToVocabulary($machine_name, $currentTerm, $field_data, self::get_term_from_name($machine_name, $currentGroup));
+			}
+				
 
+
+
+
+
+
+
+
+
+
+			/* Checking Code
+			* Will probably be needed when the self::addTermToVocabulary function is cleaned up.
+			* It isn't needed at the moment because the ::addTermToVocab... function internally checks for duplicate entries.
+			* This behaviour shouldn't be expected of this function and as such it must be removed and placed here.
+			*/
+
+			#Check if group parent of hierarchy exists; if it doesn't then add it to the hierarchy.		
+			#Checks done internally (kept for reference)
+			#$groupExists = self::taxonomy_term_exists($machine_name, $currentGroup);
+			#Checks done internally (kept for reference)
 			#Check if child element exists; if it doesn't then add it to the hierarchy.
-			$labelExists = self::taxonomy_term_exists($machine_name, $currentTerm);
-
-			if(!$labelExists) {
-				#Create a new term with the parent being set to the current group.
-				self::addTermToVocabulary($machine_name, $currentTerm, $field_data, self::get_term_from_name($machine_name, $currentGroup));
-			} else {
-				self::addTermToVocabulary($machine_name, $currentTerm, $field_data, self::get_term_from_name($machine_name, $currentGroup));
-			};
-		};
-		return sizeof($attribs);
+			#$labelExists = self::taxonomy_term_exists($machine_name, $currentTerm);
+			
+	
+		}
+			
+		return sizeof($api_attribs);
 	}
 
 	/*

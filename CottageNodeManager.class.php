@@ -159,6 +159,9 @@ class CottageNodeManager {
 		);
 
 		$images = self::parsePropertyValueArray($data["images"], array('alt', 'title', 'url'));
+		
+		dpm(drupal_json_encode($data["brands"]["ZZ"]["pricing"]));
+
 
 		$return_data = array(
 			'title' => $data["name"],
@@ -281,6 +284,13 @@ class CottageNodeManager {
 			),
 			'cottage_coordinates' => array(
 				'und' => $coordinates,
+			),
+			'cottage_pricing' => array(
+				'und' => array(
+					0 => array(
+						'value' => drupal_json_encode($data["brands"]["ZZ"]["pricing"]),
+					),
+				),
 			),
 		);
 
