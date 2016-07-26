@@ -54,7 +54,7 @@ function nt2_node_type_test_view($propref, $type) {
   return $node_output;
 }
 
-function nt2_node_type_node_render_array($node) {
+function nt2_node_type_node_render_array(&$node) {
     $render_array = array();
 
     $render_array['cottage_name'] = array(
@@ -64,16 +64,14 @@ function nt2_node_type_node_render_array($node) {
         '#suffix' => '</h2>',
     );
 
+    // Build images array.
     $render_array['images'] = array(
         '#prefix' => '<ul>',
         '#suffix' => '</ul>',
     );
-
     $images = $node->cottage_images['und'];
     $index = 0;
-
     foreach ($images as $image) {
-
         list($alt, $title, $url) = explode("\n", $image['value']);
 
         $_image = array(
@@ -87,11 +85,20 @@ function nt2_node_type_node_render_array($node) {
         );
         $render_array['images']['image' . sprintf('%02d', $index++)] = $_image;
     }
+    
+    // Process the address using a custom template.
+    $address = array(
+      '#theme' => 'nt2_node_type_address',
+      '#address' => $node->cottage_fieldaddress['und'][0],
+    );
+    $render_array['address'] = $address;
 
     $render = array(
         'property' => $render_array,
     );
 
+    dpm($render, 'Property Render array');
+    dpm($node, 'Node');
 
     return $render;
 }
@@ -175,45 +182,19 @@ function nt2_node_type_node_view($node, $view_mode, $langcode) {
     }
 }
 
-/**
- * https://api.drupal.org/api/drupal/modules%21system%21system.api.php/function/hook_theme/7.x
- *
- * Implements hook_theme().
- */
 function nt2_node_type_theme() {
   return array(
-    'nt2_node_type_slideshow' => array(
+    'nt2_node_type_address' => array(
       'variables' => array(
-        'items' => NULL,
+        'address' => NULL,
       ),
-      'template' => 'templates/nt2_node_type_slider',
+      'template' => 'templates/nt2_node_type_address'
     ),
   );
 }
 
-function nt2_node_type_preprocess_nt2_node_type_slideshow(&$vars) {
-    // This function SHOULD be used to tweak variables but we will use it to inject JS.
-    // We could do thei in the entity load hook or a page alter hook.
-
-    // We should check if the flex slider js all ready in scope.  Most site include it by default.
-    drupal_add_js(
-        drupal_get_path('module', 'nt2_node_type') . '/javascript/jquery.flexslider.js',
-        array(
-            'type' => 'file',
-            'scope' => 'footer',
-            'weight' => 100,
-        )
-    );
-    drupal_add_js(
-        drupal_get_path('module', 'nt2_node_type') . '/javascript/nt2_node_type.js',
-        array(
-            'type' => 'file',
-            'scope' => 'footer',
-            'weight' => 110,
-        )
-    );
-    drupal_add_css(
-        drupal_get_path('module', 'nt2_node_type') . '/javascript/flexslider.css',
-        array('group' => CSS_DEFAULT, 'every_page' => FALSE)
-    );
+function nt2_node_type_nt2_node_type_address_preprocess(&$vars) {
+  if (isset($vars['address'])) {
+    // Here I could mess with the variable if I wanted.
+  }
 }

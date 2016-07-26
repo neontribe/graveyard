@@ -5,10 +5,12 @@ core = 7.x
 dependencies[] = field
 dependencies[] = entity
 dependencies[] = neontabs_io
-dependencies[] = neontabs
+; dependencies[] = neontabs ; We should not need this, it's menus and update hooks?
 dependencies[] = addressfield
+dependencies[] = imageapi_optimize
 dependencies[] = imagecache_external
-;We only need this for development purposes
+
+; We'll leave this in place while we are developing, but it needs go.
 dependencies[] = devel
 
 files[] = CottageNodeManager.class.php
