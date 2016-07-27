@@ -40,6 +40,7 @@ function nt2_search_block_info() {
     'info' => t('NT2: Quick search form'),
     'cache' => DRUPAL_NO_CACHE,
     'region' => 'sidebar_first',
+    'status' => 1, // enabled
   );
 
   return $blocks;
