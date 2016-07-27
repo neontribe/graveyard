@@ -62,17 +62,16 @@ class NT2_Search {
     $params = array(
       'accommodates' => $accom,
       'location' => $location,
-//      'fields' => array(
-//        'propertyRef',
-//      ),
+      'fields' => 'propertyRef',
     );
     
     $api = NeontabsIO::getInstance();
     $json = $api->get('/property', $params);
+    
     dpm($json, 'json');
     
     // See if you can make this back into a render array, with pre wrapper.
-    return $json;
+    return 'foo';
 //    $render_array = array();
 //    
 //    foreach ($json['results'] as $property) {
