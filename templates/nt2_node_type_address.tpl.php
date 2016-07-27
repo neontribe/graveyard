@@ -4,7 +4,7 @@
  */
 ?>
 
-<div class="nt2_note_type_address">
+<div class="nt2_node_type_address">
   <?php /* echo implode("<br />\n", array_reverse(array_filter($address))); */ ?>
   <h3>Address</h3>
   <?php echo isset($addr1) ? $addr1 . '</br>' : ''; ?>

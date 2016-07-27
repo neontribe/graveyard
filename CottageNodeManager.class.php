@@ -160,7 +160,7 @@ class CottageNodeManager {
 
 		$images = self::parsePropertyValueArray($data["images"], array('alt', 'title', 'url'));
 		
-		dpm(drupal_json_encode($data["brands"]["ZZ"]["pricing"]));
+		dpm($data);
 
 
 		$return_data = array(
@@ -219,6 +219,27 @@ class CottageNodeManager {
 				'und' => array(
 					0 => array(
 						'value' => $data["accommodationDescription"],
+					),
+				),
+			),
+			'cottage_description' => array(
+				'und' => array(
+					0 => array(
+						'value' => $data["brands"][$data["brandCode"]]["description"],
+					),
+				),
+			),
+			'cottage_description_short' => array(
+				'und' => array(
+					0 => array(
+						'value' => $data["brands"][$data["brandCode"]]["short"],
+					),
+				),
+			),
+			'cottage_description_teaser' => array(
+				'und' => array(
+					0 => array(
+						'value' => $data["brands"][$data["brandCode"]]["teaser"],
 					),
 				),
 			),
@@ -288,7 +309,7 @@ class CottageNodeManager {
 			'cottage_pricing' => array(
 				'und' => array(
 					0 => array(
-						'value' => drupal_json_encode($data["brands"]["ZZ"]["pricing"]),
+						'value' => drupal_json_encode($data["brands"][$data["brandCode"]]["pricing"]),
 					),
 				),
 			),

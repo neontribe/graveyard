@@ -39,6 +39,18 @@ function nt2_node_type_install() {
 			'field_name' => 'cottage_accommodationdescription',
 			'type' => 'text',
 		),
+		'cottage_description' => array(
+			'field_name' => 'cottage_description',
+			'type' => 'text_long',
+		),
+		'cottage_description_short' => array(
+			'field_name' => 'cottage_description_short',
+			'type' => 'text_long',
+		),
+		'cottage_description_teaser' => array(
+			'field_name' => 'cottage_description_teaser',
+			'type' => 'text_long',
+		),
 		'cottage_bedrooms' => array(
 			'field_name' => 'cottage_bedrooms',
 			'type' => 'number_integer',
