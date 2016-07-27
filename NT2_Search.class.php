@@ -35,6 +35,11 @@ class NT2_Search {
       '#type' => 'checkbox',
       '#title' => t('Pets'),
     );
+
+    $form['NT2_Search_garden'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Garden'),
+    );
     
     $form['NT2_Search_submit'] = array(
       '#type' => 'submit',
@@ -52,6 +57,7 @@ class NT2_Search {
       'accommodates' => $values['NT2_Search_accomodates'],
       'location' => $values['NT2_Search_location'],
       'pets' => $values['NT2_Search_pets'],
+      'garden' => $values['NT2_Search_garden'],
     );
     
     $options = array(
@@ -65,14 +71,17 @@ class NT2_Search {
     $accom = filter_input(INPUT_GET, 'accommodates');
     $location = filter_input(INPUT_GET, 'location');
     $pets = filter_input(INPUT_GET, 'pets');
+    $garden = filter_input(INPUT_GET, 'garden');
 
     // convert the checkbox 0 or 1 to 'false' or 'true' respectively
     $pets = ($pets === 1) ? 'true' : 'false';
+    $garden = ($garden === 1) ? 'true' : 'false';
     
     $params = array(
       'accommodates' => $accom,
       'location' => $location,
       'pets' => $pets,
+      'ATTR08' => $garden,
       'fields' => 'propertyRef',
     );
     
