@@ -67,19 +67,20 @@ class NT2_Search {
     
     $api = NeontabsIO::getInstance();
     $json = $api->get('/property', $params);
+        
+    $render_array = array();
     
-    dpm($json, 'json');
-    
-    // See if you can make this back into a render array, with pre wrapper.
-    return 'foo';
-//    $render_array = array();
-//    
-//    foreach ($json['results'] as $property) {
+    foreach ($json['results'] as $property) {
 //      $node = CottageNodeManager::fetchPropertyFromAPI($property['propertyRef'], '_ZZ');
 //      $_render_array = nt2_node_type_node_render_array($node);
 //      $render_array[$property['id']] = $_render_array;
-//    }
-//    
-//    return $render_array;
+      $render_array[$property['propertyRef']] = array(
+        '#markup' => $property['propertyRef'],
+        '#prefix' => '<div>',
+        '#suffix' => '</div>',
+      );
+    }
+    
+    return $render_array;
   }
 }
