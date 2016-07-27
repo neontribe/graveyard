@@ -1,0 +1,13 @@
+name = NT2 Search
+description = The API search for NT2
+core = 7.x
+package = nt2
+
+; php = 
+; version =
+dependencies[] = nt2_node_type
+dependencies[] = neontabs_io
+
+files[] = NT2_Search.class.php
+
+; configure = 
