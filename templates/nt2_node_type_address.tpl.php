@@ -10,5 +10,6 @@
   <?php echo isset($addr1) ? $addr1 . '</br>' : ''; ?>
   <?php echo isset($addr2) ? $addr2 . '</br>' : ''; ?>
   <?php echo isset($county) ? $county . '</br>' : ''; ?>
+  <?php echo isset($city) ? $city . '</br>' : ''; ?>
   <?php echo isset($postcode) ? $postcode . '</br>' : ''; ?>
 </div>
