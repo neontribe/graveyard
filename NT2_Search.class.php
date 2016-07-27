@@ -70,6 +70,8 @@ class NT2_Search {
     $api = NeontabsIO::getInstance();
     $json = $api->get('/property', $params);
     dpm($json, 'json');
+    
+    // See if you can make this back into a render array, with pre wrapper.
     return $json;
 //    $render_array = array();
 //    
