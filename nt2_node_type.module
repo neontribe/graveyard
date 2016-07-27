@@ -123,8 +123,13 @@ function nt2_node_type_theme() {
   );
 }
 
-function nt2_node_type_nt2_node_type_address_preprocess(&$vars) {
+function nt2_node_type_preprocess_nt2_node_type_address(&$vars) {
+  dpm($vars, '$vars before');
   if (isset($vars['address'])) {
-    // Here I could mess with the variable if I wanted.
+    $vars['addr1'] = 'aaaa';
+    $vars['addr2'] = 'bbbb';
+    $vars['county'] = 'cccc';
+    $vars['postcode'] = 'dddd';
   }
+  dpm($vars, '$vars after');
 }
