@@ -73,6 +73,7 @@ function nt2_node_type_node_render_array(&$node) {
     $index = 0;
     foreach ($images as $image) {
         list($alt, $title, $url) = explode("\n", $image['value']);
+
         $_image = array(
             '#prefix' => '<li>',
             '#suffix' => '</li>',
@@ -100,6 +101,75 @@ function nt2_node_type_node_render_array(&$node) {
     dpm($node, 'Node');
 
     return $render;
+}
+
+function nt2_node_type_create_and_populate_vocabs() {
+    
+    $vocab_definition_cottage_tags = (object) array(
+        'name' => 'Cottage Tag Vocab',
+        'machine_name' => variable_get("COTTAGE_VOCAB_MACHINE_NAME"),
+        'description' => 'A vocabulary used to store cottage tags.',
+        'weight' => 0,
+    );
+
+    $vocab_definition_cottage_location = (object) array(
+        'name' => 'Cottage Location Vocab',
+        'machine_name' => variable_get("COTTAGE_LOC_VOCAB_MACHINE_NAME"),
+        'description' => 'A vocabulary used to store cottage location information.',
+        'weight' => 0,
+    );
+
+    $vocab_tag_fields = array(  
+        'tag_code' => array(
+          'field_name' => 'tag_code',
+          'data_key_name' => 'code',
+          'type' => 'text',
+        ),
+        'tag_brand' => array(
+          'field_name' => 'tag_brand',
+          'data_key_name' => 'brand',
+          'type' => 'text',
+        ),
+    );
+
+    $vocab_loc_fields = array(  
+        'loc_code' => array(
+          'field_name' => 'loc_code',
+          'data_key_name' => 'code',
+          'type' => 'text',
+        ),
+        'loc_name' => array(
+          'field_name' => 'loc_name',
+          'data_key_name' => 'name',
+          'type' => 'text',
+        ),
+        'loc_brand' => array(
+          'field_name' => 'loc_brand',
+          'data_key_name' => 'brand',
+          'type' => 'text',
+        ),
+        // 'loc_coordinates' => array(
+        //   'field_name' => 'loc_coordinates',
+        //   'data_key_name' => 'coordinates',
+        //   'type' => 'text',
+        // ),
+    );
+
+    #Create the cottage tag vocabulary. (TODO: generalise this function to allow it to create any Vocab we need)
+    $cottage_vocab_tag_creation_status = CottageVocabManager::createCottageTagVocabulary(variable_get("COTTAGE_VOCAB_MACHINE_NAME"), $vocab_definition_cottage_tags, $vocab_tag_fields);
+
+    #Populate the vocabulary from the API (TODO: generalise this too)
+    $data = NeontabsIO::getInstance()->get("/");
+
+    CottageVocabManager::create_vocabulary_from_attrib_list(variable_get("COTTAGE_VOCAB_MACHINE_NAME"), $data["constants"]["attributes"], $vocab_tag_fields, "group", "label");
+
+
+    ## Create and populate cottage location vocabulary.
+    $cottage_vocab_location_creation_status = CottageVocabManager::createCottageTagVocabulary(variable_get("COTTAGE_LOC_VOCAB_MACHINE_NAME"), $vocab_definition_cottage_location, $vocab_loc_fields);
+    
+    $data = NeontabsIO::getInstance()->get("/utility/area");
+
+    CottageVocabManager::create_vocabulary_from_attrib_list(variable_get("COTTAGE_LOC_VOCAB_MACHINE_NAME"), $data, $vocab_loc_fields, 'code', "locations");
 }
 
 function nt2_node_type_node_view($node, $view_mode, $langcode) {
