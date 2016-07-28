@@ -4,8 +4,6 @@ core = 7.x
 
 dependencies[] = field
 dependencies[] = entity
-dependencies[] = neontabs_io
-; dependencies[] = neontabs ; We should not need this, it's menus and update hooks?
 dependencies[] = addressfield
 dependencies[] = imageapi_optimize
 dependencies[] = imagecache_external

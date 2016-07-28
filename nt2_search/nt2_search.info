@@ -6,7 +6,6 @@ package = nt2
 ; php = 
 ; version =
 dependencies[] = nt2_node_type
-dependencies[] = neontabs_io
 
 files[] = NT2_Search.class.php
 
