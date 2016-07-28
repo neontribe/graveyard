@@ -1,0 +1,97 @@
+<?php
+
+function nt2_search_menu() {
+  $items = array();
+  
+  $items['nt2_search'] = array(
+    'title' => t('NT2 Search'),
+    'type' => MENU_CALLBACK,
+    'access callback' => TRUE,
+    'page callback' => 'nt2_search_page',
+  );
+
+  $items['admin/config/nt2/terms'] = array(
+    'title' => 'Search',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('nt2_search_admin_form'),
+    'access arguments' => array('access administration pages'),
+    'file' => 'nt2_search.admin.inc',
+  );
+
+  return $items;
+}
+
+function nt2_search_page() {
+  /* TODO
+   * The below conditional prevents ::page() being called twice when a form is submitted on the search results page, however, it achieves this by using the variable $_SERVER, which Drupal abstracts away, so should be avoided. Furthermore, an edge-case is if the form being submitted from the results page submits to the same page with a GET request; in this scenario the bug would still occur.
+   *
+   * Ideally, this problem may be fixed cleanly with Drupal, by preventing ::page() from being performed in any scenario other than Drupal internally redirecting to it, or similar.
+   */
+  if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    return NT2_Search::page();
+  }
+  return array();
+}
+
+/**
+ * Define all blocks provided by the module.
+ *
+ * @return
+ *   An associative array whose keys define the delta for each block and whose
+ *   values contain the block descriptions. Each block description is itself an
+ *   associative array, with the following key-value pairs:
+ *   - 'info': (required)
+ *   - 'cache': (optional)
+ *   - 'properties': (optional)
+ *   - 'weight': (optional)
+ *   - 'status': (optional)
+ *   - 'region': (optional)
+ *   - 'visibility': (optional)
+ *   - 'pages': (optional)
+ */
+function nt2_search_block_info() {
+  $blocks = array();
+  
+  $blocks['nt2_q_search'] = array(
+    'info' => t('NT2: Quick search form'),
+    'cache' => DRUPAL_NO_CACHE,
+    'region' => 'sidebar_first',
+    'status' => 1, // enabled
+  );
+
+  return $blocks;
+}
+
+function nt2_search_block_view($delta) {
+  $block = array();
+  
+  if ($delta == 'nt2_q_search') {
+    $block['subject'] = t('Quick Search');
+    $block['content'] = drupal_get_form('nt2_search_quick_form');
+  }
+  elseif ($delta == 'nt2_a_search') {
+    $block['subject'] = t('Advanced Search');
+    $block['content'] = drupal_get_form('nt2_search_advanced_form');
+  }
+  
+  return $block;
+}
+
+function nt2_search_quick_form() {
+  return NT2_Search::quickSearchForm();
+}
+
+function nt2_search_quick_form_validate($form, &$form_state) {
+  // Do valdsation;
+  dpm(__METHOD__);
+  // form_set_error('NT2_Search_location', 'Example error');
+}
+
+function nt2_search_quick_form_submit($form, &$form_state) {
+  // Do submit.
+  NT2_Search::quickSearchFormSubmit($form, $form_state);
+}
+
+function nt2_search_advanced_form() {
+  return array();
+}
