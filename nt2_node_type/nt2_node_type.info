@@ -1,4 +1,4 @@
-name = nt2_node_type
+name = NT2 Node Type
 description = A wrapper for cottages
 core = 7.x
 
@@ -7,9 +7,7 @@ dependencies[] = entity
 dependencies[] = addressfield
 dependencies[] = imageapi_optimize
 dependencies[] = imagecache_external
-
-; We'll leave this in place while we are developing, but it needs go.
-dependencies[] = devel
+dependencies[] = nt2
 
 files[] = CottageNodeManager.class.php
 files[] = CottageVocabManager.class.php
