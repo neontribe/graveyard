@@ -1,0 +1,13 @@
+<?php
+
+function nt2_menu() {
+  $items = array();
+
+  $items['admin/config/nt2'] = array(
+    'title' => 'Neontabs II',
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('access administration pages'),
+  );
+
+  return $items;
+}

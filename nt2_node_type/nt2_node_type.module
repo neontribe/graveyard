@@ -27,15 +27,7 @@ function nt2_node_type_menu() {
     'type' => MENU_NORMAL_ITEM
   );
 
-  $items['admin/config/nt2_node_type_test'] = array(
-    'title' => 'NT2 Entity',
-    'position' => 'right',
-    'weight' => -25,
-    'page callback' => 'system_admin_menu_block_page',
-    'access arguments' => array('access administration pages'),
-  );
-
-  $items['admin/config/nt2_node_type_test/entity'] = array(
+  $items['admin/config/nt2/entity'] = array(
     'title' => 'NT2 Entity',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('nt2_node_type_admin_form'),
