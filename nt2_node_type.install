@@ -97,6 +97,19 @@ function nt2_node_type_install() {
 				),
 			),
 		),
+		'cottage_location_reference' => array(
+			'field_name' => 'cottage_location_reference',
+			'type' => 'taxonomy_term_reference',
+			'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+			'settings' => array(
+				'allowed_values' => array(
+					array(	
+						'vocabulary' => variable_get("COTTAGE_LOC_VOCAB_MACHINE_NAME"),
+						'parent' => 0,
+					),
+				),
+			),
+		),
 		'cottage_fieldaddress' => array(	
 			'active' => 1,
 		    'cardinality' => 1,

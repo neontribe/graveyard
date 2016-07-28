@@ -128,17 +128,21 @@ class CottageNodeManager {
 	* Takes an array of data (the data returned by the API for a property request) as input and returns an array
 	* which is in the correct format to be saved as an instance of the custom cottage node_type.
 	*/
-	public static function parseAPIPropertyReturnData($machine_name, $data) {
+	public static function parseAPIPropertyReturnData($machine_name = array("tag" => "", "location" => ""), $data) {
 
 		#Find which tags to retain
 		$tagKeysToKeep = array();
 		foreach ($data["attributes"] as $key => $value) {
 			if($value) {
 				$tagKeysToKeep[] = array(
-					'tid' => CottageVocabManager::get_term_from_name($machine_name, $key),
+					'tid' => CottageVocabManager::get_term_from_name($machine_name["tag"], $key),
 				);
 			}
 		};
+
+		$locationKey[] = array(
+			'tid' => CottageVocabManager::get_term_from_name($machine_name["location"], $data["location"]["code"]),
+		);
 
 		$address = array(
 			'thoroughfare' => $data["address"]["addr1"],
@@ -159,8 +163,6 @@ class CottageNodeManager {
 		);
 
 		$images = self::parsePropertyValueArray($data["images"], array('alt', 'title', 'url'));
-		
-		dpm($data);
 
 
 		$return_data = array(
@@ -297,6 +299,9 @@ class CottageNodeManager {
 			),
 			'cottage_term_reference' => array(
 				'und' => $tagKeysToKeep,
+			),
+			'cottage_location_reference' => array(
+				'und' => $locationKey,
 			),
 			'cottage_fieldaddress' => array(
 				'und' => array(

@@ -95,7 +95,10 @@ function nt2_node_type_admin_form_submit($form, &$form_state) {
   	$api_response = CottageNodeManager::fetchPropertyFromAPI($propref, "_ZZ");
 
   	#Parse the returned data.
-  	$parsed_data = CottageNodeManager::parseAPIPropertyReturnData(variable_get("COTTAGE_VOCAB_MACHINE_NAME"), $api_response);
+  	$parsed_data = CottageNodeManager::parseAPIPropertyReturnData(array(
+      "tag" => variable_get("COTTAGE_VOCAB_MACHINE_NAME"),
+      "location" => variable_get("COTTAGE_LOC_VOCAB_MACHINE_NAME"),
+      ), $api_response);
 
   	#Create a test node reference.
   	$reference = CottageNodeManager::setPropertyReference($propref, variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"), $parsed_data);
