@@ -7,6 +7,8 @@ function nt2_menu() {
     'title' => 'Neontabs II',
     'page callback' => 'system_admin_menu_block_page',
     'access arguments' => array('access administration pages'),
+    'position' => 'right',
+    'weight' => -999,
   );
 
   return $items;

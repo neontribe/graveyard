@@ -9,18 +9,6 @@ function nt2_node_type_admin_form() {
   	'#description' => t('If a prop ref is entered here it will trigger an import/refresh on the propref.'),
   );
 
-  $form['reload_tax_tag'] = array(
-    '#type' => 'submit',
-    '#value' => 'Reload Tags',
-    '#submit' => array('nt2_entity_admin_form_reload_tax_tag'),
-  );
-
-  $form['reload_tax_loc'] = array(
-    '#type' => 'submit',
-    '#value' => 'Reload Locations',
-    '#submit' => array('nt2_entity_admin_form_reload_tax_loc')
-  );
-
   $form['submit'] = array(
   	'#type' => 'submit',
   	'#value' => 'Save'
@@ -101,10 +89,10 @@ function nt2_node_type_admin_form_submit($form, &$form_state) {
       ), $api_response);
 
   	#Create a test node reference.
-  	$reference = CottageNodeManager::setPropertyReference($propref, variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"), $parsed_data);
+  	$reference = CottageNodeManager::createNode($propref, variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"), $parsed_data);
 
-  	#Save the node reference.
-  	CottageNodeManager::savePropertyReference($reference);
+    #Save the node reference.
+  	CottageNodeManager::saveNode($reference);
 
   	// Now unset the value so it doesn't get saved below.
   	unset($form_state['values']['nt2_node_type_propref']);
