@@ -9,7 +9,15 @@ function nt2_search_menu() {
     'access callback' => TRUE,
     'page callback' => 'nt2_search_page',
   );
-  
+
+  $items['admin/config/nt2/terms'] = array(
+    'title' => 'Search',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('nt2_search_admin_form'),
+    'access arguments' => array('access administration pages'),
+    'file' => 'nt2_search.admin.inc',
+  );
+
   return $items;
 }
 

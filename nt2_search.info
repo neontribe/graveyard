@@ -10,4 +10,4 @@ dependencies[] = neontabs_io
 
 files[] = NT2_Search.class.php
 
-; configure = 
+configure = admin/config/nt2/terms
