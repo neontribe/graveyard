@@ -5,10 +5,6 @@
  * Rest client class with various TABS related helpers attached.
  */
 
-if (!function_exists('neontabs_hmac_encode')) {
-  require_once __DIR__ . '/../neontabs_hmac/neontabs_hmac.module';
-}
-
 /**
  * Rest client to TABS API.
  */
@@ -150,7 +146,7 @@ class NeontabsIO {
       }
     }
 
-    $restdata = neontabs_hmac_encode(array('data' => json_encode($params)), $secret, $pubkey);
+    $restdata = self::hmacEncode(array('data' => json_encode($params)), $secret, $pubkey);
     $querydata = array();
 
     $this->debugApiCall(__METHOD__, $method, $path, $restdata, WATCHDOG_INFO);
@@ -170,7 +166,7 @@ class NeontabsIO {
         break;
 
       case 'GET':
-        $querydata = neontabs_hmac_encode(self::filterParams($params, TRUE), $secret, $pubkey);
+        $querydata = self::hmacEncode(self::filterParams($params, TRUE), $secret, $pubkey);
         break;
 
       case 'POST':
@@ -438,6 +434,74 @@ class NeontabsIO {
       }
     }
     return $data;
+  }
+
+/**
+   * Encode function.
+   *
+   * @param array $params
+   *   Parameters to encode.
+   * @param string $secret
+   *   Secret key.
+   * @param string $key
+   *   Key.
+   *
+   * @return array
+   *   Parameters.
+   */
+  public static function hmacEncode($params, $secret = FALSE, $key = FALSE) {
+
+    if (!$secret) {
+      $secret = variable_get('tabs_io_config_api_secret');
+    }
+    if (!$key) {
+      $key = variable_get('tabs_io_config_api_api_key');
+    }
+
+    $params['APIKEY'] = $key;
+    $params['APISECRET'] = $secret;
+    ksort($params);
+    $params = array_map('strval', $params);
+    $hash = self::hmacHash(json_encode($params));
+    $params['hash'] = $hash;
+    unset($params['APISECRET']);
+    return $params;
+  }
+
+  /**
+   * Check function.
+   *
+   * @param string $params
+   *   Parameters to check.
+   * @param string $secret
+   *   Secret key.
+   *
+   * @return bool
+   *   Passed or failed.
+   */
+  public static function hmacCheck($params, $secret) {
+
+    $hash = $params['hash'];
+    unset($params['hash']);
+    $params['APISECRET'] = $secret;
+    ksort($params);
+    $params = array_map('strval', $params);
+    $_hash = self::hmacHash(json_encode($params));
+    return ($_hash == $hash);
+  }
+
+  /**
+   * Hash function.
+   *
+   * @param array $data
+   *   Data.
+   *
+   * @return string
+   *   The hashed data.
+   */
+  public static function hmacHash($data) {
+
+    return hash('SHA256', $data, FALSE);
   }
 
 }
