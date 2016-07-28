@@ -27,11 +27,11 @@ We'll re-assess here, we have co-ordinates, brands, address to consider
   * ```drupal_name="nt2_test"``` (can be any appropriate name)
   * ```drush dl drupal-7.40 --drupal-project-rename=$drupal_name```
 1. [Get access to neontabs then clone into /var/www/html/$drupal_name/sites/all/modules/neontabs](https://bitbucket.org/neontabs/neontabs)
-1. [Clone this repo into your modules folder](https://github.com/ob6160/nt2_entity)
+1. [Clone this repo into your modules folder](https://github.com/Neontabs/nt2)
 1. Create an empty database for the drupal install in mysql
 1. Carry out drupal install steps @ `http://localhost/$drupal_name`
 1. Run the following commands to set the required environment variables:
   * ```drush vset tabs_io_config_api_base_url http://zz.api.carltonsoftware.co.uk```
   * ```drush vset tabs_io_config_api_secret $secret```
   * ```drush vset tabs_io_config_api_api_key $other_secret```
-1. ```cd /var/www/html/$drupal_name/ && drush en nt2_node_type```
+1. ```cd /var/www/html/$drupal_name/ && drush en nt2_node_type && drush en nt2_search```
