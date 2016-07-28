@@ -5,7 +5,8 @@ package = nt2
 
 ; php = 
 ; version =
-dependencies[] = nt2_node_type
+
+dependencies[] = nt2
 
 files[] = NT2_Search.class.php
 
