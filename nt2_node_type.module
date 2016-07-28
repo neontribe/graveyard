@@ -75,7 +75,7 @@ function nt2_node_type_node_render_array(&$node) {
       '#name' => $node->cottage_name["und"][0]["value"],
     );
 
-    $render_array['cottage_info_definition'] = $cottage_info_definition;
+    $render_array['definition'] = $cottage_info_definition;
 
     $render_array['cottage_name'] = array(
         '#type' => 'markup',
@@ -175,10 +175,10 @@ function nt2_node_type_theme() {
     ),
     'nt2_node_type_info' => array(
       'variables' => array(
-        '#title' => NULL,
-        '#reference' => NULL,
-        '#slug' => NULL,
-        '#name' => NULL,
+        'title' => NULL,
+        'reference' => NULL,
+        'slug' => NULL,
+        'name' => NULL,
       ),
       'template' => 'templates/nt2_node_type_info'
     )
