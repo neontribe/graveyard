@@ -46,7 +46,9 @@ function nt2_entity_admin_form_load_all_prop() {
 
   #Get page count
   $firstPage = NeontabsIO::getInstance()->get("/property", array("page" => 1, "pageSize" => 1));
-  dpm($firstPage);
+  $search_instance_id = $firstPage["searchId"];
+
+
   $totalResults = $firstPage["totalResults"];
 
   $batch = array(
@@ -66,16 +68,16 @@ function nt2_entity_admin_form_load_all_prop() {
   $pages = ceil($totalResults / $per_page);
 
   for($page_counter = 1; $page_counter < $pages; $page_counter++) {
-    $batch["operations"][] = array("return_function_test", array($page_counter, $per_page)); 
+    $batch["operations"][] = array("nt2_entity_admin_batch_callback", array($page_counter, $per_page, $search_instance_id)); 
   }
 
   batch_set($batch);
 
-  batch_process('node/1');
+  batch_process('/');
 }
 
-function return_function_test($page_counter, $per_page, &$context) {
-  $data = NeontabsIO::getInstance()->get("/property", array("page" => $page_counter, "pageSize" => $per_page));
+function nt2_entity_admin_batch_callback($page_counter, $per_page, $search_instance_id, &$context) {
+  $data = NeontabsIO::getInstance()->get("/property", array("page" => $page_counter, "pageSize" => $per_page, "searchId" => $search_instance_id));
   foreach ($data["results"] as $result) {
     $propref = $result["propertyRef"];
 
@@ -149,7 +151,7 @@ function nt2_entity_admin_form_reload_tax_loc() {
 
 
   #Update the cottage location vocabulary.
-  $data = NeontabsIO::getInstance()->get("/utility/area");
+  $data = NeontabsIO::getInstance()->get("utility/area");
 
   $result = CottageVocabManager::create_vocabulary_from_attrib_list(variable_get("COTTAGE_LOC_VOCAB_MACHINE_NAME"), $data, $vocab_loc_fields, 'code', "locations");  
 
