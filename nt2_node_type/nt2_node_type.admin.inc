@@ -18,15 +18,68 @@ function nt2_node_type_admin_form() {
   $form['reload_tax_loc'] = array(
     '#type' => 'submit',
     '#value' => 'Reload Locations',
-    '#submit' => array('nt2_entity_admin_form_reload_tax_loc')
+    '#submit' => array('nt2_entity_admin_form_reload_tax_loc'),
+  );
+
+  $form['load_all_prop'] = array(
+    '#type' => 'submit',
+    '#value' => 'Load all properties',
+    '#submit' => array('nt2_entity_admin_form_load_all_prop'),
   );
 
   $form['submit'] = array(
   	'#type' => 'submit',
-  	'#value' => 'Save'
+  	'#value' => 'Save',
   );
 
   return $form;
+}
+
+function nt2_entity_admin_form_load_all_prop() {
+  #Get list of properties to reload.
+
+  $per_page = 20;
+
+  $results = array(); 
+  $ops = array();
+
+  #Get page count
+  $firstPage = NeontabsIO::getInstance()->get("/property", array("page" => 1, "pageSize" => 1));
+  $totalResults = $firstPage["totalResults"];
+
+  $batch = array(
+    'operations' => array(),
+    'finished' => 'nt2_entity_admin_form_batch_load_props_finished',
+    'title' => t('Load all properties into cache.'),
+    'init_message' => t('Starting.'),
+    'progress_message' => t('Processed @current out of @total.'), #Steps of 5. 
+    'error_message' => t('Fix has encountered an error.'),
+    'file' => drupal_get_path('module', 'nt2_node_type') . '/nt2_node_type.admin.inc',
+  );
+
+  if(!isset($totalResults)) {
+    return "Cannot Fetch Total Result Count";
+  }
+
+  $pages = ceil($totalResults / $per_page);
+
+  for($page_counter = 0; $page_counter < $pages; $page_counter++) {
+    $batch["operations"][] = array("return_function_test", array($page_counter, $per_page)); 
+  }
+
+  batch_set($batch);
+
+  batch_process('node/1');
+}
+
+function return_function_test($page_counter, $per_page, &$context) {
+  $data = NeontabsIO::getInstance()->get("/property", array("page" => $page_counter, "pageSize" => $per_page));
+  
+
+}
+
+function nt2_entity_admin_form_batch_load_props_finished($success, $results, $operations) {
+ 
 }
 
 function nt2_entity_admin_form_reload_tax_tag() {

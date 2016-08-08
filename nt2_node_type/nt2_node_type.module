@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Implements hook_menu().
+ */
 function nt2_node_type_menu() {
   $items = array();
 
@@ -127,8 +130,6 @@ function nt2_node_type_node_render_array(&$node) {
     );
 
     $render_array['description'] = $description_definition;
-
-
 
     $render = array(
         'property' => $render_array,
