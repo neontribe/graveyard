@@ -1,0 +1,19 @@
+{
+  "name": "neontribe pre-commit for drupal",
+  "description": "Runs PHP lint and phpcs against change files.  Uses the drupal coding standard",
+  "homepage": "https://www.neontribe.co.uk",
+  "license": "GPL-2.0+",
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "require": {
+        "symfony/yaml": "~2.1"
+  },
+  "authors": [
+    { "name": "Toby Batch", "email": "tobias@neontribe.co.uk" }
+  ],
+  "scripts": {
+    "post-install-cmd": [
+      "bash contrib/setup.sh"
+    ]
+  }
+}
