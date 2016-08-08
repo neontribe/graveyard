@@ -10,8 +10,8 @@ class CottageNodeManager {
 		#If existing nodes exist for this property reference modify them.
 		if($result != NULL) {
 
-            dpm($result, 'Result');
-            dpm($data, 'Data');
+            #dpm($result, 'Result');
+            #dpm($data, 'Data');
 			if( is_array($data) ) {
 				foreach ($data as $key => $value) {
                     // dpm($value, $key);
@@ -19,7 +19,7 @@ class CottageNodeManager {
 				}
 			}
 
-            dpm($result, 'Updated Property');
+            #dpm($result, 'Updated Property');
 			return $result;
 
 		} else { #Else create a new node for the current property reference.
@@ -38,7 +38,7 @@ class CottageNodeManager {
 				}
 			}
 		}
-        dpm($node, 'New Property');
+        #dpm($node, 'New Property');
 
 		return $node;
 	}

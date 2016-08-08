@@ -38,13 +38,14 @@ function nt2_node_type_admin_form() {
 function nt2_entity_admin_form_load_all_prop() {
   #Get list of properties to reload.
 
-  $per_page = 20;
+  $per_page = 2;
 
   $results = array(); 
   $ops = array();
 
   #Get page count
   $firstPage = NeontabsIO::getInstance()->get("/property", array("page" => 1, "pageSize" => 1));
+  dpm($firstPage);
   $totalResults = $firstPage["totalResults"];
 
   $batch = array(
@@ -63,7 +64,7 @@ function nt2_entity_admin_form_load_all_prop() {
 
   $pages = ceil($totalResults / $per_page);
 
-  for($page_counter = 0; $page_counter < $pages; $page_counter++) {
+  for($page_counter = 1; $page_counter < $pages; $page_counter++) {
     $batch["operations"][] = array("return_function_test", array($page_counter, $per_page)); 
   }
 
@@ -74,7 +75,21 @@ function nt2_entity_admin_form_load_all_prop() {
 
 function return_function_test($page_counter, $per_page, &$context) {
   $data = NeontabsIO::getInstance()->get("/property", array("page" => $page_counter, "pageSize" => $per_page));
-  
+  foreach ($data["results"] as $result) {
+    $propref = $result["propertyRef"];
+
+    #Parse the returned data.
+    $parsed_data = CottageNodeManager::parseAPIPropertyReturnData(array(
+      "tag" => variable_get("COTTAGE_VOCAB_MACHINE_NAME"),
+      "location" => variable_get("COTTAGE_LOC_VOCAB_MACHINE_NAME"),
+      ), $result);
+
+    #Create a test node reference.
+    $reference = CottageNodeManager::setPropertyReference($propref, variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"), $parsed_data);
+
+    #Save the node reference.
+    CottageNodeManager::savePropertyReference($reference);
+  }
 
 }
 

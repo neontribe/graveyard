@@ -135,8 +135,8 @@ function nt2_node_type_node_render_array(&$node) {
         'property' => $render_array,
     );
 
-    dpm($render, 'Property Render array');
-    dpm($node, 'Node');
+    #dpm($render, 'Property Render array');
+    #dpm($node, 'Node');
 
     return $render;
 }
