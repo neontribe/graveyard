@@ -7,7 +7,7 @@ function nt2_search_menu() {
     'title' => t('NT2 Search'),
     'type' => MENU_CALLBACK,
     'access callback' => TRUE,
-    'page callback' => 'nt2_search_page',
+    'page callback' => 'nt2_search_results',
   );
 
   $items['admin/config/nt2/terms'] = array(
@@ -21,14 +21,16 @@ function nt2_search_menu() {
   return $items;
 }
 
-function nt2_search_page() {
+function nt2_search_results() {
   /* TODO
    * The below conditional prevents ::page() being called twice when a form is submitted on the search results page, however, it achieves this by using the variable $_SERVER, which Drupal abstracts away, so should be avoided. Furthermore, an edge-case is if the form being submitted from the results page submits to the same page with a GET request; in this scenario the bug would still occur.
    *
    * Ideally, this problem may be fixed cleanly with Drupal, by preventing ::page() from being performed in any scenario other than Drupal internally redirecting to it, or similar.
    */
   if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    return NT2_Search::page();
+    $data = NT2_Search::page();
+    drupal_alter('nt2_search_results', $data);
+    return $data;
   }
   return array();
 }

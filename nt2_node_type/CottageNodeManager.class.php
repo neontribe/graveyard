@@ -4,10 +4,10 @@ class CottageNodeManager {
 	/*
 	* Creates a new property reference node when given returned data from the API as a parameter: $data.
 	*/
-	public static function setPropertyReference($propref, $type_machine_name, $data = NULL) {
-		$result = self::getNode($propref);
+	public static function createNode($propref, $type_machine_name, $data = NULL) {
+    $result = self::loadNode($propref);
 
-		#If existing nodes exist for this property reference modify them.
+    #If existing nodes exist for this property reference modify them.
 		if($result != NULL) {
 
             #dpm($result, 'Result');
@@ -55,8 +55,8 @@ class CottageNodeManager {
      * @return Object
      *   The loaded object or NULL.
      */
-	public static function getNode($propref, $node_machine_name = 'cottage_entity') {
-		#Compose a new entity query which will ascertain whether node entries exist with the same reference as provided in $ref.
+	public static function loadNode($propref, $node_machine_name = 'cottage_entity') {
+    #Compose a new entity query which will ascertain whether node entries exist with the same reference as provided in $ref.
 		$query = new EntityFieldQuery();
 		$query->entityCondition('entity_type', 'node')
   			->entityCondition('bundle', $node_machine_name)
@@ -87,20 +87,18 @@ class CottageNodeManager {
 	/*
 	* Takes a node or an array of nodes as input and saves the requisite node type for each reference.
 	*/
-	public static function savePropertyReference($ref) {
-		#If there is more than one property reference loop through and individually create a node reference for each provided.
-		if(is_array($ref)) {
-			foreach ($ref as $key => $propRef) {
-				if( is_object($propRef) ) {
+	public static function saveNode($node) {
+    #If there is more than one property reference loop through and individually create a node reference for each provided.
+	if (is_array($node)) {
+      foreach ($node as $key => $propRef) {
+        if( is_object($propRef) ) {
 					node_save($propRef);
 				}
 			}
-		}
-
-		#Save a single reference.
-		if( is_object($ref) ) {
-			node_save($ref);
-		}
+		} elseif (is_object($node)) {
+			#Save a single reference.
+			node_save($node);
+    	}
 	}
 
 	/*

@@ -27,6 +27,7 @@ function nt2_node_type_admin_form() {
     '#submit' => array('nt2_entity_admin_form_load_all_prop'),
   );
 
+
   $form['submit'] = array(
   	'#type' => 'submit',
   	'#value' => 'Save',
@@ -38,7 +39,7 @@ function nt2_node_type_admin_form() {
 function nt2_entity_admin_form_load_all_prop() {
   #Get list of properties to reload.
 
-  $per_page = 2;
+  $per_page = 20;
 
   $results = array(); 
   $ops = array();
@@ -85,12 +86,11 @@ function return_function_test($page_counter, $per_page, &$context) {
       ), $result);
 
     #Create a test node reference.
-    $reference = CottageNodeManager::setPropertyReference($propref, variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"), $parsed_data);
+    $reference = CottageNodeManager::createNode($propref, variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"), $parsed_data);
 
     #Save the node reference.
-    CottageNodeManager::savePropertyReference($reference);
+    CottageNodeManager::saveNode($reference);
   }
-
 }
 
 function nt2_entity_admin_form_batch_load_props_finished($success, $results, $operations) {
@@ -116,6 +116,10 @@ function nt2_entity_admin_form_reload_tax_tag() {
   $data = NeontabsIO::getInstance()->get("/");
 
   $result = CottageVocabManager::create_vocabulary_from_attrib_list(variable_get("COTTAGE_VOCAB_MACHINE_NAME"), $data["constants"]["attributes"], $vocab_tag_fields, "group", "label");
+
+  drupal_set_message("Tag taxonomy reload status.");
+
+  drupal_goto("/");
 }
 
 function nt2_entity_admin_form_reload_tax_loc() {
@@ -147,7 +151,10 @@ function nt2_entity_admin_form_reload_tax_loc() {
   #Update the cottage location vocabulary.
   $data = NeontabsIO::getInstance()->get("/utility/area");
 
-  CottageVocabManager::create_vocabulary_from_attrib_list(variable_get("COTTAGE_LOC_VOCAB_MACHINE_NAME"), $data, $vocab_loc_fields, 'code', "locations");
+  $result = CottageVocabManager::create_vocabulary_from_attrib_list(variable_get("COTTAGE_LOC_VOCAB_MACHINE_NAME"), $data, $vocab_loc_fields, 'code', "locations");  
+
+  drupal_set_message("Location taxonomy reload status.");
+  drupal_goto("/");
 }
 
 function nt2_node_type_admin_form_submit($form, &$form_state) {
@@ -169,10 +176,10 @@ function nt2_node_type_admin_form_submit($form, &$form_state) {
       ), $api_response);
 
   	#Create a test node reference.
-  	$reference = CottageNodeManager::setPropertyReference($propref, variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"), $parsed_data);
+  	$reference = CottageNodeManager::createNode($propref, variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"), $parsed_data);
 
-  	#Save the node reference.
-  	CottageNodeManager::savePropertyReference($reference);
+    #Save the node reference.
+  	CottageNodeManager::saveNode($reference);
 
   	// Now unset the value so it doesn't get saved below.
   	unset($form_state['values']['nt2_node_type_propref']);
