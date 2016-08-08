@@ -8,6 +8,6 @@ package = nt2
 
 dependencies[] = nt2
 
-files[] = NT2_Search.class.php
+files[] = NT2Search.class.php
 
 configure = admin/config/nt2/terms
