@@ -36,9 +36,53 @@ function nt2_node_type_admin_form() {
   return $form;
 }
 
-function nt2_entity_admin_form_load_all_prop() {
-  #Get list of properties to reload.
+function nt2_entity_admin_form_load_attr_list($attrs = NULL) {
+  $batch = array(
+    'operations' => array(),
+    'finished' => 'nt2_entity_admin_form_batch_load_props_finished',
+    'title' => t('Load all properties into cache.'),
+    'init_message' => t('Starting.'),
+    'progress_message' => t('Processed @current out of @total.'), #Steps of 5. 
+    'error_message' => t('Fix has encountered an error.'),
+    'file' => drupal_get_path('module', 'nt2_node_type') . '/nt2_node_type.admin.inc',
+  );
 
+  foreach ($attrs as $attr) {
+   $batch["operations"][] = array("nt2_entity_admin_batch_list_callback", array($attr)); 
+  }
+
+
+  batch_set($batch);
+  
+  $batch =& batch_get();
+
+  $batch['progressive'] = FALSE;
+  
+  drush_backend_batch_process();
+}
+
+function nt2_entity_admin_batch_list_callback($attr, &$context) {
+  //TODO: Change from using just ZZ here to a 'vget-ed' variable
+  $attr_data = CottageNodeManager::fetchPropertyFromAPI($attr, "_ZZ");
+
+  #Parse the returned data.
+  $parsed_data = CottageNodeManager::parseAPIPropertyReturnData(array(
+    "tag" => variable_get("COTTAGE_VOCAB_MACHINE_NAME"),
+    "location" => variable_get("COTTAGE_LOC_VOCAB_MACHINE_NAME"),
+  ), $attr_data);
+
+  #Create a test node reference.
+  $reference = CottageNodeManager::createNode($propref, variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"), $parsed_data);
+
+  #Save the node reference.
+  CottageNodeManager::saveNode($reference);
+
+  #Log out the current property reference being loaded.
+  var_dump("Property: " . $attr);
+}
+
+function nt2_entity_admin_form_load_all_prop($data = NULL, $other_data = NULL, $is_backend = FALSE) {
+  #Get list of properties to reload.
   $per_page = 20;
 
   $results = array(); 
@@ -47,7 +91,6 @@ function nt2_entity_admin_form_load_all_prop() {
   #Get page count
   $firstPage = NeontabsIO::getInstance()->get("/property", array("page" => 1, "pageSize" => 1));
   $search_instance_id = $firstPage["searchId"];
-
 
   $totalResults = $firstPage["totalResults"];
 
@@ -73,11 +116,18 @@ function nt2_entity_admin_form_load_all_prop() {
 
   batch_set($batch);
 
-  batch_process('/');
+  if($is_backend) {
+    $batch =& batch_get();
+    $batch['progressive'] = FALSE;
+    drush_backend_batch_process();
+  } else {
+    batch_process("/");
+  }
 }
 
 function nt2_entity_admin_batch_callback($page_counter, $per_page, $search_instance_id, &$context) {
   $data = NeontabsIO::getInstance()->get("/property", array("page" => $page_counter, "pageSize" => $per_page, "searchId" => $search_instance_id));
+
   foreach ($data["results"] as $result) {
     $propref = $result["propertyRef"];
 

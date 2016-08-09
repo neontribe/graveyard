@@ -325,7 +325,11 @@ class CottageNodeManager {
 	* This function queries the API for a specific property reference and returns an array of the data found.
 	*/
 	public static function fetchPropertyFromAPI($propref, $suffix) {
+
 		$path = sprintf('property/' . strtoupper($propref) . $suffix);
+
+		//TODO: Uncomment this line and fix any errors this change causes.
+		##$path = sprintf('property/' . strtoupper($propref) . "_" . $suffix);
 		$data = NeontabsIO::getInstance()->get($path);
 
 		return $data;
