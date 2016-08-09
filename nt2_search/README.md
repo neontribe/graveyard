@@ -18,5 +18,7 @@
    
 ### Problems/Notes
 
- * The inital search will return a long list of property references, we nned to persist this somehow.  Cookies seem to be the best place to store these http://php.net/manual/en/function.setcookie.php
+ * The inital search will return a long list of property references, we need to persist this somehow.  Cookies seem to be the best place to store these http://php.net/manual/en/function.setcookie.php
  * When we first hit the search page we won't have a search ID in the URL
+
+Please feel free to add any other notes.
