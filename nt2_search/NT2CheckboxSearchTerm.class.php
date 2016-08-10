@@ -9,7 +9,8 @@ class NT2CheckboxSearchTerm extends NT2SearchTerm {
    * TODO: consider adding checking of this
    */
   public function __construct($code, $defaultLabel) {
-    parent::__construct([$code], $defaultLabel);
+    parent::__construct([$code]);
+    $this->defaultLabel = $defaultLabel;
   }
 
   public function injectInputs(&$form) {
@@ -38,5 +39,10 @@ class NT2CheckboxSearchTerm extends NT2SearchTerm {
     if ($formValue == '1') {
       $params[$this->getIds()[0]] = 'true';
     }
+  }
+
+  private function getLabel() {
+    // TODO: this should be configurable
+    return $this->defaultLabel;
   }
 }

@@ -12,7 +12,7 @@ class NeontabsIO {
 
   private $version = "0.1";
   static protected $ioinstance = NULL;
-  protected $forceNoCache = FALSE;
+  protected $forceNoCache = TRUE;
   protected $lastError = FALSE;
 
   /**
@@ -192,7 +192,6 @@ class NeontabsIO {
     }
 
     $url = $this->buildRequestUrl($method, $path, $querydata);
-    dpm($url, 'url');
 
     curl_setopt($curl, CURLOPT_URL, $url);
 

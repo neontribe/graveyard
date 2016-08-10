@@ -28,7 +28,7 @@ function nt2_search_page() {
    * Ideally, this problem may be fixed cleanly with Drupal, by preventing ::page() from being performed in any scenario other than Drupal internally redirecting to it, or similar.
    */
   if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $data = NT2_Search::page();
+    $data = NT2Search::page();
     drupal_alter('nt2_search_results', $data);
     return $data;
   }
