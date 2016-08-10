@@ -1,5 +1,4 @@
 <?php
-
 /**
  * ############
  * ### NOTE ###
@@ -15,12 +14,9 @@ abstract class NT2SearchTerm {
   // TODO: add proper documentation, not this strange self-invented JavaDoc-ish syntax
 
   protected $codes;
-  protected $defaultLabel;
 
-  public function __construct($codes, $defaultLabel) {
+  public function __construct($codes) {
     $this->codes = $codes;
-    $this->defaultLabel = $defaultLabel;
-
     sort($this->codes); // this allows a unique identifier to be constructed later
   }
 
@@ -54,17 +50,16 @@ abstract class NT2SearchTerm {
 
   /**
     * Inject any custom configuration inputs into the form.
-    * TODO: have a super-class implementing sensible defaults (e.g. visibility, label)
    */
   public function injectConfigurationInputs(&$form) {
-    // TODO: add label and visibility options
+    // TODO: add visibility options
   }
 
   /**
    * Handle the response of any configuration inputs.
    */
   public function handleConfigurationInputs(&$form_state) {
-    // TODO: handle label and visibiltiy options
+    // TODO: handle label and visibility options
   }
 
   // TODO: thoughtfully consider the visibility of the below methods
@@ -75,13 +70,5 @@ abstract class NT2SearchTerm {
    */
   protected function getName() {
     return join('_', $this->codes); // $codes is pre-sorted in constructor for consistent results
-  }
-
-  /**
-   * Return the label to use when rendering the form element.
-   */
-  protected function getLabel() {
-    // TODO: check settings, usnig the current method as a default value
-    return $this->defaultLabel;
   }
 }
