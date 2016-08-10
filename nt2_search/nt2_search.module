@@ -1,10 +1,18 @@
 <?php
 
+/**
+ * @file
+ * This file contains most of the hooks necessary for the module to function.
+ */
+
+/**
+ * Implements hook_menu().
+ */
 function nt2_search_menu() {
   $items = array();
-  
+
   $items['nt2_search'] = array(
-    'title' => t('NT2 Search'),
+    'title' => 'NT2 Search',
     'type' => MENU_CALLBACK,
     'access callback' => TRUE,
     'page callback' => 'nt2_search_page',
@@ -21,6 +29,9 @@ function nt2_search_menu() {
   return $items;
 }
 
+/**
+ * Implements hook_page().
+ */
 function nt2_search_page() {
   /* TODO
    * The below conditional prevents ::page() being called twice when a form is submitted on the search results page, however, it achieves this by using the variable $_SERVER, which Drupal abstracts away, so should be avoided. Furthermore, an edge-case is if the form being submitted from the results page submits to the same page with a GET request; in this scenario the bug would still occur.
@@ -36,37 +47,28 @@ function nt2_search_page() {
 }
 
 /**
- * Define all blocks provided by the module.
- *
- * @return
- *   An associative array whose keys define the delta for each block and whose
- *   values contain the block descriptions. Each block description is itself an
- *   associative array, with the following key-value pairs:
- *   - 'info': (required)
- *   - 'cache': (optional)
- *   - 'properties': (optional)
- *   - 'weight': (optional)
- *   - 'status': (optional)
- *   - 'region': (optional)
- *   - 'visibility': (optional)
- *   - 'pages': (optional)
+ * Implements hook_block_info().
  */
 function nt2_search_block_info() {
   $blocks = array();
-  
+
   $blocks['nt2_q_search'] = array(
     'info' => t('NT2: Quick search form'),
     'cache' => DRUPAL_NO_CACHE,
     'region' => 'sidebar_first',
-    'status' => 1, // enabled
+    // Status of 1 means enabled.
+    'status' => 1,
   );
 
   return $blocks;
 }
 
+/**
+ * Implements hook_block_view().
+ */
 function nt2_search_block_view($delta) {
   $block = array();
-  
+
   if ($delta == 'nt2_q_search') {
     $block['subject'] = t('Quick Search');
     $block['content'] = drupal_get_form('nt2_search_quick_form');
@@ -75,25 +77,36 @@ function nt2_search_block_view($delta) {
     $block['subject'] = t('Advanced Search');
     $block['content'] = drupal_get_form('nt2_search_advanced_form');
   }
-  
+
   return $block;
 }
 
+/**
+ * Implements hook_form().
+ */
 function nt2_search_quick_form() {
   return NT2Search::quickSearchForm();
 }
 
+/**
+ * Implements hook_form_validate().
+ */
 function nt2_search_quick_form_validate($form, &$form_state) {
-  // Do valdsation;
+  // Do validation.
   dpm(__METHOD__);
-  // form_set_error('NT2Search_location', 'Example error');
 }
 
+/**
+ * Implements hook_form_submit().
+ */
 function nt2_search_quick_form_submit($form, &$form_state) {
   // Do submit.
   NT2Search::quickSearchFormSubmit($form, $form_state);
 }
 
+/**
+ * Implements hook_form().
+ */
 function nt2_search_advanced_form() {
   return array();
 }

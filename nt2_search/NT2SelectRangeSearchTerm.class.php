@@ -1,8 +1,37 @@
 <?php
 
+/**
+ * @file
+ * Contains the NT2SelectRangeSearchTerm class.
+ */
+
+/**
+ * A search term that gets a user's choice from a range of integer values.
+ *
+ * It makes the assumption that these range integer values are quantities of
+ * an object.
+ *
+ * @todo Most use-cases required a '>' prefix. How should this be implemented?
+ */
 class NT2SelectRangeSearchTerm extends NT2SearchTerm {
+  /**
+   * The form value representation of any value being acceptable.
+   *
+   * @var string
+   */
   const ANY_VALUE = 'any';
 
+  /**
+   * The default properties of the search term used for rendering.
+   *
+   * This array is pre-populated with default-default-values (what). So. In
+   * descending order, here are the priorities of the values used:
+   * * Drupal configuration settings
+   * * Settings passed to the constructor
+   * * The settings below.
+   *
+   * @var array
+   */
   private $defaultProperties = array(
     'unspecified' => 'Any',
     'minimum' => 1,
@@ -12,16 +41,29 @@ class NT2SelectRangeSearchTerm extends NT2SearchTerm {
     'pluralNoun' => 'things',
   );
 
-  public function __construct($code, $defaultLabel, $defaultProperties) {
+  /**
+   * Initialises the class with the code it covers and sensible defaults.
+   *
+   * @param string $code
+   *   The code of the one search term covered in the API.
+   * @param string $defaultLabel
+   *   The default label specified by the API.
+   * @param array $defaultProperties
+   *   Optional rendering properties. See documentation of the private
+   *   $defaultProperties variable for more information.
+   */
+  public function __construct($code, $defaultLabel, $defaultProperties = array()) {
     parent::__construct([$code]);
 
     $this->defaultLabel = $defaultLabel;
-    // TODO: explain multiple meta-layers of defaults
     $this->defaultProperties = array_merge($this->defaultProperties, $defaultProperties);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function injectInputs(&$form) {
-    // inject an HTML select input
+    // Inject an HTML select input.
     $form[$this->getName()] = array(
       '#type' => 'select',
       '#title' => $this->getLabel(),
@@ -29,24 +71,45 @@ class NT2SelectRangeSearchTerm extends NT2SearchTerm {
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function injectParams(&$params) {
-    // extract the value from the get request
+    // Extract the value from the get request.
     $formValue = filter_input(INPUT_GET, $this->getName());
 
-    // did the user care for search results to be filtered this way
+    // Did the user care for search results to be filtered this way.
     if ($formValue !== self::ANY_VALUE) {
-      // TODO: do we need to validate?
-      $params[$this->getIds()[0]] = $formValue; // pass the form value straight through unaltered
+      // @todo Do we need to validate?
+      // Pass the form value straight through unaltered.
+      $params[$this->getIds()[0]] = $formValue;
     }
   }
 
+  /**
+   * Get the label that should be used when rendering the element.
+   *
+   * @todo This code has not yet been made configurable and  used the default.
+   * @todo Should t() be used?
+   *
+   * @return string
+   *   Returns the label to use when rendering the element.
+   */
   private function getLabel() {
-    // TODO: this should be configurable
     return $this->defaultLabel;
   }
 
+  /**
+   * Generate the options for the select element.
+   *
+   * @todo This code has not yet been made configurable and  used the default.
+   * @todo Should t() be used?
+   *
+   * @return array
+   *   Returns an array of option elements, with the key the value of the
+   *   option and the value the displayed label.
+   */
   private function generateOptions() {
-    // TODO: this should be configurable
     $unspecified = $this->defaultProperties['unspecified'];
     $minimum = $this->defaultProperties['minimum'];
     $maximum = $this->defaultProperties['maximum'];
@@ -55,13 +118,18 @@ class NT2SelectRangeSearchTerm extends NT2SearchTerm {
     $pluralNoun = $this->defaultProperties['pluralNoun'];
 
     $options = array();
-    $options[self::ANY_VALUE] = $unspecified; // TODO: should we be using t()
+    $options[self::ANY_VALUE] = $unspecified;
     for ($i = $minimum; $i <= $maximum; $i++) {
-      $suffix = ($unlimited && $i === $maximum) ? '+' : ''; // append a '+' to the last number if unlimited
-      $noun = ($i === 1) ? $singularNoun : $pluralNoun; // singular if 1, else plural
-      $built = "$i$suffix $noun"; // glue 'em all together
-      $options[$i] = $built; // stash it in the options
+      // Append a '+' to the last number if unlimited.
+      $suffix = ($unlimited && $i === $maximum) ? '+' : '';
+      // Singular if 1, else plural.
+      $noun = ($i === 1) ? $singularNoun : $pluralNoun;
+      // Glue 'em all together.
+      $built = "$i$suffix $noun";
+      // Stash it in the options.
+      $options[$i] = $built;
     }
     return $options;
   }
+
 }

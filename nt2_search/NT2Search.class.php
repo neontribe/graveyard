@@ -1,25 +1,34 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * @file
+ * Code for rendering and handling search forms, as well as displaying results.
  */
 
+/**
+ * Code for rendering and handling search forms, as well as displaying results.
+ *
+ * @todo Consistent capitalisation.
+ * @todo Make t() usage consistent.
+ */
 class NT2Search {
-  // TODO: consistent capitalisation pls
-  // TODO make t() usage consistent
-  
+
+  /**
+   * Generates and returns a quick search form.
+   *
+   * @return array
+   *   Return a drupal form represented as an associative array.
+   */
   public static function quickSearchForm() {
     $form = array();
 
-    // inject input elements
-    $searchTerms = NT2Search::getSearchTerms(true); // get all enabled search terms
-    foreach($searchTerms as &$searchTerm) {
+    // Inject input elements from all enabled search terms.
+    $searchTerms = NT2Search::getSearchTerms(TRUE);
+    foreach ($searchTerms as &$searchTerm) {
       $searchTerm->injectInputs($form);
     }
 
-    // TODO: primitive check for name clashes
+    // @todo Primitive check for name clashes.
     $form['submit'] = array(
       '#type' => 'submit',
       '#value' => t('Search'),
@@ -27,75 +36,95 @@ class NT2Search {
 
     return $form;
   }
-  
+
+  /**
+   * Passes the values from the submitted quick search form to the results page.
+   *
+   * @param array $form
+   *   The form that was just submitted.
+   * @param array $form_state
+   *   The submitted parameters, name and value.
+   */
   public static function quickSearchFormSubmit($form, &$form_state) {
     $values = $form_state['values'];
-    
-    // Drupal should check that only form values are present here
-    // TODO: test that this is the case
+
+    // Drupal should check that only form values are present here.
+    // @todo Test that this is the case.
     $options = array(
       'query' => $values,
     );
-    
-    // pass query to the search page
-    // TODO: see if this can be justified, as it likely renders Drupal's form parameter checking useless
+
+    // Pass query to the search page.
     drupal_goto('nt2_search', $options);
   }
-  
-  public static function page() {
-    // TODO: this page can be rendered even if not directed from the form - is that useful or horrific?
 
+  /**
+   * Make a search request and render the results.
+   *
+   * No parameters, as they are taken from the GET parameters.
+   *
+   * @return array
+   *   A render array representing the search results.
+   */
+  public static function page() {
     $params = array();
-    
+
     $fields = ['propertyRef'];
     $params['fields'] = implode(':', $fields);
 
-    // extract search queries
-    $searchTerms = NT2Search::getSearchTerms(true); // get all enabled search terms
-    foreach($searchTerms as &$searchTerm) {
+    // Extract search queries with all enabled search terms.
+    $searchTerms = NT2Search::getSearchTerms(TRUE);
+    foreach ($searchTerms as &$searchTerm) {
       $searchTerm->injectParams($params);
     }
-    dpm($params, 'params');
-    
+
     $api = NeontabsIO::getInstance();
     $json = $api->get('property', $params);
-        
-    $render_array = array();
-    
-    // TODO: $json['results'] will not exist in the event of the API returning an error
-    // at the moment this is not accounted for
-    dpm($json, 'json');
-    foreach ($json['results'] as $property) {
-  
-     $node = CottageNodeManager::loadNode($property['propertyRef']);
-    
-     $render_array[$property['propertyRef']] = nt2_node_type_teaser_node_render_array($node);
 
+    $render_array = array();
+
+    // @todo $json['results'] will not exist in the event of the API returning
+    // an error; at the moment this is not accounted for.
+    foreach ($json['results'] as $property) {
+      $node = CottageNodeManager::loadNode($property['propertyRef']);
+      $render_array[$property['propertyRef']] = nt2_node_type_teaser_node_render_array($node);
     }
-    
+
     return $render_array;
   }
 
-  public static function getSearchTerms($onlyEnabled = false) {
-    // TODO: handle onlyEnabled, including dependency checks, etc
+  /**
+   * Get the search terms, as deduced from the API.
+   *
+   * @todo The form type should probably need to be specified to check whether
+   * each search term is enabled.
+   *
+   * @param bool $onlyEnabled
+   *   Whether only enabled search terms should be returned. If FALSE, all
+   *   search terms are returned.
+   */
+  public static function getSearchTerms($onlyEnabled = FALSE) {
+    // @todo handle onlyEnabled, including dependency checks, etc.
 
     $searchTerms = array();
 
-    // TODO: caching, is hitting the API everytime necessary?
+    // @todo caching, is hitting the API everytime necessary?
     $api = NeontabsIO::getInstance();
-    $json = $api->get('/'); // hit up the root API - TODO: this seems to return NULL in some scenarios
-    $json = $json['constants']['searchTerms']; // we only care about searchTerms - TODO: check this doesn't have horrific performance implications
-    
-    // make porentially conflicting search term objects for present core terms
-    // TODO: this core coverage is incomplete
-    
-    // convert from flat array to key=>value, with 'code' as key
+    $json = $api->get('/');
+
+    // Keep only searchTerms; everything else is irrelevant going forwards.
+    $json = $json['constants']['searchTerms'];
+
+    // Make potentially conflicting search term objects for present core terms.
+    // @todo this core coverage is incomplete.
+
+    // Convert from flat array to key=>value, with 'code' as key.
     $coreTerms = array();
     foreach ($json['core'] as $coreTerm) {
       $coreTerms[$coreTerm['code']] = $coreTerm;
     }
 
-    // add potential terms from present and sane core terms
+    // Add potential terms from present and sane core terms.
     if (array_key_exists('accommodates', $coreTerms) && $coreTerms['accommodates']['type'] === 'integer') {
       $defaults = array(
         'unspecified' => 'Any',
@@ -120,10 +149,10 @@ class NT2Search {
       $searchTerms[] = new NT2SelectRangeSearchTerm('bedrooms', $coreTerms['bedrooms']['label'], $defaults);
     }
 
-    // TODO: explain this
+    // @todo Explain this better than just the summary in NT2GroupSearchTerm.
     if (array_key_exists('fromDate', $coreTerms) && $coreTerms['fromDate']['type'] == 'string') {
-      // TODO: work out the date SearchTerm
-      
+      // @todo Work out the date SearchTerm.
+
       if (array_key_exists('nights', $coreTerms) && $coreTerms['nights']['type'] === 'integer') {
         $nightsDefaults = array(
           'unspecified' => 'Any',
@@ -135,31 +164,35 @@ class NT2Search {
         );
         $nightsSearchTerm = new NT2SelectRangeSearchTerm('nights', $coreTerms['nights']['label'], $defaults);
 
-        // TODO: join and add as a GroupedSearchTerm
+        // @todo Join and add as a GroupSearchTerm.
       }
-      // TODO: add it on its own as well
+      // @todo Add it on its own as well.
     }
 
-    // make a basic simple input for every attribute
+    // Make a basic simple input for every attribute.
     foreach ($json['attributes'] as $attribute) {
-      // TODO: do we want /all/ of the attributes?
+      // @todo Do we want /all/ of the attributes?
       switch (strtolower($attribute['type'])) {
         case 'boolean':
           $searchTerms[] = new NT2CheckboxSearchTerm($attribute['code'], $attribute['label']);
           break;
+
         case 'number':
-          // TODO: handle the number use-case
+          // @todo Handle the number use-case.
           break;
+
         case 'text':
         case 'long text':
-          // TODO: handle the string use-case
+          // @todo Handle the string use-case.
           break;
+
         default:
-          // TODO: there are probably more types
+          // @todo Check whether there are more types.
           break;
       }
     }
 
     return $searchTerms;
   }
+
 }

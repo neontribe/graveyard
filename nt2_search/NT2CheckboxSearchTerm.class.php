@@ -1,48 +1,63 @@
 <?php
 
 /**
- * A basic SearchTerm, used to obtain a boolean value, represented by a checkbox in the form.
+ * @file
+ * Contains the NT2CheckboxSearchTerm class.
+ */
+
+/**
+ * A basic SearchTerm implementation, obtaining a boolean value from a checkbox.
  */
 class NT2CheckboxSearchTerm extends NT2SearchTerm {
+
   /**
-   * Constructor overridden as CheckboxSearchTerm only covers one code, not multiple.
-   * TODO: consider adding checking of this
+   * Initialise with the code that is covered and a default label.
+   *
+   * @param string $code
+   *   The singular code that this search term implementation covers.
+   * @param string $defaultLabel
+   *   The default label for the search term provided in the API.
    */
   public function __construct($code, $defaultLabel) {
     parent::__construct([$code]);
     $this->defaultLabel = $defaultLabel;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function injectInputs(&$form) {
-    // inject an HTML checkbox input
+    // Inject an HTML checkbox input.
     $form[$this->getName()] = array(
       '#type' => 'checkbox',
-      '#title' => $this->getLabel(), // TODO: consider passing this through t()
+      // @todo Consider passing this through t()
+      '#title' => $this->getLabel(),
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function injectParams(&$params) {
-    // extract the value from the get request
+    // Extract the value from the get request.
     $formValue = filter_input(INPUT_GET, $this->getName());
 
-    //////// OLD METHOD THAT DOES NOT OMIT ////////
-    // http checkbox to boolean string conversion
-    //$queryValue = ($formValue == '1') ? 'true' : 'false';
-
-    // inject the boolean string value into the parameter
-    // one can assume that there is only one code, owing to the constructor
-    //$params[$this->getIds()[0]] = $queryValue;
-    ///////////////////////////////////////////////
-
-    // omit from query if checkbox is unticked
-    // TODO: potentially make this optional or clever or something
+    // Omit from query if checkbox is unticked.
+    // @todo Potentially make this optional or clever or something.
     if ($formValue == '1') {
       $params[$this->getIds()[0]] = 'true';
     }
   }
 
+  /**
+   * Returns the default label, as previously provided by the API.
+   *
+   * @return string
+   *   The default label.
+   */
   private function getLabel() {
-    // TODO: this should be configurable
+    // @todo This should be configurable.
     return $this->defaultLabel;
   }
+
 }
