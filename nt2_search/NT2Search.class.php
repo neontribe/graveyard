@@ -46,6 +46,9 @@ class NT2Search {
     // TODO: this page can be rendered even if not directed from the form - is that useful or horrific?
 
     $params = array();
+    
+    $fields = ['propertyRef'];
+    $params['fields'] = implode(':', $fields);
 
     // extract search queries
     $searchTerms = NT2Search::getSearchTerms(true); // get all enabled search terms
@@ -63,14 +66,11 @@ class NT2Search {
     // at the moment this is not accounted for
     dpm($json, 'json');
     foreach ($json['results'] as $property) {
-//      $node = CottageNodeManager::fetchPropertyFromAPI($property['propertyRef'], '_ZZ');
-//      $_render_array = nt2_node_type_node_render_array($node);
-//      $render_array[$property['id']] = $_render_array;
-      $render_array[$property['propertyRef']] = array(
-        '#markup' => $property['propertyRef'],
-        '#prefix' => '<div>',
-        '#suffix' => '</div>',
-      );
+  
+     $node = CottageNodeManager::loadNode($property['propertyRef']);
+    
+     $render_array[$property['propertyRef']] = nt2_node_type_teaser_node_render_array($node);
+
     }
     
     return $render_array;
