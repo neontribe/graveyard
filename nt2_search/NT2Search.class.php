@@ -68,12 +68,14 @@ class NT2Search {
     foreach ($json['results'] as $property) {
   
      $node = CottageNodeManager::loadNode($property['propertyRef']);
-    
-     $render_array[$property['propertyRef']] = array(
-      '#theme' => 'nt2_node_type_preprocess_nt2_node_teaser',
-      '#node' => $node
-      );
-     //$render_array[$property['propertyRef']] = nt2_node_type_teaser_node_render_array($node);
+
+      $render_array[$property['propertyRef']] = node_view($node, 'teaser');
+
+//     $render_array[$property['propertyRef']] = array(
+//      '#theme' => 'nt2_node_type_preprocess_nt2_node_teaser',
+//      '#node' => $node
+//      );
+      //$render_array[$property['propertyRef']] = nt2_node_type_teaser_node_render_array($node);
 
     }
     
