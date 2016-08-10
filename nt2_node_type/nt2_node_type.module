@@ -74,9 +74,51 @@ function nt2_node_type_node_view($node, $view_mode, $langcode) {
         if ($view_mode == 'full'){
             $node_output = nt2_node_type_node_render_array($node);
             $node->content['nt2_node'] = $node_output;
+        } else if($view_mode == 'teaser') {
+            $node_output = nt2_node_type_teaser_node_render_array($node);
+            $node->content['nt2_node'] = $node_output;
         }
         return $node;
     }
+}
+
+function nt2_node_type_teaser_node_render_array(&$node) {
+  $render_array = array();
+
+  $image_highlight = $node->cottage_images['und'][0];
+  list($alt, $title, $url) = explode("\n", $image_highlight['value']);
+  
+  $_image = array(
+      '#prefix' => '<div id="teaser_image">',
+      '#suffix' => '</div>',
+      '#theme' => 'imagecache_external',
+      '#path' => $url,
+      '#style_name' => 'thumbnail',
+      '#alt' => $alt,
+      '#title' => $title,
+  );
+
+  $render_array['image_highlight'] = $_image;
+
+ 
+
+  $accommodation_definition = array(
+    '#theme' => 'nt2_node_type_accommodation',
+    '#accommodates' => $node->cottage_accomodates["und"][0]["value"],
+    '#bedrooms' => $node->cottage_bedrooms["und"][0]["value"],
+    '#pets' => $node->cottage_pets["und"][0]["value"],
+    '#changeover' => $node->cottage_changeoverday["und"][0]["value"],
+  );
+
+  $render_array['accommodation'] = $accommodation_definition;
+
+
+  $render = array(
+      'property' => $render_array,
+  );
+
+  return $render;
+
 }
 
 function nt2_node_type_node_render_array(&$node) {
@@ -194,7 +236,7 @@ function nt2_node_type_theme() {
         'name' => NULL,
       ),
       'template' => 'templates/nt2_node_type_info'
-    )
+    ),
   );
 }
 
