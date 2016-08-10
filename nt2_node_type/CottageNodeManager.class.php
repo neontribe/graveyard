@@ -169,7 +169,7 @@ class CottageNodeManager {
 			'body' => array(
 				'und' => array(
 					0 => array(
-						'value' => 'This is the body content.',
+						'value' => '',
 					),
 				),
 			),
