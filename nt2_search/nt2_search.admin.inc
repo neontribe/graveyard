@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * The admin functions for nt2 search.
@@ -6,6 +7,10 @@
 
 /**
  * Implements hook form().
+ *
+ * Provides the admin form for search settings.
+ *
+ * @todo Implement.
  */
 function nt2_search_admin_form() {
   $form = array();
@@ -20,6 +25,10 @@ function nt2_search_admin_form() {
 
 /**
  * Implements hook form_submit().
+ *
+ * Handles submission of the admin form for search settings.
+ *
+ * @todo Implement.
  */
 function nt2_search_admin_form_submit($form, &$form_state) {
   form_state_values_clean($form_state);
