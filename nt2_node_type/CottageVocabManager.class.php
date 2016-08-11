@@ -248,6 +248,8 @@ class CottageVocabManager {
 	/*
 	* Grab the TID of a specific term from the database and return the first of these.
 	*/
+
+	//TODO: Look into merging these two functions (avoid repetition)
 	public static function get_term_from_name($machine_name, $name) {
 		$tid = taxonomy_get_term_by_name($name, $machine_name);
 
