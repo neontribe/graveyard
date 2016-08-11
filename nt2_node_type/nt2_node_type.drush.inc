@@ -27,7 +27,6 @@ function nt2_node_type_drush_command() {
  * Callback for the drush-load-properties command
  */
 function drush_nt2_node_type_drush_load_properties($attrs = FALSE) {
-  require_once("NeontabsIO.class.php");
   module_load_include("inc", "nt2_node_type", "nt2_node_type.admin");
 
   var_dump("Loading properties");

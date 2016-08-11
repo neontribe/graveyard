@@ -5,6 +5,8 @@
  * Code for rendering and handling search forms, as well as displaying results.
  */
 
+use Drupal\nt2_io\uk\co\neontabs\NeontabsIO;
+
 /**
  * Code for rendering and handling search forms, as well as displaying results.
  *

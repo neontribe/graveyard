@@ -1,12 +1,13 @@
 name = NT2 Search
 description = The API search for NT2
 core = 7.x
-package = nt2
+package = NT2
 
 ; php = 
 ; version =
 
-dependencies[] = nt2
+dependencies[] = nt2_io
+dependencies[] = nt2_node_type
 
 files[] = NT2Search.class.php
 files[] = NT2SearchTerm.class.php

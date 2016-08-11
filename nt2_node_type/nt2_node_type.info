@@ -2,6 +2,7 @@ name = NT2 Node Type
 description = A wrapper for cottages
 core = 7.x
 
+dependencies[] = nt2_io
 dependencies[] = field
 dependencies[] = entity
 dependencies[] = addressfield
@@ -11,7 +12,6 @@ dependencies[] = nt2
 
 files[] = CottageNodeManager.class.php
 files[] = CottageVocabManager.class.php
-files[] = NeontabsIO.class.php
 files[] = nt2_node_type.drush.inc
 
-package = nt2
+package = NT2

@@ -1,5 +1,7 @@
 <?php
 
+use Drupal\nt2_io\uk\co\neontabs\NeontabsIO;
+
 /*
  * Implement hook_install.
  */
