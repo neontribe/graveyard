@@ -44,7 +44,7 @@ class CottageNodeManager {
 	}
 
     /**
-     * Get a single property node.
+     * Gets a single property node.
      *
      * @param string $propref
      * @param string $node_machine_name

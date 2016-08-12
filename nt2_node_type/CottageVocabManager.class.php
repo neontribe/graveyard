@@ -79,6 +79,10 @@ class CottageVocabManager {
 
  		$vocab_info = self::vocabTypeExists($machine_name);
 
+
+ 		if(!$vocab_info) {
+ 			return;
+ 		}
  		#If the term already exists update it then return.
 
  		#TODO: This is messy, should be refactored.
@@ -204,16 +208,6 @@ class CottageVocabManager {
 				self::addTermToVocabulary($machine_name, $currentTerm, $field_data, self::get_term_from_name($machine_name, $currentGroup));
 			}
 				
-
-
-
-
-
-
-
-
-
-
 			/* Checking Code
 			* Will probably be needed when the self::addTermToVocabulary function is cleaned up.
 			* It isn't needed at the moment because the ::addTermToVocab... function internally checks for duplicate entries.
@@ -225,9 +219,7 @@ class CottageVocabManager {
 			#$groupExists = self::taxonomy_term_exists($machine_name, $currentGroup);
 			#Checks done internally (kept for reference)
 			#Check if child element exists; if it doesn't then add it to the hierarchy.
-			#$labelExists = self::taxonomy_term_exists($machine_name, $currentTerm);
-			
-	
+			#$labelExists = self::taxonomy_term_exists($machine_name, $currentTerm);	
 		}
 			
 		return sizeof($api_attribs);
