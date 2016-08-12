@@ -35,11 +35,13 @@ class NT2GroupSearchTerm extends NT2SearchTerm {
    *
    * @param string[] $codes
    *   The codes that the group search term has coverage of.
+   * @param string $humanReadable
+   *   An understandable description of the search term.
    * @param NT2SearchTerm[] $childSearchTerms
    *   The child search terms that inheritance is drawn from.
    */
-  public function __construct($codes, $childSearchTerms) {
-    parent::__construct($codes);
+  public function __construct($codes, $humanReadable, $childSearchTerms) {
+    parent::__construct($codes, $humanReadable);
     $this->childSearchTerms = $childSearchTerms;
   }
 

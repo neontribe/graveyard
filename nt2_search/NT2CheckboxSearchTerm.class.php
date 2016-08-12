@@ -9,18 +9,26 @@
  * A basic SearchTerm implementation, obtaining a boolean value from a checkbox.
  */
 class NT2CheckboxSearchTerm extends NT2SearchTerm {
+  /**
+   * The default options to use when rendering and interpreting the search term.
+   *
+   * @var string
+   */
+  private $defaultOptions;
 
   /**
    * Initialise with the code that is covered and a default label.
    *
    * @param string $code
    *   The singular code that this search term implementation covers.
-   * @param string $defaultLabel
-   *   The default label for the search term provided in the API.
+   * @param string $humanName
+   *   An understandable but brief description of the search term.
    */
-  public function __construct($code, $defaultLabel) {
-    parent::__construct([$code]);
-    $this->defaultLabel = $defaultLabel;
+  public function __construct($code, $humanName) {
+    parent::__construct([$code], $humanName);
+    $this->defaultOptions = array(
+      'label' => $humanName,
+    );
   }
 
   /**
@@ -45,8 +53,22 @@ class NT2CheckboxSearchTerm extends NT2SearchTerm {
     // Omit from query if checkbox is unticked.
     // @todo Potentially make this optional or clever or something.
     if ($formValue == '1') {
-      $params[$this->getIds()[0]] = 'true';
+      $params[$this->getCodes()[0]] = 'true';
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function injectConfigurationInputs(&$form) {
+    // Nothing to do here for now.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function handleConfigurationInputs(&$form_state) {
+    // Nothing to do here for now.
   }
 
   /**
@@ -56,8 +78,7 @@ class NT2CheckboxSearchTerm extends NT2SearchTerm {
    *   The default label.
    */
   private function getLabel() {
-    // @todo This should be configurable.
-    return $this->defaultLabel;
+    return $this->getConfiguration($this->defaultOptions)['label'];
   }
 
 }

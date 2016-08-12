@@ -14,6 +14,21 @@ use Drupal\nt2_io\uk\co\neontabs\NeontabsIO;
  * @todo Make t() usage consistent.
  */
 class NT2Search {
+  /**
+   * The prefix to use when making persistant settings with variable_set().
+   *
+   * @var string
+   */
+  const CONFIGURATION_PREFIX = 'nt2_search_';
+
+  /**
+   * The different types of searches.
+   *
+   * @todo Use this everywhere.
+   *
+   * @var string[]
+   */
+  const SEARCH_TYPES = ['Quick', 'Advanced'];
 
   /**
    * Generates and returns a quick search form.
@@ -27,6 +42,10 @@ class NT2Search {
     // Inject input elements from all enabled search terms.
     $searchTerms = NT2Search::getSearchTerms(TRUE);
     foreach ($searchTerms as &$searchTerm) {
+      // @todo Replace magic constant.
+      if (!$searchTerm->isVisible('Quick')) {
+        continue;
+      }
       $searchTerm->injectInputs($form);
     }
 
@@ -77,6 +96,11 @@ class NT2Search {
     // Extract search queries with all enabled search terms.
     $searchTerms = NT2Search::getSearchTerms(TRUE);
     foreach ($searchTerms as &$searchTerm) {
+      // @todo Replace magic constant
+      // @todo Work out how this can be done for different types of searches
+      if (!$searchTerm->isVisible('Quick')) {
+        continue;
+      }
       $searchTerm->injectParams($params);
     }
 
@@ -98,14 +122,10 @@ class NT2Search {
   /**
    * Get the search terms, as deduced from the API.
    *
-   * @todo The form type should probably need to be specified to check whether
-   * each search term is enabled.
-   *
-   * @param bool $onlyEnabled
-   *   Whether only enabled search terms should be returned. If FALSE, all
-   *   search terms are returned.
+   * @return NT2SearchTerm[]
+   *   A list of potential search terms allowed by the API.
    */
-  public static function getSearchTerms($onlyEnabled = FALSE) {
+  public static function getSearchTerms() {
     // @todo handle onlyEnabled, including dependency checks, etc.
 
     $searchTerms = array();

@@ -39,6 +39,7 @@ class NT2SelectRangeSearchTerm extends NT2SearchTerm {
     'unlimited' => FALSE,
     'singularNoun' => 'thing',
     'pluralNoun' => 'things',
+    'label' => 'Things',
   );
 
   /**
@@ -46,16 +47,17 @@ class NT2SelectRangeSearchTerm extends NT2SearchTerm {
    *
    * @param string $code
    *   The code of the one search term covered in the API.
-   * @param string $defaultLabel
-   *   The default label specified by the API.
+   * @param string $humanReadable
+   *   An understandable description of the search term.
    * @param array $defaultProperties
    *   Optional rendering properties. See documentation of the private
    *   $defaultProperties variable for more information.
    */
-  public function __construct($code, $defaultLabel, $defaultProperties = array()) {
-    parent::__construct([$code]);
+  public function __construct($code, $humanReadable, $defaultProperties = array()) {
+    parent::__construct([$code], $humanReadable);
 
-    $this->defaultLabel = $defaultLabel;
+    $defaultProperties['label'] = $humanReadable;
+
     $this->defaultProperties = array_merge($this->defaultProperties, $defaultProperties);
   }
 
@@ -64,10 +66,26 @@ class NT2SelectRangeSearchTerm extends NT2SearchTerm {
    */
   public function injectInputs(&$form) {
     // Inject an HTML select input.
+
+    $configuration = $this->getConfiguration($this->defaultProperties);
+
+    $options = array();
+    $options[self::ANY_VALUE] = $configuration['unspecified'];
+    for ($i = $configuration['minimum']; $i <= $configuration['maximum']; $i++) {
+      // Append a '+' to the last number if unlimited.
+      $suffix = ($configuration['unlimited'] && $i === $configuration['maximum']) ? '+' : '';
+      // Singular if 1, else plural.
+      $noun = ($i === 1) ? $configuration['singularNoun'] : $configuration['pluralNoun'];
+      // Glue 'em all together.
+      $built = "$i$suffix $noun";
+      // Stash it in the options.
+      $options[$i] = $built;
+    }
+
     $form[$this->getName()] = array(
       '#type' => 'select',
-      '#title' => $this->getLabel(),
-      '#options' => $this->generateOptions(),
+      '#title' => $configuration['label'],
+      '#options' => $options,
     );
   }
 
@@ -82,54 +100,22 @@ class NT2SelectRangeSearchTerm extends NT2SearchTerm {
     if ($formValue !== self::ANY_VALUE) {
       // @todo Do we need to validate?
       // Pass the form value straight through unaltered.
-      $params[$this->getIds()[0]] = $formValue;
+      $params[$this->getCodes()[0]] = $formValue;
     }
   }
 
   /**
-   * Get the label that should be used when rendering the element.
-   *
-   * @todo This code has not yet been made configurable and  used the default.
-   * @todo Should t() be used?
-   *
-   * @return string
-   *   Returns the label to use when rendering the element.
+   * {@inheritdoc}
    */
-  private function getLabel() {
-    return $this->defaultLabel;
+  public function injectConfigurationInputs(&$form) {
+    // Nothing to do here for now.
   }
 
   /**
-   * Generate the options for the select element.
-   *
-   * @todo This code has not yet been made configurable and  used the default.
-   * @todo Should t() be used?
-   *
-   * @return array
-   *   Returns an array of option elements, with the key the value of the
-   *   option and the value the displayed label.
+   * {@inheritdoc}
    */
-  private function generateOptions() {
-    $unspecified = $this->defaultProperties['unspecified'];
-    $minimum = $this->defaultProperties['minimum'];
-    $maximum = $this->defaultProperties['maximum'];
-    $unlimited = $this->defaultProperties['unlimited'];
-    $singularNoun = $this->defaultProperties['singularNoun'];
-    $pluralNoun = $this->defaultProperties['pluralNoun'];
-
-    $options = array();
-    $options[self::ANY_VALUE] = $unspecified;
-    for ($i = $minimum; $i <= $maximum; $i++) {
-      // Append a '+' to the last number if unlimited.
-      $suffix = ($unlimited && $i === $maximum) ? '+' : '';
-      // Singular if 1, else plural.
-      $noun = ($i === 1) ? $singularNoun : $pluralNoun;
-      // Glue 'em all together.
-      $built = "$i$suffix $noun";
-      // Stash it in the options.
-      $options[$i] = $built;
-    }
-    return $options;
+  public function handleConfigurationInputs(&$form_state) {
+    // Nothing to do here for now.
   }
 
 }
