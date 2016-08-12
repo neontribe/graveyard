@@ -5,11 +5,11 @@ function nt2_theme_preprocess_field(&$vars) {
   if ($node = $vars['element']['#object']) {
 
     if ($node->type == 'cottage_entity') {
+
     	$item_ref =& $vars['items'];
     	$label = $vars['element']['#field_name'];
 
     	
-    
     	if($label == 'cottage_images') {
     		$image_rndarray = array(
 				'cottage-images' => array(
@@ -40,6 +40,9 @@ function nt2_theme_preprocess_field(&$vars) {
     	
     		
     	} else {
+    		
+    		$item_ref[0]['#markup'] = decode_entities($item_ref[0]['#markup']);
+
     		$item_ref = array(
 				0 => array(
 					'#prefix' => '<h2>',
