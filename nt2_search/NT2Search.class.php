@@ -67,6 +67,7 @@ class NT2Search {
    *   The submitted parameters, name and value.
    */
   public static function quickSearchFormSubmit($form, &$form_state) {
+    form_state_values_clean($form_state);
     $values = $form_state['values'];
 
     // Drupal should check that only form values are present here.

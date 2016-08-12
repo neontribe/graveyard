@@ -45,7 +45,6 @@ function nt2_search_admin_form() {
  */
 function nt2_search_admin_form_submit($form, &$form_state) {
   form_state_values_clean($form_state);
-
   $values = $form_state['values'];
 
   $searchTerms = NT2Search::getSearchTerms();
