@@ -12,6 +12,5 @@ dependencies[] = nt2
 
 files[] = CottageNodeManager.class.php
 files[] = CottageVocabManager.class.php
-files[] = nt2_node_type.drush.inc
 
 package = NT2

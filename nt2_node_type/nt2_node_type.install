@@ -1,18 +1,31 @@
 <?php
 
-use Drupal\nt2_io\uk\co\neontabs\NeontabsIO;
-
-/*
+/**
+ * @file
  * Implement hook_install.
  */
 
+use Drupal\nt2_io\uk\co\neontabs\NeontabsIO;
+
+/**
+ * Implements hook_install.
+ */
 function nt2_node_type_install() {
-  #Setup constants
+  // Setup constants.
   variable_set("COTTAGE_NODE_TYPE_MACHINE_NAME", "cottage_entity");
   variable_set("COTTAGE_VOCAB_MACHINE_NAME", "cottage_vocab");
   variable_set("COTTAGE_LOC_VOCAB_MACHINE_NAME", "cottage_loc_vocab");
 
-  #Define the cottage entity fields.
+  var_dump("===Warning you will need to add your external image server to the whitelisted hosts array===");
+
+  $whitelisted_hosts = array(
+    "zz.api.carltonsoftware.co.uk",
+    "test.co.uk",
+  );
+
+  variable_set("imagecache_external_hosts", implode("\r\n", $whitelisted_hosts));
+
+  // Define the cottage entity fields.
   $cottage_fields = array(
     'cottage_reference' => array(
       'field_name' => 'cottage_reference',
@@ -139,7 +152,6 @@ function nt2_node_type_install() {
     )
   );
 
-
   $custom_instances = array(
     'cottage_fieldaddress' => array(
       'bundle' => 'cottage_entity',
@@ -196,44 +208,50 @@ function nt2_node_type_install() {
     )
   );
 
-  #Register the node type with Drupal.
+  // Register the node type with Drupal.
   $cottage_type_creation_status = CottageNodeManager::registerCottageNodeTypeEntity(variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"));
 
   if ($cottage_type_creation_status == FALSE) {
-    // throw new Exception("Cottage type already exists.");
-    //drupal_set_message(t('Unable to create the new content_type of: `cottage_entity`.'), 'error');
+    // Throw new Exception("Cottage type already exists.");
+    // drupal_set_message(t('Unable to create the new content_type of: `cottage_entity`.'), 'error');.
     var_dump($cottage_type_creation_status);
   }
 
-  #Register the requisite fields.
+  // Register the requisite fields.
   $cottage_field_creation_status = CottageNodeManager::registerCottageFieldDefinitionInstances(variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"), $cottage_fields, $custom_instances);
 
-  #Create our custom vocabularies.
+  // Create our custom vocabularies.
   nt2_node_type_create_and_populate_vocabs();
 }
 
+/**
+ * Implements hook_disable.
+ */
 function nt2_node_type_disable() {
-  #Delete global variables.
+  // Delete global variables.
   variable_del("COTTAGE_NODE_TYPE_MACHINE_NAME");
   variable_del("COTTAGE_VOCAB_MACHINE_NAME");
-  #Delete the node_type: `COTTAGE_NODE_TYPE_MACHINE_NAME` if it currently exists in the DB.
+  // Delete the node_type: `COTTAGE_NODE_TYPE_MACHINE_NAME` if it currently exists in the DB.
   if (CottageNodeManager::nodeTypeExists(variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"))) {
-    #Delete the node_type
+    // Delete the node_type.
     node_type_delete(variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"));
   }
 
   $vocab = CottageVocabManager::vocabTypeExists(variable_get("COTTAGE_VOCAB_MACHINE_NAME"));
   if ($vocab) {
-    #Delete each individual term.
+    // Delete each individual term.
     foreach (taxonomy_get_tree($vocab->vid) as $term) {
       taxonomy_term_delete($term->tid);
     }
 
-    #Delete the vocabulary
+    // Delete the vocabulary.
     taxonomy_vocabulary_delete(variable_get("COTTAGE_VOCAB_MACHINE_NAME"));
   }
 }
 
+/**
+ * Creates and populates all vocabularies.
+ */
 function nt2_node_type_create_and_populate_vocabs() {
 
   $vocab_definition_cottage_tags = (object) array(
@@ -279,26 +297,25 @@ function nt2_node_type_create_and_populate_vocabs() {
       'data_key_name' => 'brand',
       'type' => 'text',
     ),
-      // 'loc_coordinates' => array(
-      //   'field_name' => 'loc_coordinates',
-      //   'data_key_name' => 'coordinates',
-      //   'type' => 'text',
-      // ),
+    // 'loc_coordinates' => array(
+    // 'field_name' => 'loc_coordinates',
+    // 'data_key_name' => 'coordinates',
+    // 'type' => 'text',
+    // ),.
   );
 
-  #Create the cottage tag vocabulary. (TODO: generalise this function to allow it to create any Vocab we need)
+  // Create the cottage tag vocabulary. (TODO: generalise this function to allow it to create any Vocab we need)
   $cottage_vocab_tag_creation_status = CottageVocabManager::createCottageTagVocabulary(variable_get("COTTAGE_VOCAB_MACHINE_NAME"), $vocab_definition_cottage_tags, $vocab_tag_fields);
 
-  #Populate the vocabulary from the API (TODO: generalise this too)
+  // Populate the vocabulary from the API (TODO: generalise this too)
   $data = NeontabsIO::getInstance()->get("/");
 
-  CottageVocabManager::create_vocabulary_from_attrib_list(variable_get("COTTAGE_VOCAB_MACHINE_NAME"), $data["constants"]["attributes"], $vocab_tag_fields, "group", "label");
+  CottageVocabManager::createVocabularyFromAttribList(variable_get("COTTAGE_VOCAB_MACHINE_NAME"), $data["constants"]["attributes"], $vocab_tag_fields, "group", "label");
 
-
-  ## Create and populate cottage location vocabulary.
+  // Create and populate cottage location vocabulary.
   $cottage_vocab_location_creation_status = CottageVocabManager::createCottageTagVocabulary(variable_get("COTTAGE_LOC_VOCAB_MACHINE_NAME"), $vocab_definition_cottage_location, $vocab_loc_fields);
 
   $data = NeontabsIO::getInstance()->get("/utility/area");
 
-  CottageVocabManager::create_vocabulary_from_attrib_list(variable_get("COTTAGE_LOC_VOCAB_MACHINE_NAME"), $data, $vocab_loc_fields, 'code', "locations");
+  CottageVocabManager::createVocabularyFromAttribList(variable_get("COTTAGE_LOC_VOCAB_MACHINE_NAME"), $data, $vocab_loc_fields, 'code', "locations");
 }
