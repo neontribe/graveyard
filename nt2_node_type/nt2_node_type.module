@@ -1,10 +1,13 @@
 <?php
 
-
 /**
- * Implements hook_menu().
+ * @file
+ * The module file for nt2_node_type.
  */
 
+/**
+ * Implements hook_menu.
+ */
 function nt2_node_type_menu() {
   $items = array();
 
@@ -32,7 +35,7 @@ function nt2_node_type_menu() {
     'type' => MENU_NORMAL_ITEM
   );
 
-  // Admin pages
+  // Admin pages.
   $items['admin/config/nt2/entity'] = array(
     'title' => 'Property nodes',
     'page callback' => 'drupal_get_form',
@@ -40,7 +43,6 @@ function nt2_node_type_menu() {
     'access arguments' => array('access administration pages'),
     'file' => 'nt2_node_type.admin.inc',
   );
-
 
   $items['admin/config/nt2/entity/reload_atts'] = array(
     'title' => 'Refresh Attributes',
