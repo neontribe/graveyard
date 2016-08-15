@@ -5,6 +5,8 @@
  * Hooks the nt2_node_type_admin_form.
  */
 
+use Drupal\nt2_io\uk\co\neontabs\NeontabsIO;
+
 /**
  * Implements hook admin_form.
  */

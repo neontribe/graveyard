@@ -1,4 +1,5 @@
 <?php
+namespace Drupal\nt2_io\uk\co\neontabs;
 
 /**
  * @file

@@ -5,6 +5,8 @@
  * Implement hook_install.
  */
 
+use Drupal\nt2_io\uk\co\neontabs\NeontabsIO;
+
 /**
  * Implements hook_install.
  */
