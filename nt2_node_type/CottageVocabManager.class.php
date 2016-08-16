@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file
+ * @file_example_get_managed_file
  * Contains the class CottageVocabManager.
  */
 
