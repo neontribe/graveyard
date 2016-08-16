@@ -193,23 +193,25 @@ abstract class NT2SearchTerm {
    *
    * @param string $searchType
    *   The search type to determine visibility for. (e.g. "QUICK, "ADVANCED").
+   * @param bool $shouldBeVisible
+   *   Whether the search term should be visible for the given type.
    *
    * @todo Should search type be an enum or are basic strings fine?
    */
-  public function setVisible($searchType, $visible) {
+  public function setVisible($searchType, $shouldBeVisible) {
     // A list of the search types the term is enabled for.
     $enabledFor = variable_get($this->getVariableKey('visibility'), []);
 
     // Is the search term already enabled for this search type?
-    $alreadyEnabled = in_array($searchType, $enabledFor);
+    $currentlyVisible = in_array($searchType, $enabledFor);
 
-    if (!$visible && $alreadyEnabled) {
+    if (!$shouldBeVisible && $currentlyVisible) {
       // It is enabled but should not be: remove it.
       $key = array_search($searchType, $enabledFor);
-      unset($enabledFor[$searchType]);
+      unset($enabledFor[$key]);
       $enabledFor = array_values($enabledFor);
     }
-    elseif ($visible && !$alreadyEnabled) {
+    elseif ($shouldBeVisible && !$currentlyVisible) {
       // It is not enabled but should be: add it.
       $enabledFor[] = $searchType;
     }
