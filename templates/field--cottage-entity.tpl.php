@@ -1,15 +1,14 @@
+<div class=<?php print $variables['field_name_css']; ?> >
 
-<div class="property-field">
-
-<?php 
+<?php
 
 foreach ($variables['items'] as $delta => $item) {
 	$rendered_item = drupal_render($item);
 
-	$output = '<div class="field-item-' . $delta . '">' . $rendered_item . '</div>';
+	$output = $rendered_item;
 
 	print $output;
-} 
+}
 
 ?>
 

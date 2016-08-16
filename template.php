@@ -1,67 +1,128 @@
 <?php
 
-function nt2_theme_preprocess_field(&$vars) {
-  // if ($node = menu_get_object()) {
-  if ($node = $vars['element']['#object']) {
- 	
+function render_cottage_images($image_data, $view_mode) {
+	$image_rndarray = array(
+		'cottage-images' => array(
+			'#prefix' => '<ul>',
+			'#suffix' => '</ul>',
+		),
+	);
 
+	$index = 0;
+
+	if($view_mode == 'teaser') {
+		$image_data = array($image_data[0]);
+	}
+
+	foreach ($image_data as $image) {
+		list($alt, $title, $url) = explode("\n", $image['value']);
+	
+		$_image = array(
+		 '#prefix' => '<li>',
+		 '#suffix' => '</li>',
+		 '#theme' => 'imagecache_external',
+		 '#path' => $url,
+		 '#style_name' => 'thumbnail',
+		 '#alt' => $alt,
+		 '#title' => $title,
+		);
+
+	 	$image_rndarray['cottage-images']['image' . sprintf('%02d', $index++)] = $_image;
+	}
+
+	return $image_rndarray;
+}
+
+function render_default_field($field_data) {
+	$field_data = array(
+		0 => array(
+			'#prefix' => '<h2>',
+			'#suffix' => '</h2>',
+			'data' => $field_data,
+		),
+	);
+	
+	return $field_data;
+}
+
+function _render_link($text, $url, $prefix = '<span>', $suffix = '</span>') {
+	return array(
+		'#theme' => 'link',
+		'#prefix' => $prefix,
+		'#suffix' => $suffix,
+		'#text' => $text,
+		'#options' => array(
+			'attributes' => array(
+				'title' => $text,
+			),
+			'html' => '',
+		),
+		'#path' => $url,
+	);
+}
+
+function render_cottage_name($field_data, $url, $view_mode) {
+	$cottage_name = $field_data[0]['#markup'];
+	
+	$link_prefix = '<h1 id="cottage-name">';
+	$link_suffix = '</h1>';
+
+	$title_renderarray = array(
+		0 => _render_link($cottage_name, $url, $link_prefix, $link_suffix),
+	);
+
+
+	return $title_renderarray;
+}
+
+function render_cottage_reference($field_data, $url, $view_mode) {
+
+	$cottage_reference = $field_data[0]['#markup'];
+
+	$link_prefix = '<h4 id="cottage-reference">';
+	$link_suffix = '</h4>';
+
+	$reference_renderarray = array(
+		0 => _render_link($cottage_reference, $url, $link_prefix, $link_suffix),
+	);
+
+	return $reference_renderarray;
+}
+
+
+function nt2_theme_preprocess_field(&$vars) {
+  if ($node = $vars['element']['#object']) {
     if ($node->type == 'cottage_entity') {
-  		// dpm($vars['element']['#field_translatable']);
-  		// dpm(gettype($vars['element']['#field_language']));
     	$view_mode = $vars['element']['#view_mode'];
 
     	$item_ref =& $vars['items'];
     	$label = $vars['element']['#field_name'];
 
-    	if($label == 'cottage_images') {
-    		$image_rndarray = array(
-				'cottage-images' => array(
-					'#prefix' => '<ul>',
-					'#suffix' => '</ul>',
-				),
-			);
+    	// Figure out the absolute path to the current node.
+    	$options = array('absolute' => TRUE);
+		$nid = $node->nid;
+		$url = url('node/' . $nid, $options);
+    
+    	switch($label) {
+    		case 'cottage_images':
+    			$item_ref = render_cottage_images($node->cottage_images, $view_mode);
+    			break;
+    		case 'cottage_name':
+    			$item_ref = render_cottage_name($item_ref, $url, $view_mode);
+    			break;
+    		case 'cottage_reference':
+    			$item_ref = render_cottage_reference($item_ref, $url, $view_mode);
+    			break;
+       		default:
+    			$item_ref = render_default_field($item_ref);
 
-			$index = 0;
-
-			if($view_mode == 'teaser') {
-				$node->cottage_images = array($node->cottage_images[0]);
-			}
-
-
-			foreach ($node->cottage_images as $image) {
-				list($alt, $title, $url) = explode("\n", $image['value']);
-			
-
-				$_image = array(
-				 '#prefix' => '<li>',
-				 '#suffix' => '</li>',
-				 '#theme' => 'imagecache_external',
-				 '#path' => $url,
-				 '#style_name' => 'thumbnail',
-				 '#alt' => $alt,
-				 '#title' => $title,
-				);
-
-			 	$image_rndarray['cottage-images']['image' . sprintf('%02d', $index++)] = $_image;
-			}
-
-    		$item_ref = $image_rndarray;
-    	
-    		
-    	} else {
-    		
-    		if(isset($item_ref[0]['#markup'])) {
-				$item_ref[0]['#markup'] = decode_entities($item_ref[0]['#markup']);
-    		}
-
-    		$item_ref = array(
-				0 => array(
-					'#prefix' => '<h2>',
-					'#suffix' => '</h2>',
-					'data' => $item_ref,
-				),
-			);
     	}
+
+ 	// if(isset($item_ref[0]['#markup'])) {
+		// 	$item_ref[0]['#markup'] = decode_entities($item_ref[0]['#markup']);
+ 	// 	}
+
+//  		
     }
 
   }

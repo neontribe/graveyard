@@ -6,9 +6,7 @@ core = 7.x
 base theme = 'bartik'
 
 ; Check the bartik theme for defaults of location, css, js etc
-
-
-stylesheets[all][] = css/base.css
+stylesheets[all][] = stylesheets/cottage_entity.css
 
 regions[header] = Header
 regions[help] = Help
