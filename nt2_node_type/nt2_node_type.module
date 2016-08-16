@@ -46,7 +46,7 @@ function nt2_node_type_menu() {
 
   $items['admin/config/nt2/entity/reload_atts'] = array(
     'title' => 'Refresh Attributes',
-    'page callback' => 'nt2_entity_admin_form_reload_tax_tag',
+    'page callback' => 'nt2_entity_admin_reload_attributes',
     'access arguments' => array('access administration pages'),
     'type' => MENU_LOCAL_ACTION,
     'file' => 'nt2_node_type.admin.inc',
@@ -54,7 +54,16 @@ function nt2_node_type_menu() {
 
   $items['admin/config/nt2/entity/reload_locs'] = array(
     'title' => 'Refresh locations',
-    'page callback' => 'nt2_entity_admin_form_reload_tax_loc',
+    'page callback' => 'nt2_entity_admin_reload_tax_loc',
+    'access arguments' => array('access administration pages'),
+    'type' => MENU_LOCAL_ACTION,
+    'file' => 'nt2_node_type.admin.inc',
+  );
+
+
+  $items['admin/config/nt2/entity/reload_props'] = array(
+    'title' => 'Refresh ALL Properties',
+    'page callback' => 'nt2_entity_admin_load_all_prop',
     'access arguments' => array('access administration pages'),
     'type' => MENU_LOCAL_ACTION,
     'file' => 'nt2_node_type.admin.inc',
