@@ -63,12 +63,12 @@ class NT2Search {
    *
    * @param array $form
    *   The form that was just submitted.
-   * @param array $form_state
+   * @param array $formState
    *   The submitted parameters, name and value.
    */
-  public static function quickSearchFormSubmit($form, &$form_state) {
-    form_state_values_clean($form_state);
-    $values = $form_state['values'];
+  public static function quickSearchFormSubmit($form, &$formState) {
+    form_state_values_clean($formState);
+    $values = $formState['values'];
 
     // Drupal should check that only form values are present here.
     // @todo Test that this is the case.
@@ -108,16 +108,14 @@ class NT2Search {
     $api = NeontabsIO::getInstance();
     $json = $api->get('property', $params);
 
-    $render_array = array();
+    $renderArray = array();
 
     // @todo $json['results'] will not exist in the event of the API returning
     // an error; at the moment this is not accounted for.
-    foreach ($json['results'] as $property) {
-      $node = CottageNodeManager::loadNode($property['propertyRef']);
-      $render_array[$property['propertyRef']] = nt2_node_type_teaser_node_render_array($node);
-    }
 
-    return $render_array;
+    // @todo Actually render results.
+
+    return $renderArray;
   }
 
   /**

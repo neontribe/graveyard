@@ -100,12 +100,12 @@ abstract class NT2SearchTerm {
    *
    * This ensures that changes are acted on and are persistant.
    *
-   * @param array $form_state
+   * @param array $formState
    *   The parameters passed on the submission of the admin form.
    *
    * @todo Need this be passed by reference?
    */
-  public abstract function handleConfigurationInputs(&$form_state);
+  public abstract function handleConfigurationInputs(&$formState);
 
   /**
    * Returns a list of codes that this search term provides coverage for.
@@ -228,9 +228,9 @@ abstract class NT2SearchTerm {
    *   *   The configuration as an associative array.
    */
   protected function setConfiguration($configuration) {
-    foreach ($configuration as $key => $defaultValue) {
+    foreach ($configuration as $key => $value) {
       $variableKey = $this->getVariableKey('configuration', $key);
-      variable_set($variableKey, $defaultValue);
+      variable_set($variableKey, $value);
     }
   }
 

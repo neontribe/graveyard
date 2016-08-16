@@ -1,11 +1,11 @@
 <?php
 
-use Drupal\nt2_io\uk\co\neontabs\NeontabsIO;
-
 /**
  * @file
  * Main module file for Neontabs Booking.
  */
+
+use Drupal\nt2_io\uk\co\neontabs\NeontabsIO;
 
 /**
  * Implements hook_menu.

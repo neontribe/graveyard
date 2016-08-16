@@ -28,6 +28,11 @@
  * nicer.
  */
 class NT2GroupSearchTerm extends NT2SearchTerm {
+  /**
+   * The child search terms that this group contains.
+   *
+   * @var NT2SearchTerm[]
+   */
   private $childSearchTerms;
 
   /**
@@ -68,20 +73,20 @@ class NT2GroupSearchTerm extends NT2SearchTerm {
   /**
    * {@inheritdoc}
    */
-  public function injectConfigurationInputs(&$form_state) {
+  public function injectConfigurationInputs(&$formState) {
     // Call injectConfigurationInputs() on all children.
     foreach ($childSearchTerms as $childSearchTerm) {
-      $childSearchTerm->injectConfigurationInputs($form_state);
+      $childSearchTerm->injectConfigurationInputs($formState);
     }
   }
 
   /**
    * {@inheritdoc}
    */
-  public function handleConfigurationInputs(&$form_state) {
+  public function handleConfigurationInputs(&$formState) {
     // Call handleConfigurationInputs() on all children.
     foreach ($childSearchTerms as $childSearchTerm) {
-      $childSearchTerm->handleConfigurationInputs($form_state);
+      $childSearchTerm->handleConfigurationInputs($formState);
     }
   }
 

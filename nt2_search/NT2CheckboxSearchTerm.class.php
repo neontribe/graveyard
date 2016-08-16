@@ -12,7 +12,7 @@ class NT2CheckboxSearchTerm extends NT2SearchTerm {
   /**
    * The default options to use when rendering and interpreting the search term.
    *
-   * @var string
+   * @var array
    */
   private $defaultOptions;
 
@@ -67,7 +67,7 @@ class NT2CheckboxSearchTerm extends NT2SearchTerm {
   /**
    * {@inheritdoc}
    */
-  public function handleConfigurationInputs(&$form_state) {
+  public function handleConfigurationInputs(&$formState) {
     // Nothing to do here for now.
   }
 
