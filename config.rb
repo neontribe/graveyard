@@ -1,5 +1,4 @@
 # Require any additional compass plugins here.
-
 # Set this to the root of your project when deployed:
 http_path = "/"
 css_dir = "stylesheets"
@@ -22,3 +21,5 @@ line_comments = false
 # preferred_syntax = :sass
 # and then run:
 # sass-convert -R --from scss --to sass sass scss && rm -rf sass && mv scss sass
+#
+

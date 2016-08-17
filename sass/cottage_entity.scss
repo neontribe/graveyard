@@ -1,4 +1,111 @@
-h1 {
-	
+.node-teaser {
+	border: none;
 
+}
+
+//Cottage title field block styling
+div {
+	//Teaser Specific
+	.cottage-title {
+		.cottage-reference, .cottage-name {
+			display: inline-block;
+
+			& > * {
+				margin: 0;
+			}
+		}
+	}
+
+	//Page Specific
+	.cottage_page {
+
+	}
+}
+
+//Cottage teaser block specific styling 
+div {
+	//Teaser Specific
+	.cottage-teaser {
+		border: 1px solid black;
+		padding: 10px;
+		overflow: hidden;
+		box-sizing: border-box;
+		position: relative;
+		margin: 1em 0;
+	}
+}
+
+//Cottage images field block styling
+div {
+	//Teaser Specific
+	.cottage-teaser {
+		.cottage-images {
+			float: left;
+			margin: 0;
+			margin-right: 10px;
+			position: static;
+			width: 35%;
+		}
+	}
+
+	//Page Specific
+	.cottage-page {
+
+	}
+}
+
+//Cottage description field block styling
+div {
+	//Teaser Specific
+	.cottage-teaser {
+		.cottage-description-teaser {
+			margin-top: 0;
+			font-size: 0.8em;
+			line-height: 145%;
+			overflow: hidden;
+		}
+	}
+
+	//Page Specific
+	.cottage-page {
+
+	}
+}
+
+
+//Cottage info field block styling
+div {
+	.cottage-info {
+		border: 1px solid;
+		.cottage-bedrooms, .cottage-pets {
+			// margin-right: 5px;
+			padding: 5px 10px 5px 10px;
+
+		}
+	}
+
+	//Teaser Specific
+	.cottage-teaser {
+		.cottage-info {
+			display: inline-block;
+
+			.cottage-bedrooms, .cottage-pets {
+				
+				display: inline-block;
+
+				& > * {
+					margin: 0;
+					padding-right: 10px;
+					display: inline-block;
+				}
+			}
+		}
+	}
+
+	//Page Specific
+	.cottage-page {
+		.cottage-info {
+
+		}
+	}
 }

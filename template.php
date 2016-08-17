@@ -1,13 +1,7 @@
 <?php
 
 function render_cottage_images($image_data, $view_mode) {
-	$image_rndarray = array(
-		'cottage-images' => array(
-			'#prefix' => '<ul>',
-			'#suffix' => '</ul>',
-		),
-	);
-
+	$image_rndarray = array();
 	$index = 0;
 
 	if($view_mode == 'teaser') {
@@ -16,13 +10,21 @@ function render_cottage_images($image_data, $view_mode) {
 		list($alt, $title, $url) = explode("\n", $image_data[0]['value']);
 		
 		$image_rndarray = array(
-			'image-highlight' => _render_image($title, $url, $alt),
+			'cottage-images' => _render_image($title, $url, $alt, 'medium'),
 		);
 	} else {
+
+		$image_rndarray = array(
+			'cottage-images' => array(
+				'#prefix' => '<ul>',
+				'#suffix' => '</ul>',
+			),
+		);
+
 		foreach ($image_data as $image) {
 			list($alt, $title, $url) = explode("\n", $image['value']);
 		
-			$_image = _render_image($title, $url, $alt, '<li>', '</li>');
+			$_image = _render_image($title, $url, $alt, 'medium', '<li>', '</li>');
 
 		 	$image_rndarray['cottage-images']['image' . sprintf('%02d', $index++)] = $_image;
 		}
@@ -38,7 +40,7 @@ function _render_image($title, $path, $alt, $style_name, $prefix = '<span>', $su
 	 '#suffix' => $suffix,
 	 '#theme' => 'imagecache_external',
 	 '#path' => $path,
-	 '#style_name' => 'medium',
+	 '#style_name' => $style_name,
 	 '#alt' => $alt,
 	 '#title' => $title,
 	);
@@ -60,18 +62,6 @@ function _render_link($text, $url, $prefix = '<span>', $suffix = '</span>') {
 		),
 		'#path' => $url,
 	);
-}
-
-function render_default_field($field_data) {
-	$field_data = array(
-		0 => array(
-			'#prefix' => '<h2>',
-			'#suffix' => '</h2>',
-			'data' => $field_data,
-		),
-	);
-	
-	return $field_data;
 }
 
 function render_cottage_name($field_data, $url, $view_mode) {
@@ -96,10 +86,40 @@ function render_cottage_reference($field_data, $url, $view_mode) {
 	$link_suffix = '</h4>';
 
 	$reference_renderarray = array(
-		0 => _render_link($cottage_reference, $url, $link_prefix, $link_suffix),
+		0 => _render_link('(' . $cottage_reference . ')', $url, $link_prefix, $link_suffix),
 	);
 
 	return $reference_renderarray;
+}
+
+function render_default_field($item_ref, $prefix = '<h2>', $suffix = '</h2>') {
+	$item_ref = array(
+		0 => array(
+			'#prefix' => $prefix,
+			'#suffix' => $suffix,
+			'data' => $item_ref,
+		),
+	);
+	
+	return $item_ref;
+}
+
+function render_cottage_info_field($prefix_text, $item_ref, $url, $view_mode, $prefix = NULL, $suffix = NULL) {
+	$field_data = array(
+		0 => array(
+			'#prefix' => $prefix,
+			'#suffix' => $suffix,
+			'data' => array(
+				0 => array(
+					'#prefix' => '<p>',
+					'#suffix' => '</p>',
+					'#markup' => $prefix_text,
+				),
+				1 => render_default_field($item_ref, '<em>', '</em>'),
+			),
+		)
+	);
+	return $field_data;
 }
 
 
@@ -126,6 +146,13 @@ function nt2_theme_preprocess_field(&$vars) {
     		case 'cottage_reference':
     			$item_ref = render_cottage_reference($item_ref, $url, $view_mode);
     			break;
+    		case 'cottage_bedrooms':
+    			$item_ref = render_cottage_info_field('Bedrooms', $item_ref, $url, $view_mode);
+    			break;
+    		case 'cottage_pets':
+    			$item_ref[0]['#markup'] = ($item_ref[0]['#markup']) ? 'Yes' : 'No';
+    			$item_ref = render_cottage_info_field('Pets', $item_ref, $url, $view_mode);
+    			break;
        		default:
     			$item_ref = render_default_field($item_ref);
 
@@ -134,8 +161,7 @@ function nt2_theme_preprocess_field(&$vars) {
  	// if(isset($item_ref[0]['#markup'])) {
 		// 	$item_ref[0]['#markup'] = decode_entities($item_ref[0]['#markup']);
  	// 	}
-
-//  		
+	
     }
 
   }

@@ -91,31 +91,41 @@
   <!-- <h2>Using template at <?php echo __FILE__; ?></h2> -->
 
   <div class="content clearfix"<?php print $content_attributes; ?>>
-    <?php
-      // We hide the comments and links now so that we can render them later.
-      hide($content['comments']);
-      hide($content['links']);
+    <div class="cottage-<?php print $teaser ? "teaser" : "full"; ?>">
+      <?php
+        // We hide the comments and links now so that we can render them later.
+        hide($content['comments']);
+        hide($content['links']);
+
+        // print render($content);
+      ?>
+      
+
+    
 
 
-      print render($content);
-    ?>
+      <!-- Teaser specific templating. -->
+      <?php if($teaser): ?>
+        <div class="cottage-image">
+        <?php print render($content['cottage_images']); ?>
+        </div>
+
+        <div class="cottage-title">
+          <?php print render($content['cottage_name']); ?>
+          <?php print render($content['cottage_reference']); ?>
+        </div>
+        
+        <div class="cottage-info">
+          <?php print render($content['cottage_bedrooms']); ?>
+          <?php print render($content['cottage_pets']); ?>
+        </div>
+        
+        <div class="cottage-description-teaser">
+          <?php print render($content['cottage_description_teaser']); ?>
+        </div>
+      <?php endif; ?>
+
+
+    </div>  
   </div>
-
-  <?php
-    // Remove the "Add new comment" link on the teaser page or if the comment
-    // form is being displayed on the same page.
-    if ($teaser || !empty($content['comments']['comment_form'])) {
-      unset($content['links']['comment']['#links']['comment-add']);
-    }
-    // Only display the wrapper div if there are links.
-    $links = render($content['links']);
-    if ($links):
-  ?>
-    <div class="link-wrapper">
-      <?php print $links; ?>
-    </div>
-  <?php endif; ?>
-
-  <?php print render($content['comments']); ?>
-
 </div>
