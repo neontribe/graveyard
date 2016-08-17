@@ -120,6 +120,8 @@ function nt2_search_theme() {
 /**
  * Theme the table element.
  *
+ * See https://www.drupal.org/node/1876710.
+ *
  * @todo This doesn't seem to work.
  * @todo More accurate doc comment please.
  */
