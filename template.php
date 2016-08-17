@@ -12,37 +12,38 @@ function render_cottage_images($image_data, $view_mode) {
 
 	if($view_mode == 'teaser') {
 		$image_data = array($image_data[0]);
-	}
 
-	foreach ($image_data as $image) {
-		list($alt, $title, $url) = explode("\n", $image['value']);
-	
-		$_image = array(
-		 '#prefix' => '<li>',
-		 '#suffix' => '</li>',
-		 '#theme' => 'imagecache_external',
-		 '#path' => $url,
-		 '#style_name' => 'thumbnail',
-		 '#alt' => $alt,
-		 '#title' => $title,
+		list($alt, $title, $url) = explode("\n", $image_data[0]['value']);
+		
+		$image_rndarray = array(
+			'image-highlight' => _render_image($title, $url, $alt),
 		);
+	} else {
+		foreach ($image_data as $image) {
+			list($alt, $title, $url) = explode("\n", $image['value']);
+		
+			$_image = _render_image($title, $url, $alt, '<li>', '</li>');
 
-	 	$image_rndarray['cottage-images']['image' . sprintf('%02d', $index++)] = $_image;
+		 	$image_rndarray['cottage-images']['image' . sprintf('%02d', $index++)] = $_image;
+		}
 	}
 
 	return $image_rndarray;
 }
 
-function render_default_field($field_data) {
-	$field_data = array(
-		0 => array(
-			'#prefix' => '<h2>',
-			'#suffix' => '</h2>',
-			'data' => $field_data,
-		),
+function _render_image($title, $path, $alt, $style_name, $prefix = '<span>', $suffix = '</span>') {
+
+	$_image_rndarray = array(
+	 '#prefix' => $prefix,
+	 '#suffix' => $suffix,
+	 '#theme' => 'imagecache_external',
+	 '#path' => $path,
+	 '#style_name' => 'medium',
+	 '#alt' => $alt,
+	 '#title' => $title,
 	);
-	
-	return $field_data;
+
+	return $_image_rndarray;
 }
 
 function _render_link($text, $url, $prefix = '<span>', $suffix = '</span>') {
@@ -59,6 +60,18 @@ function _render_link($text, $url, $prefix = '<span>', $suffix = '</span>') {
 		),
 		'#path' => $url,
 	);
+}
+
+function render_default_field($field_data) {
+	$field_data = array(
+		0 => array(
+			'#prefix' => '<h2>',
+			'#suffix' => '</h2>',
+			'data' => $field_data,
+		),
+	);
+	
+	return $field_data;
 }
 
 function render_cottage_name($field_data, $url, $view_mode) {
