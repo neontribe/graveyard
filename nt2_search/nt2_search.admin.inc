@@ -11,7 +11,6 @@
  * Provides the admin form for search settings.
  *
  * @todo Add per-search-term settings.
- * @todo Fix table rendering.
  */
 function nt2_search_admin_form() {
   $search_terms = NT2Search::getSearchTerms();
@@ -24,7 +23,7 @@ function nt2_search_admin_form() {
   // The custom theme allows for rendering as a table to occur.
   $visibility_table = array(
     '#tree' => 'TRUE',
-    '#theme' => 'nt2_search_admin_form_table',
+    '#theme' => 'nt2_search_admin_overview_form_table',
   );
 
   // Make a row for every search term.
@@ -105,27 +104,13 @@ function nt2_search_admin_form_submit($form, &$form_state) {
 }
 
 /**
- * Implements hook_theme().
- *
- * @todo This doesn't seem to work.
- */
-function nt2_search_theme() {
-  $theme['nt2_search_admin_form_table'] = array(
-    'render element' => 'element',
-    'file' => 'nt2_search.admin.inc',
-  );
-  return $theme;
-}
-
-/**
  * Theme the table element.
  *
  * See https://www.drupal.org/node/1876710.
  *
- * @todo This doesn't seem to work.
  * @todo More accurate doc comment please.
  */
-function theme_nt2_search_admin_form_table($variables) {
+function theme_nt2_search_admin_overview_form_table($variables) {
   $element = $variables['element'];
 
   $rows = array();

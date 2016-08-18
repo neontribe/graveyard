@@ -30,6 +30,20 @@ function nt2_search_menu() {
 }
 
 /**
+ * Implements hook_theme().
+ */
+function nt2_search_theme() {
+  $theme = array();
+
+  $theme['nt2_search_admin_overview_form_table'] = array(
+    'render element' => 'element',
+    'file' => 'nt2_search.admin.inc',
+  );
+
+  return $theme;
+}
+
+/**
  * Implements hook_page().
  */
 function nt2_search_page() {
