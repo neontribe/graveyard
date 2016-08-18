@@ -18,12 +18,29 @@ function nt2_search_menu() {
     'page callback' => 'nt2_search_page',
   );
 
-  $items['admin/config/nt2/terms'] = array(
+  $items['admin/config/nt2/search'] = array(
     'title' => 'Search',
+    'description' => 'test',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('nt2_search_admin_form'),
     'access arguments' => array('access administration pages'),
     'file' => 'nt2_search.admin.inc',
+  );
+
+  $items['admin/config/nt2/search/terms'] = array(
+    'title' => '1',
+    'page callback' => 'drupal_get_form',
+    'access arguments' => array('access administration pages'),
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => 10,
+  );
+
+  $items['admin/config/nt2/search/test'] = array(
+    'title' => '2',
+    'type' => MENU_LOCAL_TASK,
+    'page callback' => 'drupal_get_form',
+    'access arguments' => array('access administration pages'),
+    'weight' => 20,
   );
 
   return $items;
