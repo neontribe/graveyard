@@ -88,7 +88,18 @@ class NT2Search {
     // @todo $json['results'] will not exist in the event of the API returning
     // an error; at the moment this is not accounted for.
 
-    // @todo Actually render results.
+    $results = $json['results'];
+
+    foreach ($results as $result) {
+      $prop_ref = $result['propertyRef'];
+
+      // Load node from database.
+      $node = CottageNodeManager::loadNode($prop_ref);
+
+      $view = node_view($node, 'teaser');
+
+      $renderArray[$prop_ref] = $view;
+    }
 
     return $render_array;
   }
