@@ -76,17 +76,27 @@ class NT2GroupSearchTerm extends NT2SearchTerm {
   public function injectConfigurationInputs(&$formState) {
     // Call injectConfigurationInputs() on all children.
     foreach ($childSearchTerms as $childSearchTerm) {
-      $childSearchTerm->injectConfigurationInputs($formState);
+      $childFieldSet = array(
+        '#tree' => 'TRUE',
+        '#type' => 'fieldset',
+        '#title' => $childSearchTerm->getHumanName(),
+      );
+
+      $childSearchTerm->injectConfigurationInputs($childFieldSet);
+      $formState[$childSearchTerm->getName(TRUE)] = $childFieldSet;
     }
   }
 
   /**
    * {@inheritdoc}
    */
-  public function handleConfigurationInputs(&$formState) {
+  public function handleConfigurationInputs($form, $formState) {
     // Call handleConfigurationInputs() on all children.
     foreach ($childSearchTerms as $childSearchTerm) {
-      $childSearchTerm->handleConfigurationInputs($formState);
+      // @todo Will drupal make sure the field set is always there?
+      $childFieldSetForm = $form[$$childSearchTerm->getName(TRUE)];
+      $childFieldSetState = $formState[$childSearchTerm->getName(TRUE)];
+      $childSearchTerm->handleConfigurationInputs($childFieldSetForm, $childFieldSetState);
     }
   }
 

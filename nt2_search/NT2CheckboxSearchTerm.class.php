@@ -92,17 +92,12 @@ class NT2CheckboxSearchTerm extends NT2SearchTerm {
   /**
    * {@inheritdoc}
    */
-  public function handleConfigurationInputs(&$formState) {
+  public function handleConfigurationInputs($form, $formState) {
     // @todo Should some primitive form of validation be used?
-    $options = $this->defaultOptions;
+    $options = array();
 
-    if (array_key_exists('label', $formState)) {
-      $options['label'] = $formState['label'];
-    }
-
-    if (array_key_exists('omit', $formState)) {
-      $options['omit'] = $formState['omit'] === 1;
-    }
+    $options['label'] = $formState['label'];
+    $options['omit'] = $formState['omit'] === 1;
 
     $this->setConfiguration($options);
   }

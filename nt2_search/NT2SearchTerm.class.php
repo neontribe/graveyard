@@ -102,10 +102,8 @@ abstract class NT2SearchTerm {
    *
    * @param array $formState
    *   The parameters passed on the submission of the admin form.
-   *
-   * @todo Need this be passed by reference?
    */
-  public abstract function handleConfigurationInputs(&$formState);
+  public abstract function handleConfigurationInputs($form, $formState);
 
   /**
    * Returns a list of codes that this search term provides coverage for.

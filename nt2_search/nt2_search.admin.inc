@@ -125,6 +125,8 @@ function nt2_search_configuration_form() {
     $term_fieldset = array(
       '#tree' => 'TRUE',
       '#type' => 'fieldset',
+      '#collapsible' => 'TRUE',
+      '#collapsed' => 'TRUE',
       '#title' => $search_term->getHumanName(),
     );
 
@@ -168,10 +170,11 @@ function nt2_search_configuration_form_submit($form, &$form_state) {
       continue;
     }
 
+    $term_form = $form[$term_name];
     $term_values = $values[$term_name];
 
     // Let the search term handle the form response.
-    $search_term->handleConfigurationInputs($term_values);
+    $search_term->handleConfigurationInputs($term_form, $term_values);
   }
 }
 
