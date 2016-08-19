@@ -9,8 +9,6 @@
  * Implements hook form().
  *
  * Provides the admin form for search term visibility settings.
- *
- * @todo Add per-search-term settings.
  */
 function nt2_search_visibility_form() {
   $search_terms = NT2Search::getSearchTerms();
@@ -91,6 +89,11 @@ function nt2_search_visibility_form_submit($form, &$form_state) {
 
   $search_terms = NT2Search::getSearchTerms();
 
+  $claimed_codes = array();
+  foreach (NT2Search::SEARCH_TYPES as $search_type) {
+    $claimed_codes[$search_type] = array();
+  }
+
   // Fields describing visibility.
   $visibility_table = $values['visibilityTable'];
   foreach ($search_terms as $search_term) {
@@ -111,7 +114,31 @@ function nt2_search_visibility_form_submit($form, &$form_state) {
         continue;
       }
       // Is the checkbox ticked, to indicate visibility?
-      $visible = $visibility_for[$type_field_name] == '1';
+      $visible = $visibility_for[$type_field_name] === 1;
+
+      // PHP doesn't have labelled for-loops :(.
+      $can_set = TRUE;
+
+      // Check that any of the term's codes are not already in use.
+      foreach ($search_term->getCodes() as $code) {
+        if (array_key_exists($code, $claimed_codes[$search_type])) {
+          $can_set = FALSE;
+
+          $us = $search_term->getHumanName();
+          $thief = $claimed_codes[$search_type][$code]->getHumanName();
+          $msg = "$us cannot be made visible for $search_type, as $thief already uses $code.";
+          drupal_set_message($msg, 'error');
+        }
+      }
+
+      if (!$can_set) {
+        continue;
+      }
+
+      // Claim any codes the search term uses.
+      foreach ($search_term->getCodes() as $code) {
+        $claimed_codes[$search_type][$code] = $search_term;
+      }
 
       // Persist the user's wishes.
       $search_term->setVisible($search_type, $visible);
