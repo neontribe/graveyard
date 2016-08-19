@@ -14,11 +14,25 @@
  */
 abstract class NT2SearchTerm {
   /**
+   * The prefix for terms to use when saving details with variable_set().
+   *
+   * @var string
+   */
+  const CONFIGURATION_PREFIX = NT2Search::CONFIGURATION_PREFIX . 'term_';
+
+  /**
    * The codes from the search terms API this object may provide values for.
    *
    * @var string[]
    */
   protected $codes;
+
+  /**
+   * A human-readable description of the search term for the admin screen.
+   *
+   * @var string
+   */
+  protected $humanName;
 
   /**
    * Initialises with the codes that the search term provides coverage of.
@@ -29,9 +43,12 @@ abstract class NT2SearchTerm {
    * @param string[] $codes
    *   The list of codes from the search terms API that the search term
    *   provides coverage for.
+   * @param string $humanName
+   *   A human-readable description of the search term, for the admin screen.
    */
-  public function __construct($codes) {
+  public function __construct($codes, $humanName) {
     $this->codes = $codes;
+    $this->humanName = $humanName;
 
     // This allows a unique but consistent identifier to be constructed later.
     sort($this->codes);
@@ -67,48 +84,16 @@ abstract class NT2SearchTerm {
   public abstract function injectParams(&$params);
 
   /**
-   * Returns a list of codes that this search term provides coverage for.
-   *
-   * This is generally used to avoid conflicts between SearchTerms that both
-   * claim codes.
-   *
-   * @return string[]
-   *   A list of the codes, as strings in an array.
-   */
-  public function getIds() {
-    return $this->codes;
-  }
-
-  /**
-   * Determines if this search term should be visible for the given search type.
-   *
-   * @param string $searchType
-   *   The search type to check for. (e.g. "QUICK", "ADVANCED")
-   *
-   * @todo Should search type be an enum or are basic strings fine?
-   * @todo Potential check to see if the search term is visible for ANY type.
-   *
-   * @return bool
-   *   TRUE if the search term should be visible, otherwise FALSE.
-   */
-  protected function isVisible($searchType) {
-    // @todo This should check the configuration.
-    return TRUE;
-  }
-
-  /**
    * Injects any configurable options into the admin form.
    *
-   * The admin form is shown in Drupal configuration to allow the admin to
-   * configure what search terms are rendered and how they are rendered.
+   * This usually includes parameters such as a label or maybe a minimum and
+   * maximum for a ranged-input.
    *
    * @param array $form
    *   The form to inject the inputs into. Passed by reference, to allow for
    *   modification.
    */
-  public function injectConfigurationInputs(&$form) {
-    // @todo Add visibility options.
-  }
+  public abstract function injectConfigurationInputs(&$form);
 
   /**
    * Handles the configuration of the options after the admin form's submission.
@@ -117,34 +102,183 @@ abstract class NT2SearchTerm {
    *
    * @param array $formState
    *   The parameters passed on the submission of the admin form.
-   *
-   * @todo Need this be passed by reference?
    */
-  public function handleConfigurationInputs(&$formState) {
-    // @todo As a bare minimum, visibility options should be handled.
+  public abstract function handleConfigurationInputs($form, $formState);
+
+  /**
+   * Returns a list of codes that this search term provides coverage for.
+   *
+   * This is generally used to avoid conflicts between SearchTerms that both
+   * try to claim the same code.
+   *
+   * @return string[]
+   *   A list of the codes, as strings in an array.
+   */
+  public function getCodes() {
+    return $this->codes;
+  }
+
+  /**
+   * Returns a human, understandable name defined for the search term.
+   *
+   * This is usually hardcoded for core attributes or determined from label for
+   * the attributes and is displayed on the admin page when configuring the
+   * search term.
+   *
+   * @return string
+   *   The understandable name for the search term.
+   */
+  public function getHumanName() {
+    return $this->humanName;
   }
 
   /**
    * Returns an identifying name for the search term.
    *
    * This is based on the joining of the alphabetically-sorted codes this
-   * search term has coverage of.
+   * search term has coverage of, which is unique enough for a form, as no
+   * other form element will cover the same codes.
    *
-   * This should be unique for any generated search form, as it is not allowed
-   * for a search form to cover the same codes multiple times.
+   * If the search term must be identifiable in implementation too, one can
+   * specify for the class name to be prepended.
    *
-   * It would not be sufficiently unique for configuration, however, as there
-   * may be dormant alternative implementations of coverage for the same codes
-   * that, while not enabled, may still haev configuration options.
-   *
-   * @todo Will prepending the implementing class name solve the above issue?
+   * @param bool $implementationSpecific
+   *   Whether or not the implementating class name should be prepended to make
+   *   the name unique to this implementation of the codes.
    *
    * @return string
    *   A collection of code names joined with underscores, as a string.
    */
-  protected function getName() {
+  public function getName($implementationSpecific = FALSE) {
     // $codes is pre-sorted in constructor for consistent results.
-    return implode('_', $this->codes);
+    $genericName = implode('_', $this->codes);
+
+    if ($implementationSpecific) {
+      return get_class($this) . '_' . $genericName;
+    }
+
+    return $genericName;
+  }
+
+  /**
+   * Determines if this search term should be visible for the given search type.
+   *
+   * @param string $searchType
+   *   (optional) The search type to check for. (e.g. "QUICK", "ADVANCED"). If
+   *   not specified, the function will check if the search term is visible in
+   *   at least one form.
+   *
+   * @todo Should search type be an enum or are basic strings fine?
+   *
+   * @return bool
+   *   TRUE if the search term should be visible, otherwise FALSE.
+   */
+  public function isVisible($searchType = NULL) {
+    // A list of the search types the term is enabled for.
+    $enabledFor = variable_get($this->getVariableKey('visibility'), []);
+
+    if (is_null($searchType)) {
+      // Is the search term visible for at least one form?
+      return count($enabledFor) > 0;
+    }
+
+    // Is the search type set to be visible for this search term?
+    return in_array($searchType, $enabledFor);
+  }
+
+  /**
+   * Sets whether this search term should be visible for the given search type.
+   *
+   * @param string $searchType
+   *   The search type to determine visibility for. (e.g. "QUICK, "ADVANCED").
+   * @param bool $shouldBeVisible
+   *   Whether the search term should be visible for the given type.
+   *
+   * @todo Should search type be an enum or are basic strings fine?
+   */
+  public function setVisible($searchType, $shouldBeVisible) {
+    // A list of the search types the term is enabled for.
+    $enabledFor = variable_get($this->getVariableKey('visibility'), []);
+
+    // Is the search term already enabled for this search type?
+    $currentlyVisible = in_array($searchType, $enabledFor);
+
+    if (!$shouldBeVisible && $currentlyVisible) {
+      // It is enabled but should not be: remove it.
+      $key = array_search($searchType, $enabledFor);
+      unset($enabledFor[$key]);
+      $enabledFor = array_values($enabledFor);
+    }
+    elseif ($shouldBeVisible && !$currentlyVisible) {
+      // It is not enabled but should be: add it.
+      $enabledFor[] = $searchType;
+    }
+
+    // Persist our changes.
+    variable_set($this->getVariableKey('visibility'), $enabledFor);
+  }
+
+  /**
+   * Sets the given configuration options to the provided values.
+   *
+   * @todo In the future, it might be nice to have an option to reset to
+   * default values.
+   *
+   * @param array $configuration
+   *   *   The configuration as an associative array.
+   */
+  protected function setConfiguration($configuration) {
+    foreach ($configuration as $key => $value) {
+      $variableKey = $this->getVariableKey('configuration', $key);
+      variable_set($variableKey, $value);
+    }
+  }
+
+  /**
+   * Gets the configured options, with their set values else the default values.
+   *
+   * @param array $defaultConfiguration
+   *   The default configuration as an associative array.
+   *
+   * @return array
+   *   The complete configuration with specified values substituted in where
+   *   possible.
+   */
+  protected function getConfiguration($defaultConfiguration) {
+    $configuration = array();
+    foreach ($defaultConfiguration as $key => $defaultValue) {
+      $variableKey = $this->getVariableKey('configuration', $key);
+      $configuration[$key] = variable_get($variableKey, $defaultValue);
+    }
+    return $configuration;
+  }
+
+  /**
+   * Gets the key to use when storing configuration details.
+   *
+   * This is just a convenient private utility method to prevent code repetition
+   * in the various functions of this class that handle persistance of
+   * configuration.
+   *
+   * @todo Surely the current method of concatenation is inefficient?
+   * @todo Document the inside of this function a little better, it's cryptic
+   *
+   * @param string $configurationType
+   *   The type of configuration. (e.g. "configuration", "visibility")
+   * @param string $suffix
+   *   (optional) An additional term to suffix at the end. (e.g. a key when
+   *   saving configuration).
+   */
+  private function getVariableKey($configurationType, $suffix = NULL) {
+    $key = NT2SearchTerm::CONFIGURATION_PREFIX;
+    $key = $key . $configurationType . '_' . $this->getName();
+
+    if (is_null($suffix)) {
+      return $key;
+    }
+
+    $key = $key . '_' . $suffix;
+    return $key;
   }
 
 }
