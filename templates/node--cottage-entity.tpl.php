@@ -80,15 +80,6 @@
 ?>
 <div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?> clearfix"<?php print $attributes; ?>>
 
-  <?php print render($title_prefix); ?>
-<!--   <?php if (!$page): ?>
-    <h2<?php print $title_attributes; ?>>
-      <a href="<?php print $node_url; ?>"><?php print $title; ?></a>
-    </h2>
-  <?php endif; ?> -->
-  <?php print render($title_suffix); ?>
-  
-  <!-- <h2>Using template at <?php echo __FILE__; ?></h2> -->
 
   <div class="content clearfix"<?php print $content_attributes; ?>>
     <div class="cottage-<?php print $teaser ? "teaser" : "full"; ?>">
@@ -107,7 +98,7 @@
       <!-- Teaser specific templating. -->
       <?php if($teaser): ?>
         <div class="cottage-image">
-        <?php print render($content['cottage_images']); ?>
+          <?php print render($content['cottage_images']); ?>
         </div>
 
         <div class="cottage-title">
@@ -123,7 +114,35 @@
         <div class="cottage-description-teaser">
           <?php print render($content['cottage_description_teaser']); ?>
         </div>
+      <?php else: ?>
+
+        <div class="cottage-title">
+          <?php print render($content['cottage_name']); ?>
+          <?php print render($content['cottage_reference']); ?>
+        </div>
+        
+        <div class="cottage-header-container">       
+          <div class="cottage-image">
+            <?php print render($content['cottage_images']); ?>
+          </div>
+          
+          <div class="cottage-info">
+            <?php print render($content['cottage_bedrooms']); ?>
+            <?php print render($content['cottage_pets']); ?>
+            <?php print render($content['cottage_changeoverday']); ?>
+          </div>
+        </div>
+
+        <div class="cottage-pricing">
+          <?php print decode_entities(render($content['cottage_pricing'])); ?>
+        </div>
+
+        <div class="cottage-description">
+          <?php print decode_entities(render($content['cottage_description'])); ?>
+        </div>
       <?php endif; ?>
+
+
 
 
     </div>  
