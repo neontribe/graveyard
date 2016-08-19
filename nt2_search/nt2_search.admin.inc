@@ -16,6 +16,16 @@ function nt2_search_visibility_form() {
   $search_terms = NT2Search::getSearchTerms();
   $form = array();
 
+  $description = array(
+    '<p>Control which search terms are visible for what types of search.</p>',
+    '<p>Different search terms have different API code coverage. ',
+    'For this reason, search terms that both use a certain code cannot be both selected.</p>',
+  );
+
+  $form['description'] = array(
+    '#markup' => implode($description),
+  );
+
   // @todo Separate attributes and core terms, if not done so by order suitably
 
   // The table containing visibility settings.
@@ -33,6 +43,10 @@ function nt2_search_visibility_form() {
     // Column 1: The search term's human name.
     $row['humanName'] = array(
       '#markup' => $search_term->getHumanName(),
+    );
+
+    $row['codes'] = array(
+      '#markup' => implode($search_term->getCodes(), ', '),
     );
 
     // Columns 2-n: A checkbox for each search type to indicate visibility.
@@ -113,6 +127,15 @@ function nt2_search_visibility_form_submit($form, &$form_state) {
 function nt2_search_configuration_form() {
   $search_terms = NT2Search::getSearchTerms();
   $form = array();
+
+  $description = array(
+    '<p>Configure individual search terms.</p>',
+    '<p><strong>NOTE: </strong>Only search terms enabled for at least one search type will be visible.</p>',
+  );
+
+  $form['description'] = array(
+    '#markup' => implode($description),
+  );
 
   // Make a row for every search term.
   foreach ($search_terms as $search_term) {
@@ -201,6 +224,7 @@ function theme_nt2_search_admin_visibility_form_table($variables) {
 
   $header = array(
     t('Search Term'),
+    t('API Codes'),
   );
 
   foreach (NT2Search::SEARCH_TYPES as $search_type) {
