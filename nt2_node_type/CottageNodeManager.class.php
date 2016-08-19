@@ -15,8 +15,8 @@ class CottageNodeManager {
   /**
    * Creates a new property reference node when given returned data from the API as a parameter: $data.
    */
-  public static function createNode($propref, $type_machine_name, $data = NULL) {
-    $result = self::loadNode($propref);
+  public static function createNode($propRef, $typeMachineName, $data = NULL) {
+    $result = self::loadNode($propRef);
 
     // If existing nodes exist for this property reference modify them.
     if ($result != NULL) {
@@ -39,7 +39,7 @@ class CottageNodeManager {
       $node = new stdClass();
 
       // Set type to custom type which is supplied to the function.
-      $node->type = $type_machine_name;
+      $node->type = $typeMachineName;
 
       // Set drupal defaults for the new node before we apply the custom attribute data.
       node_object_prepare($node);
@@ -59,20 +59,20 @@ class CottageNodeManager {
   /**
    * Gets a single property node.
    *
-   * @param string $propref
+   * @param string $propRef
    *   Property reference string.
-   * @param string $node_machine_name
+   * @param string $nodeMachineName
    *   Machine name for the node type.
    *
    * @return Object
    *   The loaded object or NULL.
    */
-  public static function loadNode($propref, $node_machine_name = 'cottage_entity') {
+  public static function loadNode($propRef, $nodeMachineName = 'cottage_entity') {
     // Compose a new entity query which will ascertain whether node entries exist with the same reference as provided in $ref.
     $query = new EntityFieldQuery();
     $query->entityCondition('entity_type', 'node')
-      ->entityCondition('bundle', $node_machine_name)
-      ->fieldCondition('cottage_reference', 'value', $propref, '=');
+      ->entityCondition('bundle', $nodeMachineName)
+      ->fieldCondition('cottage_reference', 'value', $propRef, '=');
 
     // Assign the value of the result of executing the query to the variable $result.
     $result = $query->execute();
@@ -85,10 +85,10 @@ class CottageNodeManager {
         return array_pop($props);
       }
       elseif (count($props) == 0) {
-        watchdog(__METHOD__, 'Property not found :propref', array(':propref' => $propref));
+        watchdog(__METHOD__, 'Property not found :propRef', array(':propRef' => $propRef));
       }
       else {
-        watchdog(__METHOD__, ':count properties not found :propref', array(':count' => count($props), ':propref' => $propref));
+        watchdog(__METHOD__, ':count properties not found :propRef', array(':count' => count($props), ':propRef' => $propRef));
         return array_pop($props);
       }
     }
@@ -115,21 +115,21 @@ class CottageNodeManager {
   }
 
   /**
-   * Takes an array as input and returns a string of newline separated values. The keys to be retained are specified in the `$values_to_keep` array.
+   * Takes an array as input and returns a string of newline separated values. The keys to be retained are specified in the `$valuesToKeep` array.
    */
-  private static function parsePropertyValueArray($array_of_values, $values_to_keep) {
+  private static function parsePropertyValueArray($arrayOfValues, $valuesToKeep) {
     // TODO: Use an entity as a wrapper for these value arrays such as images instead of a newline separated list.
     $output = array();
-    foreach ($array_of_values as $key => $value) {
-      $value_carry = array();
-      foreach ($values_to_keep as $value_keep) {
-        if (empty($value[$value_keep])) {
-          $value[$value_keep] = "no_" . $value_keep;
+    foreach ($arrayOfValues as $key => $value) {
+      $valueCarry = array();
+      foreach ($valuesToKeep as $valueKeep) {
+        if (empty($value[$valueKeep])) {
+          $value[$valueKeep] = "no_" . $valueKeep;
         }
 
-        array_push($value_carry, $value[$value_keep]);
+        array_push($valueCarry, $value[$valueKeep]);
       }
-      $output[$key] = array('value' => implode("\n", $value_carry));
+      $output[$key] = array('value' => implode("\n", $valueCarry));
     }
 
     return $output;
@@ -138,20 +138,20 @@ class CottageNodeManager {
   /**
    * Takes an array of data (the data returned by the API for a property request) as input and returns an array which is in the correct format to be saved as an instance of the custom cottage node_type.
    */
-  public static function parseApiPropertyReturnData($data, $machine_name = array("tag" => "", "location" => "")) {
+  public static function parseApiPropertyReturnData($data, $machineName = array("tag" => "", "location" => "")) {
 
     // Find which tags to retain.
     $tagKeysToKeep = array();
     foreach ($data["attributes"] as $key => $value) {
       if ($value) {
         $tagKeysToKeep[] = array(
-          'tid' => CottageVocabManager::getTermFromName($machine_name["tag"], $key),
+          'tid' => CottageVocabManager::getTermFromName($machineName["tag"], $key),
         );
       }
     };
 
     $locationKey[] = array(
-      'tid' => CottageVocabManager::getTermFromName($machine_name["location"], $data["location"]["code"]),
+      'tid' => CottageVocabManager::getTermFromName($machineName["location"], $data["location"]["code"]),
     );
 
     $address = array(
@@ -180,7 +180,7 @@ class CottageNodeManager {
       )
     );
 
-    $return_data = array(
+    $returnData = array(
       'title' => $data["name"],
       'language' => LANGUAGE_NONE,
       'body' => array(
@@ -337,18 +337,18 @@ class CottageNodeManager {
       ),
     );
 
-    return $return_data;
+    return $returnData;
   }
 
   /**
    * This function queries the API for a specific property reference and returns an array of the data found.
    */
-  public static function fetchPropertyFromApi($propref, $suffix) {
+  public static function fetchPropertyFromApi($propRef, $suffix) {
 
-    $path = sprintf('property/' . strtoupper($propref) . $suffix);
+    $path = sprintf('property/' . strtoupper($propRef) . $suffix);
 
     // TODO: Uncomment this line and fix any errors this change causes.
-    // $path = sprintf('property/' . strtoupper($propref) . "_" . $suffix);.
+    // $path = sprintf('property/' . strtoupper($propRef) . "_" . $suffix);.
     $data = NeontabsIO::getInstance()->get($path);
 
     return $data;
@@ -357,27 +357,27 @@ class CottageNodeManager {
   /**
    * Register the instances for each of the fields (attach them to the custom cottage node type via the bundle system).
    */
-  public static function registerCottageFieldDefinitionInstances($name, $cottage_fields, $custom_instances) {
-    foreach ($cottage_fields as $field_key => $field_options) {
-      if (field_info_field($field_key)) {
+  public static function registerCottageFieldDefinitionInstances($name, $cottageFields, $customInstances) {
+    foreach ($cottageFields as $fieldKey => $fieldOptions) {
+      if (field_info_field($fieldKey)) {
         continue;
       }
 
-      $field_options = field_create_field($field_options);
+      $fieldOptions = field_create_field($fieldOptions);
 
       $instance = array(
-      'field_name' => $field_key,
+      'field_name' => $fieldKey,
       'entity_type' => 'node',
       'bundle' => $name,
       'description' => 'Cottage data field.',
-      'label' => $field_key,
+      'label' => $fieldKey,
       'widget' => array(
         'type' => 'textfield',
       )
        );
 
-      if (array_key_exists($field_key, $custom_instances)) {
-        $instance = $custom_instances[$field_key];
+      if (array_key_exists($fieldKey, $customInstances)) {
+        $instance = $customInstances[$fieldKey];
       }
 
       field_create_instance($instance);
@@ -400,10 +400,10 @@ class CottageNodeManager {
    * Register a new cottage node entity when given a $name (machine name).
    */
   public static function registerCottageNodeTypeEntity($name) {
-    $cottage_type_defintion_array = self::generateTypeDefinitionArray($name);
+    $cottageTypeDefinitionArray = self::generateTypeDefinitionArray($name);
 
-    $status = node_type_save($cottage_type_defintion_array);
-    node_add_body_field($cottage_type_defintion_array);
+    $status = node_type_save($cottageTypeDefinitionArray);
+    node_add_body_field($cottageTypeDefinitionArray);
 
     return $status;
   }

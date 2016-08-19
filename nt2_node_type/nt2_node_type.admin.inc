@@ -107,10 +107,10 @@ function nt2_entity_admin_form_load_all_prop($data = NULL, $other_data = NULL, $
   $ops = array();
 
   // Get page count.
-  $firstPage = NeontabsIO::getInstance()->get("/property", array("page" => 1, "pageSize" => 1));
-  $search_instance_id = $firstPage["searchId"];
+  $first_page = NeontabsIO::getInstance()->get("/property", array("page" => 1, "pageSize" => 1));
+  $search_instance_id = $first_page["searchId"];
 
-  $totalResults = $firstPage["totalResults"];
+  $total_results = $first_page["totalResults"];
 
   $batch = array(
     'operations' => array(),
@@ -123,11 +123,11 @@ function nt2_entity_admin_form_load_all_prop($data = NULL, $other_data = NULL, $
     'file' => drupal_get_path('module', 'nt2_node_type') . '/nt2_node_type.admin.inc',
   );
 
-  if (!isset($totalResults)) {
+  if (!isset($total_results)) {
     return "Cannot Fetch Total Result Count";
   }
 
-  $pages = ceil($totalResults / $per_page);
+  $pages = ceil($total_results / $per_page);
 
   for ($page_counter = 1; $page_counter < $pages; $page_counter++) {
     $batch["operations"][] = array("nt2_entity_admin_batch_callback",

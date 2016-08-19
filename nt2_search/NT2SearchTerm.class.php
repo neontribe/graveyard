@@ -115,12 +115,12 @@ abstract class NT2SearchTerm {
    *
    * This ensures that changes are acted on and are persistant.
    *
-   * @param array $form_state
+   * @param array $formState
    *   The parameters passed on the submission of the admin form.
    *
    * @todo Need this be passed by reference?
    */
-  public function handleConfigurationInputs(&$form_state) {
+  public function handleConfigurationInputs(&$formState) {
     // @todo As a bare minimum, visibility options should be handled.
   }
 
