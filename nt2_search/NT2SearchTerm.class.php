@@ -280,6 +280,7 @@ abstract class NT2SearchTerm {
     }
 
     $key = $key . '_' . $suffix;
+    return $key;
   }
 
 }

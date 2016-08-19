@@ -20,26 +20,27 @@ function nt2_search_menu() {
 
   $items['admin/config/nt2/search'] = array(
     'title' => 'Search',
-    'description' => 'test',
+    'description' => 'Configuration for the types of cottage searches.',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('nt2_search_admin_form'),
+    'page arguments' => array('nt2_search_visibility_form'),
     'access arguments' => array('access administration pages'),
     'file' => 'nt2_search.admin.inc',
   );
 
   $items['admin/config/nt2/search/terms'] = array(
-    'title' => '1',
-    'page callback' => 'drupal_get_form',
+    'title' => 'Visibility',
     'access arguments' => array('access administration pages'),
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => 10,
   );
 
-  $items['admin/config/nt2/search/test'] = array(
-    'title' => '2',
+  $items['admin/config/nt2/search/configuration'] = array(
+    'title' => 'Term Configuration',
     'type' => MENU_LOCAL_TASK,
     'page callback' => 'drupal_get_form',
+    'page arguments' => array('nt2_search_configuration_form'),
     'access arguments' => array('access administration pages'),
+    'file' => 'nt2_search.admin.inc',
     'weight' => 20,
   );
 
@@ -52,7 +53,8 @@ function nt2_search_menu() {
 function nt2_search_theme() {
   $theme = array();
 
-  $theme['nt2_search_admin_overview_form_table'] = array(
+  // Add the theme function for nicely rendering a visibility table.
+  $theme['nt2_search_admin_visibility_form_table'] = array(
     'render element' => 'element',
     'file' => 'nt2_search.admin.inc',
   );

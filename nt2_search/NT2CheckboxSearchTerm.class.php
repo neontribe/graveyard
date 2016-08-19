@@ -14,7 +14,10 @@ class NT2CheckboxSearchTerm extends NT2SearchTerm {
    *
    * @var array
    */
-  private $defaultOptions;
+  private $defaultOptions = array(
+    'omit' => FALSE,
+    'label' => 'Checkbox',
+  );
 
   /**
    * Initialise with the code that is covered and a default label.
@@ -26,9 +29,9 @@ class NT2CheckboxSearchTerm extends NT2SearchTerm {
    */
   public function __construct($code, $humanName) {
     parent::__construct([$code], $humanName);
-    $this->defaultOptions = array(
+    $this->defaultOptions = array_merge($this->defaultOptions, array(
       'label' => $humanName,
-    );
+    ));
   }
 
   /**
@@ -38,7 +41,6 @@ class NT2CheckboxSearchTerm extends NT2SearchTerm {
     // Inject an HTML checkbox input.
     $form[$this->getName()] = array(
       '#type' => 'checkbox',
-      // @todo Consider passing this through t()
       '#title' => $this->getLabel(),
     );
   }
@@ -50,10 +52,17 @@ class NT2CheckboxSearchTerm extends NT2SearchTerm {
     // Extract the value from the get request.
     $formValue = filter_input(INPUT_GET, $this->getName());
 
-    // Omit from query if checkbox is unticked.
-    // @todo Potentially make this optional or clever or something.
-    if ($formValue == '1') {
+    if ($formValue === 1) {
+      // The condition is TRUE.
       $params[$this->getCodes()[0]] = 'true';
+      return;
+    }
+    else {
+      // The condition is FALSE.
+      if (!$this->shouldOmit()) {
+        // The condition should be explicitly set to false if not ticked.
+        $params[$this->getCodes()[0]] = 'false';
+      }
     }
   }
 
@@ -61,14 +70,41 @@ class NT2CheckboxSearchTerm extends NT2SearchTerm {
    * {@inheritdoc}
    */
   public function injectConfigurationInputs(&$form) {
-    // Nothing to do here for now.
+    // Configuration input for the label.
+    $form['label'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Label'),
+      '#description' => t('The label to show in the search form'),
+      '#required' => FALSE,
+      '#default_value' => $this->getLabel(),
+    );
+
+    // Configuration input for whether to omit when unticked.
+    $form['omit'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Ignore if unspecified'),
+      '#description' => t('If enabled, the checkbox has no effect on searches if unticked'),
+      '#required' => FALSE,
+      '#default_value' => $this->shouldOmit(),
+    );
   }
 
   /**
    * {@inheritdoc}
    */
   public function handleConfigurationInputs(&$formState) {
-    // Nothing to do here for now.
+    // @todo Should some primitive form of validation be used?
+    $options = $this->defaultOptions;
+
+    if (array_key_exists('label', $formState)) {
+      $options['label'] = $formState['label'];
+    }
+
+    if (array_key_exists('omit', $formState)) {
+      $options['omit'] = $formState['omit'] === 1;
+    }
+
+    $this->setConfiguration($options);
   }
 
   /**
@@ -79,6 +115,19 @@ class NT2CheckboxSearchTerm extends NT2SearchTerm {
    */
   private function getLabel() {
     return $this->getConfiguration($this->defaultOptions)['label'];
+  }
+
+  /**
+   * Returns whether the query should be unaffected if the checkbox is unticked.
+   *
+   * This is useful for functions such as "Pets"; an unticked checkbox does not
+   * necessarily indicate a desire for there to be no pets in the cottage.
+   *
+   * @return bool
+   *   TRUE if the value should be omitted when unticked, else FALSE.
+   */
+  private function shouldOmit() {
+    return $this->getConfiguration($this->defaultOptions)['omit'];
   }
 
 }

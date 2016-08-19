@@ -8,11 +8,11 @@
 /**
  * Implements hook form().
  *
- * Provides the admin form for search settings.
+ * Provides the admin form for search term visibility settings.
  *
  * @todo Add per-search-term settings.
  */
-function nt2_search_admin_form() {
+function nt2_search_visibility_form() {
   $search_terms = NT2Search::getSearchTerms();
   $form = array();
 
@@ -23,7 +23,7 @@ function nt2_search_admin_form() {
   // The custom theme allows for rendering as a table to occur.
   $visibility_table = array(
     '#tree' => 'TRUE',
-    '#theme' => 'nt2_search_admin_overview_form_table',
+    '#theme' => 'nt2_search_admin_visibility_form_table',
   );
 
   // Make a row for every search term.
@@ -67,9 +67,11 @@ function nt2_search_admin_form() {
 /**
  * Implements hook form_submit().
  *
- * Handles submission of the admin form for search settings.
+ * Handles submission of the admin form for visibility settings.
+ *
+ * @todo Form should error if a code is claimed by multiple search terms.
  */
-function nt2_search_admin_form_submit($form, &$form_state) {
+function nt2_search_visibility_form_submit($form, &$form_state) {
   form_state_values_clean($form_state);
   $values = $form_state['values'];
 
@@ -104,13 +106,81 @@ function nt2_search_admin_form_submit($form, &$form_state) {
 }
 
 /**
- * Theme the table element.
+ * Implements hook form().
+ *
+ * Injects configuration options for every enabled search term.
+ */
+function nt2_search_configuration_form() {
+  $search_terms = NT2Search::getSearchTerms();
+  $form = array();
+
+  // Make a row for every search term.
+  foreach ($search_terms as $search_term) {
+    if (!$search_term->isVisible()) {
+      // Don't show configurations for unused/disabled search terms.
+      continue;
+    }
+
+    // Make a fieldset for each search term.
+    $term_fieldset = array(
+      '#tree' => 'TRUE',
+      '#type' => 'fieldset',
+      '#title' => $search_term->getHumanName(),
+    );
+
+    // Add the search term's configuration inputs to the form.
+    $search_term->injectConfigurationInputs($term_fieldset);
+
+    // Add the sub-form to the main form.
+    $form[$search_term->getName(TRUE)] = $term_fieldset;
+  }
+
+  // Add a save button.
+  $form_actions = array(
+    '#type' => 'actions',
+  );
+  $form_actions['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save Changes'),
+  );
+  $form['actions'] = $form_actions;
+
+  return $form;
+}
+
+/**
+ * Implements hook form_submit().
+ *
+ * Handles submission of the search term configuration form, passing the
+ * returned values to each search term to handle.
+ */
+function nt2_search_configuration_form_submit($form, &$form_state) {
+  form_state_values_clean($form_state);
+  $values = $form_state['values'];
+
+  $search_terms = NT2Search::getSearchTerms();
+
+  foreach ($search_terms as $search_term) {
+    $term_name = $search_term->getName(TRUE);
+
+    if (!array_key_exists($term_name, $values)) {
+      // The search term is not present in the submitted values, ignore.
+      continue;
+    }
+
+    $term_values = $values[$term_name];
+
+    // Let the search term handle the form response.
+    $search_term->handleConfigurationInputs($term_values);
+  }
+}
+
+/**
+ * The theming for the visibility table: used above.
  *
  * See https://www.drupal.org/node/1876710.
- *
- * @todo More accurate doc comment please.
  */
-function theme_nt2_search_admin_overview_form_table($variables) {
+function theme_nt2_search_admin_visibility_form_table($variables) {
   $element = $variables['element'];
 
   $rows = array();
