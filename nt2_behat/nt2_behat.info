@@ -1,0 +1,11 @@
+name = NT2 Tests
+description = Behat tests and test config
+core = 7.x
+package = NT2
+php = 5.4
+
+; dependencies[] = 
+; files[] = 
+; configure = 
+
+behat[] = features
