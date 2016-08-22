@@ -6,6 +6,7 @@ dependencies[] = nt2_io
 dependencies[] = field
 dependencies[] = entity
 dependencies[] = addressfield
+dependencies[] = number
 dependencies[] = imageapi_optimize
 dependencies[] = imagecache_external
 dependencies[] = nt2

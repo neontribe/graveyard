@@ -19,27 +19,27 @@ function nt2_node_type_admin_form() {
     '#description' => t('If a prop ref is entered here it will trigger an import/refresh on the propref.'),
   );
 
-  $form['reload_tax_tag'] = array(
-    '#type' => 'submit',
-    '#value' => 'Reload Tags',
-    '#submit' => array('nt2_entity_admin_form_reload_tax_tag'),
-  );
-
-  $form['reload_tax_loc'] = array(
-    '#type' => 'submit',
-    '#value' => 'Reload Locations',
-    '#submit' => array('nt2_entity_admin_form_reload_tax_loc'),
-  );
-
-  $form['load_all_prop'] = array(
-    '#type' => 'submit',
-    '#value' => 'Load all properties',
-    '#submit' => array('nt2_entity_admin_form_load_all_prop'),
-  );
+//  $form['reload_tax_tag'] = array(
+//    '#type' => 'submit',
+//    '#value' => 'Reload Tags',
+//    '#submit' => array('nt2_entity_admin_reload_attributes'),
+//  );
+//
+//  $form['reload_tax_loc'] = array(
+//    '#type' => 'submit',
+//    '#value' => 'Reload Locations',
+//    '#submit' => array('nt2_entity_admin_reload_tax_loc'),
+//  );
+//
+//  $form['load_all_prop'] = array(
+//    '#type' => 'submit',
+//    '#value' => 'Load all properties',
+//    '#submit' => array('nt2_entity_admin_load_all_prop'),
+//  );
 
   $form['submit'] = array(
     '#type' => 'submit',
-    '#value' => 'Save',
+    '#value' => 'Load',
   );
 
   return $form;
@@ -48,10 +48,10 @@ function nt2_node_type_admin_form() {
 /**
  * Implements hook_load_attr_list.
  */
-function nt2_entity_admin_form_load_attr_list($attrs = NULL) {
+function nt2_entity_admin_load_attr_list($attrs = NULL) {
   $batch = array(
     'operations' => array(),
-    'finished' => 'nt2_entity_admin_form_batch_load_props_finished',
+    'finished' => 'nt2_entity_admin_batch_load_props_finished',
     'title' => t('Load all properties into cache.'),
     'init_message' => t('Starting.'),
   // Steps of 5.
@@ -99,7 +99,7 @@ function nt2_entity_admin_batch_list_callback($attr, &$context) {
 /**
  * Implements hook_form_load_all_prop.
  */
-function nt2_entity_admin_form_load_all_prop($data = NULL, $other_data = NULL, $is_backend = FALSE) {
+function nt2_entity_admin_load_all_prop($data = NULL, $other_data = NULL, $is_backend = FALSE) {
   // Get list of properties to reload.
   $per_page = 20;
 
@@ -114,7 +114,7 @@ function nt2_entity_admin_form_load_all_prop($data = NULL, $other_data = NULL, $
 
   $batch = array(
     'operations' => array(),
-    'finished' => 'nt2_entity_admin_form_batch_load_props_finished',
+    'finished' => 'nt2_entity_admin_batch_load_props_finished',
     'title' => t('Load all properties into cache.'),
     'init_message' => t('Starting.'),
   // Steps of 5.
@@ -183,14 +183,14 @@ function nt2_entity_admin_batch_callback($page_counter, $per_page, $search_insta
 /**
  * TODO: Do something on batch completion.
  */
-function nt2_entity_admin_form_batch_load_props_finished($success, $results, $operations) {
-
+function nt2_entity_admin_batch_load_props_finished($success, $results, $operations) {
+  
 }
 
 /**
  * Callback for reload_tax_tag form action button.
  */
-function nt2_entity_admin_form_reload_tax_tag() {
+function nt2_entity_admin_reload_attributes() {
 
   $vocab_tag_fields = array(
     'tag_code' => array(
@@ -210,15 +210,16 @@ function nt2_entity_admin_form_reload_tax_tag() {
 
   $result = CottageVocabManager::createVocabularyFromAttribList(variable_get("COTTAGE_VOCAB_MACHINE_NAME"), $data["constants"]["attributes"], $vocab_tag_fields, "group", "label");
 
-  drupal_set_message("Tag taxonomy reload status.");
+  $msg = t("@cnt attribute taxonomy terms reload.", array('@cnt' => $result));
+  drupal_set_message($msg);
 
-  drupal_goto("/");
+  drupal_goto('admin/config/nt2/entity');
 }
 
 /**
  * Callback for reload_tax_loc form action button.
  */
-function nt2_entity_admin_form_reload_tax_loc() {
+function nt2_entity_admin_reload_tax_loc() {
 
   $vocab_loc_fields = array(
     'loc_code' => array(
@@ -248,8 +249,10 @@ function nt2_entity_admin_form_reload_tax_loc() {
 
   $result = CottageVocabManager::createVocabularyFromAttribList(variable_get("COTTAGE_LOC_VOCAB_MACHINE_NAME"), $data, $vocab_loc_fields, 'code', "locations");
 
-  drupal_set_message("Location taxonomy reload status.");
-  drupal_goto("/");
+  $msg = t("@cnt location taxonomy terms reload.", array('@cnt' => $result));
+  drupal_set_message($msg);
+
+  drupal_goto('admin/config/nt2/entity');
 }
 
 /**

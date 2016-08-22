@@ -39,11 +39,11 @@ function drush_nt2_node_type_drush_load_properties($attrs = FALSE) {
   if ($attrs) {
     $attrs = explode(",", $attrs);
     // Load the list of properties as exploded from the supplied CSV data as the `attr` paramater.
-    nt2_entity_admin_form_load_attr_list($attrs);
+    nt2_entity_admin_load_attr_list($attrs);
   }
   else {
     // Load all properties, telling the function it is being invoked from the backend.
-    nt2_entity_admin_form_load_all_prop(NULL, NULL, TRUE);
+    nt2_entity_admin_load_all_prop(NULL, NULL, TRUE);
   }
 
   var_dump("Properties loaded.");

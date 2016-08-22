@@ -221,7 +221,7 @@ function nt2_node_type_install() {
   $cottage_field_creation_status = CottageNodeManager::registerCottageFieldDefinitionInstances(variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"), $cottage_fields, $custom_instances);
 
   // Create our custom vocabularies.
-  nt2_node_type_create_and_populate_vocabs();
+  nt2_node_type_create_vocabs();
 }
 
 /**
@@ -252,7 +252,7 @@ function nt2_node_type_disable() {
 /**
  * Creates and populates all vocabularies.
  */
-function nt2_node_type_create_and_populate_vocabs() {
+function nt2_node_type_create_vocabs() {
 
   $vocab_definition_cottage_tags = (object) array(
     'name' => 'Cottage Tag Vocab',
@@ -308,14 +308,11 @@ function nt2_node_type_create_and_populate_vocabs() {
   $cottage_vocab_tag_creation_status = CottageVocabManager::createCottageTagVocabulary(variable_get("COTTAGE_VOCAB_MACHINE_NAME"), $vocab_definition_cottage_tags, $vocab_tag_fields);
 
   // Populate the vocabulary from the API (TODO: generalise this too)
-  $data = NeontabsIO::getInstance()->get("/");
-
-  CottageVocabManager::createVocabularyFromAttribList(variable_get("COTTAGE_VOCAB_MACHINE_NAME"), $data["constants"]["attributes"], $vocab_tag_fields, "group", "label");
-
+//  $data = NeontabsIO::getInstance()->get("/");
+//  CottageVocabManager::createVocabularyFromAttribList(variable_get("COTTAGE_VOCAB_MACHINE_NAME"), $data["constants"]["attributes"], $vocab_tag_fields, "group", "label");
   // Create and populate cottage location vocabulary.
   $cottage_vocab_location_creation_status = CottageVocabManager::createCottageTagVocabulary(variable_get("COTTAGE_LOC_VOCAB_MACHINE_NAME"), $vocab_definition_cottage_location, $vocab_loc_fields);
 
-  $data = NeontabsIO::getInstance()->get("/utility/area");
-
-  CottageVocabManager::createVocabularyFromAttribList(variable_get("COTTAGE_LOC_VOCAB_MACHINE_NAME"), $data, $vocab_loc_fields, 'code', "locations");
+//  $data = NeontabsIO::getInstance()->get("/utility/area");
+//  CottageVocabManager::createVocabularyFromAttribList(variable_get("COTTAGE_LOC_VOCAB_MACHINE_NAME"), $data, $vocab_loc_fields, 'code', "locations");
 }
