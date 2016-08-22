@@ -1,5 +1,13 @@
 /* ===================
 
+   Variables
+
+====================== */
+$info-background-colour-light: #f6f6f2;
+$info-background-colour-dark: #dddddd;
+
+/* ===================
+
    Node Block Styling
 
 ====================== */
@@ -16,22 +24,48 @@
 
 .cottage-info {
 	text-align: center;
+	background-color: $info-background-colour-light;
 
-	.cottage-bedrooms, .cottage-pets, .cottage-changeoverday {
+	> div {
+		padding: 0;
+		margin-bottom: 20px;
+
+		> p {
+			margin: 0;
+			background-color: $info-background-colour-light;
+
+			&:nth-child(even) {	
+				background-color: $info-background-colour-dark;
+			}
+		}
+
+	}
+}
+
+.cottage-details {
+	background-color: $info-background-colour-light;
+	margin-top: 20px;
+
+	// TODO: Add support for older browsers (polyfill or similar).
+	display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
+	display: -ms-flexbox;  /* TWEENER - IE 10 */
+	display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+	display: flex;         /* NEW, Spec - Firefox, Chrome, Opera */
+
+	> div {
+		width: 100%;
+		text-align: center;
+
 		padding: 0;
 
 		> p {
 			margin: 0;
-			background-color: #f6f6f2;
-			
+			background-color: $info-background-colour-light;
 		}
 
 		> p:nth-child(even) {
-				margin-bottom: 10px;
-				background-color: #dddddd;
+				background-color: $info-background-colour-dark;
 		}
-
-
 	}
 }
 
@@ -59,6 +93,12 @@
 				margin: 0;
 				padding: 0;
 				list-style: none;
+
+				> li {
+					img {
+						display: block;
+					}
+				}
 			}
 		}
 
@@ -104,6 +144,7 @@
 
 			> * {
 				margin: 0;
+				padding-left: 10px;
 				padding-right: 10px;
 				display: inline-block;
 			}

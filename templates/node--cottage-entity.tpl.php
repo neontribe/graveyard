@@ -87,13 +87,7 @@
         // We hide the comments and links now so that we can render them later.
         hide($content['comments']);
         hide($content['links']);
-
-        // print render($content);
       ?>
-      
-
-    
-
 
       <!-- Teaser specific templating. -->
       <?php if($teaser): ?>
@@ -133,18 +127,16 @@
           </div>
         </div>
 
-        <div class="cottage-pricing">
-          <?php print decode_entities(render($content['cottage_pricing'])); ?>
+        <div class="cottage-details">
+          <?php print render($content['cottage_pricing']); ?>
+          <?php print render($content['cottage_location_reference']); ?>
         </div>
 
+        <h2>Description</h2>
         <div class="cottage-description">
           <?php print decode_entities(render($content['cottage_description'])); ?>
         </div>
       <?php endif; ?>
-
-
-
-
     </div>  
   </div>
 </div>

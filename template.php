@@ -78,7 +78,6 @@ function render_cottage_name($field_data, $url, $view_mode) {
         0 => _render_link($cottage_name, $url, $link_prefix, $link_suffix),
     );
 
-
     return $title_renderarray;
 }
 
@@ -96,7 +95,7 @@ function render_cottage_reference($field_data, $url, $view_mode) {
     return $reference_renderarray;
 }
 
-function render_default_field($item_ref, $prefix = '<h2>', $suffix = '</h2>') {
+function render_default_field($item_ref, $prefix = '<p>', $suffix = '</p>') {
     $item_ref = array(
         0 => array(
             '#prefix' => $prefix,
@@ -127,7 +126,7 @@ function render_cottage_info_field($prefix_text, $item_ref, $url, $view_mode, $p
 }
 
 function render_cottage_pricing_field($prefix_text, $item_ref, $url, $view_mode) {
-  //TODO: Implement pricing render arrays.
+
 }
 
 
@@ -162,15 +161,25 @@ function nt2_theme_preprocess_field(&$vars) {
             $item_ref = render_cottage_info_field('Pets', $item_ref, $url, $view_mode);
             break;
         case 'cottage_changeoverday':
-            // $item_ref[0]['#markup'] = ($item_ref[0]['#markup']) ? 'Yes' : 'No';
             $item_ref = render_cottage_info_field('Changeover Day', $item_ref, $url, $view_mode);
             break;
         case 'cottage_pricing':
-            // TEMPORARY
-            //$pricing_parsed = json_decode(decode_entities($item_ref[0]['#markup']));
-           // $lowest = $pricing_parsed['ranges']['2016']['low'];
-            //$item_ref = render_cottage_info_field('Lowest Price', $item_ref, $url, $view_mode);
+            $pricing_parsed = json_decode(decode_entities($item_ref[0]['#markup']));
+            $prices = $pricing_parsed->ranges->{'2016'};
+
+            $item_ref[0] = array(
+              '#markup' => '£' . $prices->low,
+            );
+
+            $item_ref[1] = array(
+              '#markup' => ' - £' . $prices->high,
+            );
+
+            $item_ref = render_cottage_info_field('Price Range', $item_ref, $url, $view_mode);
             break;
+        case 'cottage_location_reference':
+          $item_ref = render_cottage_info_field('Location', $item_ref, $url, $view_mode);
+          break;
         default:
             $item_ref = render_default_field($item_ref);
       }
