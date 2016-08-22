@@ -28,7 +28,6 @@ $info-background-colour-dark: #dddddd;
 
 	> div {
 		padding: 0;
-		margin-bottom: 20px;
 
 		> p {
 			margin: 0;
@@ -55,7 +54,6 @@ $info-background-colour-dark: #dddddd;
 	> div {
 		width: 100%;
 		text-align: center;
-
 		padding: 0;
 
 		> p {
@@ -153,7 +151,7 @@ $info-background-colour-dark: #dddddd;
 
 	.cottage-description-teaser {
 		margin-top: 0;
-		font-size: 0.8em;
+		font-size: 1.0em;
 		line-height: 145%;
 		overflow: hidden;
 	}
