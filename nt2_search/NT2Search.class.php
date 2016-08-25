@@ -10,8 +10,8 @@ use Drupal\nt2_io\uk\co\neontabs\NeontabsIO;
 /**
  * Code for rendering and handling search forms, as well as displaying results.
  *
- * @todo Consistent capitalisation.
  * @todo Make t() usage consistent.
+ * @todo Consider breaking up this god-object.
  */
 class NT2Search {
   /**
@@ -24,26 +24,32 @@ class NT2Search {
   /**
    * The different types of searches.
    *
-   * @todo Use this everywhere.
+   * These are represented in human readable form. They should be regarded as
+   * case-insensitive, as code may change their case for compliance with Drupal
+   * naming standards.
+   *
+   * @todo Having the unique value the human readable value is not sensible.
    *
    * @var string[]
    */
   const SEARCH_TYPES = ['Quick', 'Advanced'];
 
   /**
-   * Generates and returns a quick search form.
+   * Generates and returns a search form.
+   *
+   * @param string $searchType
+   *   The type of search, as a string.
    *
    * @return array
    *   Return a drupal form represented as an associative array.
    */
-  public static function quickSearchForm() {
+  public static function form($searchType) {
     $form = array();
 
-    // Inject input elements from all enabled search terms.
-    $searchTerms = NT2Search::getSearchTerms(TRUE);
+    // Inject input elements from all enabled search terms for this search type.
+    $searchTerms = NT2Search::getSearchTerms();
     foreach ($searchTerms as &$searchTerm) {
-      // @todo Replace magic constant.
-      if (!$searchTerm->isVisible('Quick')) {
+      if (!$searchTerm->isVisible($searchType)) {
         continue;
       }
       $searchTerm->injectInputs($form);
@@ -61,19 +67,37 @@ class NT2Search {
   /**
    * Passes the values from the submitted quick search form to the results page.
    *
+   * @todo Is validation necessary?
+   *
+   * @param string $searchType
+   *   The type of search.
    * @param array $form
    *   The form that was just submitted.
    * @param array $formState
    *   The submitted parameters, name and value.
    */
-  public static function quickSearchFormSubmit($form, &$formState) {
+  public static function submit($searchType, $form, &$formState) {
     form_state_values_clean($formState);
     $values = $formState['values'];
 
-    // Drupal should check that only form values are present here.
-    // @todo Test that this is the case.
+    // Construct a search API query based on the form response.
+    $query = array();
+    $searchTerms = NT2Search::getSearchTerms();
+
+    // Extract responses to input elements injected by enabled search terms.
+    foreach ($searchTerms as &$searchTerm) {
+      // If the search term is not visible on any search form...
+      if (!$searchTerm->isVisible($searchType)) {
+        continue;
+      }
+
+      // Inject queries from the form response.
+      $searchTerm->injectParams($query, $formState['values']);
+    }
+
+    // We will pass this query as parameters to the search performing page.
     $options = array(
-      'query' => $values,
+      'query' => $query,
     );
 
     // Pass query to the search page.
@@ -91,18 +115,32 @@ class NT2Search {
   public static function page() {
     $params = array();
 
+    // We just want property references back from Tabs API.
     $fields = ['propertyRef'];
     $params['fields'] = implode(':', $fields);
 
-    // Extract search queries with all enabled search terms.
-    $searchTerms = NT2Search::getSearchTerms(TRUE);
-    foreach ($searchTerms as &$searchTerm) {
-      // @todo Replace magic constant
-      // @todo Work out how this can be done for different types of searches
-      if (!$searchTerm->isVisible('Quick')) {
+    /*
+     * Keep only recognised search codes. While this serves a basic defense
+     * against some forms of injection, ideally NeontabsIO would allow for
+     * search filters and unrelated API parameters to be passed in seperate
+     * arrays.
+     *
+     * @todo Is this a possibility?
+     */
+    $query = drupal_get_query_parameters();
+    $codes = array();
+    $searchTerms = NT2Search::getSearchTerms();
+    foreach ($searchTerms as $searchTerm) {
+      $codes = array_merge($codes, $searchTerm->getCodes());
+    }
+    foreach ($query as $code => $value) {
+      if (!in_array($code, $codes)) {
+        // Evil unrecognised code, ignore.
         continue;
       }
-      $searchTerm->injectParams($params);
+
+      // We semi-trust this code. Inject it into our API request.
+      $params[$code] = $value;
     }
 
     $api = NeontabsIO::getInstance();
@@ -116,14 +154,14 @@ class NT2Search {
     $results = $json['results'];
 
     foreach ($results as $result) {
-      $prop_ref = $result['propertyRef'];
+      $propRef = $result['propertyRef'];
 
       // Load node from database.
-      $node = CottageNodeManager::loadNode($prop_ref);
+      $node = CottageNodeManager::loadNode($propRef);
 
       $view = node_view($node, 'teaser');
 
-      $renderArray[$prop_ref] = $view;
+      $renderArray[$propRef] = $view;
     }
 
     return $renderArray;

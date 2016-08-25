@@ -66,16 +66,18 @@ function nt2_search_theme() {
  * Implements hook_page().
  */
 function nt2_search_page() {
-  /* TODO
-   * The below conditional prevents ::page() being called twice when a form is submitted on the search results page, however, it achieves this by using the variable $_SERVER, which Drupal abstracts away, so should be avoided. Furthermore, an edge-case is if the form being submitted from the results page submits to the same page with a GET request; in this scenario the bug would still occur.
+  /* @todo
    *
-   * Ideally, this problem may be fixed cleanly with Drupal, by preventing ::page() from being performed in any scenario other than Drupal internally redirecting to it, or similar.
+   * When a search form is submitted on the search results page, a search will
+   * be performed twice without the below fix.
+   *
+   * Ideally, there would be a way of setting the search results menu to only
+   * respond to the HTTP 'GET' method in Drupal, if possible.
    */
   if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $data = NT2Search::page();
-    drupal_alter('nt2_search_results', $data);
-    return $data;
+    return NT2Search::page();
   }
+
   return array();
 }
 
@@ -85,13 +87,15 @@ function nt2_search_page() {
 function nt2_search_block_info() {
   $blocks = array();
 
-  $blocks['nt2_q_search'] = array(
-    'info' => t('NT2: Quick search form'),
-    'cache' => DRUPAL_NO_CACHE,
-    'region' => 'sidebar_first',
-    // Status of 1 means enabled.
-    'status' => 1,
-  );
+  foreach (NT2Search::SEARCH_TYPES as $search_type) {
+    $blocks['nt2_search_' . strtolower($search_type)] = array(
+      'info' => t('NT2: @type search form', array('@type' => $search_type)),
+      'cache' => DRUPAL_NO_CACHE,
+      'region' => 'sidebar_first',
+      // Status of 1 means enabled.
+      'status' => 1,
+    );
+  }
 
   return $blocks;
 }
@@ -102,39 +106,69 @@ function nt2_search_block_info() {
 function nt2_search_block_view($delta) {
   $block = array();
 
-  if ($delta == 'nt2_q_search') {
-    $block['subject'] = t('Quick Search');
-    $block['content'] = drupal_get_form('nt2_search_quick_form');
-  }
-  elseif ($delta == 'nt2_a_search') {
-    $block['subject'] = t('Advanced Search');
-    $block['content'] = drupal_get_form('nt2_search_advanced_form');
+  foreach (NT2Search::SEARCH_TYPES as $search_type) {
+    if ($delta !== ('nt2_search_' . strtolower($search_type))) {
+      continue;
+    }
+
+    $block['subject'] = t('@type Search', array('@type' => $search_type));
+    $block['content'] = drupal_get_form('nt2_search_' . strtolower($search_type));
+    break;
   }
 
   return $block;
 }
 
 /**
+ * Implements hook_forms().
+ */
+function nt2_search_forms($form_id, $args) {
+  $forms = array();
+
+  foreach (NT2Search::SEARCH_TYPES as $search_type) {
+    $forms['nt2_search_' . strtolower($search_type)] = array(
+      'callback' => 'nt2_search_form',
+    );
+  }
+
+  return $forms;
+}
+
+/**
  * Implements hook_form().
  */
-function nt2_search_quick_form() {
-  return NT2Search::quickSearchForm();
+function nt2_search_form($node, &$form_state) {
+  // @todo Eww. This should be nicer.
+  foreach (NT2Search::SEARCH_TYPES as $search_type) {
+    if ('nt2_search_' . strtolower($search_type) === $form_state['build_info']['form_id']) {
+      return NT2Search::form($search_type);
+    }
+  }
+
+  return array();
 }
 
 /**
  * Implements hook_form_validate().
  */
 function nt2_search_quick_form_validate($form, &$form_state) {
-  // Do validation.
+  // @todo Do validation.
   dpm(__METHOD__);
 }
 
 /**
  * Implements hook_form_submit().
  */
-function nt2_search_quick_form_submit($form, &$form_state) {
-  // Do submit.
-  NT2Search::quickSearchFormSubmit($form, $form_state);
+function nt2_search_form_submit($form, &$form_state) {
+  // @todo Eww. This should be nicer.
+  foreach (NT2Search::SEARCH_TYPES as $search_type) {
+    if ('nt2_search_' . strtolower($search_type) === $form_state['build_info']['form_id']) {
+      // Do submit.
+      NT2Search::submit($search_type, $form, $form_state);
+    }
+  }
+
+  return array();
 }
 
 /**

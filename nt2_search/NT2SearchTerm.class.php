@@ -72,16 +72,16 @@ abstract class NT2SearchTerm {
    * Useful data from the form's response is extracted and reformatted as
    * necessary to be injected as a parameter for the search query.
    *
-   * This function runs with the assumption that the search form has just been
-   * submitted, as it uses filter_input().
-   *
    * @param array $params
    *   The parameters that will be passed to the API when a search request is
    *   made, with the key as the parameter name and the value as the
    *   parameter's value. Passed by reference to allow for modification by the
    *   function.
+   * @param array $formValues
+   *   The values from the just-submitted form. These are used to extract the
+   *   resposnes to the input elements previously injected.
    */
-  public abstract function injectParams(&$params);
+  public abstract function injectParams(&$params, $formValues);
 
   /**
    * Injects any configurable options into the admin form.

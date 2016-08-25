@@ -63,10 +63,10 @@ class NT2GroupSearchTerm extends NT2SearchTerm {
   /**
    * {@inheritdoc}
    */
-  public function injectParams(&$params) {
+  public function injectParams(&$params, $formValues) {
     // Call injectParams() on all children.
     foreach ($childSearchTerms as $childSearchTerm) {
-      $childSearchTerm->injectParams($params);
+      $childSearchTerm->injectParams($params, $formValues);
     }
   }
 

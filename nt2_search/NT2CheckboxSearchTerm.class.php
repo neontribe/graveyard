@@ -48,9 +48,9 @@ class NT2CheckboxSearchTerm extends NT2SearchTerm {
   /**
    * {@inheritdoc}
    */
-  public function injectParams(&$params) {
-    // Extract the value from the get request.
-    $formValue = filter_input(INPUT_GET, $this->getName());
+  public function injectParams(&$params, $formValues) {
+    // Extract the value from the form response.
+    $formValue = $formValues[$this->getName()];
 
     if ($formValue === 1) {
       // The condition is TRUE.

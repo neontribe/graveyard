@@ -92,9 +92,9 @@ class NT2SelectRangeSearchTerm extends NT2SearchTerm {
   /**
    * {@inheritdoc}
    */
-  public function injectParams(&$params) {
-    // Extract the value from the get request.
-    $formValue = filter_input(INPUT_GET, $this->getName());
+  public function injectParams(&$params, $formValues) {
+    // Extract the value from the form response.
+    $formValue = $formValues[$this->getName()];
 
     // Did the user care for search results to be filtered this way.
     if ($formValue !== self::ANY_VALUE) {
