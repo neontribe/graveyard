@@ -20,7 +20,6 @@ function nt2_node_type_install() {
 
   $whitelisted_hosts = array(
     "zz.api.carltonsoftware.co.uk",
-    "test.co.uk",
   );
 
   variable_set("imagecache_external_hosts", implode("\r\n", $whitelisted_hosts));
@@ -308,11 +307,11 @@ function nt2_node_type_create_vocabs() {
   $cottage_vocab_tag_creation_status = CottageVocabManager::createCottageTagVocabulary(variable_get("COTTAGE_VOCAB_MACHINE_NAME"), $vocab_definition_cottage_tags, $vocab_tag_fields);
 
   // Populate the vocabulary from the API (TODO: generalise this too)
-//  $data = NeontabsIO::getInstance()->get("/");
-//  CottageVocabManager::createVocabularyFromAttribList(variable_get("COTTAGE_VOCAB_MACHINE_NAME"), $data["constants"]["attributes"], $vocab_tag_fields, "group", "label");
+  // $data = NeontabsIO::getInstance()->get("/");
+  // CottageVocabManager::createVocabularyFromAttribList(variable_get("COTTAGE_VOCAB_MACHINE_NAME"), $data["constants"]["attributes"], $vocab_tag_fields, "group", "label");
   // Create and populate cottage location vocabulary.
   $cottage_vocab_location_creation_status = CottageVocabManager::createCottageTagVocabulary(variable_get("COTTAGE_LOC_VOCAB_MACHINE_NAME"), $vocab_definition_cottage_location, $vocab_loc_fields);
 
-//  $data = NeontabsIO::getInstance()->get("/utility/area");
-//  CottageVocabManager::createVocabularyFromAttribList(variable_get("COTTAGE_LOC_VOCAB_MACHINE_NAME"), $data, $vocab_loc_fields, 'code', "locations");
+  // $data = NeontabsIO::getInstance()->get("/utility/area");
+  // CottageVocabManager::createVocabularyFromAttribList(variable_get("COTTAGE_LOC_VOCAB_MACHINE_NAME"), $data, $vocab_loc_fields, 'code', "locations");.
 }
