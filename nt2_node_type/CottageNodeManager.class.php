@@ -5,6 +5,8 @@
  * Contains the class CottageNodeManager.
  */
 
+use Drupal\nt2_io\uk\co\neontabs\NeontabsIO;
+
 /**
  * CottageNodeManager manages the creation, updating and deleting of cottage node entries.
  *
@@ -359,11 +361,12 @@ class CottageNodeManager {
    */
   public static function registerCottageFieldDefinitionInstances($name, $cottage_fields, $custom_instances) {
     foreach ($cottage_fields as $field_key => $field_options) {
-      if (field_info_field($field_key)) {
-        continue;
-      }
 
-      $field_options = field_create_field($field_options);
+      $field_options_temp = field_info_field($field_key);
+
+      if (!$field_options_temp) {
+        $field_options = field_create_field($field_options);
+      }
 
       $instance = array(
         'field_name' => $field_key,
