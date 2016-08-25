@@ -20,7 +20,6 @@ function nt2_node_type_install() {
 
   $whitelisted_hosts = array(
     "zz.api.carltonsoftware.co.uk",
-    "test.co.uk",
   );
 
   variable_set("imagecache_external_hosts", implode("\r\n", $whitelisted_hosts));

@@ -366,15 +366,29 @@ class CottageNodeManager {
       $field_options = field_create_field($field_options);
 
       $instance = array(
-      'field_name' => $field_key,
-      'entity_type' => 'node',
-      'bundle' => $name,
-      'description' => 'Cottage data field.',
-      'label' => $field_key,
-      'widget' => array(
-        'type' => 'textfield',
-      )
-       );
+        'field_name' => $field_key,
+        'entity_type' => 'node',
+        'bundle' => $name,
+        'description' => 'Cottage data field.',
+        'label' => $field_key,
+        'widget' => array(
+          'type' => 'textfield',
+        ),
+        'display' => array(
+          'default' => array(
+            'label' => 'above',
+            'settings' => array(),
+            'type' => 'default',
+            'weight' => 0,
+          ),
+          'teaser' => array(
+            'label' => 'above',
+            'settings' => array(),
+            'type' => 'default',
+            'weight' => 0,
+          ),
+        ),
+      );
 
       if (array_key_exists($field_key, $custom_instances)) {
         $instance = $custom_instances[$field_key];
