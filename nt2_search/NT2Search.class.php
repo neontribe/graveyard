@@ -35,6 +35,16 @@ class NT2Search {
   const SEARCH_TYPES = ['Quick', 'Advanced'];
 
   /**
+   * The amount of properties to load from Tabs API at a time for searches.
+   *
+   * The value below is `(2^32)-1`. This is the maximum possible value without
+   * causing an overflow, upon which Tabs returns no properties.
+   *
+   * @var int
+   */
+  const TABS_PAGE_SIZE = 2147483647;
+
+  /**
    * Generates and returns a search form.
    *
    * @param string $searchType
@@ -118,6 +128,9 @@ class NT2Search {
     // We just want property references back from Tabs API.
     $fields = ['propertyRef'];
     $params['fields'] = implode(':', $fields);
+
+    // Load ALL the properties! We'll sort and paginate as we please.
+    $params['pageSize'] = NT2Search::TABS_PAGE_SIZE;
 
     /*
      * Keep only recognised search codes. While this serves a basic defense
