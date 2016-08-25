@@ -153,7 +153,6 @@ function nt2_search_form($node, &$form_state) {
  */
 function nt2_search_quick_form_validate($form, &$form_state) {
   // @todo Do validation.
-  dpm(__METHOD__);
 }
 
 /**
