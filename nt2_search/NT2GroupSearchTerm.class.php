@@ -28,6 +28,11 @@
  * nicer.
  */
 class NT2GroupSearchTerm extends NT2SearchTerm {
+  /**
+   * The child search terms that this group contains.
+   *
+   * @var NT2SearchTerm[]
+   */
   private $childSearchTerms;
 
   /**
@@ -35,11 +40,13 @@ class NT2GroupSearchTerm extends NT2SearchTerm {
    *
    * @param string[] $codes
    *   The codes that the group search term has coverage of.
+   * @param string $humanReadable
+   *   An understandable description of the search term.
    * @param NT2SearchTerm[] $childSearchTerms
    *   The child search terms that inheritance is drawn from.
    */
-  public function __construct($codes, $childSearchTerms) {
-    parent::__construct($codes);
+  public function __construct($codes, $humanReadable, $childSearchTerms) {
+    parent::__construct($codes, $humanReadable);
     $this->childSearchTerms = $childSearchTerms;
   }
 
@@ -56,10 +63,10 @@ class NT2GroupSearchTerm extends NT2SearchTerm {
   /**
    * {@inheritdoc}
    */
-  public function injectParams(&$params) {
+  public function injectParams(&$params, $formValues) {
     // Call injectParams() on all children.
     foreach ($childSearchTerms as $childSearchTerm) {
-      $childSearchTerm->injectParams($params);
+      $childSearchTerm->injectParams($params, $formValues);
     }
   }
 
@@ -69,17 +76,27 @@ class NT2GroupSearchTerm extends NT2SearchTerm {
   public function injectConfigurationInputs(&$formState) {
     // Call injectConfigurationInputs() on all children.
     foreach ($childSearchTerms as $childSearchTerm) {
-      $childSearchTerm->injectConfigurationInputs($formState);
+      $childFieldSet = array(
+        '#tree' => 'TRUE',
+        '#type' => 'fieldset',
+        '#title' => $childSearchTerm->getHumanName(),
+      );
+
+      $childSearchTerm->injectConfigurationInputs($childFieldSet);
+      $formState[$childSearchTerm->getName(TRUE)] = $childFieldSet;
     }
   }
 
   /**
    * {@inheritdoc}
    */
-  public function handleConfigurationInputs(&$formState) {
+  public function handleConfigurationInputs($form, $formState) {
     // Call handleConfigurationInputs() on all children.
     foreach ($childSearchTerms as $childSearchTerm) {
-      $childSearchTerm->handleConfigurationInputs($formState);
+      // @todo Will drupal make sure the field set is always there?
+      $childFieldSetForm = $form[$$childSearchTerm->getName(TRUE)];
+      $childFieldSetState = $formState[$childSearchTerm->getName(TRUE)];
+      $childSearchTerm->handleConfigurationInputs($childFieldSetForm, $childFieldSetState);
     }
   }
 

@@ -9,18 +9,29 @@
  * A basic SearchTerm implementation, obtaining a boolean value from a checkbox.
  */
 class NT2CheckboxSearchTerm extends NT2SearchTerm {
+  /**
+   * The default options to use when rendering and interpreting the search term.
+   *
+   * @var array
+   */
+  private $defaultOptions = array(
+    'omit' => FALSE,
+    'label' => 'Checkbox',
+  );
 
   /**
    * Initialise with the code that is covered and a default label.
    *
    * @param string $code
    *   The singular code that this search term implementation covers.
-   * @param string $defaultLabel
-   *   The default label for the search term provided in the API.
+   * @param string $humanName
+   *   An understandable but brief description of the search term.
    */
-  public function __construct($code, $defaultLabel) {
-    parent::__construct([$code]);
-    $this->defaultLabel = $defaultLabel;
+  public function __construct($code, $humanName) {
+    parent::__construct([$code], $humanName);
+    $this->defaultOptions = array_merge($this->defaultOptions, array(
+      'label' => $humanName,
+    ));
   }
 
   /**
@@ -30,7 +41,6 @@ class NT2CheckboxSearchTerm extends NT2SearchTerm {
     // Inject an HTML checkbox input.
     $form[$this->getName()] = array(
       '#type' => 'checkbox',
-      // @todo Consider passing this through t()
       '#title' => $this->getLabel(),
     );
   }
@@ -38,15 +48,58 @@ class NT2CheckboxSearchTerm extends NT2SearchTerm {
   /**
    * {@inheritdoc}
    */
-  public function injectParams(&$params) {
-    // Extract the value from the get request.
-    $formValue = filter_input(INPUT_GET, $this->getName());
+  public function injectParams(&$params, $formValues) {
+    // Extract the value from the form response.
+    $formValue = $formValues[$this->getName()];
 
-    // Omit from query if checkbox is unticked.
-    // @todo Potentially make this optional or clever or something.
-    if ($formValue == '1') {
-      $params[$this->getIds()[0]] = 'true';
+    if ($formValue === 1) {
+      // The condition is TRUE.
+      $params[$this->getCodes()[0]] = 'true';
+      return;
     }
+    else {
+      // The condition is FALSE.
+      if (!$this->shouldOmit()) {
+        // The condition should be explicitly set to false if not ticked.
+        $params[$this->getCodes()[0]] = 'false';
+      }
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function injectConfigurationInputs(&$form) {
+    // Configuration input for the label.
+    $form['label'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Label'),
+      '#description' => t('The label to show in the search form'),
+      '#required' => FALSE,
+      '#default_value' => $this->getLabel(),
+    );
+
+    // Configuration input for whether to omit when unticked.
+    $form['omit'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Ignore if unspecified'),
+      '#description' => t('If enabled, the checkbox has no effect on searches if unticked'),
+      '#required' => FALSE,
+      '#default_value' => $this->shouldOmit(),
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function handleConfigurationInputs($form, $formState) {
+    // @todo Should some primitive form of validation be used?
+    $options = array();
+
+    $options['label'] = $formState['label'];
+    $options['omit'] = $formState['omit'] === 1;
+
+    $this->setConfiguration($options);
   }
 
   /**
@@ -56,8 +109,20 @@ class NT2CheckboxSearchTerm extends NT2SearchTerm {
    *   The default label.
    */
   private function getLabel() {
-    // @todo This should be configurable.
-    return $this->defaultLabel;
+    return $this->getConfiguration($this->defaultOptions)['label'];
+  }
+
+  /**
+   * Returns whether the query should be unaffected if the checkbox is unticked.
+   *
+   * This is useful for functions such as "Pets"; an unticked checkbox does not
+   * necessarily indicate a desire for there to be no pets in the cottage.
+   *
+   * @return bool
+   *   TRUE if the value should be omitted when unticked, else FALSE.
+   */
+  private function shouldOmit() {
+    return $this->getConfiguration($this->defaultOptions)['omit'];
   }
 
 }
