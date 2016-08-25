@@ -29,79 +29,98 @@ function nt2_node_type_install() {
     'cottage_reference' => array(
       'field_name' => 'cottage_reference',
       'type' => 'text',
+      'label' => 'Cottage Reference Code.',
     ),
     'cottage_brandcode' => array(
       'field_name' => 'cottage_brandcode',
       'type' => 'text',
+      'label' => 'Cottage Brand Code.',
     ),
     'cottage_url' => array(
       'field_name' => 'cottage_url',
       'type' => 'text',
+      'label' => 'Cottage url.',
     ),
     'cottage_slug' => array(
       'field_name' => 'cottage_slug',
       'type' => 'text',
+      'label' => 'Cottage slug.',
     ),
     'cottage_name' => array(
       'field_name' => 'cottage_name',
       'type' => 'text',
+      'label' => 'Cottage Name.',
     ),
     'cottage_accomodates' => array(
       'field_name' => 'cottage_accomodates',
       'type' => 'number_integer',
+      'label' => 'Cottage accommodation.',
     ),
     'cottage_accommodationdescription' => array(
       'field_name' => 'cottage_accommodationdescription',
       'type' => 'text',
+      'label' => 'Cottage accommodation description.',
     ),
     'cottage_description' => array(
       'field_name' => 'cottage_description',
       'type' => 'text_long',
+      'label' => 'Cottage Long Description.',
     ),
     'cottage_description_short' => array(
       'field_name' => 'cottage_description_short',
       'type' => 'text_long',
+      'label' => 'Cottage Short Description',
     ),
     'cottage_description_teaser' => array(
       'field_name' => 'cottage_description_teaser',
       'type' => 'text_long',
+      'label' => 'Cottage Teaser Description.',
     ),
     'cottage_bedrooms' => array(
       'field_name' => 'cottage_bedrooms',
       'type' => 'number_integer',
+      'label' => 'Cottage Bedroom Count.',
     ),
     'cottage_changeoverday' => array(
       'field_name' => 'cottage_changeoverday',
       'type' => 'text',
+      'label' => 'Cottage Changeover Day.',
     ),
     'cottage_rating' => array(
       'field_name' => 'cottage_rating',
       'type' => 'number_integer',
+      'label' => 'Cottage Rating.',
     ),
     'cottage_pets' => array(
       'field_name' => 'cottage_pets',
       'type' => 'number_integer',
+      'label' => 'Cottage Allowed Pets.',
     ),
     'cottage_promote' => array(
       'field_name' => 'cottage_promote',
       'type' => 'number_integer',
+      'label' => 'TODO',
     ),
     'cottage_booking' => array(
       'field_name' => 'cottage_booking',
-      'type' => 'text'
+      'type' => 'text',
+      'label' => 'Cottage Booking Url.',
     ),
     'cottage_ownercode' => array(
       'field_name' => 'cottage_ownercode',
       'type' => 'text',
+      'label' => 'Cottage Owner Code.',
     ),
     'cottage_images' => array(
       'field_name' => 'cottage_images',
       'type' => 'text',
-      'cardinality' => -1,
+      'label' => 'List of cottage image urls.',
+      'cardinality' => FIELD_CARDINALITY_UNLIMITED,
     ),
     'cottage_term_reference' => array(
       'field_name' => 'cottage_term_reference',
       'type' => 'taxonomy_term_reference',
+      'label' => 'List of cottage term references.',
       'cardinality' => FIELD_CARDINALITY_UNLIMITED,
       'settings' => array(
         'allowed_values' => array(
@@ -115,6 +134,7 @@ function nt2_node_type_install() {
     'cottage_location_reference' => array(
       'field_name' => 'cottage_location_reference',
       'type' => 'taxonomy_term_reference',
+      'label' => 'List of cottage location references.',
       'cardinality' => FIELD_CARDINALITY_UNLIMITED,
       'settings' => array(
         'allowed_values' => array(
@@ -126,6 +146,7 @@ function nt2_node_type_install() {
       ),
     ),
     'cottage_fieldaddress' => array(
+      'label' => 'Cottage address field.',
       'active' => 1,
       'cardinality' => 1,
       'deleted' => 0,
@@ -141,11 +162,13 @@ function nt2_node_type_install() {
     'cottage_coordinates' => array(
       'field_name' => 'cottage_coordinates',
       'type' => 'number_float',
+      'label' => 'Cottage coordinates.',
       'cardinality' => 2,
       'precision' => 10.0,
     ),
     'cottage_pricing' => array(
       'field_name' => 'cottage_pricing',
+      'label' => 'Cottage pricing info (JSON format).',
       'type' => 'text',
       'cardinality' => 1,
     )

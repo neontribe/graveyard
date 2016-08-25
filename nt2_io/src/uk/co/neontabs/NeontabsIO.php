@@ -1,4 +1,5 @@
 <?php
+
 namespace Drupal\nt2_io\uk\co\neontabs;
 
 /**
@@ -123,7 +124,7 @@ class NeontabsIO {
     $tabs_io_config_api_base_url = variable_get('tabs_io_config_api_base_url');
 
     if (empty($pubkey) || empty($secret) || empty($tabs_io_config_api_base_url)) {
-      $msg_params = array('!here' => l('here', 'admin/config/nt2/io/default'));
+      $msg_params = array('!here' => t('here', 'admin/config/nt2/io/default'));
       drupal_set_message(t('API details are not set go !here to set them.', $msg_params), 'error', FALSE);
       return FALSE;
     }

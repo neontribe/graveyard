@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file_example_get_managed_file
+ * @file
  * Contains the class CottageVocabManager.
  */
 
@@ -203,15 +203,6 @@ class CottageVocabManager {
 
           };
 
-          // TEMPORARY SET COORDINATES TO NOTHING
-          // $fieldData["loc_coordinates"] = array(
-          // 'und' => array(
-          // 0 => array(
-          // 'value' => "TO BE FILLED",
-          // ),
-          // ),
-          // );.
-
           self::addTermToVocabulary($machineName, $curChildTerm, $fieldData, self::getTermFromName($machineName, $currentGroup));
 
         }
@@ -219,19 +210,6 @@ class CottageVocabManager {
       else {
         self::addTermToVocabulary($machineName, $currentTerm, $fieldData, self::getTermFromName($machineName, $currentGroup));
       }
-
-      /* Checking Code
-       * Will probably be needed when the self::addTermToVocabulary function is cleaned up.
-       * It isn't needed at the moment because the ::addTermToVocab... function internally checks for duplicate entries.
-       * This behaviour shouldn't be expected of this function and as such it must be removed and placed here.
-       */
-
-      // Check if group parent of hierarchy exists; if it doesn't then add it to the hierarchy.
-      // Checks done internally (kept for reference)
-      // $groupExists = self::taxonomyTermExists($machineName, $currentGroup);
-      // Checks done internally (kept for reference)
-      // Check if child element exists; if it doesn't then add it to the hierarchy.
-      // $labelExists = self::taxonomyTermExists($machineName, $currentTerm);.
     }
 
     return count($apiAttribs);

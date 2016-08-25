@@ -19,24 +19,6 @@ function nt2_node_type_admin_form() {
     '#description' => t('If a prop ref is entered here it will trigger an import/refresh on the propref.'),
   );
 
-//  $form['reload_tax_tag'] = array(
-//    '#type' => 'submit',
-//    '#value' => 'Reload Tags',
-//    '#submit' => array('nt2_entity_admin_reload_attributes'),
-//  );
-//
-//  $form['reload_tax_loc'] = array(
-//    '#type' => 'submit',
-//    '#value' => 'Reload Locations',
-//    '#submit' => array('nt2_entity_admin_reload_tax_loc'),
-//  );
-//
-//  $form['load_all_prop'] = array(
-//    '#type' => 'submit',
-//    '#value' => 'Load all properties',
-//    '#submit' => array('nt2_entity_admin_load_all_prop'),
-//  );
-
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => 'Load',
@@ -184,7 +166,7 @@ function nt2_entity_admin_batch_callback($page_counter, $per_page, $search_insta
  * TODO: Do something on batch completion.
  */
 function nt2_entity_admin_batch_load_props_finished($success, $results, $operations) {
-  
+
 }
 
 /**
