@@ -1,0 +1,59 @@
+<?php
+
+/**
+ * @file
+ * The main nt2_landing module file.
+ */
+
+/**
+ * Implements hook_module.
+ */
+function nt2_landing_module() {
+
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function nt2_landing_block_info() {
+  $blocks = array();
+
+  $blocks['nt2_landing'] = array(
+    'info' => t('NT2: landing block.'),
+    'cache' => DRUPAL_NO_CACHE,
+    'region' => 'content',
+    'visibility' => BLOCK_VISIBILITY_LISTED,
+    'pages' => '<front>',
+    // Status of 1 means enabled.
+    'status' => 1,
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function nt2_landing_block_view($delta) {
+  $block = array();
+
+  if ($delta === 'nt2_landing') {
+    $block['subject'] = t('LANDING PAGES');
+    $block['content'] = array(
+      '#title' => "landing page",
+    );
+  }
+
+  return $block;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function nt2_landing_theme() {
+  $theme = array();
+
+  $theme['nt2_landing_block_theme'] = array();
+
+  return $theme;
+}
