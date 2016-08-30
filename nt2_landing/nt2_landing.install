@@ -36,8 +36,12 @@ function nt2_landing_install() {
       'cardinality' => 1,
       'label' => 'Landing page header image.',
     ),
-
   );
+
+  if ($instance = field_info_instance('node', 'body', $machine_name)) {
+    field_delete_instance($instance, TRUE);
+    field_purge_batch(1);
+  }
 
   NT2Landing::registerFieldDefinitionInstances($machine_name, $landing_fields);
 

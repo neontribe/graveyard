@@ -59,7 +59,7 @@ function nt2_landing_block_info() {
   );
 
   $blocks['nt2_landing_multi'] = array(
-    'info' => t('NT2: landing pages block.'),
+    'info' => t('NT2: landing block.'),
     'cache' => DRUPAL_NO_CACHE,
     'region' => 'content',
     'visibility' => BLOCK_VISIBILITY_LISTED,
@@ -81,6 +81,7 @@ function nt2_landing_block_view($delta) {
   $temp_node_list = NT2Landing::loadLandingNodes(variable_get("COTTAGE_LANDING_PAGE_MACHINE_NAME"));
 
   if ($delta === 'nt2_landing') {
+
     // TODO: Make this configurable also.
     if (!empty($temp_node_list['node'])) {
 
@@ -98,15 +99,6 @@ function nt2_landing_block_view($delta) {
   }
   elseif ($delta === 'nt2_landing_multi') {
 
-    $node_ids = array_keys($temp_node_list['node']);
-    $temp_nodes = node_load_multiple($node_ids);
-
-    $temp_views = node_view_multiple($temp_nodes, 'teaser');
-
-    $block['subject'] = t('LANDING PAGES');
-    $block['content'] = array(
-      'nodes' => $temp_views,
-    );
   }
 
   return $block;
@@ -117,15 +109,21 @@ function nt2_landing_block_view($delta) {
  */
 function nt2_landing_search_node_by_title_callback($string = "") {
   $matches = array();
+
   if ($string) {
-    $result = db_select('node')
-      ->fields('node', array('nid', 'title', 'type'))
-      ->condition('type', variable_get("COTTAGE_LANDING_PAGE_MACHINE_NAME"))
-      ->condition('title', db_like($string) . '%', 'LIKE')
-      ->range(0, 10)
+    $query = new EntityFieldQuery();
+    $entities = $query->entityCondition('entity_type', 'node')
+      ->entityCondition('bundle', variable_get("COTTAGE_LANDING_PAGE_MACHINE_NAME"))
+      ->fieldCondition('landing_title', 'value', db_like($string) . '%', 'LIKE')
       ->execute();
-    foreach ($result as $node) {
-      $matches[$node->title . " [$node->nid]"] = check_plain($node->title);
+
+    $loaded_nodes = node_load_multiple(array_keys($entities['node']));
+
+    foreach ($loaded_nodes as $node) {
+      // var_dump($node);
+      $landing_title = $node->landing_title['und'][0]['value'];
+
+      $matches[$landing_title . " [$node->nid]"] = check_plain($landing_title);
     }
   }
 
@@ -137,45 +135,15 @@ function nt2_landing_search_node_by_title_callback($string = "") {
  */
 function nt2_landing_block_configure($delta) {
   $form = array();
-  if ($delta == 'nt2_landing_multi') {
+  if ($delta == 'nt2_landing') {
 
-    $form['node'] = array(
+    $form['node_landing_single_selection'] = array(
       '#type' => 'textfield',
-      '#title' => t('Choose a node by title'),
+      '#title' => t('Choose a landing page.'),
     // The autocomplete path is provided in hook_menu in ajax_example.module.
       '#autocomplete_path' => 'nt2_landing/nt2_landing_search_node_by_title_callback',
     );
 
-    $form['node_recent_block_count'] = array(
-      '#type' => 'select',
-      '#title' => t('Number of landing page teasers to display.'),
-      '#default_value' => variable_get('node_landing_teasers_count', 10),
-      '#options' => drupal_map_assoc(
-        array(
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15,
-          16,
-          17,
-          18,
-          19,
-          20,
-          25,
-          30,
-        )
-      ),
-    );
   }
   return $form;
 
@@ -184,8 +152,10 @@ function nt2_landing_block_configure($delta) {
 /**
  * Implements hook_block_save.
  */
-function nt2_landing_block_save($delta) {
-
+function nt2_landing_block_save($delta = '', $edit = array()) {
+  if ($delta == 'nt2_landing') {
+    variable_set('node_landing_teasers_count', $edit['node_landing_teasers_count']);
+  }
 }
 
 /**
