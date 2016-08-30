@@ -28,7 +28,7 @@ class NT2CheckboxSearchTerm extends NT2SearchTerm {
    *   An understandable but brief description of the search term.
    */
   public function __construct($code, $humanName) {
-    parent::__construct([$code], $humanName);
+    parent::__construct([$code], $humanName . ' (Checkbox)');
     $this->defaultOptions = array_merge($this->defaultOptions, array(
       'label' => $humanName,
     ));

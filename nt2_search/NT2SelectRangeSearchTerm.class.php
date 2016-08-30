@@ -54,7 +54,7 @@ class NT2SelectRangeSearchTerm extends NT2SearchTerm {
    *   $defaultProperties variable for more information.
    */
   public function __construct($code, $humanReadable, $defaultProperties = array()) {
-    parent::__construct([$code], $humanReadable);
+    parent::__construct([$code], $humanReadable . ' (Select range)');
 
     $defaultProperties['label'] = $humanReadable;
 
