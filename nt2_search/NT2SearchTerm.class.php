@@ -3,7 +3,6 @@
 /**
  * @file
  * Contains the abstract class NT2SearchTerm.
- * @todo Learn how to link to classes in documentation.
  */
 
 /**
@@ -18,7 +17,7 @@ abstract class NT2SearchTerm {
    *
    * @var string
    */
-  const CONFIGURATION_PREFIX = NT2Search::CONFIGURATION_PREFIX . 'term_';
+  const CONFIGURATION_PREFIX = 'nt2_search_term_';
 
   /**
    * The codes from the search terms API this object may provide values for.
@@ -270,7 +269,7 @@ abstract class NT2SearchTerm {
    *   saving configuration).
    */
   private function getVariableKey($configurationType, $suffix = NULL) {
-    $key = NT2SearchTerm::CONFIGURATION_PREFIX;
+    $key = self::CONFIGURATION_PREFIX;
     $key = $key . $configurationType . '_' . $this->getName();
 
     if (is_null($suffix)) {

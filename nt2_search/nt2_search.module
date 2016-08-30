@@ -75,7 +75,7 @@ function nt2_search_page() {
    * respond to the HTTP 'GET' method in Drupal, if possible.
    */
   if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    return NT2Search::page();
+    return NT2SearchUI::page();
   }
 
   return array();
@@ -87,7 +87,7 @@ function nt2_search_page() {
 function nt2_search_block_info() {
   $blocks = array();
 
-  foreach (NT2Search::SEARCH_TYPES as $search_type) {
+  foreach (NT2SearchUI::SEARCH_TYPES as $search_type) {
     $blocks['nt2_search_' . strtolower($search_type)] = array(
       'info' => t('NT2: @type search form', array('@type' => $search_type)),
       'cache' => DRUPAL_NO_CACHE,
@@ -106,7 +106,7 @@ function nt2_search_block_info() {
 function nt2_search_block_view($delta) {
   $block = array();
 
-  foreach (NT2Search::SEARCH_TYPES as $search_type) {
+  foreach (NT2SearchUI::SEARCH_TYPES as $search_type) {
     if ($delta !== ('nt2_search_' . strtolower($search_type))) {
       continue;
     }
@@ -125,7 +125,7 @@ function nt2_search_block_view($delta) {
 function nt2_search_forms($form_id, $args) {
   $forms = array();
 
-  foreach (NT2Search::SEARCH_TYPES as $search_type) {
+  foreach (NT2SearchUI::SEARCH_TYPES as $search_type) {
     $forms['nt2_search_' . strtolower($search_type)] = array(
       'callback' => 'nt2_search_form',
     );
@@ -139,9 +139,9 @@ function nt2_search_forms($form_id, $args) {
  */
 function nt2_search_form($node, &$form_state) {
   // @todo Eww. This should be nicer.
-  foreach (NT2Search::SEARCH_TYPES as $search_type) {
+  foreach (NT2SearchUI::SEARCH_TYPES as $search_type) {
     if ('nt2_search_' . strtolower($search_type) === $form_state['build_info']['form_id']) {
-      return NT2Search::form($search_type);
+      return NT2SearchUI::form($search_type);
     }
   }
 
@@ -160,10 +160,10 @@ function nt2_search_quick_form_validate($form, &$form_state) {
  */
 function nt2_search_form_submit($form, &$form_state) {
   // @todo Eww. This should be nicer.
-  foreach (NT2Search::SEARCH_TYPES as $search_type) {
+  foreach (NT2SearchUI::SEARCH_TYPES as $search_type) {
     if ('nt2_search_' . strtolower($search_type) === $form_state['build_info']['form_id']) {
       // Do submit.
-      NT2Search::submit($search_type, $form, $form_state);
+      NT2SearchUI::submit($search_type, $form, $form_state);
     }
   }
 
