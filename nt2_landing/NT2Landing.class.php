@@ -23,6 +23,19 @@ class NT2Landing {
   }
 
   /**
+   * Method used to load every landing page nid.
+   */
+  public static function loadLandingNodes($name) {
+    $query = new EntityFieldQuery();
+    $query->entityCondition('entity_type', 'node')
+      ->entityCondition('bundle', $name);
+
+    $result = $query->execute();
+
+    return $result;
+  }
+
+  /**
    * Method used to generate field definition instances.
    */
   public static function registerFieldDefinitionInstances($name, $fields) {
@@ -71,9 +84,9 @@ class NT2Landing {
    */
   public static function generateEntityDefinitionArray($name) {
     // Return from the function if a node type already exists.
-    if (in_array($name, node_type_get_names())) {
-      return FALSE;
-    }
+    // if (in_array($name, node_type_get_names())) {
+    // return FALSE;
+    // }.
 
     // Define new cottage node type.
     $nt2_landing_type = array(
@@ -85,6 +98,7 @@ class NT2Landing {
       'modified' => 1,
     // TESTING.
       'locked' => 0,
+      'has_title' => 0,
     );
 
     // Apply Drupal defaults to initial type definition array.

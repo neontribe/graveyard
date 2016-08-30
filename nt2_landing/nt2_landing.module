@@ -13,6 +13,36 @@ function nt2_landing_module() {
 }
 
 /**
+ * Implements hook_menu.
+ */
+function nt2_landing_menu() {
+  $items = array();
+
+  $items['nt2_landing'] = array(
+    'title' => 'NT2 Landing Page',
+    'page callback' => 'nt2_landing_callback',
+    'access callback' => TRUE,
+    'expanded' => TRUE,
+  );
+
+  $items['nt2_landing/nt2_landing_search_node_by_title_callback'] = array(
+    'page callback' => 'nt2_landing_search_node_by_title_callback',
+    // 'file' => 'nt2_landing.module',.
+    'type' => MENU_CALLBACK,
+    'access arguments' => array('access content'),
+  );
+
+  return $items;
+}
+
+/**
+ * Page callback for nt2_landing.
+ */
+function nt2_landing_callback() {
+
+}
+
+/**
  * Implements hook_block_info().
  */
 function nt2_landing_block_info() {
@@ -20,6 +50,16 @@ function nt2_landing_block_info() {
 
   $blocks['nt2_landing'] = array(
     'info' => t('NT2: landing block.'),
+    'cache' => DRUPAL_NO_CACHE,
+    'region' => 'content',
+    'visibility' => BLOCK_VISIBILITY_LISTED,
+    'pages' => '<front>',
+    // Status of 1 means enabled.
+    'status' => 1,
+  );
+
+  $blocks['nt2_landing_multi'] = array(
+    'info' => t('NT2: landing pages block.'),
     'cache' => DRUPAL_NO_CACHE,
     'region' => 'content',
     'visibility' => BLOCK_VISIBILITY_LISTED,
@@ -37,14 +77,115 @@ function nt2_landing_block_info() {
 function nt2_landing_block_view($delta) {
   $block = array();
 
+  // TODO: Make this configurable.
+  $temp_node_list = NT2Landing::loadLandingNodes(variable_get("COTTAGE_LANDING_PAGE_MACHINE_NAME"));
+
   if ($delta === 'nt2_landing') {
+    // TODO: Make this configurable also.
+    if (!empty($temp_node_list['node'])) {
+
+      $node_ids = array_keys($temp_node_list['node']);
+      $first_id = array_shift($node_ids);
+
+      $temp_node = node_load($first_id);
+
+      $temp_view = node_view($temp_node, 'teaser');
+
+      $block['subject'] = t('Landing Pages');
+      $block['content'] = $temp_view;
+    }
+
+  }
+  elseif ($delta === 'nt2_landing_multi') {
+
+    $node_ids = array_keys($temp_node_list['node']);
+    $temp_nodes = node_load_multiple($node_ids);
+
+    $temp_views = node_view_multiple($temp_nodes, 'teaser');
+
     $block['subject'] = t('LANDING PAGES');
     $block['content'] = array(
-      '#title' => "landing page",
+      'nodes' => $temp_views,
     );
   }
 
   return $block;
+}
+
+/**
+ * Callback for landing page node search by title, returns JSON.
+ */
+function nt2_landing_search_node_by_title_callback($string = "") {
+  $matches = array();
+  if ($string) {
+    $result = db_select('node')
+      ->fields('node', array('nid', 'title', 'type'))
+      ->condition('type', variable_get("COTTAGE_LANDING_PAGE_MACHINE_NAME"))
+      ->condition('title', db_like($string) . '%', 'LIKE')
+      ->range(0, 10)
+      ->execute();
+    foreach ($result as $node) {
+      $matches[$node->title . " [$node->nid]"] = check_plain($node->title);
+    }
+  }
+
+  drupal_json_output($matches);
+}
+
+/**
+ * Implements hook_block_configure.
+ */
+function nt2_landing_block_configure($delta) {
+  $form = array();
+  if ($delta == 'nt2_landing_multi') {
+
+    $form['node'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Choose a node by title'),
+    // The autocomplete path is provided in hook_menu in ajax_example.module.
+      '#autocomplete_path' => 'nt2_landing/nt2_landing_search_node_by_title_callback',
+    );
+
+    $form['node_recent_block_count'] = array(
+      '#type' => 'select',
+      '#title' => t('Number of landing page teasers to display.'),
+      '#default_value' => variable_get('node_landing_teasers_count', 10),
+      '#options' => drupal_map_assoc(
+        array(
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          25,
+          30,
+        )
+      ),
+    );
+  }
+  return $form;
+
+}
+
+/**
+ * Implements hook_block_save.
+ */
+function nt2_landing_block_save($delta) {
+
 }
 
 /**
