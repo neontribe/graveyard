@@ -13,6 +13,7 @@ files[] = NT2SearchUI.class.php
 files[] = NT2SearchTabs.class.php
 files[] = NT2SearchTerm.class.php
 files[] = NT2CheckboxSearchTerm.class.php
+files[] = NT2TextFieldSearchTerm.class.php
 files[] = NT2SelectRangeSearchTerm.class.php
 
 configure = admin/config/nt2/terms

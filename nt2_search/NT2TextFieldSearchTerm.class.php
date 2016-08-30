@@ -2,25 +2,25 @@
 
 /**
  * @file
- * Contains the NT2CheckboxSearchTerm class.
+ * Contains the NT2TextFieldSearchTerm class.
  */
 
 /**
- * A basic SearchTerm implementation, obtaining a boolean value from a checkbox.
+ * A basic SearchTerm implementation, obtaining a string value from a text field.
  */
-class NT2CheckboxSearchTerm extends NT2SearchTerm {
+class NT2TextFieldSearchTerm extends NT2SearchTerm {
   /**
    * The default options to use when rendering and interpreting the search term.
    *
    * @var array
    */
   private $defaultOptions = array(
-    'omit' => FALSE,
-    'label' => 'Checkbox',
+    'omit' => TRUE,
+    'label' => 'Text',
   );
 
   /**
-   * Initialise with the code that is covered and a default label.
+   * Initialise with the $code that is covered and a default label.
    *
    * @param string $code
    *   The singular code that this search term implementation covers.
@@ -28,7 +28,7 @@ class NT2CheckboxSearchTerm extends NT2SearchTerm {
    *   An understandable but brief description of the search term.
    */
   public function __construct($code, $humanName) {
-    parent::__construct([$code], $humanName . ' (Checkbox)');
+    parent::__construct([$code], $humanName . ' (Text Field)');
     $this->defaultOptions = array_merge($this->defaultOptions, array(
       'label' => $humanName,
     ));
@@ -40,7 +40,7 @@ class NT2CheckboxSearchTerm extends NT2SearchTerm {
   public function injectInputs(&$form) {
     // Inject an HTML checkbox input.
     $form[$this->getName()] = array(
-      '#type' => 'checkbox',
+      '#type' => 'textfield',
       '#title' => $this->getLabel(),
     );
   }
@@ -52,16 +52,18 @@ class NT2CheckboxSearchTerm extends NT2SearchTerm {
     // Extract the value from the form response.
     $formValue = $formValues[$this->getName()];
 
-    if ($formValue === 1) {
-      // The condition is TRUE.
-      $params[$this->getCodes()[0]] = 'true';
+    // @todo Do we need to sanitise this?
+
+    if (strlen($formValue) !== 0) {
+      // The user has submitted some text.
+      $params[$this->getCodes()[0]] = $formValue;
       return;
     }
     else {
-      // The condition is FALSE.
+      // The search field is blank.
       if (!$this->shouldOmit()) {
-        // The condition should be explicitly set to false if not ticked.
-        $params[$this->getCodes()[0]] = 'false';
+        // The contents should be submitted even if empty.
+        $params[$this->getCodes()[0]] = $formValue;
       }
     }
   }
@@ -83,7 +85,7 @@ class NT2CheckboxSearchTerm extends NT2SearchTerm {
     $form['omit'] = array(
       '#type' => 'checkbox',
       '#title' => t('Ignore if unspecified'),
-      '#description' => t('If enabled, the checkbox has no effect on searches if unticked'),
+      '#description' => t('If enabled, the search field has no effect on searches if empty'),
       '#required' => FALSE,
       '#default_value' => $this->shouldOmit(),
     );
@@ -113,13 +115,10 @@ class NT2CheckboxSearchTerm extends NT2SearchTerm {
   }
 
   /**
-   * Returns whether the query should be unaffected if the checkbox is unticked.
-   *
-   * This is useful for functions such as "Pets"; an unticked checkbox does not
-   * necessarily indicate a desire for there to be no pets in the cottage.
+   * Returns whether the query should be unaffected if the textfield is empty.
    *
    * @return bool
-   *   TRUE if the value should be omitted when unticked, else FALSE.
+   *   TRUE if the value should be omitted when empty, else FALSE.
    */
   private function shouldOmit() {
     return $this->getConfiguration($this->defaultOptions)['omit'];

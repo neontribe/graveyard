@@ -156,6 +156,10 @@ class NT2SearchTabs {
       $searchTerms[] = new NT2SelectRangeSearchTerm('bedrooms', $json['bedrooms']['label'], $defaults);
     }
 
+    if (array_key_exists('name', $json) && $json['name']['type'] === 'string') {
+      $searchTerms[] = new NT2TextFieldSearchTerm('name', 'Property name');
+    }
+
     // @todo Explain this better than just the summary in NT2GroupSearchTerm.
     if (array_key_exists('fromDate', $json) && $json['fromDate']['type'] == 'string') {
       // @todo Work out the date SearchTerm.
@@ -212,7 +216,7 @@ class NT2SearchTabs {
 
         case 'text':
         case 'long text':
-          // @todo Handle the string use-case.
+          $searchTerms[] = new NT2TextFieldSearchTerm($code, $label);
           break;
 
         default:
