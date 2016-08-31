@@ -68,14 +68,14 @@ function _render_link($text, $url, $title, $prefix = '<span>', $suffix = '</span
     );
 }
 
-function render_cottage_name($field_data, $url, $view_mode) {
-    $cottage_name = $field_data[0]['#markup'];
-    
-    $link_prefix = '<h1 id="cottage-name">';
+function render_node_name($field_data, $view_mode, $prefix = 'node', $url = NULL) {
+    $name = $field_data[0]['#markup'];
+
+    $link_prefix = '<h1 id="$prefix-name">';
     $link_suffix = '</h1>';
 
     $title_renderarray = array(
-        0 => _render_link($cottage_name, $url, 'cottage-page-link', $link_prefix, $link_suffix),
+        0 => _render_link($name, $url, "$prefix-page-link", $link_prefix, $link_suffix),
     );
 
     return $title_renderarray;
@@ -126,24 +126,29 @@ function render_cottage_info_field($prefix_text, $item_ref, $url, $view_mode, $p
 }
 
 function nt2_theme_preprocess_field(&$vars) {
+
   if ($node = $vars['element']['#object']) {
-    if ($node->type == 'cottage_entity') {
-      $view_mode = $vars['element']['#view_mode'];
+    // Assign the node type `teaser` or `full` to the $node_type variable.
+    $node_type = $node->type;
 
-      $item_ref =& $vars['items'];
-      $label = $vars['element']['#field_name'];
+    // Setup node information variables.
+    $view_mode = $vars['element']['#view_mode'];
+    $item_ref =& $vars['items'];
+    $label = $vars['element']['#field_name'];
+    
+    // Figure out the absolute path to the current node.
+    $options = array('absolute' => TRUE);
+    $nid = $node->nid;
+    $url = url('node/' . $nid, $options);
 
-      // Figure out the absolute path to the current node.
-      $options = array('absolute' => TRUE);
-      $nid = $node->nid;
-      $url = url('node/' . $nid, $options);
+    if ($node_type == 'cottage_entity') {
   
       switch($label) {
         case 'cottage_images':
             $item_ref = render_cottage_images($node->cottage_images, $view_mode);
             break;
         case 'cottage_name':
-            $item_ref = render_cottage_name($item_ref, $url, $view_mode);
+            $item_ref = render_node_name($item_ref, $view_mode, 'cottage', $url);
             break;
         case 'cottage_reference':
             $item_ref = render_cottage_reference($item_ref, $url, $view_mode);
@@ -180,5 +185,35 @@ function nt2_theme_preprocess_field(&$vars) {
             $item_ref = render_default_field($item_ref);
       }
     }
+    elseif ($node_type == 'nt2_landing_entity_type') {
+        switch($label) {
+            default:
+                $item_ref = render_default_field($item_ref);
+        }
+    }
   }
+}
+
+
+function nt2_theme_preprocess_node(&$vars) {
+    
+    $node_type = $vars['type'];
+
+    if($node_type == 'nt2_landing_entity_type') {
+        $tmp_title = array(
+            '0' => array(
+                '#markup' => $vars['title']
+            ),
+        );
+
+        // Setup node information variables.
+        $view_mode = $vars['view_mode'];
+        
+        // Figure out the absolute path to the current node.
+        $options = array('absolute' => TRUE);
+        $nid = $vars['nid'];
+        $url = url('node/' . $nid, $options);
+
+        $vars['title'] = render_node_name($tmp_title, $view_mode, 'landing', $url);
+    }
 }
