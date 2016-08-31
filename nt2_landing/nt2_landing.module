@@ -80,7 +80,6 @@ function nt2_landing_block_view($delta) {
   $block['subject'] = t('Landing Pages');
 
   if ($delta === 'nt2_landing') {
-
     $node_landing_single_selection = variable_get('node_landing_single_selection');
 
     $matches = array();
@@ -122,13 +121,13 @@ function nt2_landing_search_node_by_title_callback($string = "") {
     $query = new EntityFieldQuery();
     $entities = $query->entityCondition('entity_type', 'node')
       ->entityCondition('bundle', variable_get("COTTAGE_LANDING_PAGE_MACHINE_NAME"))
-      ->fieldCondition('title', 'value', db_like($string) . '%', 'LIKE')
+      ->propertyCondition('title', db_like($string) . '%', 'LIKE')
       ->execute();
 
     $loaded_nodes = node_load_multiple(array_keys($entities['node']));
 
     foreach ($loaded_nodes as $node) {
-      $landing_title = $node->landing_title['und'][0]['value'];
+      $landing_title = $node->title;
 
       $matches[$landing_title . " [$node->nid]"] = check_plain($landing_title);
     }

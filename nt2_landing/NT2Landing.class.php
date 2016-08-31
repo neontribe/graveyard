@@ -98,7 +98,6 @@ class NT2Landing {
       'modified' => 1,
     // TESTING.
       'locked' => 0,
-      'has_title' => 0,
     );
 
     // Apply Drupal defaults to initial type definition array.
