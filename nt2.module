@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * @file
+ * The core nt2 module file.
+ */
+
+/**
+ * Implements hook_menu.
+ */
 function nt2_menu() {
   $items = array();
 

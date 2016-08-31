@@ -15,11 +15,6 @@ function nt2_landing_install() {
   NT2Landing::registerEntityType($machine_name);
 
   $landing_fields = array(
-    'landing_title' => array(
-      'field_name' => 'landing_title',
-      'type' => 'text',
-      'label' => 'Title of landing page.',
-    ),
     'landing_body' => array(
       'field_name' => 'landing_body',
       'type' => 'text',

@@ -59,7 +59,7 @@ function nt2_landing_block_info() {
   );
 
   $blocks['nt2_landing_multi'] = array(
-    'info' => t('NT2: landing block.'),
+    'info' => t('NT2: landing blocks.'),
     'cache' => DRUPAL_NO_CACHE,
     'region' => 'content',
     'visibility' => BLOCK_VISIBILITY_LISTED,
@@ -77,25 +77,33 @@ function nt2_landing_block_info() {
 function nt2_landing_block_view($delta) {
   $block = array();
 
-  // TODO: Make this configurable.
-  $temp_node_list = NT2Landing::loadLandingNodes(variable_get("COTTAGE_LANDING_PAGE_MACHINE_NAME"));
+  $block['subject'] = t('Landing Pages');
 
   if ($delta === 'nt2_landing') {
 
-    // TODO: Make this configurable also.
-    if (!empty($temp_node_list['node'])) {
+    $node_landing_single_selection = variable_get('node_landing_single_selection');
 
-      $node_ids = array_keys($temp_node_list['node']);
-      $first_id = array_shift($node_ids);
+    $matches = array();
+    // Check for instances of a valid node ID encapsulated by '[]'. eg: `[444]`.
+    $matched = preg_match("/\[[0-9]+\]/", $node_landing_single_selection, $matches);
 
-      $temp_node = node_load($first_id);
+    // If there are matches and there is only one match.
+    if ($matched && count($matches) == 1) {
+      // Strip out `[]` leaving just the node id.
+      $node_id = preg_replace('/((\[)|(\]))/', '', $matches[0]);
+      $loaded_matched_node = node_load($node_id);
 
-      $temp_view = node_view($temp_node, 'teaser');
-
-      $block['subject'] = t('Landing Pages');
-      $block['content'] = $temp_view;
+      // If the node could be loaded call node_view with the node object and output to the block.
+      if ($loaded_matched_node) {
+        $temp_view = node_view($loaded_matched_node, 'teaser');
+        $block['content'] = $temp_view;
+      }
     }
-
+    else {
+      $block['content'] = array(
+        '#markup' => "$node_landing_single_selection is not a valid ID."
+      );
+    }
   }
   elseif ($delta === 'nt2_landing_multi') {
 
@@ -114,13 +122,12 @@ function nt2_landing_search_node_by_title_callback($string = "") {
     $query = new EntityFieldQuery();
     $entities = $query->entityCondition('entity_type', 'node')
       ->entityCondition('bundle', variable_get("COTTAGE_LANDING_PAGE_MACHINE_NAME"))
-      ->fieldCondition('landing_title', 'value', db_like($string) . '%', 'LIKE')
+      ->fieldCondition('title', 'value', db_like($string) . '%', 'LIKE')
       ->execute();
 
     $loaded_nodes = node_load_multiple(array_keys($entities['node']));
 
     foreach ($loaded_nodes as $node) {
-      // var_dump($node);
       $landing_title = $node->landing_title['und'][0]['value'];
 
       $matches[$landing_title . " [$node->nid]"] = check_plain($landing_title);
@@ -140,6 +147,7 @@ function nt2_landing_block_configure($delta) {
     $form['node_landing_single_selection'] = array(
       '#type' => 'textfield',
       '#title' => t('Choose a landing page.'),
+      '#default_value' => t(variable_get('node_landing_single_selection')),
     // The autocomplete path is provided in hook_menu in ajax_example.module.
       '#autocomplete_path' => 'nt2_landing/nt2_landing_search_node_by_title_callback',
     );
@@ -154,7 +162,7 @@ function nt2_landing_block_configure($delta) {
  */
 function nt2_landing_block_save($delta = '', $edit = array()) {
   if ($delta == 'nt2_landing') {
-    variable_set('node_landing_teasers_count', $edit['node_landing_teasers_count']);
+    variable_set('node_landing_single_selection', $edit['node_landing_single_selection']);
   }
 }
 

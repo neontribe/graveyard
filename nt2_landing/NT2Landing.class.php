@@ -84,9 +84,9 @@ class NT2Landing {
    */
   public static function generateEntityDefinitionArray($name) {
     // Return from the function if a node type already exists.
-    // if (in_array($name, node_type_get_names())) {
-    // return FALSE;
-    // }.
+    if (in_array($name, node_type_get_names())) {
+      return FALSE;
+    }
 
     // Define new cottage node type.
     $nt2_landing_type = array(
