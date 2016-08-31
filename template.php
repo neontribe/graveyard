@@ -52,7 +52,7 @@ function _render_image($title, $path, $alt, $style_name, $prefix = '<span>', $su
     return $_image_rndarray;
 }
 
-function _render_link($text, $url, $prefix = '<span>', $suffix = '</span>') {
+function _render_link($text, $url, $title, $prefix = '<span>', $suffix = '</span>') {
     return array(
         '#theme' => 'link',
         '#prefix' => $prefix,
@@ -60,7 +60,7 @@ function _render_link($text, $url, $prefix = '<span>', $suffix = '</span>') {
         '#text' => $text,
         '#options' => array(
             'attributes' => array(
-                'title' => $text,
+                'title' => $title,
             ),
             'html' => '',
         ),
@@ -75,7 +75,7 @@ function render_cottage_name($field_data, $url, $view_mode) {
     $link_suffix = '</h1>';
 
     $title_renderarray = array(
-        0 => _render_link($cottage_name, $url, $link_prefix, $link_suffix),
+        0 => _render_link($cottage_name, $url, 'cottage-page-link', $link_prefix, $link_suffix),
     );
 
     return $title_renderarray;
@@ -89,7 +89,7 @@ function render_cottage_reference($field_data, $url, $view_mode) {
     $link_suffix = '</h4>';
 
     $reference_renderarray = array(
-        0 => _render_link('(' . $cottage_reference . ')', $url, $link_prefix, $link_suffix),
+        0 => _render_link('(' . $cottage_reference . ')', $url, 'cottage-page-link', $link_prefix, $link_suffix),
     );
 
     return $reference_renderarray;
@@ -124,11 +124,6 @@ function render_cottage_info_field($prefix_text, $item_ref, $url, $view_mode, $p
     );
     return $field_data;
 }
-
-function render_cottage_pricing_field($prefix_text, $item_ref, $url, $view_mode) {
-
-}
-
 
 function nt2_theme_preprocess_field(&$vars) {
   if ($node = $vars['element']['#object']) {
@@ -178,6 +173,7 @@ function nt2_theme_preprocess_field(&$vars) {
             $item_ref = render_cottage_info_field('Price Range', $item_ref, $url, $view_mode);
             break;
         case 'cottage_location_reference':
+          $item_ref[0]['#options']['attributes']['title'] = 'cottage-location-reference';
           $item_ref = render_cottage_info_field('Location', $item_ref, $url, $view_mode);
           break;
         default:
