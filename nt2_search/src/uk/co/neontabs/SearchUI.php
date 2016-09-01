@@ -1,5 +1,7 @@
 <?php
 
+namespace Drupal\nt2_search\uk\co\neontabs;
+
 /**
  * @file
  * Code for rendering and handling search forms, as well as displaying results.
@@ -8,7 +10,7 @@
 /**
  * Code for rendering and handling search forms, as well as displaying results.
  */
-class NT2SearchUI {
+class SearchUI {
   /**
    * The different types of searches.
    *
@@ -35,7 +37,7 @@ class NT2SearchUI {
     $form = array();
 
     // Inject input elements from all enabled search terms for this search type.
-    $searchTerms = NT2SearchTabs::getSearchTerms();
+    $searchTerms = SearchTabs::getSearchTerms();
     foreach ($searchTerms as &$searchTerm) {
       if (!$searchTerm->isVisible($searchType)) {
         continue;
@@ -70,7 +72,7 @@ class NT2SearchUI {
 
     // Construct a search API query based on the form response.
     $query = array();
-    $searchTerms = NT2SearchTabs::getSearchTerms();
+    $searchTerms = SearchTabs::getSearchTerms();
 
     // Extract responses to input elements injected by enabled search terms.
     foreach ($searchTerms as &$searchTerm) {
@@ -101,7 +103,7 @@ class NT2SearchUI {
    *   A render array representing the search results.
    */
   public static function page() {
-    // Build the finished search query to pass to NT2SearchTabs.
+    // Build the finished search query to pass to SearchTabs.
     $params = array();
 
     // The user's untrusted input, as GET parameters.
@@ -121,7 +123,7 @@ class NT2SearchUI {
 
     // Build a list of codes we recognise as valid search filters.
     $codes = array();
-    $searchTerms = NT2SearchTabs::getSearchTerms();
+    $searchTerms = SearchTabs::getSearchTerms();
     foreach ($searchTerms as $searchTerm) {
       $codes = array_merge($codes, $searchTerm->getCodes());
     }
@@ -138,7 +140,7 @@ class NT2SearchUI {
     }
 
     // Access the Tabs API to find the properties based on our query.
-    $results = NT2SearchTabs::findProperties($params);
+    $results = SearchTabs::findProperties($params);
 
     // Render each result.
     $renderArray = array();

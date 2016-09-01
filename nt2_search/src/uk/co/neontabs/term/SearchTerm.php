@@ -1,8 +1,10 @@
 <?php
 
+namespace Drupal\nt2_search\uk\co\neontabs\term;
+
 /**
  * @file
- * Contains the abstract class NT2SearchTerm.
+ * Contains the abstract class SearchTerm.
  */
 
 /**
@@ -11,7 +13,7 @@
  * Implementations will inject inputs into a search form and extract from the
  * form response parameters that will be injected into the search query.
  */
-abstract class NT2SearchTerm {
+abstract class SearchTerm {
   /**
    * The prefix for terms to use when saving details with variable_set().
    *

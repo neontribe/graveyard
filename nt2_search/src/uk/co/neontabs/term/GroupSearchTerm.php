@@ -1,8 +1,10 @@
 <?php
 
+namespace Drupal\nt2_search\uk\co\neontabs\term;
+
 /**
  * @file
- * Contains the NT2GroupSearchTerm class.
+ * Contains the GroupSearchTerm class.
  */
 
 /**
@@ -13,11 +15,11 @@
  *
  * For example, "fromDate" can be its own search term. "nights", however, may
  * only be used with "fromDate". Therefore, one can make both the search term
- * for "fromDate" and an NT2GroupSearchTerm containing the search terms for
+ * for "fromDate" and an GroupSearchTerm containing the search terms for
  * "fromDate" and "nights".
  *
  * With the checking that codes are not claimed by multiple search terms, this
- * allows for clashes to be checked easily. Either the NT2GroupSearchTerm is
+ * allows for clashes to be checked easily. Either the GroupSearchTerm is
  * enabled, the "fromDate" search term is enabled alone or neither are enabled.
  *
  * In this manner, clashes are prevented and search terms can be grouped
@@ -27,11 +29,11 @@
  * earns its worth and makes code in other areas of the codebase much, much
  * nicer.
  */
-class NT2GroupSearchTerm extends NT2SearchTerm {
+class GroupSearchTerm extends SearchTerm {
   /**
    * The child search terms that this group contains.
    *
-   * @var NT2SearchTerm[]
+   * @var SearchTerm[]
    */
   private $childSearchTerms;
 
@@ -42,7 +44,7 @@ class NT2GroupSearchTerm extends NT2SearchTerm {
    *   The codes that the group search term has coverage of.
    * @param string $humanReadable
    *   An understandable description of the search term.
-   * @param NT2SearchTerm[] $childSearchTerms
+   * @param SearchTerm[] $childSearchTerms
    *   The child search terms that inheritance is drawn from.
    */
   public function __construct($codes, $humanReadable, $childSearchTerms) {

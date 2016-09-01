@@ -1,8 +1,10 @@
 <?php
 
+namespace Drupal\nt2_search\uk\co\neontabs\term;
+
 /**
  * @file
- * Contains the NT2SelectRangeSearchTerm class.
+ * Contains the SelectRangeSearchTerm class.
  */
 
 /**
@@ -13,7 +15,7 @@
  *
  * @todo Most use-cases required a '>' prefix. How should this be implemented?
  */
-class NT2SelectRangeSearchTerm extends NT2SearchTerm {
+class SelectRangeSearchTerm extends SearchTerm {
   /**
    * The form value representation of any value being acceptable.
    *

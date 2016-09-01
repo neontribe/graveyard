@@ -1,16 +1,22 @@
 <?php
 
+namespace Drupal\nt2_search\uk\co\neontabs;
+
 /**
  * @file
- * Contains the NT2SearchTabs class.
+ * Contains the SearchTabs class.
  */
 
+// @todo Can these be relative?
+use Drupal\nt2_search\uk\co\neontabs\term\SelectRangeSearchTerm;
+use Drupal\nt2_search\uk\co\neontabs\term\TextFieldSearchTerm;
+use Drupal\nt2_search\uk\co\neontabs\term\CheckboxSearchTerm;
 use Drupal\nt2_io\uk\co\neontabs\NeontabsIO;
 
 /**
  * Methods for interfacing with Tabs API for search-related functions.
  */
-class NT2SearchTabs {
+class SearchTabs {
   /**
    * The number of properties to load from Tabs API at a time for searches.
    *
@@ -38,7 +44,7 @@ class NT2SearchTabs {
     $query['fields'] = implode(':', $fields);
 
     // Load ALL the properties! We'll sort and paginate as we please.
-    $query['pageSize'] = NT2SearchTabs::TABS_PAGE_SIZE;
+    $query['pageSize'] = self::TABS_PAGE_SIZE;
 
     // Query Tabs API with parameters.
     $json = NeontabsIO::getInstance()->get('property', $query);
@@ -77,7 +83,7 @@ class NT2SearchTabs {
     $propertyNodes = array();
     foreach ($propertyReferences as $propertyReference) {
       // @todo Check for errors here.
-      $propertyNodes[] = CottageNodeManager::loadNode($propertyReference);
+      $propertyNodes[] = \CottageNodeManager::loadNode($propertyReference);
     }
 
     return $propertyNodes;
@@ -91,7 +97,7 @@ class NT2SearchTabs {
    * implementations may be returned for the same API codes, so one should note
    * to check that a search term has been made visible before using it.
    *
-   * @return NT2SearchTerm[]
+   * @return SearchTerm[]
    *   A list of potential search terms allowed by the API.
    */
   public static function getSearchTerms() {
@@ -119,7 +125,7 @@ class NT2SearchTabs {
    * @param array $flatJson
    *   The 'core' section of the API.
    *
-   * @return NT2SearchTerm[]
+   * @return SearchTerm[]
    *   The implementations we were able to find given the API response.
    */
   protected static function extractCoreTerms($flatJson) {
@@ -141,7 +147,7 @@ class NT2SearchTabs {
         'singularNoun' => 'person',
         'pluralNoun' => 'people',
       );
-      $searchTerms[] = new NT2SelectRangeSearchTerm('accommodates', $json['accommodates']['label'], $defaults);
+      $searchTerms[] = new SelectRangeSearchTerm('accommodates', $json['accommodates']['label'], $defaults);
     }
 
     if (array_key_exists('bedrooms', $json) && $json['bedrooms']['type'] === 'integer') {
@@ -153,14 +159,14 @@ class NT2SearchTabs {
         'singularNoun' => 'bedroom',
         'pluralNoun' => 'bedrooms',
       );
-      $searchTerms[] = new NT2SelectRangeSearchTerm('bedrooms', $json['bedrooms']['label'], $defaults);
+      $searchTerms[] = new SelectRangeSearchTerm('bedrooms', $json['bedrooms']['label'], $defaults);
     }
 
     if (array_key_exists('name', $json) && $json['name']['type'] === 'string') {
-      $searchTerms[] = new NT2TextFieldSearchTerm('name', 'Property name');
+      $searchTerms[] = new TextFieldSearchTerm('name', 'Property name');
     }
 
-    // @todo Explain this better than just the summary in NT2GroupSearchTerm.
+    // @todo Explain this better than just the summary in GroupSearchTerm.
     if (array_key_exists('fromDate', $json) && $json['fromDate']['type'] == 'string') {
       // @todo Work out the date SearchTerm.
 
@@ -173,7 +179,7 @@ class NT2SearchTabs {
           'singularNoun' => 'night',
           'pluralNoun' => 'nights',
         );
-        $nightsSearchTerm = new NT2SelectRangeSearchTerm('nights', $json['nights']['label'], $defaults);
+        $nightsSearchTerm = new SelectRangeSearchTerm('nights', $json['nights']['label'], $defaults);
 
         // @todo Join and add as a GroupSearchTerm.
       }
@@ -193,7 +199,7 @@ class NT2SearchTabs {
    * @param array $json
    *   The 'attributes' section of the API.
    *
-   * @return NT2SearchTerm[]
+   * @return SearchTerm[]
    *   The implementations we were able to find given the API response.
    */
   protected static function extractAttributesTerms($json) {
@@ -207,7 +213,7 @@ class NT2SearchTabs {
       // @todo Do we want /all/ of the attributes?
       switch (strtolower($type)) {
         case 'boolean':
-          $searchTerms[] = new NT2CheckboxSearchTerm($code, $label);
+          $searchTerms[] = new CheckboxSearchTerm($code, $label);
           break;
 
         case 'number':
@@ -216,7 +222,7 @@ class NT2SearchTabs {
 
         case 'text':
         case 'long text':
-          $searchTerms[] = new NT2TextFieldSearchTerm($code, $label);
+          $searchTerms[] = new TextFieldSearchTerm($code, $label);
           break;
 
         default:

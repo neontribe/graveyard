@@ -5,13 +5,16 @@
  * The admin functions for nt2 search.
  */
 
+use Drupal\nt2_search\uk\co\neontabs\SearchUI;
+use Drupal\nt2_search\uk\co\neontabs\SearchTabs;
+
 /**
  * Implements hook form().
  *
  * Provides the admin form for search term visibility settings.
  */
 function nt2_search_visibility_form() {
-  $search_terms = NT2SearchTabs::getSearchTerms();
+  $search_terms = SearchTabs::getSearchTerms();
   $form = array();
 
   $description = array(
@@ -48,7 +51,7 @@ function nt2_search_visibility_form() {
     );
 
     // Columns 2-n: A checkbox for each search type to indicate visibility.
-    foreach (NT2SearchUI::SEARCH_TYPES as $search_type) {
+    foreach (SearchUI::SEARCH_TYPES as $search_type) {
       // We prepend 'type' to prevent any clashes.
       $row['type' . $search_type] = array(
         '#type' => 'checkbox',
@@ -87,10 +90,10 @@ function nt2_search_visibility_form_submit($form, &$form_state) {
   form_state_values_clean($form_state);
   $values = $form_state['values'];
 
-  $search_terms = NT2SearchTabs::getSearchTerms();
+  $search_terms = SearchTabs::getSearchTerms();
 
   $claimed_codes = array();
-  foreach (NT2SearchUI::SEARCH_TYPES as $search_type) {
+  foreach (SearchUI::SEARCH_TYPES as $search_type) {
     $claimed_codes[$search_type] = array();
   }
 
@@ -106,7 +109,7 @@ function nt2_search_visibility_form_submit($form, &$form_state) {
 
     // The checkbox values for each search type.
     $visibility_for = $visibility_table[$term_name];
-    foreach (NT2SearchUI::SEARCH_TYPES as $search_type) {
+    foreach (SearchUI::SEARCH_TYPES as $search_type) {
       // 'type' was prepended in form generation earlier to prevent clashes.
       $type_field_name = 'type' . $search_type;
       if (!array_key_exists($type_field_name, $visibility_for)) {
@@ -152,7 +155,7 @@ function nt2_search_visibility_form_submit($form, &$form_state) {
  * Injects configuration options for every enabled search term.
  */
 function nt2_search_configuration_form() {
-  $search_terms = NT2SearchTabs::getSearchTerms();
+  $search_terms = SearchTabs::getSearchTerms();
   $form = array();
 
   $description = array(
@@ -210,7 +213,7 @@ function nt2_search_configuration_form_submit($form, &$form_state) {
   form_state_values_clean($form_state);
   $values = $form_state['values'];
 
-  $search_terms = NT2SearchTabs::getSearchTerms();
+  $search_terms = SearchTabs::getSearchTerms();
 
   foreach ($search_terms as $search_term) {
     $term_name = $search_term->getName(TRUE);
@@ -254,7 +257,7 @@ function theme_nt2_search_admin_visibility_form_table($variables) {
     t('API Codes'),
   );
 
-  foreach (NT2SearchUI::SEARCH_TYPES as $search_type) {
+  foreach (SearchUI::SEARCH_TYPES as $search_type) {
     $header[] = t($search_type);
   };
 
