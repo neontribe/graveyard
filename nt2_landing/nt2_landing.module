@@ -1,177 +1,356 @@
 <?php
 
-/**
- * @file
- * The main nt2_landing module file.
- */
+  /**
+   * @file
+   * The main nt2_landing module file.
+   */
 
-/**
- * Implements hook_module.
- */
-function nt2_landing_module() {
-
-}
-
-/**
- * Implements hook_menu.
- */
-function nt2_landing_menu() {
-  $items = array();
-
-  $items['nt2_landing'] = array(
-    'title' => 'NT2 Landing Page',
-    'page callback' => 'nt2_landing_callback',
-    'access callback' => TRUE,
-    'expanded' => TRUE,
-  );
-
-  $items['nt2_landing/nt2_landing_search_node_by_title_callback'] = array(
-    'page callback' => 'nt2_landing_search_node_by_title_callback',
-    // 'file' => 'nt2_landing.module',.
-    'type' => MENU_CALLBACK,
-    'access arguments' => array('access content'),
-  );
-
-  return $items;
-}
-
-/**
- * Page callback for nt2_landing.
- */
-function nt2_landing_callback() {
-
-}
-
-/**
- * Implements hook_block_info().
- */
-function nt2_landing_block_info() {
-  $blocks = array();
-
-  $blocks['nt2_landing'] = array(
-    'info' => t('NT2: landing block.'),
-    'cache' => DRUPAL_NO_CACHE,
-    'region' => 'content',
-    'visibility' => BLOCK_VISIBILITY_LISTED,
-    'pages' => '<front>',
-    // Status of 1 means enabled.
-    'status' => 1,
-  );
-
-  $blocks['nt2_landing_multi'] = array(
-    'info' => t('NT2: landing blocks.'),
-    'cache' => DRUPAL_NO_CACHE,
-    'region' => 'content',
-    'visibility' => BLOCK_VISIBILITY_LISTED,
-    'pages' => '<front>',
-    // Status of 1 means enabled.
-    'status' => 1,
-  );
-
-  return $blocks;
-}
-
-/**
- * Implements hook_block_view().
- */
-function nt2_landing_block_view($delta) {
-  $block = array();
-
-  $block['subject'] = t('Landing Pages');
-
-  if ($delta === 'nt2_landing') {
-    $node_landing_single_selection = variable_get('node_landing_single_selection');
-
-    $matches = array();
-    // Check for instances of a valid node ID encapsulated by '[]'. eg: `[444]`.
-    $matched = preg_match("/\[[0-9]+\]/", $node_landing_single_selection, $matches);
-
-    // If there are matches and there is only one match.
-    if ($matched && count($matches) == 1) {
-      // Strip out `[]` leaving just the node id.
-      $node_id = preg_replace('/((\[)|(\]))/', '', $matches[0]);
-      $loaded_matched_node = node_load($node_id);
-
-      // If the node could be loaded call node_view with the node object and output to the block.
-      if ($loaded_matched_node) {
-        $temp_view = node_view($loaded_matched_node, 'teaser');
-        $block['content'] = $temp_view;
-      }
-    }
-    else {
-      $block['content'] = array(
-        '#markup' => "$node_landing_single_selection is not a valid ID."
-      );
-    }
-  }
-  elseif ($delta === 'nt2_landing_multi') {
+  /**
+   * Implements hook_module.
+   */
+  function nt2_landing_module() {
 
   }
 
-  return $block;
-}
+  /**
+   * Implements hook_menu.
+   */
+  function nt2_landing_menu() {
+    $items = array();
 
-/**
- * Callback for landing page node search by title, returns JSON.
- */
-function nt2_landing_search_node_by_title_callback($string = "") {
-  $matches = array();
-
-  if ($string) {
-    $query = new EntityFieldQuery();
-    $entities = $query->entityCondition('entity_type', 'node')
-      ->entityCondition('bundle', variable_get("COTTAGE_LANDING_PAGE_MACHINE_NAME"))
-      ->propertyCondition('title', db_like($string) . '%', 'LIKE')
-      ->execute();
-
-    $loaded_nodes = node_load_multiple(array_keys($entities['node']));
-
-    foreach ($loaded_nodes as $node) {
-      $landing_title = $node->title;
-
-      $matches[$landing_title . " [$node->nid]"] = check_plain($landing_title);
-    }
-  }
-
-  drupal_json_output($matches);
-}
-
-/**
- * Implements hook_block_configure.
- */
-function nt2_landing_block_configure($delta) {
-  $form = array();
-  if ($delta == 'nt2_landing') {
-
-    $form['node_landing_single_selection'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Choose a landing page.'),
-      '#default_value' => t(variable_get('node_landing_single_selection')),
-    // The autocomplete path is provided in hook_menu in ajax_example.module.
-      '#autocomplete_path' => 'nt2_landing/nt2_landing_search_node_by_title_callback',
+    $items['nt2_landing'] = array(
+      'title' => 'NT2 Landing Page',
+      'page callback' => 'nt2_landing_callback',
+      'access callback' => TRUE,
+      'expanded' => TRUE,
     );
 
+    $items['nt2_landing/nt2_landing_search_node_by_title_callback'] = array(
+      'page callback' => 'nt2_landing_search_node_by_title_callback',
+      // 'file' => 'nt2_landing.module',.
+      'type' => MENU_CALLBACK,
+      'access arguments' => array('access content'),
+    );
+
+    return $items;
   }
-  return $form;
 
-}
+  /**
+   * Page callback for nt2_landing.
+   */
+  function nt2_landing_callback() {
 
-/**
- * Implements hook_block_save.
- */
-function nt2_landing_block_save($delta = '', $edit = array()) {
-  if ($delta == 'nt2_landing') {
-    variable_set('node_landing_single_selection', $edit['node_landing_single_selection']);
   }
-}
 
-/**
- * Implements hook_theme().
- */
-function nt2_landing_theme() {
-  $theme = array();
+  /**
+   * Implements hook_block_info().
+   */
+  function nt2_landing_block_info() {
+    $blocks = array();
 
-  $theme['nt2_landing_block_theme'] = array();
+    $blocks['nt2_landing'] = array(
+      'info' => t('NT2: landing block.'),
+      'cache' => DRUPAL_NO_CACHE,
+      'region' => 'content',
+      'visibility' => BLOCK_VISIBILITY_LISTED,
+      'pages' => '<front>',
+    // Status of 1 means enabled.
+      'status' => 1,
+    );
 
-  return $theme;
-}
+    $blocks['nt2_landing_multi'] = array(
+      'info' => t('NT2: landing blocks.'),
+      'cache' => DRUPAL_NO_CACHE,
+      'region' => 'content',
+      'visibility' => BLOCK_VISIBILITY_LISTED,
+      'pages' => '<front>',
+      // Status of 1 means enabled.
+      'status' => 1,
+    );
+
+    return $blocks;
+  }
+
+  /**
+   * Function to strip ID from landing page name.
+   */
+  function nt2_strip_id_from_search($search) {
+    $matches = array();
+    $matched = preg_match("/\[[0-9]+\]/", $search, $matches);
+    $node_id = -1;
+
+    if ($matched && count($matches) > 0) {
+      $node_id = preg_replace('/((\[)|(\]))/', '', $matches[0]);
+    }
+
+    return $node_id;
+  }
+
+  /**
+   * Implements hook_block_view().
+   */
+  function nt2_landing_block_view($delta) {
+    $block = array();
+
+    $block['subject'] = t('Landing Pages');
+
+    if ($delta === 'nt2_landing') {
+      $node_landing_single_selection = variable_get('node_landing_single_selection');
+
+      // Strip out `[]` leaving just the node id.
+      $node_id = nt2_strip_id_from_search($node_landing_single_selection);
+
+      // If there are matches and there is only one match.
+      if ($node_id > -1) {
+        $loaded_matched_node = node_load($node_id);
+
+        // If the node could be loaded call node_view with the node object and output to the block.
+        if ($loaded_matched_node) {
+          $temp_view = node_view($loaded_matched_node, 'teaser');
+          $block['content'] = $temp_view;
+        }
+      }
+      else {
+        $block['content'] = array(
+        '#markup' => "$node_landing_single_selection is not a valid ID."
+          );
+      }
+    }
+    elseif ($delta === 'nt2_landing_multi') {
+
+    }
+
+    return $block;
+  }
+
+  /**
+   * Callback for landing page node search by title, returns JSON.
+   */
+  function nt2_landing_search_node_by_title_callback($string = "") {
+    $matches = array();
+
+    if ($string) {
+      $query = new EntityFieldQuery();
+      $entities = $query->entityCondition('entity_type', 'node')
+        ->entityCondition('bundle', variable_get("COTTAGE_LANDING_PAGE_MACHINE_NAME"))
+        ->propertyCondition('title', db_like($string) . '%', 'LIKE')
+        ->execute();
+
+      $loaded_nodes = node_load_multiple(array_keys($entities['node']));
+
+      foreach ($loaded_nodes as $node) {
+        $landing_title = $node->title;
+
+        $matches[$landing_title . " [$node->nid]"] = check_plain($landing_title);
+      }
+    }
+
+    drupal_json_output($matches);
+  }
+
+  /**
+   * Implements hook_block_configure.
+   */
+  function nt2_landing_block_configure($delta) {
+    $form = array();
+
+    if ($delta == 'nt2_landing') {
+
+      $form['node_landing_single_selection'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Choose a landing page.'),
+        '#default_value' => t(variable_get('node_landing_single_selection')),
+      // The autocomplete path is provided in hook_menu in ajax_example.module.
+        '#autocomplete_path' => 'nt2_landing/nt2_landing_search_node_by_title_callback',
+      );
+
+    }
+    elseif ($delta == 'nt2_landing_multi') {
+      $rows = array();
+      $row_elements = array();
+
+      // Put it into a fieldset for no reason.
+      $form['data_table'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Landing Pages Enabled.'),
+      );
+
+      $data = variable_get('node_landing_table_data');
+
+      if (!$data) {
+        $data = array();
+      }
+
+      $data['add-item-row'] = array(
+        'enabled' => TRUE,
+        'weight' => 999,
+        'name' => '',
+      );
+
+      // Sort the rows.
+      uasort($data, '_better_tabledrag_example_form_weight_arraysort');
+
+      // Build the rows.
+      foreach ($data as $id => $entry) {
+
+        $name_field = array(
+          '#title' => t('Name'),
+          '#type' => 'textfield',
+          '#attributes' => array('readonly' => 'readonly', 'disabled' => 'disabled'),
+          '#default_value' => $entry['name'],
+          '#parents' => array('data_table', $id, 'name'),
+        );
+
+        if ($id == 'add-item-row') {
+          $name_field = array(
+            '#title' => t('Name'),
+            '#type' => 'textfield',
+            '#default_value' => $entry['name'],
+            '#parents' => array('data_table', $id, 'name'),
+            '#size' => 60,
+            '#maxlength' => 128,
+            '#autocomplete_path' => 'nt2_landing/nt2_landing_search_node_by_title_callback',
+          );
+        }
+
+        // Build the table rows.
+        $rows[$id] = array(
+          'data' => array(
+            // Cell for the cross drag&drop element.
+            array('class' => array('entry-cross')),
+            // Weight item for the tabledrag.
+            array(
+        'data' => array(
+          '#type' => 'weight',
+          '#title' => t('Weight'),
+          '#title_display' => 'invisible',
+          '#default_value' => $entry['weight'],
+          '#parents' => array('data_table', $id, 'weight'),
+          '#attributes' => array(
+            'class' => array('entry-order-weight'),
+          ),
+        )
+),
+                  // Enabled checkbox.
+                  array(
+              'data' => array(
+                '#type' => 'checkbox',
+                '#title' => t('Enabled'),
+                '#title_display' => 'invisible',
+                '#default_value' => $entry['enabled'],
+                '#parents' => array('data_table', $id, 'enabled'),
+              )
+),
+                   // Name textfield.
+                  array('data' => $name_field),
+                  // Operations.
+                  array(
+              'data' => array(
+                '#theme' => 'link',
+                '#text' => t('Edit settings'),
+                '#path' => 'tabledrag/' . $id . '/edit',
+                '#options' => array('attributes' => array(), 'html' => FALSE),
+              )
+),
+                  array(
+              'data' => array(
+                '#theme' => 'link',
+                '#text' => t('Delete entry'),
+                '#path' => 'tabledrag/' . $id . '/delete',
+                '#options' => array('attributes' => array(), 'html' => FALSE),
+              )
+),
+          ),
+          'class' => array('draggable'),
+        );
+
+        // Build rows of the form elements in the table.
+        $row_elements[$id] = array(
+          'weight' => &$rows[$id]['data'][1]['data'],
+          'enabled' => &$rows[$id]['data'][2]['data'],
+          'name' => &$rows[$id]['data'][3]['data'],
+        );
+
+      }
+
+      // Add the table to the form.
+      $form['data_table']['table'] = array(
+        '#theme' => 'table',
+        // The row form elements need to be processed and build,
+        // therefore pass them as element children.
+        'elements' => $row_elements,
+        '#header' => array(
+        // We need two empty columns for the weigth field and the cross.
+        array('data' => NULL, 'colspan' => 2),
+          t('Enabled'),
+          t('Name'),
+        array('data' => t('Operations'), 'colspan' => 2),
+        ),
+        '#rows' => $rows,
+        '#empty' => t('There are no entries available.'),
+        '#attributes' => array('id' => 'entry-order'),
+      );
+      drupal_add_tabledrag('entry-order', 'order', 'sibling', 'entry-order-weight');
+
+    }
+
+    return $form;
+  }
+
+  /**
+   * Helper function for sorting entry weights.
+   */
+  function _better_tabledrag_example_form_weight_arraysort($a, $b) {
+    if (isset($a['weight']) && isset($b['weight'])) {
+      return $a['weight'] < $b['weight'] ? -1 : 1;
+    }
+    return 0;
+  }
+
+  /**
+   * Implements hook_block_save.
+   */
+  function nt2_landing_block_save($delta = '', $edit = array()) {
+    if ($delta == 'nt2_landing') {
+      variable_set('node_landing_single_selection', $edit['node_landing_single_selection']);
+    }
+    elseif ($delta == 'nt2_landing_multi') {
+      $save_value = $edit['data_table']['add-item-row'];
+
+      // If the user hasn't entered any new value then return.
+      if ($save_value['name'] == '') {
+        unset($edit['data_table']['add-item-row']);
+        dpm($edit['data_table']);
+        variable_set('node_landing_table_data', $edit['data_table']);
+        return;
+      }
+
+      $new_value = array(
+        'weight' => $save_value['weight'],
+        'enabled' => $save_value['enabled'],
+        'name' => $save_value['name'],
+      );
+
+      $id = $new_value['name'];
+      $stripped_id = nt2_strip_id_from_search($id);
+
+      if ($stripped_id > -1) {
+        $edit['data_table'][$stripped_id] = $new_value;
+        unset($edit['data_table']['add-item-row']);
+        variable_set('node_landing_table_data', $edit['data_table']);
+      }
+      else {
+        drupal_set_message(t('Invalid property reference format.'), 'error');
+        return;
+      }
+    }
+  }
+
+  /**
+   * Implements hook_theme().
+   */
+  function nt2_landing_theme() {
+    $theme = array();
+
+    return $theme;
+  }
