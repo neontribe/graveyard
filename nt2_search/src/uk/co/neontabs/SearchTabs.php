@@ -1,16 +1,22 @@
 <?php
 
+namespace Drupal\nt2_search\uk\co\neontabs;
+
 /**
  * @file
- * Contains the NT2SearchTabs class.
+ * Contains the SearchTabs class.
  */
 
+// @todo Can these be relative?
+use Drupal\nt2_search\uk\co\neontabs\term\CheckboxTerm;
+use Drupal\nt2_search\uk\co\neontabs\term\TextFieldTerm;
+use Drupal\nt2_search\uk\co\neontabs\term\RangeSelectTerm;
 use Drupal\nt2_io\uk\co\neontabs\NeontabsIO;
 
 /**
  * Methods for interfacing with Tabs API for search-related functions.
  */
-class NT2SearchTabs {
+class SearchTabs {
   /**
    * The number of properties to load from Tabs API at a time for searches.
    *
@@ -38,7 +44,7 @@ class NT2SearchTabs {
     $query['fields'] = implode(':', $fields);
 
     // Load ALL the properties! We'll sort and paginate as we please.
-    $query['pageSize'] = NT2SearchTabs::TABS_PAGE_SIZE;
+    $query['pageSize'] = self::TABS_PAGE_SIZE;
 
     // Query Tabs API with parameters.
     $json = NeontabsIO::getInstance()->get('property', $query);
@@ -77,24 +83,24 @@ class NT2SearchTabs {
     $propertyNodes = array();
     foreach ($propertyReferences as $propertyReference) {
       // @todo Check for errors here.
-      $propertyNodes[] = CottageNodeManager::loadNode($propertyReference);
+      $propertyNodes[] = \CottageNodeManager::loadNode($propertyReference);
     }
 
     return $propertyNodes;
   }
 
   /**
-   * Gets potential search terms from the API.
+   * Gets potential Terms from the API.
    *
-   * This function will return any search terms that can potentially be added to
-   * a form based on what search terms the API returns. Different
+   * This function will return any Terms that can potentially be added to
+   * a form based on what Terms the API returns. Different
    * implementations may be returned for the same API codes, so one should note
-   * to check that a search term has been made visible before using it.
+   * to check that a Term has been made visible before using it.
    *
-   * @return NT2SearchTerm[]
-   *   A list of potential search terms allowed by the API.
+   * @return Term[]
+   *   A list of potential Terms allowed by the API.
    */
-  public static function getSearchTerms() {
+  public static function getTerms() {
     $searchTerms = array();
 
     // @todo Caching, is hitting the API everytime necessary?
@@ -103,7 +109,7 @@ class NT2SearchTabs {
     // Keep only searchTerms; everything else is irrelevant going forwards.
     $json = $json['constants']['searchTerms'];
 
-    // Create search terms from the 'core' and 'attributes' sections.
+    // Create Terms from the 'core' and 'attributes' sections.
     $searchTerms = array_merge($searchTerms, self::extractCoreTerms($json['core']));
     $searchTerms = array_merge($searchTerms, self::extractAttributesTerms($json['attributes']));
 
@@ -111,15 +117,18 @@ class NT2SearchTabs {
   }
 
   /**
-   * Generate search terms from the 'core' section of the API.
+   * Generate Terms from the 'core' section of the API.
    *
    * This is where the majority of hardcoding should be for certain codes,
    * hopefully keeping the rest of the module hardcoding-free.
    *
+   * @todo The hardcoding here is unavoidable but, at least, it could probably
+   * be broken up a little to make this mega-function less daunting.
+   *
    * @param array $flatJson
    *   The 'core' section of the API.
    *
-   * @return NT2SearchTerm[]
+   * @return Term[]
    *   The implementations we were able to find given the API response.
    */
   protected static function extractCoreTerms($flatJson) {
@@ -132,6 +141,7 @@ class NT2SearchTabs {
       $json[$coreJsonTerm['code']] = $coreJsonTerm;
     }
 
+    // Create a custom Term for 'accommodates', if it exists as we know it.
     if (array_key_exists('accommodates', $json) && $json['accommodates']['type'] === 'integer') {
       $defaults = array(
         'unspecified' => 'Any',
@@ -140,10 +150,22 @@ class NT2SearchTabs {
         'unlimited' => TRUE,
         'singularNoun' => 'person',
         'pluralNoun' => 'people',
+        'label' => 'Sleeps',
       );
-      $searchTerms[] = new NT2SelectRangeSearchTerm('accommodates', $json['accommodates']['label'], $defaults);
+
+      $searchTerms[] = new RangeSelectTerm(
+        // The name.
+        'Sleeps (Range Select)',
+        // The code covered.
+        'accommodates',
+        // The dependencies (none).
+        array(),
+        // The default config.
+        $defaults
+      );
     }
 
+    // Create a custom Term for 'bedrooms', if it exists as we know it.
     if (array_key_exists('bedrooms', $json) && $json['bedrooms']['type'] === 'integer') {
       $defaults = array(
         'unspecified' => 'Any',
@@ -152,35 +174,67 @@ class NT2SearchTabs {
         'unlimited' => FALSE,
         'singularNoun' => 'bedroom',
         'pluralNoun' => 'bedrooms',
+        'label' => 'Bedrooms',
       );
-      $searchTerms[] = new NT2SelectRangeSearchTerm('bedrooms', $json['bedrooms']['label'], $defaults);
+
+      $searchTerms[] = new RangeSelectTerm(
+        // The name.
+        'Bedrooms (Range Select)',
+        // The code covered.
+        'bedrooms',
+        // The dependencies (none).
+        array(),
+        // The default config.
+        $defaults
+      );
     }
 
-    // @todo Explain this better than just the summary in NT2GroupSearchTerm.
+    // Create a custom Term for 'name', if it exists as we know it.
+    if (array_key_exists('name', $json) && $json['name']['type'] === 'string') {
+      $searchTerms[] = new TextFieldTerm(
+        // The name.
+        'Name (Text Field)',
+        // The code covered.
+        'name',
+        // The dependencies (none).
+        array(),
+        // The label.
+        'Name'
+      );
+    }
+
     if (array_key_exists('fromDate', $json) && $json['fromDate']['type'] == 'string') {
-      // @todo Work out the date SearchTerm.
+      // @todo Work out and add the date Term.
 
       if (array_key_exists('nights', $json) && $json['nights']['type'] === 'integer') {
-        $nightsDefaults = array(
+        $defaults = array(
           'unspecified' => 'Any',
           'minimum' => 1,
           'maximum' => 28,
           'unlimited' => FALSE,
           'singularNoun' => 'night',
           'pluralNoun' => 'nights',
+          'label' => 'Duration',
         );
-        $nightsSearchTerm = new NT2SelectRangeSearchTerm('nights', $json['nights']['label'], $defaults);
 
-        // @todo Join and add as a GroupSearchTerm.
+        $searchTerms[] = new RangeSelectTerm(
+          // The name.
+          'Duration (Range Select)',
+          // The code covered.
+          'nights',
+          // The dependencies ('nights' cannot be included as a filter without 'fromDate').
+          array('fromDate'),
+          // The default config.
+          $defaults
+        );
       }
-      // @todo Add it on its own as well.
     }
 
     return $searchTerms;
   }
 
   /**
-   * Generate search terms from the 'attributes' section of the API.
+   * Generate Terms from the 'attributes' section of the API.
    *
    * This is where the majority of hardcoding should be for certain codes,
    * hopefully keeping the rest of the module hardcoding-free, although for
@@ -189,7 +243,7 @@ class NT2SearchTabs {
    * @param array $json
    *   The 'attributes' section of the API.
    *
-   * @return NT2SearchTerm[]
+   * @return Term[]
    *   The implementations we were able to find given the API response.
    */
   protected static function extractAttributesTerms($json) {
@@ -200,10 +254,10 @@ class NT2SearchTabs {
       $code = $attributeJson['code'];
       $type = $attributeJson['type'];
       $label = $attributeJson['label'];
-      // @todo Do we want /all/ of the attributes?
+
       switch (strtolower($type)) {
         case 'boolean':
-          $searchTerms[] = new NT2CheckboxSearchTerm($code, $label);
+          $searchTerms[] = new CheckboxTerm("$label (Checkbox)", $code, array(), $label);
           break;
 
         case 'number':
@@ -212,7 +266,7 @@ class NT2SearchTabs {
 
         case 'text':
         case 'long text':
-          // @todo Handle the string use-case.
+          $searchTerms[] = new TextFieldTerm("$label (Text Field)", $code, array(), $label);
           break;
 
         default:
