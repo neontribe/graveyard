@@ -67,7 +67,7 @@ Usually the process is as simple as that. See `CheckboxTerm` for a good example 
 
 Modifying the search form should be as simple as implementing a custom `Term` - as described above - in a separate module, then injecting this `Term` with the provided hook for doing so. After this has happened, the new `Term` will show up in the module's configuration panel and can be made visible to add to a form or to replace another, more undesirable `Term`, lacking the custom additions.
 
-At this point in time, this functionality is not implemented and is waiting on the implementation of the promised hooks in the **Extensability** section of this README. Expect example code to be added once this functionality has been provided.
+At this point in time, this functionality is not implemented and is waiting on the implementation of the promised hooks in the [Extensability](#extensability) section of this README. Expect example code to be added once this functionality has been provided.
 
 ### Extensability
 
