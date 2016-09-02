@@ -15,6 +15,7 @@ The `nt2_search` module handles:
 
 * [x] Performing searches with Tabs API
 * [x] Rendering basic search results
+* [x] Having a search results page that can be bookmarked
 * [x] Making simple attempts to provide most of the Tabs API search terms in search forms
 * [x] Providing configuration menus for controlling the behaviour of search forms
 * [ ] Efficient usage of Tabs API, with caching and smart error handling
