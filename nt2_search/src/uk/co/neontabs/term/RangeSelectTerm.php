@@ -4,7 +4,7 @@ namespace Drupal\nt2_search\uk\co\neontabs\term;
 
 /**
  * @file
- * Contains the SelectRangeSearchTerm class.
+ * Contains the RangeSelectTerm class.
  */
 
 /**
@@ -15,7 +15,7 @@ namespace Drupal\nt2_search\uk\co\neontabs\term;
  *
  * @todo Most use-cases required a '>' prefix. How should this be implemented?
  */
-class SelectRangeSearchTerm extends SearchTerm {
+class RangeSelectTerm extends Term {
   /**
    * The form value representation of any value being acceptable.
    *
@@ -24,7 +24,7 @@ class SelectRangeSearchTerm extends SearchTerm {
   const ANY_VALUE = 'any';
 
   /**
-   * The default properties of the search term used for rendering.
+   * The default config of the search term used for rendering.
    *
    * This array is pre-populated with default-default-values (what). So. In
    * descending order, here are the priorities of the values used:
@@ -34,7 +34,7 @@ class SelectRangeSearchTerm extends SearchTerm {
    *
    * @var array
    */
-  private $defaultProperties = array(
+  private $defaultConfig = array(
     'unspecified' => 'Any',
     'minimum' => 1,
     'maximum' => 10,
@@ -47,63 +47,68 @@ class SelectRangeSearchTerm extends SearchTerm {
   /**
    * Initialises the class with the code it covers and sensible defaults.
    *
+   * @param string $name
+   *   A description of the search term and its purpose in a search form.
    * @param string $code
-   *   The code of the one search term covered in the API.
-   * @param string $humanReadable
-   *   An understandable description of the search term.
-   * @param array $defaultProperties
-   *   Optional rendering properties. See documentation of the private
-   *   $defaultProperties variable for more information.
+   *   The Tabs API search Term code this Term provides coverage for.
+   * @param string[] dependencyCodes
+   *   A list of codes this Term depends on being covered to be visible.
+   * @param array $defaultConfig
+   *   Optional rendering config. The admin panel descriptions are most
+   *   informative of each one's purpose.
    */
-  public function __construct($code, $humanReadable, $defaultProperties = array()) {
-    parent::__construct([$code], $humanReadable . ' (Select range)');
+  public function __construct($name, $code, $dependencyCodes, $defaultConfig = array()) {
+    parent::__construct($name, array($code), $dependencyCodes);
 
-    $defaultProperties['label'] = $humanReadable;
-
-    $this->defaultProperties = array_merge($this->defaultProperties, $defaultProperties);
+    $this->defaultConfig = array_merge($this->defaultConfig, $defaultConfig);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function injectInputs(&$form) {
-    // Inject an HTML select input.
-
-    $configuration = $this->getConfiguration($this->defaultProperties);
+  public function renderInputs() {
+    // Render an HTML select input.
+    $config = $this->getConfig($this->defaultConfig);
+    $form = array();
 
     $options = array();
-    $options[self::ANY_VALUE] = $configuration['unspecified'];
-    for ($i = $configuration['minimum']; $i <= $configuration['maximum']; $i++) {
+    $options[self::ANY_VALUE] = $config['unspecified'];
+    for ($i = $config['minimum']; $i <= $config['maximum']; $i++) {
       // Append a '+' to the last number if unlimited.
-      $suffix = ($configuration['unlimited'] && $i === $configuration['maximum']) ? '+' : '';
+      $suffix = ($config['unlimited'] && $i === $config['maximum']) ? '+' : '';
       // Singular if 1, else plural.
-      $noun = ($i === 1) ? $configuration['singularNoun'] : $configuration['pluralNoun'];
+      $noun = ($i === 1) ? $config['singularNoun'] : $config['pluralNoun'];
       // Glue 'em all together.
       $built = "$i$suffix $noun";
       // Stash it in the options.
       $options[$i] = $built;
     }
 
-    $form[$this->getName()] = array(
+    $form[$this->getCodes()[0]] = array(
       '#type' => 'select',
-      '#title' => $configuration['label'],
+      '#title' => $config['label'],
       '#options' => $options,
     );
+
+    return $form;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function injectParams(&$params, $formValues) {
+  public function buildFilter($formValues) {
     // Extract the value from the form response.
-    $formValue = $formValues[$this->getName()];
+    $formValue = $formValues[$this->getCodes()[0]];
+    $filter = array();
 
     // Did the user care for search results to be filtered this way.
     if ($formValue !== self::ANY_VALUE) {
       // @todo Do we need to validate?
       // Pass the form value straight through unaltered.
-      $params[$this->getCodes()[0]] = $formValue;
+      $filter[$this->getCodes()[0]] = $formValue;
     }
+
+    return $filter;
   }
 
   /**
@@ -111,15 +116,16 @@ class SelectRangeSearchTerm extends SearchTerm {
    *
    * @todo There is massive code repetition here; can some be function'd away?
    */
-  public function injectConfigurationInputs(&$form) {
-    $configuration = $this->getConfiguration($this->defaultProperties);
+  public function renderConfigInputs() {
+    $config = $this->getConfig($this->defaultConfig);
+    $form = array();
 
     $form['unspecified'] = array(
       '#type' => 'textfield',
       '#title' => t('Unspecified option'),
       '#description' => t('The default dropdown option, when no option has been selected'),
       '#required' => FALSE,
-      '#default_value' => $configuration['unspecified'],
+      '#default_value' => $config['unspecified'],
     );
 
     $form['minimum'] = array(
@@ -127,7 +133,7 @@ class SelectRangeSearchTerm extends SearchTerm {
       '#title' => t('Minimum'),
       '#description' => t('The bottom end of the range'),
       '#required' => FALSE,
-      '#default_value' => $configuration['minimum'],
+      '#default_value' => $config['minimum'],
     );
 
     $form['maximum'] = array(
@@ -135,7 +141,7 @@ class SelectRangeSearchTerm extends SearchTerm {
       '#title' => t('Maximum'),
       '#description' => t('The top end of the range'),
       '#required' => FALSE,
-      '#default_value' => $configuration['maximum'],
+      '#default_value' => $config['maximum'],
     );
 
     $form['unlimited'] = array(
@@ -143,7 +149,7 @@ class SelectRangeSearchTerm extends SearchTerm {
       '#title' => t('Unlimited'),
       '#description' => t('Whether the last option should be a minimum bound (e.g. 5+ rather than 5)'),
       '#required' => FALSE,
-      '#default_value' => $configuration['unlimited'],
+      '#default_value' => $config['unlimited'],
     );
 
     $form['singularNoun'] = array(
@@ -151,7 +157,7 @@ class SelectRangeSearchTerm extends SearchTerm {
       '#title' => t('Singular noun'),
       '#description' => t('The noun to use when there is just one of the object'),
       '#required' => FALSE,
-      '#default_value' => $configuration['singularNoun'],
+      '#default_value' => $config['singularNoun'],
     );
 
     $form['pluralNoun'] = array(
@@ -159,7 +165,7 @@ class SelectRangeSearchTerm extends SearchTerm {
       '#title' => t('Plural noun'),
       '#description' => t('The noun to use when there are multiple objects'),
       '#required' => FALSE,
-      '#default_value' => $configuration['pluralNoun'],
+      '#default_value' => $config['pluralNoun'],
     );
 
     $form['label'] = array(
@@ -167,8 +173,10 @@ class SelectRangeSearchTerm extends SearchTerm {
       '#title' => t('Label'),
       '#description' => t('The label to show in the search form'),
       '#required' => FALSE,
-      '#default_value' => $configuration['label'],
+      '#default_value' => $config['label'],
     );
+
+    return $form;
   }
 
   /**
@@ -178,21 +186,21 @@ class SelectRangeSearchTerm extends SearchTerm {
    * surely a way that this can be made cleaner, ideally eliminating
    * code-repetition as it does so.
    */
-  public function handleConfigurationInputs($form, $formState) {
-    $configuration = array();
+  public function buildConfig($formValues) {
+    $config = array();
 
     // Set strings.
-    $configuration['unspecified'] = $formState['unspecified'];
-    $configuration['singularNoun'] = $formState['singularNoun'];
-    $configuration['pluralNoun'] = $formState['pluralNoun'];
-    $configuration['label'] = $formState['label'];
+    $config['unspecified'] = $formValues['unspecified'];
+    $config['singularNoun'] = $formValues['singularNoun'];
+    $config['pluralNoun'] = $formValues['pluralNoun'];
+    $config['label'] = $formValues['label'];
 
     // Set booleans (from checkboxes).
-    $configuration['unlimited'] = $formState['unlimited'] === 1;
+    $config['unlimited'] = $formValues['unlimited'] === 1;
 
     // Set integers.
     foreach (['minimum', 'maximum'] as $integerKey) {
-      $providedValue = $formState[$integerKey];
+      $providedValue = $formValues[$integerKey];
 
       // This appears to be the most sane way to parse an integer in PHP :(.
       $parsedValue = json_decode($providedValue);
@@ -205,17 +213,17 @@ class SelectRangeSearchTerm extends SearchTerm {
 
       // @todo Maybe limit to a sensible range?
 
-      $configuration[$integerKey] = $parsedValue;
+      $config[$integerKey] = $parsedValue;
     }
 
     // @todo Is silently fixing this really the best plan?
-    $minimum = min($configuration['minimum'], $configuration['maximum']);
-    $maximum = max($configuration['minimum'], $configuration['maximum']);
+    $minimum = min($config['minimum'], $config['maximum']);
+    $maximum = max($config['minimum'], $config['maximum']);
 
-    $configuration['minimum'] = $minimum;
-    $configuration['maximum'] = $maximum;
+    $config['minimum'] = $minimum;
+    $config['maximum'] = $maximum;
 
-    $this->setConfiguration($configuration);
+    return $config;
   }
 
 }

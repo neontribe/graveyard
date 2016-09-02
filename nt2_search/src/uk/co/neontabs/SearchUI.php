@@ -34,15 +34,17 @@ class SearchUI {
    *   Return a drupal form represented as an associative array.
    */
   public static function form($searchType) {
-    $form = array();
+    $form = array(
+      '#tree' => 'TRUE',
+    );
 
     // Inject input elements from all enabled search terms for this search type.
-    $searchTerms = SearchTabs::getSearchTerms();
+    $searchTerms = SearchTabs::getTerms();
     foreach ($searchTerms as &$searchTerm) {
       if (!$searchTerm->isVisible($searchType)) {
         continue;
       }
-      $searchTerm->injectInputs($form);
+      $form[$searchTerm->getId()] = $searchTerm->renderInputs();
     }
 
     // @todo Primitive check for name clashes.
@@ -72,7 +74,7 @@ class SearchUI {
 
     // Construct a search API query based on the form response.
     $query = array();
-    $searchTerms = SearchTabs::getSearchTerms();
+    $searchTerms = SearchTabs::getTerms();
 
     // Extract responses to input elements injected by enabled search terms.
     foreach ($searchTerms as &$searchTerm) {
@@ -81,8 +83,11 @@ class SearchUI {
         continue;
       }
 
-      // Inject queries from the form response.
-      $searchTerm->injectParams($query, $formState['values']);
+      // Include any filters that the form response to this Term dictates.
+      $query = array_merge($query, $searchTerm->buildFilter($formState['values'][$searchTerm->getId()]));
+
+      // @todo Check that the Term does not overstep its bounds and only
+      // produces filters for the codes it covers.
     }
 
     // We will pass this query as parameters to the search performing page.
@@ -123,7 +128,7 @@ class SearchUI {
 
     // Build a list of codes we recognise as valid search filters.
     $codes = array();
-    $searchTerms = SearchTabs::getSearchTerms();
+    $searchTerms = SearchTabs::getTerms();
     foreach ($searchTerms as $searchTerm) {
       $codes = array_merge($codes, $searchTerm->getCodes());
     }
