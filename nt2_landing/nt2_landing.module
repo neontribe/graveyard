@@ -32,13 +32,55 @@
       'access arguments' => array('access content'),
     );
 
+    $items['nt2_landing/%/delete'] = array(
+      'title' => 'Delete',
+      'type' => MENU_LOCAL_TASK,
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('nt2_landing_delete_landing_form', 1),
+      'access arguments' => array('access administration pages'),
+    );
+
     return $items;
   }
 
   /**
    * Page callback for nt2_landing.
    */
-  function nt2_landing_callback() {
+  function nt2_landing_callback($arg) {
+
+  }
+
+  /**
+   * Callback for the `nt2_landing/%/delete` path.
+   */
+  function nt2_landing_delete_landing_form($form, &$form_state, $instance) {
+    $output = confirm_form($form,
+      t('Are you sure you want to delete the field %field?', array('%field' => $instance)),
+      '/admin/structure/block/manage/nt2_landing/nt2_landing_multi/configure',
+      t('If you have any content left in this field, it will be lost. This action cannot be undone.'),
+      t('Delete'), t('Cancel'),
+      'confirm'
+      );
+
+    return $output;
+  }
+
+  /**
+   * Implements hook_form_submit().
+   */
+  function nt2_landing_delete_landing_form_submit($form, &$form_state) {
+    $form_values = $form_state['values'];
+    $landing_id_delete = $form_state['build_info']['args'][0];
+
+    $data = variable_get('node_landing_table_data');
+    $item_to_delete = $data[$landing_id_delete];
+
+    if ($form_values['confirm']) {
+      drupal_set_message("Deleted landing page node: $item_to_delete[name]");
+      unset($data[$landing_id_delete]);
+      variable_set('node_landing_table_data', $data);
+      drupal_goto('/admin/structure/block/manage/nt2_landing/nt2_landing_multi/configure');
+    }
 
   }
 
@@ -117,6 +159,18 @@
       }
     }
     elseif ($delta === 'nt2_landing_multi') {
+      $data = variable_get('node_landing_table_data');
+
+      uasort($data, '_nt2_landing_form_weight_arraysort');
+
+      $loaded_nodes = node_load_multiple(array_keys($data));
+
+      foreach ($loaded_nodes as $key => $node) {
+        if ($data[$key]['enabled'] == 1) {
+          $temp_view = node_view($node, 'teaser');
+          $block['content'][$key] = $temp_view;
+        }
+      }
 
     }
 
@@ -188,21 +242,63 @@
       );
 
       // Sort the rows.
-      uasort($data, '_better_tabledrag_example_form_weight_arraysort');
+      uasort($data, '_nt2_landing_form_weight_arraysort');
 
       // Build the rows.
       foreach ($data as $id => $entry) {
-
-        $name_field = array(
-          '#title' => t('Name'),
-          '#type' => 'textfield',
-          '#attributes' => array('readonly' => 'readonly', 'disabled' => 'disabled'),
-          '#default_value' => $entry['name'],
-          '#parents' => array('data_table', $id, 'name'),
+        // Build the table rows.
+        $rows[$id] = array(
+          'data' => array(
+            // Cell for the cross drag&drop element.
+            array('class' => array('entry-cross')),
+            // Weight item for the tabledrag.
+            array(
+              'data' => array(
+                '#type' => 'weight',
+                '#title' => t('Weight'),
+                '#title_display' => 'invisible',
+                '#default_value' => $entry['weight'],
+                '#parents' => array('data_table', $id, 'weight'),
+                '#attributes' => array(
+                  'class' => array('entry-order-weight'),
+                ),
+              )
+            ),
+            // Enabled checkbox.
+            array(
+              'data' => array(
+                '#type' => 'checkbox',
+                '#title' => t('Enabled'),
+                '#title_display' => 'invisible',
+                '#default_value' => $entry['enabled'],
+                '#parents' => array('data_table', $id, 'enabled'),
+              )
+            ),
+            // Name textfield.
+            array(
+          'data' => array(
+            '#title' => t('Name'),
+            '#type' => 'textfield',
+            '#attributes' => array('readonly' => 'readonly', 'disabled' => 'disabled'),
+            '#default_value' => $entry['name'],
+            '#parents' => array('data_table', $id, 'name'),
+          )
+),
+            // Operations.
+            array(
+              'data' => array(
+                '#theme' => 'link',
+                '#text' => t('Delete entry'),
+                '#path' => 'nt2_landing/' . $id . '/delete',
+                '#options' => array('attributes' => array(), 'html' => FALSE),
+              )
+            ),
+          ),
+          'class' => array('draggable'),
         );
 
         if ($id == 'add-item-row') {
-          $name_field = array(
+          $rows[$id]['data'][3]['data'] = array(
             '#title' => t('Name'),
             '#type' => 'textfield',
             '#default_value' => $entry['name'],
@@ -211,58 +307,9 @@
             '#maxlength' => 128,
             '#autocomplete_path' => 'nt2_landing/nt2_landing_search_node_by_title_callback',
           );
-        }
 
-        // Build the table rows.
-        $rows[$id] = array(
-          'data' => array(
-            // Cell for the cross drag&drop element.
-            array('class' => array('entry-cross')),
-            // Weight item for the tabledrag.
-            array(
-        'data' => array(
-          '#type' => 'weight',
-          '#title' => t('Weight'),
-          '#title_display' => 'invisible',
-          '#default_value' => $entry['weight'],
-          '#parents' => array('data_table', $id, 'weight'),
-          '#attributes' => array(
-            'class' => array('entry-order-weight'),
-          ),
-        )
-),
-                  // Enabled checkbox.
-                  array(
-              'data' => array(
-                '#type' => 'checkbox',
-                '#title' => t('Enabled'),
-                '#title_display' => 'invisible',
-                '#default_value' => $entry['enabled'],
-                '#parents' => array('data_table', $id, 'enabled'),
-              )
-),
-                   // Name textfield.
-                  array('data' => $name_field),
-                  // Operations.
-                  array(
-              'data' => array(
-                '#theme' => 'link',
-                '#text' => t('Edit settings'),
-                '#path' => 'tabledrag/' . $id . '/edit',
-                '#options' => array('attributes' => array(), 'html' => FALSE),
-              )
-),
-                  array(
-              'data' => array(
-                '#theme' => 'link',
-                '#text' => t('Delete entry'),
-                '#path' => 'tabledrag/' . $id . '/delete',
-                '#options' => array('attributes' => array(), 'html' => FALSE),
-              )
-),
-          ),
-          'class' => array('draggable'),
-        );
+          unset($rows[$id]['data'][4]['data']);
+        }
 
         // Build rows of the form elements in the table.
         $row_elements[$id] = array(
@@ -300,7 +347,7 @@
   /**
    * Helper function for sorting entry weights.
    */
-  function _better_tabledrag_example_form_weight_arraysort($a, $b) {
+  function _nt2_landing_form_weight_arraysort($a, $b) {
     if (isset($a['weight']) && isset($b['weight'])) {
       return $a['weight'] < $b['weight'] ? -1 : 1;
     }
@@ -320,7 +367,6 @@
       // If the user hasn't entered any new value then return.
       if ($save_value['name'] == '') {
         unset($edit['data_table']['add-item-row']);
-        dpm($edit['data_table']);
         variable_set('node_landing_table_data', $edit['data_table']);
         return;
       }
