@@ -1,0 +1,17 @@
+name = NT2 Landing
+description = A landing page for cottages
+core = 7.x
+
+dependencies[] = nt2
+dependencies[] = nt2_io
+dependencies[] = nt2_search
+dependencies[] = field
+dependencies[] = entity
+dependencies[] = number
+
+; dependencies[] = imageapi_optimize
+; dependencies[] = imagecache_external
+
+files[] = NT2Landing.class.php
+
+package = NT2
