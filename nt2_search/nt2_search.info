@@ -8,10 +8,6 @@ package = NT2
 
 dependencies[] = nt2_io
 dependencies[] = nt2_node_type
-
-files[] = NT2Search.class.php
-files[] = NT2SearchTerm.class.php
-files[] = NT2CheckboxSearchTerm.class.php
-files[] = NT2SelectRangeSearchTerm.class.php
+dependencies[] = xautoload
 
 configure = admin/config/nt2/terms

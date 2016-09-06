@@ -1,0 +1,24 @@
+{
+    "name": "Behat tests for NeonTABS II",
+    "description": "Globally install behat and junit extensions",
+    "homepage": "https://www.neontribe.co.uk",
+    "license": "GPL-2.0+",
+    "authors": [
+        { "name": "Tom Freestone", "email": "tom@neontribe.co.uk" },
+        { "name": "Toby Batch", "email": "tobias@neontribe.co.uk" }
+    ],
+    "require": {
+        "drupal/drupal-extension": "~3.0",
+        "behat/mink":                   "~1.5",
+        "behat/mink-selenium2-driver":  "~1.1",
+        "jarnaiz/behat-junit-formatter": "~1.3.2"
+    },
+    "config": {
+        "bin-dir": "bin/"
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "sudo ln -s `pwd`/bin/behat /usr/local/bin/behat"
+        ]
+    }
+}
