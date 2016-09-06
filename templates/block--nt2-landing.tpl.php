@@ -53,6 +53,8 @@
   <?php print render($title_suffix); ?>
 
   <div class="content"<?php print $content_attributes; ?>>
-    <?php print $content ?>
+    <ul class="landing-page-list">
+    	<?php print $content ?>
+    </ul>
   </div>
 </div>

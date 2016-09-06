@@ -78,26 +78,21 @@
  * @see template_process()
  */
 ?>
-<div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?> clearfix"<?php print $attributes; ?>>
 
+<<?php echo ($teaser ? 'li' : 'div'); ?> id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?>"<?php print $attributes; ?>>
+  <div class="landing-page-<?php print $teaser ? "teaser" : "full"; ?>">
+    <?php
+      // We hide the comments and links now so that we can render them later.
+      hide($content['comments']);
+      hide($content['links']);
+    ?>
 
-  <div class="content clearfix"<?php print $content_attributes; ?>>
-    <div class="landing-page-<?php print $teaser ? "teaser" : "full"; ?>">
-      <?php
-        // We hide the comments and links now so that we can render them later.
-        hide($content['comments']);
-        hide($content['links']);
-      ?>
+    <?php if($teaser): ?>
+      <!-- <?php print render($title); ?> -->
+      <?php print render($content['landing_image']); ?>
+    <?php else: ?>
+      <marquee>Search results render here</marquee>
+    <?php endif; ?>
 
-      <?php if($teaser): ?>
-        <?php print render($title); ?>
-        <?php print render($content['landing_body']); ?>
-        <?php print render($content['landing_filter']); ?>
-        <?php print render($content['landing_image']); ?>
-      <?php else: ?>
-        <marquee>Search results render here</marquee>
-      <?php endif; ?>
-
-    </div>  
   </div>
-</div>
+</<?php echo ($teaser ? 'li' : 'div'); ?>>

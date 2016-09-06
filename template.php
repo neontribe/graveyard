@@ -187,11 +187,76 @@ function nt2_theme_preprocess_field(&$vars) {
     }
     elseif ($node_type == 'nt2_landing_entity_type') {
         switch($label) {
+            case 'landing_image':
+                $title = $node->title;
+                $item_ref[0]['#item']['image_title'] = array(
+                    '#prefix' => '<span>',
+                    '#suffix' => '</span>',
+                    '#markup' => $title,
+                );
+
+                $item_ref[0]['#path'] = array(
+                    'path' => $url,
+                    'options' => array('html' => TRUE),
+                );
+                
+                break;
             default:
                 $item_ref = render_default_field($item_ref);
         }
     }
   }
+}
+
+
+function nt2_theme_image_formatter($variables) {
+  $item = $variables['item'];
+  $image = array(
+    'path' => $item['uri'],
+  );
+
+  if (array_key_exists('alt', $item)) {
+    $image['alt'] = $item['alt'];
+  }
+
+  if (isset($item['attributes'])) {
+    $image['attributes'] = $item['attributes'];
+  }
+
+  if (isset($item['width']) && isset($item['height'])) {
+    $image['width'] = $item['width'];
+    $image['height'] = $item['height'];
+  }
+
+  // Do not output an empty 'title' attribute.
+  if (isset($item['title']) && drupal_strlen($item['title']) > 0) {
+    $image['title'] = $item['title'];
+  }
+
+  if ($variables['image_style']) {
+    $image['style_name'] = $variables['image_style'];
+    $output = theme('image_style', $image);
+  }
+  else {
+    $output = theme('image', $image);
+  }
+
+  if (isset($variables['item']['image_title']) && drupal_strlen($variables['item']['image_title']['#markup'])) {
+    $output .= drupal_render($variables['item']['image_title']);  
+  }
+
+  // The link path and link options are both optional, but for the options to be
+  // processed, the link path must at least be an empty string.
+  if (isset($variables['path']['path'])) {
+    $path = $variables['path']['path'];
+    $options = isset($variables['path']['options']) ? $variables['path']['options'] : array();
+    // When displaying an image inside a link, the html option must be TRUE.
+    $options['html'] = TRUE;
+
+    $output = l($output, $path, $options);
+  }
+
+  return $output;
 }
 
 
