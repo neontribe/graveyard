@@ -1,0 +1,91 @@
+<?php
+
+/**
+ * @file
+ * The nt2_map module file.
+ */
+
+/**
+ * Implements hook_module.
+ */
+function nt2_map_module() {
+
+}
+
+/**
+ * Implements hook_menu().
+ */
+function neontabs_map_menu() {
+  $items = array();
+
+  return $items;
+}
+
+/**
+ * Implements hook_page_alter().
+ */
+function nt2_map_page_alter(&$page) {
+  $node_list = $page['content']['system_main']['nodes'];
+  $node_list_keys = array_keys($node_list);
+
+  if (isset($node_list)) {
+    // If there is only one node on the page. (including the #sorted attribute)
+    if (count($node_list) == 2) {
+      $first_property_key = $node_list_keys[0];
+      $property = $node_list[$first_property_key];
+
+      if ($property['#bundle'] == 'cottage_entity') {
+        // Property pages.
+        $page['content']['system_main']['tabs_gmap_block'] = array(
+          '#theme' => 'neontabs_map',
+          '#mapdata' => NT2Map::initMap(array($property)),
+        );
+      }
+    }
+
+    $params = array(
+      'type' => 'inline',
+      'scope' => 'footer',
+      'weight' => 1000,
+    );
+
+    drupal_add_js(
+      'jQuery("#neontabs-property-map").neonmap(jQuery("#neontabs-property-map").data("locations"));', $params
+    );
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function nt2_map_theme() {
+  return array(
+    'neontabs_map' => array(
+      'template' => 'templates/neontabs_map',
+      'variables' => array(
+        'mapdata' => array(),
+        'geojsonurl' => NULL,
+        'height' => '200px',
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_preprocess_THEME().
+ *
+ * @todo This doesn't seem to do anything?
+ */
+function nt2_map_preprocess_neontabs_map(&$variables) {
+  $settings = variable_get('nt2_map_defaults');
+
+  $settings['neontabs_map_icon_image'] = url(drupal_get_path('theme', $GLOBALS['theme']) . '/javascripts/marker.png', array('absolute' => TRUE, 'alias' => TRUE));
+
+  $settings['mapdata'] = $variables['mapdata'];
+
+  drupal_add_js(
+    array(
+      'neontabs_map' => $settings,
+    ), 'setting'
+  );
+}

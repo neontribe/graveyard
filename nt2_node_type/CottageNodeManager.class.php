@@ -10,7 +10,7 @@ use Drupal\nt2_io\uk\co\neontabs\NeontabsIO;
 /**
  * CottageNodeManager manages the creation, updating and deleting of cottage node entries.
  *
- * Provides a plethora of helpful methods so as to achieve this goal.
+ * Provides a plethora of helpful methods so as to help us achieve this goal.
  */
 class CottageNodeManager {
 

@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * The nt2_map install file.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function nt2_map_install() {
+  variable_set(
+    'nt2_map_defaults',
+    array(
+      'zoom' => '10',
+      'lon' => '0',
+      'lat' => '51.482905',
+      'tiles' => 'osmmap',
+      'imagestyle' => 'thumbnail',
+      'image_width' => '100',
+      'image_height' => '100',
+    )
+  );
+}
