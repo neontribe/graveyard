@@ -14,10 +14,16 @@ class CottageVocabManager {
 
   /**
    * Check whether a node of the $name provided already exists.
+   *
+   * @param string $machineName
+   *   The machine name of the vocabulary to check the existence of.
+   *
+   * @return object
+   *   The vocabulary, if one is found. False if one isn't.
    */
-  public static function vocabTypeExists($name) {
+  public static function vocabTypeExists($machineName) {
     // Check to see if the vocabulary already exists.
-    $vocabulary = taxonomy_vocabulary_machine_name_load($name);
+    $vocabulary = taxonomy_vocabulary_machine_name_load($machineName);
     // If it exists then exit the function as there is nothing more to do.
     if ($vocabulary) {
       return $vocabulary;
@@ -28,6 +34,14 @@ class CottageVocabManager {
 
   /**
    * Create a vocabulary used to store cottage tag entries.
+   *
+   * @param string $machineName
+   *   The machine name of the vocabulary to be created.
+   * @param object $vocabDefinition
+   *   The object definition of the vocabulary to be created.
+   *
+   * @return object
+   *   The finalised vocabulary definition.
    */
   public static function createCottageTagVocabulary($machineName, $vocabDefinition, $vocabFields) {
     // If vocabulary already exists.
@@ -54,6 +68,11 @@ class CottageVocabManager {
 
   /**
    * Register the instances for each of the fields and attach them to the taxonomy_term data type.
+   *
+   * @param string $machineName
+   *   The machine name of the vocabulary to define the definition instances of.
+   * @param array $vocabFields
+   *   The definition of the fields to be instantiated and bound to the vocab by this function.
    */
   public static function registerVocabularyFieldDefinitionInstances($machineName, $vocabFields) {
     foreach ($vocabFields as $vocabKey => $fieldOptions) {
@@ -83,7 +102,16 @@ class CottageVocabManager {
   }
 
   /**
-   * Function used in order to add a term (tag in this context) to the cottage vocabulary.
+   * Function used to add a term (tag in this context) to the cottage vocabulary.
+   *
+   * @param string $machineName
+   *   The machine name of the vocabulary to which a term should be added.
+   * @param string $termName
+   *   The name of the term to be added.
+   * @param array $termData
+   *   An array of data to be used to defined the term (defaults to NULL if )
+   * @param object $parent
+   *   The parent object for this current term (defaults to NULL if the term has no parent).
    */
   public static function addTermToVocabulary($machineName, $termName, $termData = NULL, $parent = NULL) {
 
@@ -159,6 +187,20 @@ class CottageVocabManager {
 
   /**
    * Create a vocabulary from a provided list of attributes from the API.
+   *
+   * @param string $machineName
+   *   The machine name of the vocabulary to create.
+   * @param array $apiAttribs
+   *   The attributes which define the vocabulary as provided by the API.
+   * @param array $vocabDefinitions
+   *   List of the field definitions for the vocabulary.
+   * @param string $nestedParentId
+   *   The ID of the parent.
+   * @param string $nestedItemId
+   *   The ID of the nested item.
+   *
+   * @return int
+   *   Number of attributes initialised.
    */
   public static function createVocabularyFromAttribList($machineName, $apiAttribs, $vocabDefinitions, $nestedParentId = "group", $nestedItemId = "label") {
     foreach ($apiAttribs as $attrib) {
@@ -202,9 +244,7 @@ class CottageVocabManager {
             );
 
           };
-
           self::addTermToVocabulary($machineName, $curChildTerm, $fieldData, self::getTermFromName($machineName, $currentGroup));
-
         }
       }
       else {
@@ -217,6 +257,14 @@ class CottageVocabManager {
 
   /**
    * Ascertain whether a specific taxonomy_term already exists in the database.
+   *
+   * @param string $machineName
+   *   The machine name of the taxonomy used to check the existence of the term $name.
+   * @param string $name
+   *   The name of the term to check the existence of.
+   *
+   * @return bool
+   *   A boolean indicating whether the term exists in the taxonomy or not.
    */
   public static function taxonomyTermExists($machineName, $name) {
     $term = self::getTermFromName($machineName, $name);
