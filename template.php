@@ -196,7 +196,7 @@ function nt2_theme_preprocess_field(&$vars) {
                 );
 
                 $item_ref[0]['#path'] = array(
-                    'path' => $url,
+                    'path' => url('nt2_landing/' . $nid, $options),
                     'options' => array('html' => TRUE),
                 );
                 
