@@ -16,25 +16,29 @@ class CottageNodeManager {
 
   /**
    * Creates a new property reference node when given returned data from the API as a parameter: $data.
+   *
+   * @param string $propref
+   *   The property reference of the node to be loaded.
+   * @param string $type_machine_name
+   *   Machine name of the node type to be used.
+   * @param array $data
+   *   Associative array containing the data used to define the node.
+   *
+   * @return Object
+   *   The newly created node object.
    */
   public static function createNode($propref, $type_machine_name, $data = NULL) {
     $result = self::loadNode($propref);
 
     // If existing nodes exist for this property reference modify them.
     if ($result != NULL) {
-
-      // dpm($result, 'Result');
-      // dpm($data, 'Data');.
       if (is_array($data)) {
         foreach ($data as $key => $value) {
-          // dpm($value, $key);.
           $result->$key = $value;
         }
       }
 
-      // dpm($result, 'Updated Property');.
       return $result;
-
     }
     // Else create a new node for the current property reference.
     else {
@@ -53,7 +57,6 @@ class CottageNodeManager {
         }
       }
     }
-    // dpm($node, 'New Property');.
 
     return $node;
   }
@@ -100,6 +103,9 @@ class CottageNodeManager {
 
   /**
    * Takes a node or an array of nodes as input and saves the requisite node type for each reference.
+   *
+   * @param array $node
+   *   Array of property objects or a single property object.
    */
   public static function saveNode($node) {
     // If there is more than one property reference loop through and individually create a node reference for each provided.
@@ -118,6 +124,14 @@ class CottageNodeManager {
 
   /**
    * Takes an array as input and returns a string of newline separated values. The keys to be retained are specified in the `$values_to_keep` array.
+   *
+   * @param array $array_of_values
+   *   Array of values to parse.
+   * @param array $values_to_keep
+   *   Array of values to keep out of $array_of_values.
+   *
+   * @return string
+   *   The string of generated newline separated values.
    */
   private static function parsePropertyValueArray($array_of_values, $values_to_keep) {
     // TODO: Use an entity as a wrapper for these value arrays such as images instead of a newline separated list.
@@ -138,22 +152,30 @@ class CottageNodeManager {
   }
 
   /**
-   * Takes an array of data (the data returned by the API for a property request) as input and returns an array which is in the correct format to be saved as an instance of the custom cottage node_type.
+   * Takes an array of data (the data returned by the API for a property request) as input and returns an array which is in the correct format to be saved as an instance of the custom cottage node type.
+   *
+   * @param array $data
+   *   An array of property data return from the API.
+   * @param array $machine_names
+   *   An associative array of the machine names for the tag & location taxonomies.
+   *
+   * @return array
+   *   An array containing the generated field information.
    */
-  public static function parseApiPropertyReturnData($data, $machine_name = array("tag" => "", "location" => "")) {
+  public static function parseApiPropertyReturnData($data, $machine_names = array("tag" => "", "location" => "")) {
 
     // Find which tags to retain.
     $tagKeysToKeep = array();
     foreach ($data["attributes"] as $key => $value) {
       if ($value) {
         $tagKeysToKeep[] = array(
-          'tid' => CottageVocabManager::getTermFromName($machine_name["tag"], $key),
+          'tid' => CottageVocabManager::getTermFromName($machine_names["tag"], $key),
         );
       }
     };
 
     $locationKey[] = array(
-      'tid' => CottageVocabManager::getTermFromName($machine_name["location"], $data["location"]["code"]),
+      'tid' => CottageVocabManager::getTermFromName($machine_names["location"], $data["location"]["code"]),
     );
 
     $address = array(
@@ -344,13 +366,18 @@ class CottageNodeManager {
 
   /**
    * This function queries the API for a specific property reference and returns an array of the data found.
+   *
+   * @param string $propref
+   *   Represents the property reference of the property to fetch from the API.
+   * @param string $suffix
+   *   Represents the suffix e.g: '_zz' or '_wl' of the api currently in use.
+   *
+   * @return object
+   *   The property object fetched from the API.
    */
   public static function fetchPropertyFromApi($propref, $suffix) {
-
     $path = sprintf('property/' . strtoupper($propref) . $suffix);
 
-    // TODO: Uncomment this line and fix any errors this change causes.
-    // $path = sprintf('property/' . strtoupper($propref) . "_" . $suffix);.
     $data = NeontabsIO::getInstance()->get($path);
 
     return $data;
@@ -358,8 +385,13 @@ class CottageNodeManager {
 
   /**
    * Register the instances for each of the fields (attach them to the custom cottage node type via the bundle system).
+   *
+   * @param string $machine_name
+   *   The machine name of the bundle type of the new field instance.
+   * @param array $cottage_fields
+   *   Each of the cottage fields to be initialised.
    */
-  public static function registerCottageFieldDefinitionInstances($name, $cottage_fields, $custom_instances) {
+  public static function registerCottageFieldDefinitionInstances($machine_name, $cottage_fields, $custom_instances) {
     foreach ($cottage_fields as $field_key => $field_options) {
 
       $field_options_temp = field_info_field($field_key);
@@ -371,7 +403,7 @@ class CottageNodeManager {
       $instance = array(
         'field_name' => $field_key,
         'entity_type' => 'node',
-        'bundle' => $name,
+        'bundle' => $machine_name,
         'description' => 'Cottage data field.',
         'label' => $field_options["label"],
         'widget' => array(
@@ -402,9 +434,15 @@ class CottageNodeManager {
   }
 
   /**
-   * Check whether a node of the $name provided already exists.
+   * Check whether a node of the name provided already exists.
+   *
+   * @param string $machine_name
+   *   The machine name of the node type to check exists.
+   *
+   * @return bool
+   *   Whether the machine name is already defined within drupal.
    */
-  public static function nodeTypeExists($name) {
+  public static function nodeTypeExists($machine_name) {
     // Check to see if cottage_node type exists.
     if (in_array($name, node_type_get_names())) {
       return TRUE;
@@ -415,9 +453,15 @@ class CottageNodeManager {
 
   /**
    * Register a new cottage node entity when given a $name (machine name).
+   *
+   * @param string $machine_name
+   *   The machine name of the node type to register.
+   *
+   * @return int
+   *   The drupal save status id for the current node type.
    */
-  public static function registerCottageNodeTypeEntity($name) {
-    $cottage_type_defintion_array = self::generateTypeDefinitionArray($name);
+  public static function registerCottageNodeTypeEntity($machine_name) {
+    $cottage_type_defintion_array = self::generateTypeDefinitionArray($machine_name);
 
     $status = node_type_save($cottage_type_defintion_array);
     node_add_body_field($cottage_type_defintion_array);
@@ -427,16 +471,22 @@ class CottageNodeManager {
 
   /**
    * Generate a new type definition which can then be used to create a new node type using drupal's internal Node API.
+   *
+   * @param string $machine_name
+   *   The machine name of the node that the definition array describes.
+   *
+   * @return array
+   *   An array which defines the node type to be created.
    */
-  private static function generateTypeDefinitionArray($name) {
+  private static function generateTypeDefinitionArray($machine_name) {
     // Ascertain whether the node type currently is defined in the database.
-    if (self::nodeTypeExists($name)) {
+    if (self::nodeTypeExists($machine_name)) {
       return FALSE;
     }
 
     // Define new cottage node type.
     $nt2_node_type = array(
-      'type' => $name,
+      'type' => $machine_name,
       'name' => st('Basic Cottage Entry'),
       'base' => 'node_content',
       'description' => st("Defines a cottage entry node."),
