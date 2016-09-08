@@ -428,7 +428,7 @@ function nt2_landing_block_save($delta = '', $edit = array()) {
     $id = $new_value['name'];
 
     // Check the validity of the provided ID.
-    $stripped_id = nt2_strip_id_from_search($id);
+    $stripped_id = NT2Landing::stripIdFromSearchString($id);
 
     // If the ID is valid.
     if ($stripped_id > -1) {
