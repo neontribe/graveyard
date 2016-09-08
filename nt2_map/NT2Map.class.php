@@ -34,6 +34,13 @@ class NT2Map {
 
     $mapdata['geojson'] = self::getFeatures($properties, 'FeatureCollection', 'Feature', 'Point');
 
+    $mapdata['popups'] = array(
+      'template' => '<a href={{url}}><h3>{{title}}</h3></a> <img width=250 height=250 src={{imagetag}}></img>',
+      'options' => array(
+        'className' => 'neonmap-popup',
+      ),
+    );
+
     drupal_add_js(
       drupal_get_path('module', 'nt2_map') . '/neonmap/dist/neonmap.js',
       array(
@@ -84,7 +91,7 @@ class NT2Map {
         $url = url('node/' . $nid, $options);
 
         $geojson['features'][] = array(
-          'id' => $property['cottage_reference']['#markup'],
+          'id' => $property['cottage_reference'][0]['#markup'],
           'type' => 'Feature',
           'geometry' => array(
             'type' => 'Point',
@@ -99,7 +106,7 @@ class NT2Map {
             'bedrooms'  => $property['cottage_bedrooms'][0]['#markup'],
             'pricerange' => $property['cottage_pricing'][0]['#markup'],
             'propurl' => $url,
-            'imagetag' => '',
+            'imagetag' => explode("\n", $property["cottage_images"][0]['#markup'])[2],
           ),
         );
       }

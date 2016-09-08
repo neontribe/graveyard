@@ -93,7 +93,7 @@ function nt2_landing_callback($id = '') {
       $view = node_view($resultNode, 'teaser');
       // @todo This seems like a horrific way to access anything.
       $propRef = $resultNode->cottage_reference['und'][0]['value'];
-      $render[$propRef] = $view;
+      $render['nodes'][$propRef] = $view;
     }
 
   }
@@ -274,7 +274,6 @@ function nt2_landing_block_configure($delta) {
     $rows = array();
     $row_elements = array();
 
-    // Put it into a fieldset for no reason.
     $form['data_table'] = array(
       '#type' => 'fieldset',
       '#title' => t('Landing Pages Enabled.'),

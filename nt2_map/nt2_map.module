@@ -25,15 +25,20 @@ function neontabs_map_menu() {
  * Implements hook_page_alter().
  */
 function nt2_map_page_alter(&$page) {
+  if (!isset($page['content']['system_main']['nodes'])) {
+    return;
+  }
+
   $node_list = $page['content']['system_main']['nodes'];
   $node_list_keys = array_keys($node_list);
 
   if (isset($node_list)) {
     // If there is only one node on the page. (including the #sorted attribute)
-    if (count($node_list) == 2) {
+    if (count($node_list) == 2 && array_key_exists('#sorted', $node_list)) {
       $first_property_key = $node_list_keys[0];
       $property = $node_list[$first_property_key];
 
+      // And this node is a cottage node.
       if ($property['#bundle'] == 'cottage_entity') {
         // Property pages.
         $page['content']['system_main']['tabs_gmap_block'] = array(
@@ -41,6 +46,13 @@ function nt2_map_page_alter(&$page) {
           '#mapdata' => NT2Map::initMap(array($property)),
         );
       }
+    }
+    elseif (count($node_list) > 2) {
+      $page['content']['system_main']['tabs_gmap_block'] = array(
+        '#theme' => 'neontabs_map',
+        '#mapdata' => NT2Map::initMap(array_values($node_list)),
+        '#weight' => -1,
+      );
     }
 
     $params = array(

@@ -153,7 +153,7 @@ class SearchUI {
       $view = node_view($resultNode, 'teaser');
       // @todo This seems like a horrific way to access anything.
       $propRef = $resultNode->cottage_reference['und'][0]['value'];
-      $renderArray[$propRef] = $view;
+      $renderArray['nodes'][$propRef] = $view;
     }
 
     return $renderArray;
