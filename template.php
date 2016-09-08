@@ -128,8 +128,16 @@ function render_cottage_info_field($prefix_text, $item_ref, $url, $view_mode, $p
 function nt2_theme_preprocess_field(&$vars) {
 
   if ($node = $vars['element']['#object']) {
+
+    // If the field has a 'tid' property return.
+    if(property_exists($node, 'tid')) return;
+
     // Assign the node type `teaser` or `full` to the $node_type variable.
-    $node_type = $node->type;
+    $node_type = 'teaser';
+
+    if(property_exists($node, 'type')) {
+        $node_type = $node->type;
+    }
 
     // Setup node information variables.
     $view_mode = $vars['element']['#view_mode'];
