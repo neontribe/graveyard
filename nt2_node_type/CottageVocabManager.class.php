@@ -213,11 +213,11 @@ class CottageVocabManager {
         $fieldData[$key] = array(
           'und' => array(
             0 => array(
-              'value' => $attrib[$vocabDefinitions[$key]["data_key_name"]],
+              'value' => $attrib[$vocabDefinitions[$key]['data_key_name']],
             ),
           ),
         );
-      };
+      }
 
       // Set the group variable.
       $currentGroup = $attrib[$nestedParentId];
@@ -225,6 +225,7 @@ class CottageVocabManager {
 
       self::addTermToVocabulary($machineName, $currentGroup, $fieldData);
 
+      // Apply nesting to the vocabulary.
       if (is_array($currentTerm)) {
 
         foreach ($currentTerm as $childValue) {

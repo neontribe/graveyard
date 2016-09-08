@@ -39,5 +39,4 @@ function nt2_landing_install() {
   }
 
   NT2Landing::registerFieldDefinitionInstances($machine_name, $landing_fields);
-
 }
