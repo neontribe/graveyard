@@ -19,7 +19,7 @@ class CottageNodeManager {
    *
    * @param string $propref
    *   The property reference of the node to be loaded.
-   * @param string $type_machine_name
+   * @param string $typeMachineName
    *   Machine name of the node type to be used.
    * @param array $data
    *   Associative array containing the data used to define the node.
@@ -27,7 +27,7 @@ class CottageNodeManager {
    * @return Object
    *   The newly created node object.
    */
-  public static function createNode($propref, $type_machine_name, $data = NULL) {
+  public static function createNode($propref, $typeMachineName, $data = NULL) {
     $result = self::loadNode($propref);
 
     // If existing nodes exist for this property reference modify them.
@@ -45,7 +45,7 @@ class CottageNodeManager {
       $node = new stdClass();
 
       // Set type to custom type which is supplied to the function.
-      $node->type = $type_machine_name;
+      $node->type = $typeMachineName;
 
       // Set drupal defaults for the new node before we apply the custom attribute data.
       node_object_prepare($node);
@@ -66,17 +66,17 @@ class CottageNodeManager {
    *
    * @param string $propref
    *   Property reference string.
-   * @param string $node_machine_name
+   * @param string $nodeMachineName
    *   Machine name for the node type.
    *
    * @return Object
    *   The loaded object or NULL.
    */
-  public static function loadNode($propref, $node_machine_name = 'cottage_entity') {
+  public static function loadNode($propref, $nodeMachineName = 'cottage_entity') {
     // Compose a new entity query which will ascertain whether node entries exist with the same reference as provided in $ref.
     $query = new EntityFieldQuery();
     $query->entityCondition('entity_type', 'node')
-      ->entityCondition('bundle', $node_machine_name)
+      ->entityCondition('bundle', $nodeMachineName)
       ->fieldCondition('cottage_reference', 'value', $propref, '=');
 
     // Assign the value of the result of executing the query to the variable $result.
@@ -123,29 +123,37 @@ class CottageNodeManager {
   }
 
   /**
-   * Takes an array as input and returns a string of newline separated values. The keys to be retained are specified in the `$values_to_keep` array.
+   * Takes an array as input and returns a string of newline separated values. The keys to be retained are specified in the `$keepArray` array.
    *
-   * @param array $array_of_values
+   * @param array $inputArray
    *   Array of values to parse.
-   * @param array $values_to_keep
-   *   Array of values to keep out of $array_of_values.
+   * @param array $keepArray
+   *   Array of values to keep out of $inputArray.
    *
    * @return string
    *   The string of generated newline separated values.
    */
-  private static function parsePropertyValueArray($array_of_values, $values_to_keep) {
+  private static function parsePropertyValueArray($inputArray, $keepArray) {
     // TODO: Use an entity as a wrapper for these value arrays such as images instead of a newline separated list.
     $output = array();
-    foreach ($array_of_values as $key => $value) {
-      $value_carry = array();
-      foreach ($values_to_keep as $value_keep) {
-        if (empty($value[$value_keep])) {
-          $value[$value_keep] = "no_" . $value_keep;
+
+    // Loop through each element of the array of values to parse.
+    foreach ($inputArray as $key => $value) {
+      $valueCarry = array();
+
+      // Check each element of inputArray against each element of keepArray
+      // and ascertain whether it exists in the array of values to keep.
+
+      foreach ($keepArray as $valueKeep) {
+        if (empty($value[$valueKeep])) {
+          $value[$valueKeep] = "no_" . $valueKeep;
         }
 
-        array_push($value_carry, $value[$value_keep]);
+        array_push($valueCarry, $value[$valueKeep]);
       }
-      $output[$key] = array('value' => implode("\n", $value_carry));
+
+      // Finally output the imploded values of the values to carry forward in the requisite newline separated format.
+      $output[$key] = array('value' => implode("\n", $valueCarry));
     }
 
     return $output;
@@ -156,26 +164,26 @@ class CottageNodeManager {
    *
    * @param array $data
    *   An array of property data return from the API.
-   * @param array $machine_names
+   * @param array $machineNames
    *   An associative array of the machine names for the tag & location taxonomies.
    *
    * @return array
    *   An array containing the generated field information.
    */
-  public static function parseApiPropertyReturnData($data, $machine_names = array("tag" => "", "location" => "")) {
+  public static function parseApiPropertyReturnData($data, $machineNames = array("tag" => "", "location" => "")) {
 
     // Find which tags to retain.
     $tagKeysToKeep = array();
     foreach ($data["attributes"] as $key => $value) {
       if ($value) {
         $tagKeysToKeep[] = array(
-          'tid' => CottageVocabManager::getTermFromName($machine_names["tag"], $key),
+          'tid' => CottageVocabManager::getTermFromName($machineNames["tag"], $key),
         );
       }
     };
 
     $locationKey[] = array(
-      'tid' => CottageVocabManager::getTermFromName($machine_names["location"], $data["location"]["code"]),
+      'tid' => CottageVocabManager::getTermFromName($machineNames["location"], $data["location"]["code"]),
     );
 
     $address = array(

@@ -4,6 +4,7 @@ core = 7.x
 
 dependencies[] = nt2
 dependencies[] = nt2_io
+dependencies[] = nt2_search
 dependencies[] = field
 dependencies[] = entity
 dependencies[] = number

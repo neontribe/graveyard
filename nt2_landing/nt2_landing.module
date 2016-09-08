@@ -165,21 +165,6 @@ function nt2_landing_block_info() {
 }
 
 /**
- * Function to strip ID from landing page name.
- */
-function nt2_strip_id_from_search($search) {
-  $matches = array();
-  $matched = preg_match("/\[[0-9]+\]/", $search, $matches);
-  $node_id = -1;
-
-  if ($matched && count($matches) > 0) {
-    $node_id = preg_replace('/((\[)|(\]))/', '', $matches[0]);
-  }
-
-  return $node_id;
-}
-
-/**
  * Implements hook_block_view().
  */
 function nt2_landing_block_view($delta) {
@@ -187,11 +172,12 @@ function nt2_landing_block_view($delta) {
 
   $block['subject'] = t('Landing Pages');
 
+  // If the user requests a valid landing page.
   if ($delta === 'nt2_landing') {
     $node_landing_single_selection = variable_get('node_landing_single_selection');
 
     // Strip out `[]` leaving just the node id.
-    $node_id = nt2_strip_id_from_search($node_landing_single_selection);
+    $node_id = NT2Landing::stripIdFromSearchString($node_landing_single_selection);
 
     // If there are matches and there is only one match.
     if ($node_id > -1) {
@@ -204,8 +190,9 @@ function nt2_landing_block_view($delta) {
       }
     }
     else {
+      // Tell the user if they don't request a valid landing page ID.
       $block['content'] = array(
-      '#markup' => "$node_landing_single_selection is not a valid ID."
+        '#markup' => "$node_landing_single_selection is not a valid ID."
       );
     }
   }

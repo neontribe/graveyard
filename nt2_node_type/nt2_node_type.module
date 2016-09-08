@@ -60,7 +60,6 @@ function nt2_node_type_menu() {
     'file' => 'nt2_node_type.admin.inc',
   );
 
-
   $items['admin/config/nt2/entity/reload_props'] = array(
     'title' => 'Refresh ALL Properties',
     'page callback' => 'nt2_entity_admin_load_all_prop',

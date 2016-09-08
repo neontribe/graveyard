@@ -12,17 +12,20 @@ use Drupal\nt2_io\uk\co\neontabs\NeontabsIO;
  */
 function nt2_node_type_install() {
   // Setup constants.
-  variable_set("COTTAGE_NODE_TYPE_MACHINE_NAME", "cottage_entity");
-  variable_set("COTTAGE_VOCAB_MACHINE_NAME", "cottage_vocab");
-  variable_set("COTTAGE_LOC_VOCAB_MACHINE_NAME", "cottage_loc_vocab");
+  variable_set('COTTAGE_NODE_TYPE_MACHINE_NAME', 'cottage_entity');
+  variable_set('COTTAGE_VOCAB_MACHINE_NAME', 'cottage_vocab');
+  variable_set('COTTAGE_LOC_VOCAB_MACHINE_NAME', 'cottage_loc_vocab');
 
-  var_dump("===Warning you will need to add your external image server to the whitelisted hosts array===");
+  var_dump('===Warning you will need to add your external image server to the whitelisted hosts array===');
 
+  // Set configuration options.
   $whitelisted_hosts = array(
-    "zz.api.carltonsoftware.co.uk",
+    'zz.api.carltonsoftware.co.uk',
   );
 
-  variable_set("imagecache_external_hosts", implode("\r\n", $whitelisted_hosts));
+  variable_set('imagecache_external_hosts', implode("\r\n", $whitelisted_hosts));
+
+  variable_set('nt2_node_type_batch_size', 7);
 
   // Define the cottage entity fields.
   $cottage_fields = array(

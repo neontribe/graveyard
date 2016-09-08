@@ -19,6 +19,26 @@ function nt2_node_type_admin_form() {
     '#description' => t('If a prop ref is entered here it will trigger an import/refresh on the propref.'),
   );
 
+  $batchSizeList = array(
+    1 => 1,
+    2 => 2,
+    3 => 4,
+    4 => 8,
+    5 => 16,
+    6 => 32,
+    7 => 64,
+  );
+
+  $batchSizeDefault = variable_get('nt2_node_type_batch_size');
+
+  $form['nt2_node_type_batch_size'] = array(
+    '#title' => 'Property refresh batch size.',
+    '#type' => 'select',
+    '#options' => $batchSizeList,
+    '#default_value' => $batchSizeDefault,
+    '#required' => FALSE,
+  );
+
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => 'Load',
@@ -82,8 +102,18 @@ function nt2_entity_admin_batch_list_callback($attr, &$context) {
  * Implements hook_form_load_all_prop.
  */
 function nt2_entity_admin_load_all_prop($data = NULL, $other_data = NULL, $is_backend = FALSE) {
+  $batchSizeList = array(
+    1 => 1,
+    2 => 2,
+    3 => 4,
+    4 => 8,
+    5 => 16,
+    6 => 32,
+    7 => 64,
+  );
+
   // Get list of properties to reload.
-  $per_page = 20;
+  $per_page = $batchSizeList[variable_get('nt2_node_type_batch_size')];
 
   $results = array();
   $ops = array();
@@ -98,8 +128,7 @@ function nt2_entity_admin_load_all_prop($data = NULL, $other_data = NULL, $is_ba
     'operations' => array(),
     'finished' => 'nt2_entity_admin_batch_load_props_finished',
     'title' => t('Load all properties into cache.'),
-    'init_message' => t('Starting.'),
-  // Steps of 5.
+    'init_message' => t("Starting. Batch size: $per_page"),
     'progress_message' => t('Processed @current out of @total.'),
     'error_message' => t('Fix has encountered an error.'),
     'file' => drupal_get_path('module', 'nt2_node_type') . '/nt2_node_type.admin.inc',

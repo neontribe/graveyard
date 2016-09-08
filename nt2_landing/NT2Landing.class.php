@@ -12,14 +12,56 @@ class NT2Landing {
 
   /**
    * Method used to register the entity type.
+   *
+   * @param string $machineName
+   *    The machine name used to define the new entity type.
    */
-  public static function registerEntityType($name) {
-    $landing_type_definition_array = self::generateEntityDefinitionArray($name);
+  public static function registerEntityType($machineName) {
+
+    // Create the definition for the new entity type.
+    $landing_type_definition_array = self::generateEntityDefinitionArray($machineName);
+
+    // Register the new node type with Drupal.
     $status = node_type_save($landing_type_definition_array);
 
+    // Add the default drupal body field to the node type we just created.
     node_add_body_field($landing_type_definition_array);
 
+    // Return the status of the new node type creation.
     return $status;
+  }
+
+  /**
+   * Function to strip ID from landing page name.
+   *
+   * Strings should be provided in the format: "Landing Page [1234]".
+   *
+   * Landing page ID should be enclosed in square brackets.
+   *
+   * @param string $search
+   *    The string to search for the landing page ID.
+   *
+   * @return int
+   *    The node ID stripped from the search string if an ID can't be found -1 is returned instead.
+   */
+  public static function stripIdFromSearchString($search) {
+    $matches = array();
+
+    // Check for the presence of two square brackets with one or more numbers between 0 and 9 enclosed between them.
+    $matched = preg_match("/\[[0-9]+\]/", $search, $matches);
+
+    // Initialise the $node_id variable with the value -1 (assume that the search has already failed).
+    $node_id = -1;
+
+    // If the prior regex found a match and the match was deposited in the $matches array.
+    if ($matched && count($matches) > 0) {
+
+      // Remove the two square brackets from the matched string using the following regex replace.
+      $node_id = preg_replace('/((\[)|(\]))/', '', $matches[0]);
+    }
+
+    // Return the matched ID.
+    return $node_id;
   }
 
   /**
