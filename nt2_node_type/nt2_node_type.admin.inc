@@ -56,7 +56,6 @@ function nt2_entity_admin_load_attr_list($attrs = NULL) {
     'finished' => 'nt2_entity_admin_batch_load_props_finished',
     'title' => t('Load all properties into cache.'),
     'init_message' => t('Starting.'),
-  // Steps of 5.
     'progress_message' => t('Processed @current out of @total.'),
     'error_message' => t('Fix has encountered an error.'),
     'file' => drupal_get_path('module', 'nt2_node_type') . '/nt2_node_type.admin.inc',

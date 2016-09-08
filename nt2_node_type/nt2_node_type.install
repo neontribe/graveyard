@@ -263,12 +263,12 @@ function nt2_node_type_disable() {
   }
 
   $vocab = CottageVocabManager::vocabTypeExists(variable_get("COTTAGE_VOCAB_MACHINE_NAME"));
+
   if ($vocab) {
     // Delete each individual term.
     foreach (taxonomy_get_tree($vocab->vid) as $term) {
       taxonomy_term_delete($term->tid);
     }
-
     // Delete the vocabulary.
     taxonomy_vocabulary_delete(variable_get("COTTAGE_VOCAB_MACHINE_NAME"));
   }
@@ -322,22 +322,11 @@ function nt2_node_type_create_vocabs() {
       'data_key_name' => 'brand',
       'type' => 'text',
     ),
-    // 'loc_coordinates' => array(
-    // 'field_name' => 'loc_coordinates',
-    // 'data_key_name' => 'coordinates',
-    // 'type' => 'text',
-    // ),.
   );
 
   // Create the cottage tag vocabulary. (TODO: generalise this function to allow it to create any Vocab we need)
   $cottage_vocab_tag_creation_status = CottageVocabManager::createCottageTagVocabulary(variable_get("COTTAGE_VOCAB_MACHINE_NAME"), $vocab_definition_cottage_tags, $vocab_tag_fields);
 
-  // Populate the vocabulary from the API (TODO: generalise this too)
-  // $data = NeontabsIO::getInstance()->get("/");
-  // CottageVocabManager::createVocabularyFromAttribList(variable_get("COTTAGE_VOCAB_MACHINE_NAME"), $data["constants"]["attributes"], $vocab_tag_fields, "group", "label");
   // Create and populate cottage location vocabulary.
   $cottage_vocab_location_creation_status = CottageVocabManager::createCottageTagVocabulary(variable_get("COTTAGE_LOC_VOCAB_MACHINE_NAME"), $vocab_definition_cottage_location, $vocab_loc_fields);
-
-  // $data = NeontabsIO::getInstance()->get("/utility/area");
-  // CottageVocabManager::createVocabularyFromAttribList(variable_get("COTTAGE_LOC_VOCAB_MACHINE_NAME"), $data, $vocab_loc_fields, 'code', "locations");.
 }

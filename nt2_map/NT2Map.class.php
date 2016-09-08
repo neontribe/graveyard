@@ -35,7 +35,15 @@ class NT2Map {
     $mapdata['geojson'] = self::getFeatures($properties, 'FeatureCollection', 'Feature', 'Point');
 
     $mapdata['popups'] = array(
-      'template' => '<a href={{url}}><h3>{{title}}</h3></a> <img width=250 height=250 src={{imagetag}}></img>',
+      'template' => "
+        <a href={{url}}>
+          <h3>{{title}}</h3>
+        </a>
+        <ul>
+          <li>Sleeps: {{sleeps}}</li>
+          <li>Bedrooms: {{bedrooms}}</li>
+        </ul>
+        <img width=100 height=75 src={{imagetag}}></img>",
       'options' => array(
         'className' => 'neonmap-popup',
       ),
