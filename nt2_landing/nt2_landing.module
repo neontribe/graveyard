@@ -121,15 +121,26 @@ function nt2_landing_delete_landing_form($form, &$form_state, $instance) {
  */
 function nt2_landing_delete_landing_form_submit($form, &$form_state) {
   $form_values = $form_state['values'];
+
+  // Grab the id of the item to delete.
   $landing_id_delete = $form_state['build_info']['args'][0];
 
   $data = variable_get('node_landing_table_data');
+
+  // Get the item to delete from the loaded data.
   $item_to_delete = $data[$landing_id_delete];
 
   if ($form_values['confirm']) {
+    // Notify the user of the deletion.
     drupal_set_message("Deleted landing page node: $item_to_delete[name]");
+
+    // Make the change.
     unset($data[$landing_id_delete]);
+
+    // Save the changes.
     variable_set('node_landing_table_data', $data);
+
+    // Go back to the admin page.
     drupal_goto('/admin/structure/block/manage/nt2_landing/nt2_landing_multi/configure');
   }
 
@@ -147,7 +158,6 @@ function nt2_landing_block_info() {
     'region' => 'content',
     'visibility' => BLOCK_VISIBILITY_LISTED,
     'pages' => '<front>',
-  // Status of 1 means enabled.
     'status' => 1,
   );
 
@@ -157,7 +167,6 @@ function nt2_landing_block_info() {
     'region' => 'content',
     'visibility' => BLOCK_VISIBILITY_LISTED,
     'pages' => '<front>',
-  // Status of 1 means enabled.
     'status' => 1,
   );
 
@@ -197,19 +206,24 @@ function nt2_landing_block_view($delta) {
     }
   }
   elseif ($delta === 'nt2_landing_multi') {
+    // Load the data in.
     $data = variable_get('node_landing_table_data');
 
-    uasort($data, '_nt2_landing_form_weight_arraysort');
+    // Sort the data by weight.
+    uasort($data, array('NT2Landing', 'weightArraysort'));
 
+    // Load all of the nodes referenced by the loaded data.
     $loaded_nodes = node_load_multiple(array_keys($data));
 
+    // For each loaded node.
     foreach ($loaded_nodes as $key => $node) {
+
+      // If the current landing page is enabled add it to the rendered block.
       if ($data[$key]['enabled'] == 1) {
         $temp_view = node_view($node, 'teaser');
         $block['content'][$key] = $temp_view;
       }
     }
-
   }
 
   return $block;
@@ -221,22 +235,28 @@ function nt2_landing_block_view($delta) {
 function nt2_landing_search_node_by_title_callback($string = "") {
   $matches = array();
 
+  // If $string is defined.
   if ($string) {
+    // Construct a new field query.
     $query = new EntityFieldQuery();
+
+    // Set the condition to all nodes of type landing page. Find all with a title which is similar to the provided string.
     $entities = $query->entityCondition('entity_type', 'node')
         ->entityCondition('bundle', variable_get("COTTAGE_LANDING_PAGE_MACHINE_NAME"))
         ->propertyCondition('title', db_like($string) . '%', 'LIKE')
         ->execute();
 
+    // Assign each loaded node to the variable $loaded_nodes.
     $loaded_nodes = node_load_multiple(array_keys($entities['node']));
 
+    // For each loaded node append it to the $matches array.
     foreach ($loaded_nodes as $node) {
       $landing_title = $node->title;
-
       $matches[$landing_title . " [$node->nid]"] = check_plain($landing_title);
     }
   }
 
+  // Output the matches in JSON format as the autocomplete module expects.
   drupal_json_output($matches);
 }
 
@@ -246,8 +266,10 @@ function nt2_landing_search_node_by_title_callback($string = "") {
 function nt2_landing_block_configure($delta) {
   $form = array();
 
+  // If the block is a landing block.
   if ($delta == 'nt2_landing') {
 
+    // Define the autocomplete field for landing page node selection.
     $form['node_landing_single_selection'] = array(
       '#type' => 'textfield',
       '#title' => t('Choose a landing page.'),
@@ -258,6 +280,7 @@ function nt2_landing_block_configure($delta) {
 
   }
   elseif ($delta == 'nt2_landing_multi') {
+
     $rows = array();
     $row_elements = array();
 
@@ -266,11 +289,8 @@ function nt2_landing_block_configure($delta) {
       '#title' => t('Landing Pages Enabled.'),
     );
 
-    $data = variable_get('node_landing_table_data');
-
-    if (!$data) {
-      $data = array();
-    }
+    // Access stored data for the landing node table; default to an array.
+    $data = variable_get('node_landing_table_data') ?: array();
 
     $data['add-item-row'] = array(
       'enabled' => TRUE,
@@ -279,7 +299,7 @@ function nt2_landing_block_configure($delta) {
     );
 
     // Sort the rows.
-    uasort($data, '_nt2_landing_form_weight_arraysort');
+    uasort($data, array('NT2Landing', 'weightArraysort'));
 
     // Build the rows.
     foreach ($data as $id => $entry) {
@@ -382,20 +402,11 @@ function nt2_landing_block_configure($delta) {
 }
 
 /**
- * Helper function for sorting entry weights.
- */
-function _nt2_landing_form_weight_arraysort($a, $b) {
-  if (isset($a['weight']) && isset($b['weight'])) {
-    return $a['weight'] < $b['weight'] ? -1 : 1;
-  }
-  return 0;
-}
-
-/**
  * Implements hook_block_save.
  */
 function nt2_landing_block_save($delta = '', $edit = array()) {
   if ($delta == 'nt2_landing') {
+    // Set the single node selected by the user.
     variable_set('node_landing_single_selection', $edit['node_landing_single_selection']);
   }
   elseif ($delta == 'nt2_landing_multi') {
@@ -415,14 +426,21 @@ function nt2_landing_block_save($delta = '', $edit = array()) {
     );
 
     $id = $new_value['name'];
+
+    // Check the validity of the provided ID.
     $stripped_id = nt2_strip_id_from_search($id);
 
+    // If the ID is valid.
     if ($stripped_id > -1) {
       $edit['data_table'][$stripped_id] = $new_value;
+      // Unset the add item field.
       unset($edit['data_table']['add-item-row']);
+
+      // Set the modified data in the drupal variable_set table.
       variable_set('node_landing_table_data', $edit['data_table']);
     }
     else {
+      // If the ID is invalid notify the user and return.
       drupal_set_message(t('Invalid property reference format.'), 'error');
       return;
     }

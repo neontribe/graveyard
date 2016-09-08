@@ -75,12 +75,32 @@ class NT2Landing {
    */
   public static function loadLandingNodes($machineName) {
     $query = new EntityFieldQuery();
+
+    // Setup the entity conditions: `match all nodes which have a bundle type of $machineName`.
     $query->entityCondition('entity_type', 'node')
       ->entityCondition('bundle', $machineName);
 
+    // Execute the query.
     $result = $query->execute();
 
+    // Return the nodes matched by the query.
     return $result;
+  }
+
+  /**
+   * Helper function for sorting entry weights.
+   *
+   * @param array $a
+   *    First entry to compare.
+   * @param array $b
+   *    Second entry to compare.
+   */
+  public static function weightArraysort($a, $b) {
+    // If both $a and $b have weight attributes return true/false if $a['weight'] is smaller or larger than $b['weight'].
+    if (isset($a['weight']) && isset($b['weight'])) {
+      return $a['weight'] < $b['weight'] ? -1 : 1;
+    }
+    return 0;
   }
 
   /**
