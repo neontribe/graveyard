@@ -45,6 +45,7 @@ class NT2Landing {
    *    The node ID stripped from the search string if an ID can't be found -1 is returned instead.
    */
   public static function stripIdFromSearchString($search) {
+    // Define an array which is used to store each of the matches for numbers enclosed in square brackets.
     $matches = array();
 
     // Check for the presence of two square brackets with one or more numbers between 0 and 9 enclosed between them.
@@ -55,7 +56,6 @@ class NT2Landing {
 
     // If the prior regex found a match and the match was deposited in the $matches array.
     if ($matched && count($matches) > 0) {
-
       // Remove the two square brackets from the matched string using the following regex replace.
       $node_id = preg_replace('/((\[)|(\]))/', '', $matches[0]);
     }
@@ -66,11 +66,17 @@ class NT2Landing {
 
   /**
    * Method used to load every landing page nid.
+   *
+   * @param string $machineName
+   *    The machine name of the nodes to load.
+   *
+   * @return array
+   *    An array of every node fetched as a result of executing the EntityFieldQuery.
    */
-  public static function loadLandingNodes($name) {
+  public static function loadLandingNodes($machineName) {
     $query = new EntityFieldQuery();
     $query->entityCondition('entity_type', 'node')
-      ->entityCondition('bundle', $name);
+      ->entityCondition('bundle', $machineName);
 
     $result = $query->execute();
 
@@ -79,8 +85,13 @@ class NT2Landing {
 
   /**
    * Method used to generate field definition instances.
+   *
+   * @param string $machineName
+   *    Machine name of the node type the fields will be bundled with.
+   * @param array $fields
+   *    Should contain definitions for the fields we want to define.
    */
-  public static function registerFieldDefinitionInstances($name, $fields) {
+  public static function registerFieldDefinitionInstances($machineName, $fields) {
     foreach ($fields as $field_key => $field_options) {
       $field_options_temp = field_info_field($field_key);
 
@@ -90,12 +101,14 @@ class NT2Landing {
         field_purge_batch(5);
       }
 
+      // Assign a new set of field options to the variable $field_options.
       $field_options = field_create_field($field_options);
 
+      // Define a new instance array for each field.
       $instance = array(
         'field_name' => $field_key,
         'entity_type' => 'node',
-        'bundle' => $name,
+        'bundle' => $machineName,
         'description' => 'Cottage data field.',
         'label' => $field_options["label"],
         'widget' => array(
@@ -117,14 +130,21 @@ class NT2Landing {
         ),
       );
 
+      // Register the instance with drupal.
       field_create_instance($instance);
     }
   }
 
   /**
    * Generate the entity type definition array.
+   *
+   * @param string $machineName
+   *    Machine name of the entity you want to generate a definition array for.
+   *
+   * @return array
+   *    The entity definition array.
    */
-  public static function generateEntityDefinitionArray($name) {
+  public static function generateEntityDefinitionArray($machineName) {
     // Return from the function if a node type already exists.
     if (in_array($name, node_type_get_names())) {
       return FALSE;
@@ -138,7 +158,6 @@ class NT2Landing {
       'description' => st("Defines a landing page node."),
       'custom' => 1,
       'modified' => 1,
-    // TESTING.
       'locked' => 0,
     );
 
