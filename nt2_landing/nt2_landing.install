@@ -9,8 +9,8 @@
  * Implements hook_install().
  */
 function nt2_landing_install() {
-  variable_set("COTTAGE_LANDING_PAGE_MACHINE_NAME", "nt2_landing_entity_type");
-  $machine_name = variable_get("COTTAGE_LANDING_PAGE_MACHINE_NAME");
+  $machine_name = "nt2_landing_entity_type";
+  variable_set("COTTAGE_LANDING_PAGE_MACHINE_NAME", $machine_name);
 
   NT2Landing::registerEntityType($machine_name);
 
