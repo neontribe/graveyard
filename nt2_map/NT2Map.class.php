@@ -98,6 +98,12 @@ class NT2Map {
         $nid = $propObj->nid;
         $url = url('node/' . $nid, $options);
 
+        // If cottage_images is present.
+        if (isset($property['cottage_images'])) {
+          $imagetag = explode("\n", $property["cottage_images"][0]['#markup'])[2];
+        }
+
+        // Setup an array containing the geojson to send to Neonmap.
         $geojson['features'][] = array(
           'id' => $property['cottage_reference'][0]['#markup'],
           'type' => 'Feature',
@@ -114,7 +120,7 @@ class NT2Map {
             'bedrooms'  => $property['cottage_bedrooms'][0]['#markup'],
             'pricerange' => $property['cottage_pricing'][0]['#markup'],
             'propurl' => $url,
-            'imagetag' => explode("\n", $property["cottage_images"][0]['#markup'])[2],
+            'imagetag' => $imagetag,
           ),
         );
       }
