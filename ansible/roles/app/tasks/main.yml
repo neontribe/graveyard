@@ -1,0 +1,38 @@
+---
+- name: Clear /var/www/html
+  file: path=/var/www/html state=absent
+
+- name: Set ownership on /var/www/html
+  file: path=/var/www owner=vagrant group=vagrant mode=0775
+
+- name: Drush make
+  shell: 'drush make /vagrant/nt2.make --working-copy /var/www/html'
+
+- name: Set ownership on /var/www/html/sites/default
+  file: path=/var/www/html/sites/default owner=vagrant group=vagrant mode=0775
+
+- name: Drush site install
+  shell: 'drush site-install -y standard --db-url="mysql://drupal:drupal@localhost/drupal" --site-name=Neontabs2 --account-name=superadmin --account-pass=b191wkm'
+  args:
+    chdir: /var/www/html
+
+  # nt2_landing
+- name: Drush enable modules
+  shell: 'drush -y en nt2_theme nt2 nt2_map nt2_node_type nt2_search nt2_io nt2_behat'
+  args:
+    chdir: /var/www/html
+
+- name: Drush set ZZ API URL
+  shell: 'drush -y vset tabs_io_config_api_base_url http://zz.api.carltonsoftware.co.uk/'
+  args:
+    chdir: /var/www/html
+
+- name: Drush set ZZ API Key
+  shell: 'drush -y vset tabs_io_config_api_api_key mouse'
+  args:
+    chdir: /var/www/html
+
+- name: Drush set ZZ API Secret
+  shell: 'drush -y vset tabs_io_config_api_api_key secret'
+  args:
+    chdir: /var/www/html

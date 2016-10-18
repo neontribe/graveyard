@@ -1,0 +1,14 @@
+---
+  - shell: mkdir --parents /opt/drush-8.x
+  - shell: composer init --require=drush/drush:8.* -n
+    args:
+      chdir: /opt/drush-8.x
+      creates: /opt/drush-8.x/drush
+  - shell: composer config bin-dir /usr/local/bin
+    args:
+      chdir: /opt/drush-8.x
+      creates: /opt/drush-8.x/drush
+  - shell: composer install
+    args:
+      chdir: /opt/drush-8.x
+      creates: /opt/drush-8.x/drush

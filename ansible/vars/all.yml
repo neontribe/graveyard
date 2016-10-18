@@ -1,0 +1,30 @@
+---
+server:
+    install: '1'
+    packages: [vim, git, imagemagick, htop]
+    timezone: Europe/London
+    locale: en_GB.UTF-8
+vagrant_local:
+    install: '1'
+    vm: { base_box: trusty64, hostname: nt2, ip: 192.168.33.99, memory: '512', sharedfolder: ./drupal/sites/all, useVagrantCloud: '1', syncType: nfs }
+apache:
+    install: '1'
+    docroot: /var/www/html
+    servername: nt2
+mysql:
+    install: '1'
+    root_password: b191wkm
+    database: drupal
+    user: drupal
+    password: drupal
+    dump: ''
+php:
+    install: '1'
+    ppa: php5-5.6
+    packages: [php5-cli, php5-intl, php5-mcrypt, php-pear, php5-curl, php5-imagick, php5-common, php5-gd, php5-memcached, php5-mysql, php5-readline, php5-xdebug, php5-xsl]
+    peclpackages: [APC]
+xdebug:
+    install: '1'
+composer:
+    install: '1'
+
