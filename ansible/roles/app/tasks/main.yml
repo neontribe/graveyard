@@ -52,11 +52,6 @@
   args:
     chdir: /var/www/html
 
-- name: Drush set ZZ API Secret
-  shell: 'drush -y vset tabs_io_config_api_secret cottage'
-  args:
-    chdir: /var/www/html
-
 - name: Drush set default theme
   shell: 'drush vset theme_default nt2_theme'
   args:
