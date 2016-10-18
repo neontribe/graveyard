@@ -1,6 +1,6 @@
 [submodule "contrib"]
 	path = contrib
-	url = git@github.com:neontribe/drupal-commit-hooks.git
+	url = https://github.com/neontribe/drupal-commit-hooks.git 
 [submodule "nt2_map/neonmap"]
 	path = nt2_map/neonmap
-	url = git@github.com:neontribe/neonmap.git
+	url = https://github.com/neontribe/neonmap.git
