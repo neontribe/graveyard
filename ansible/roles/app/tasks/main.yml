@@ -16,14 +16,29 @@
   args:
     chdir: /var/www/html
 
+- name: Pull the git submodules
+  shell: 'git submodule update --init --recursive'
+  args:
+    chdir: /var/www/html/sites/all/modules/nt2/
+
+- name: Test chown
+  shell: 'chown -R www-data:www-data html'
+  args:
+    chdir: /var/www
+
   # nt2_landing
 - name: Drush enable modules
   shell: 'drush -y en nt2_theme nt2 nt2_map nt2_node_type nt2_search nt2_io nt2_behat'
   args:
     chdir: /var/www/html
 
+- name: Compile SCSS
+  shell: 'compass compile'
+  args:
+    chdir: /var/www/html/sites/all/themes/nt2_theme/
+
 - name: Drush set ZZ API URL
-  shell: 'drush -y vset tabs_io_config_api_base_url http://zz.api.carltonsoftware.co.uk/'
+  shell: 'drush -y vset tabs_io_config_api_base_url http://zz.api.carltonsoftware.co.uk'
   args:
     chdir: /var/www/html
 
@@ -33,6 +48,11 @@
     chdir: /var/www/html
 
 - name: Drush set ZZ API Secret
-  shell: 'drush -y vset tabs_io_config_api_api_key secret'
+  shell: 'drush -y vset tabs_io_config_api_secret cottage'
+  args:
+    chdir: /var/www/html
+
+- name: Drush set default theme
+  shell: 'drush vset theme_default nt2_theme'
   args:
     chdir: /var/www/html
