@@ -70,3 +70,19 @@ function nt2_node_type_menu() {
 
   return $items;
 }
+
+/**
+ * Implements hook_menu cron.
+ *
+ * If you use drush to set the variable nt2_node_type_rebuild to 1 then all
+ * terms and properties will be loaded on the next cron cycle.
+ */
+function nt2_node_type_cron() {
+  if (variable_get('nt2_node_type_rebuild', FALSE)) {
+    module_load_include('inc', 'nt2_node_type', 'nt2_node_type.admin');
+    nt2_entity_admin_reload_attributes();
+    nt2_entity_admin_reload_tax_loc();
+    nt2_entity_admin_batch_callback(0, 9999, rand());
+    variable_set('nt2_node_type_rebuild', FALSE);
+  }
+}

@@ -223,7 +223,9 @@ function nt2_entity_admin_reload_attributes() {
   $msg = t("@cnt attribute taxonomy terms reload.", array('@cnt' => $result));
   drupal_set_message($msg);
 
-  drupal_goto('admin/config/nt2/entity');
+  if (php_sapi_name() != 'cli') {
+    drupal_goto('admin/config/nt2/entity');
+  }
 }
 
 /**
@@ -262,7 +264,9 @@ function nt2_entity_admin_reload_tax_loc() {
   $msg = t("@cnt location taxonomy terms reload.", array('@cnt' => $result));
   drupal_set_message($msg);
 
-  drupal_goto('admin/config/nt2/entity');
+  if (php_sapi_name() != 'cli') {
+    drupal_goto('admin/config/nt2/entity');
+  }
 }
 
 /**

@@ -25,7 +25,39 @@ class NT2Landing {
     $status = node_type_save($landing_type_definition_array);
 
     // Add the default drupal body field to the node type we just created.
-    node_add_body_field($landing_type_definition_array);
+    // This was failoing: node_add_body_field($landing_type_definition_array);
+    // Add or remove the body field, as needed.
+    $field = field_info_field('body');
+    $instance = field_info_instance('node', 'body', $machineName);
+    if (empty($field)) {
+      $field = array(
+        'field_name' => 'body',
+        'type' => 'text_with_summary',
+        'entity_types' => array('node'),
+      );
+      $field = field_create_field($field);
+    }
+    if (empty($instance)) {
+      $instance = array(
+        'field_name' => 'body',
+        'entity_type' => 'node',
+        'bundle' => $machineNamee,
+        'label' => 'body',
+        'widget' => array('type' => 'text_textarea_with_summary'),
+        'settings' => array('display_summary' => TRUE),
+        'display' => array(
+          'default' => array(
+            'label' => 'hidden',
+            'type' => 'text_default',
+          ),
+          'teaser' => array(
+            'label' => 'hidden',
+            'type' => 'text_summary_or_trimmed',
+          ),
+        ),
+      );
+      $instance = field_create_instance($instance);
+    }
 
     // Return the status of the new node type creation.
     return $status;
@@ -128,7 +160,6 @@ class NT2Landing {
       $instance = array(
         'field_name' => $field_key,
         'entity_type' => 'node',
-        'bundle' => $machineName,
         'description' => 'Cottage data field.',
         'label' => $field_options["label"],
         'widget' => array(
@@ -174,6 +205,7 @@ class NT2Landing {
     $nt2_landing_type = array(
       'type' => $name,
       'name' => st('Landing Page Entry.'),
+      'bundle' => $machineName,
       'base' => 'node_content',
       'description' => st("Defines a landing page node."),
       'custom' => 1,
