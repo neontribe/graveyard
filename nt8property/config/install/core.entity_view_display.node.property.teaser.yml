@@ -1,0 +1,79 @@
+uuid: e2877b16-4870-479f-ab09-bfed64c76404
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.property.body
+    - field.field.node.property.field_cottage_accommodates
+    - field.field.node.property.field_cottage_address
+    - field.field.node.property.field_cottage_bedrooms
+    - field.field.node.property.field_cottage_booking
+    - field.field.node.property.field_cottage_brandcode
+    - field.field.node.property.field_cottage_changeover_day
+    - field.field.node.property.field_cottage_coordinates
+    - field.field.node.property.field_cottage_description
+    - field.field.node.property.field_cottage_images
+    - field.field.node.property.field_cottage_name
+    - field.field.node.property.field_cottage_ownercode
+    - field.field.node.property.field_cottage_pets
+    - field.field.node.property.field_cottage_pricing
+    - field.field.node.property.field_cottage_promote
+    - field.field.node.property.field_cottage_rating
+    - field.field.node.property.field_cottage_reference_code
+    - field.field.node.property.field_cottage_slug
+    - field.field.node.property.field_cottage_teaser_description
+    - field.field.node.property.field_cottage_url
+    - node.type.property
+  module:
+    - text
+    - user
+_core:
+  default_config_hash: s2KZHKU2C13096Zgehzj1N3B0m34I_FAb-kNrbDAnZQ
+id: node.property.teaser
+targetEntityType: node
+bundle: property
+mode: teaser
+content:
+  body:
+    label: hidden
+    type: text_summary_or_trimmed
+    weight: 3
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+  field_cottage_name:
+    type: string
+    weight: 0
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  field_cottage_teaser_description:
+    type: text_default
+    weight: 1
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+  links:
+    weight: 2
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  field_cottage_accommodates: true
+  field_cottage_address: true
+  field_cottage_bedrooms: true
+  field_cottage_booking: true
+  field_cottage_brandcode: true
+  field_cottage_changeover_day: true
+  field_cottage_coordinates: true
+  field_cottage_description: true
+  field_cottage_images: true
+  field_cottage_ownercode: true
+  field_cottage_pets: true
+  field_cottage_pricing: true
+  field_cottage_promote: true
+  field_cottage_rating: true
+  field_cottage_reference_code: true
+  field_cottage_slug: true
+  field_cottage_url: true

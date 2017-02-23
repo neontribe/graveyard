@@ -1,0 +1,19 @@
+uuid: fa6cece1-9b43-44b2-bbb9-48ff4d493cfe
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_cottage_pricing
+    - node.type.property
+id: node.property.field_cottage_pricing
+field_name: field_cottage_pricing
+entity_type: node
+bundle: property
+label: 'Cottage Pricing'
+description: 'JSON Object Containing The Cottage Pricing Info As Defined By The API Response.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

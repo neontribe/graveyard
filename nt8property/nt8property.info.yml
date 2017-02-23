@@ -1,0 +1,5 @@
+name: nt8property
+type: module
+description: Neontabs Property
+core: 8.x
+package: NT8

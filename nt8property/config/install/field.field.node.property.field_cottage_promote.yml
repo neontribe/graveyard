@@ -1,0 +1,23 @@
+uuid: fa0f80ec-9afe-4f95-8a31-2a76322382e7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_cottage_promote
+    - node.type.property
+id: node.property.field_cottage_promote
+field_name: field_cottage_promote
+entity_type: node
+bundle: property
+label: 'Cottage Promote'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'Yes'
+  off_label: 'No'
+field_type: boolean

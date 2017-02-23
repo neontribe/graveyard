@@ -1,0 +1,23 @@
+uuid: 42713fcb-ca9a-4956-af09-1f8692124aa7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_cottage_pets
+    - node.type.property
+id: node.property.field_cottage_pets
+field_name: field_cottage_pets
+entity_type: node
+bundle: property
+label: 'Cottage Pets'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

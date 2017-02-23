@@ -1,0 +1,23 @@
+uuid: baab5596-2214-48de-9f82-ade445b11be9
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - nt8property
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus:
+      - main
+    parent: 'main:'
+_core:
+  default_config_hash: 4e8MMU8Idgup1GQjbybguiv4Ri9qPiX9rjr7I1qo9zA
+name: property
+type: property
+description: 'Neontabs 8 Property Node Type'
+help: ''
+new_revision: false
+preview_mode: 1
+display_submitted: true
