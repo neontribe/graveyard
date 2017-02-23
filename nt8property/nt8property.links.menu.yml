@@ -1,0 +1,5 @@
+property.generate:
+  title: 'Neontabs Property'
+  parent: system.admin_config_system
+  description: 'Generate a new instance of an nt8property.'
+  route_name: property.generate

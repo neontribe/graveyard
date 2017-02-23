@@ -1,0 +1,14 @@
+property.generate:
+  path: '/admin/config/property'
+  defaults:
+      _form: 'Drupal\nt8property\Form\NT8PropertyFormBase'
+  requirements:
+    _permission: 'administer content'
+
+property.getFixture:
+  path: 'fixtures/property/{propRef}'
+  defaults:
+      _controller: '\Drupal\nt8property\Controller\NT8PropertyController::content'
+      _title: 'NT Property Fixture'
+  requirements:
+      _access: 'TRUE'
