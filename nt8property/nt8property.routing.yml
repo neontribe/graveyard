@@ -8,7 +8,7 @@ property.generate:
 property.getFixture:
   path: 'fixtures/property/{propRef}'
   defaults:
-      _controller: '\Drupal\nt8property\Controller\NT8PropertyController::content'
+      _controller: '\Drupal\nt8property\Controller\NT8PropertyController::fixture'
       _title: 'NT Property Fixture'
   requirements:
       _access: 'TRUE'

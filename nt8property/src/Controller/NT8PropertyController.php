@@ -2,6 +2,7 @@
 
 namespace Drupal\nt8property\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\nt8tabsio\Service\NT8TabsRestService;
@@ -16,12 +17,13 @@ class NT8PropertyController extends ControllerBase {
   /**
    * {@inheritdoc}
    */
-  public function content($propRef) {
-    $build = array(
-      '#type' => 'markup',
-      '#markup' => $propRef,
-    );
-    return $build;
+  public function fixture($propRef) {
+    $response = new Response();
+
+    $response->setContent(json_encode(array('hello' => 'world', 'goodbye' => 'world')));
+    $response->headers->set('Content-Type', 'application/json');
+
+    return $response;
   }
 
 }
