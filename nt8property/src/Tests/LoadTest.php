@@ -31,7 +31,7 @@ class LoadTest extends WebTestBase{
    */
   protected function setUp() {
     parent::setUp();
-    $this->user = $this->drupalCreateUser(['administer site configuration']);
+    $this->user = $this->drupalCreateUser(['administer config']);
     $this->drupalLogin($this->user);
   }
 

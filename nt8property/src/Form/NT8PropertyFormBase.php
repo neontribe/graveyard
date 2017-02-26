@@ -3,6 +3,7 @@
 namespace Drupal\nt8property\Form;
 
 use Drupal\Core\Form\FormBase;
+use Drupal\Core\Url;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -22,8 +23,9 @@ class NT8PropertyFormBase extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form['path_to_fixture'] = array(
-      '#type' => 'path',
+      '#type' => 'textfield',
       '#title' => $this->t('Path to Property Fixture'),
+      '#default_value' => 'H610_ZZ'
     );
     $form['actions']['#type'] = 'actions';
     $form['actions']['submit'] = array(
@@ -45,7 +47,19 @@ class NT8PropertyFormBase extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    drupal_set_message($this->t('Your phone number is @number', array('@number' => $form_state->getValue('phone_number'))));
+    $propref = $form['path_to_fixture']['#value'];
+
+
+
+    $req_path = Url::fromRoute('property.getFixture', ['propRef' => $propref], ['absolute' => TRUE])->toString();
+
+    $response = \Drupal::httpClient()->get($req_path, []);
+    $data = json_encode($response->getBody());
+
+    // Use the entity manager.
+    $node = \Drupal::entityTypeManager()->getStorage('node')->create(array('type' => 'property', 'title' => 'Another node'));
+
+    $node->save();
   }
 
 }

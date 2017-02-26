@@ -18,11 +18,16 @@ class NT8PropertyController extends ControllerBase {
    * {@inheritdoc}
    */
   public function fixture($propRef) {
-    $response = new Response();
+    $path = DRUPAL_ROOT . '/' . drupal_get_path('module', 'nt8property') . "/src/Fixtures/$propRef.json";
+    $fixtureData = @file_get_contents($path);
 
-    $response->setContent(json_encode(array('hello' => 'world', 'goodbye' => 'world')));
+    $response = new Response('No file matching this propref was found.');
+
+    if($fixtureData) {
+      $response = new Response($fixtureData);
+    }
+
     $response->headers->set('Content-Type', 'application/json');
-
     return $response;
   }
 
