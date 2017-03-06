@@ -33,7 +33,7 @@ class NT8TabsIOController extends ControllerBase {
   }
 
   public function status() {
-    $apidata = $this->nt8TabsRestService->get('/');
+    $apidata = $this->nt8TabsRestService->get('property/H610_ZZ');
     return [
       '#markup' => json_encode(json_decode($apidata), JSON_PRETTY_PRINT),
       '#prefix' => '<pre>',

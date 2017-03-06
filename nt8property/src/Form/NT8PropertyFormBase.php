@@ -2,14 +2,27 @@
 
 namespace Drupal\nt8property\Form;
 
+use Drupal\Core\Entity\EntityTypeManager;
+use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Url;
 use Drupal\Core\Form\FormStateInterface;
+use \GuzzleHttp\Client;
 
+use Drupal\nt8property\Service\NT8PropertyService;
+use Drupal\nt8tabsio\Service\NT8TabsRestService;
+
+use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Implements an example form.
  */
 class NT8PropertyFormBase extends FormBase {
+
+  protected $entityTypeManager;
+  protected $entityQuery;
+  protected $nt8RestService;
+  protected $httpClient;
+  protected $propertyMethods;
 
   /**
    * {@inheritdoc}
@@ -22,85 +35,115 @@ class NT8PropertyFormBase extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form['path_to_fixture'] = array(
-      '#type' => 'textfield',
-      '#title' => $this->t('Path to Property Fixture'),
-      '#default_value' => 'H610_ZZ'
-    );
     $form['actions']['#type'] = 'actions';
-    $form['actions']['submit'] = array(
+
+    $form['nt8_tabsio'] = [
+      '#type' => 'container',
+      'title' => [
+        '#type' => 'page_title',
+        '#title' => 'NT8 Tabs IO (API)'
+      ]
+    ];
+
+    $form['nt8_tabsio']['load_single_prop'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Load a single property into drupal (from propref_brandcode).'),
+      '#default_value' => 'H610_ZZ'
+    ];
+
+    $form['nt8_tabsio']['actions']['#type'] = 'actions';
+    $form['nt8_tabsio']['actions']['submit_property'] = [
       '#type' => 'submit',
-      '#value' => $this->t('Load'),
-      '#button_type' => 'primary',
-    );
+      '#name' => 'submit_property',
+      '#value' => $this->t('Load Property'),
+      '#submit' => array([$this, 'loadProperty']),
+    ];
+
+    $form['fixtures'] = [
+      '#type' => 'container',
+      'title' => [
+        '#type' => 'page_title',
+        '#title' => 'Fixtures'
+      ]
+    ];
+
+    $form['fixtures']['load_single_prop_fixture'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Load a single property fixture into drupal (from propref_brandcode).'),
+      '#default_value' => 'H610_ZZ'
+    ];
+
+    $form['fixtures']['actions']['#type'] = 'actions';
+    $form['fixtures']['actions']['submit_fixture'] = [
+      '#type' => 'submit',
+      '#name' => 'submit_property_fixture',
+      '#value' => $this->t('Load Property'),
+      '#submit' => array([$this, 'loadFixture']),
+    ];
+
     return $form;
+  }
+
+  public function __construct(QueryFactory $entityQuery,
+                              EntityTypeManager $entityTypeManager,
+                              NT8TabsRestService $nt8RestService,
+                              \GuzzleHttp\Client $httpClient,
+                              NT8PropertyService $propertyMethods) {
+
+    $this->entityQuery = $entityQuery;
+    $this->entityTypeManager = $entityTypeManager;
+    $this->nt8RestService = $nt8RestService;
+    $this->httpClient = $httpClient;
+    $this->propertyMethods = $propertyMethods;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('entity.query'),
+      $container->get('entity_type.manager'),
+      $container->get('nt8tabsio.tabs_service'),
+      $container->get('http_client'),
+      $container->get('nt8property.property_methods')
+    );
   }
 
   /**
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $propref = $form['path_to_fixture']['#value'];
+
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function loadProperty(array &$form, FormStateInterface $formState) {
+    $_api_property_data = $this->nt8RestService->get('property/H610_ZZ');
+    $data = json_decode($_api_property_data);
+
+    //TODO: This needs to be shipped out into a service and not left in the submit handler.
+    $this->propertyMethods->createNodeInstanceFromResponseData($data, TRUE);
+
+    drupal_set_message("New Property Node: [Name: $data->name, Reference: $data->propertyRef] Successfully Created Using Data From The API.");
+
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function loadFixture(array &$form, FormStateInterface $form_state) {
+    $propref = $form['fixtures']['load_single_prop_fixture']['#value'];
 
     $req_path = Url::fromRoute('property.getFixture', ['propRef' => $propref], ['absolute' => TRUE])->toString();
 
-    $response = \Drupal::httpClient()->get($req_path, []);
+    $response = $this->httpClient->get($req_path, []);
     $data = json_decode($response->getBody());
 
-    //TODO: This needs to be shipped out into a service and not left in the submit handler.
+    $this->propertyMethods->createNodeInstanceFromResponseData($data, TRUE);
 
-    $brandcode = $data->brandCode;
-    $brandcode_info = $data->brands->{$brandcode};
-
-    $address = $data->address;
-
-    $pricing = json_encode(
-      $brandcode_info->pricing
-    );
-
-    // Use the entity manager.
-    $node = \Drupal::entityTypeManager()->getStorage('node')->create(
-      array(
-        'type' => 'property',
-        'title' => "$data->name",
-        'field_cottage_name' => $data->name,
-        'field_cottage_brandcode' => $brandcode,
-        'field_cottage_slug' => $data->slug,
-        'field_cottage_ownercode' => $data->ownerCode,
-        'field_cottage_url' => $data->url,
-        'field_cottage_teaser_description' => $brandcode_info->teaser,
-        'field_cottage_reference_code' => $data->propertyRef,
-        'field_cottage_booking' => $data->booking,
-        'field_cottage_accommodates' => $data->accommodates,
-        'field_cottage_pets' => $data->pets,
-        'field_cottage_bedrooms' => $data->bedrooms,
-        'field_cottage_promote' => $data->promote,
-        'field_cottage_rating' => $data->rating,
-        'field_cottage_changeover_day' => $data->changeOverDay,
-        'field_cottage_pricing' => $pricing,
-        'field_cottage_coordinates' => [
-          $data->coordinates->latitude,
-          $data->coordinates->longitude,
-        ],
-        'field_cottage_address' => [
-          'address_line1' => $address->addr1,
-          'address_line2' => $address->addr2,
-          'locality' => $address->town,
-          'administrative_area' => $address->county,
-          'postal_code' => $address->postcode,
-          'country_code' => $address->country,
-        ]
-      )
-    );
-    $node->enforceIsNew();
-    $node->save();
+    drupal_set_message("New Property Node: [Name: $data->name, Reference: $data->propertyRef] Successfully Created Using The Specified Fixture Data.");
   }
-
 }
