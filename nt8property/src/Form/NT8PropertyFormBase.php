@@ -18,11 +18,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class NT8PropertyFormBase extends FormBase {
 
-  protected $entityTypeManager;
-  protected $entityQuery;
-  protected $nt8RestService;
   protected $httpClient;
   protected $propertyMethods;
+  protected $nt8RestService;
 
   /**
    * {@inheritdoc}
@@ -84,17 +82,12 @@ class NT8PropertyFormBase extends FormBase {
     return $form;
   }
 
-  public function __construct(QueryFactory $entityQuery,
-                              EntityTypeManager $entityTypeManager,
-                              NT8TabsRestService $nt8RestService,
-                              \GuzzleHttp\Client $httpClient,
-                              NT8PropertyService $propertyMethods) {
-
-    $this->entityQuery = $entityQuery;
-    $this->entityTypeManager = $entityTypeManager;
-    $this->nt8RestService = $nt8RestService;
+  public function __construct(\GuzzleHttp\Client $httpClient,
+                              NT8PropertyService $propertyMethods,
+                              NT8TabsRestService $nt8RestService) {
     $this->httpClient = $httpClient;
     $this->propertyMethods = $propertyMethods;
+    $this->nt8RestService = $nt8RestService;
   }
 
   /**
@@ -102,11 +95,9 @@ class NT8PropertyFormBase extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity.query'),
-      $container->get('entity_type.manager'),
-      $container->get('nt8tabsio.tabs_service'),
       $container->get('http_client'),
-      $container->get('nt8property.property_methods')
+      $container->get('nt8property.property_methods'),
+      $container->get('nt8tabsio.tabs_service')
     );
   }
 
@@ -121,14 +112,17 @@ class NT8PropertyFormBase extends FormBase {
    * {@inheritdoc}
    */
   public function loadProperty(array &$form, FormStateInterface $formState) {
-    $_api_property_data = $this->nt8RestService->get('property/H610_ZZ');
+    $propref = $form['nt8_tabsio']['load_single_prop']['#value'];
+
+    $_api_property_data = $this->nt8RestService->get("property/$propref");
     $data = json_decode($_api_property_data);
 
-    //TODO: This needs to be shipped out into a service and not left in the submit handler.
-    $this->propertyMethods->createNodeInstanceFromResponseData($data, TRUE);
-
-    drupal_set_message("New Property Node: [Name: $data->name, Reference: $data->propertyRef] Successfully Created Using Data From The API.");
-
+    if($data) {
+      $this->propertyMethods->createNodeInstanceFromData($data, TRUE);
+      drupal_set_message("New Property Node: [Name: $data->name, Reference: $data->propertyRef] Successfully Created Using Data From The API.");
+    } else {
+      drupal_set_message("API Call unsuccessful: $_api_property_data");
+    }
   }
 
   /**
@@ -142,7 +136,7 @@ class NT8PropertyFormBase extends FormBase {
     $response = $this->httpClient->get($req_path, []);
     $data = json_decode($response->getBody());
 
-    $this->propertyMethods->createNodeInstanceFromResponseData($data, TRUE);
+    $this->propertyMethods->createNodeInstanceFromData($data, TRUE);
 
     drupal_set_message("New Property Node: [Name: $data->name, Reference: $data->propertyRef] Successfully Created Using The Specified Fixture Data.");
   }

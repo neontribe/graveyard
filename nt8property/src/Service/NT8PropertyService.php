@@ -31,7 +31,7 @@ class NT8PropertyService {
     $this->nt8RestService = $nt8RestService;
   }
 
-  public function createNodeInstanceFromResponseData(\stdClass $data, $deleteExisting = FALSE) {
+  public function createNodeInstanceFromData(\stdClass $data, $deleteExisting = FALSE) {
     $brandcode = $data->brandCode;
     $brandcode_info = $data->brands->{$brandcode};
 
