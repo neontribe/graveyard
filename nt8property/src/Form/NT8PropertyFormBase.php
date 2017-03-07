@@ -57,6 +57,13 @@ class NT8PropertyFormBase extends FormBase {
       '#submit' => array([$this, 'loadProperty']),
     ];
 
+    $form['nt8_tabsio']['actions']['submit_property_batch_all'] = [
+      '#type' => 'submit',
+      '#name' => 'submit_property_batch_all',
+      '#value' => $this->t('Batch Load All Properties'),
+      '#submit' => array([$this, 'loadPropertyBatchAll']),
+    ];
+
     $form['fixtures'] = [
       '#type' => 'container',
       'title' => [
@@ -123,6 +130,51 @@ class NT8PropertyFormBase extends FormBase {
     } else {
       drupal_set_message("API Call unsuccessful: $_api_property_data");
     }
+  }
+
+  public function loadPropertyBatchAll(array &$form, FormStateInterface $formState) {
+    $batchSizeList = array(
+      1 => 1,
+      2 => 2,
+      3 => 4,
+      4 => 8,
+      5 => 16,
+      6 => 32,
+      7 => 64,
+    );
+    // Get list of properties to reload.
+    $per_page = $batchSizeList[7];
+
+    // Get page count.
+    $first_page = $this->nt8RestService->get("property",
+      array("page" => 1, "pageSize" => 1)
+    );
+
+    $first_page = json_decode($first_page);
+
+    $search_instance_id = $first_page->searchId;
+    $total_results = $first_page->totalResults;
+
+    $batch = array(
+      'title' => t('Loading all properties from API.'),
+      'operations' => array(),
+      'progress_message' => t('Processed @current out of @total.'),
+      'finished' => '\Drupal\nt8property\Batch\NT8PropertyBatch::propertyBatchLoadFinishedCallback',
+    );
+
+    $pages = ceil($total_results / $per_page);
+    for ($page_counter = 1; $page_counter < $pages; $page_counter++) {
+      $batch["operations"][] = array(
+        '\Drupal\nt8property\Batch\NT8PropertyBatch::propertyBatchLoadCallback',
+        array(
+          $page_counter,
+          $per_page,
+          $search_instance_id
+        ),
+      );
+    }
+
+    batch_set($batch);
   }
 
   /**

@@ -46,9 +46,11 @@ class NT8PropertyService {
       $nodeStorage = $this->entityTypeManager->getStorage('node');
       $nids = $nodeQuery->condition('field_cottage_reference_code.value', $data->propertyRef, '=')->execute();
 
-      // Delete any existing property entities which have already been loaded in.
-      $nodes = $nodeStorage->loadMultiple($nids);
-      $nodeStorage->delete($nodes);
+      if(count($nids) > 0) {
+        // Delete any existing property entities which have already been loaded in under the same propref.
+        $nodes = $nodeStorage->loadMultiple($nids);
+        $nodeStorage->delete($nodes);
+      }
     }
 
     // Use the entity manager.
@@ -87,6 +89,8 @@ class NT8PropertyService {
     );
     $node->enforceIsNew();
     $node->save();
+
+    return $node;
   }
 
 }
