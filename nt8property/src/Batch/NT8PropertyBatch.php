@@ -11,9 +11,9 @@ class NT8PropertyBatch {
     $pageSize = $per_page['per_page'];
 
     // If we're on the last page then change the pageSize limit, default back to per_page.
-    if(($pages-1) == $page_counter) {
-      $pageSize = $per_page['last_page'] ?: $per_page['per_page'];
-    }
+//    if(($pages-1) == $page_counter) {
+//      $pageSize = $per_page['last_page'] ?: $per_page['per_page'];
+//    }
 
     $data = $nt8restService->get("property",
       array(
