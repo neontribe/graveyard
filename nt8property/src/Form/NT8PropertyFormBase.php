@@ -89,6 +89,7 @@ class NT8PropertyFormBase extends FormBase {
     $form['nt8_tabsio']['batch']['batch_size'] = [
       '#type' => 'select',
       '#title' => $this->t('Batch Chunk Size (number of properties to load at a time)'),
+      '#default_value' => 8,
       '#options' => [
         1 => 1,
         2 => 2,
@@ -97,13 +98,16 @@ class NT8PropertyFormBase extends FormBase {
         5 => 16,
         6 => 32,
         7 => 64,
+        8 => 128,
+        9 => 256,
+        10 => 512,
       ],
     ];
 
     $form['nt8_tabsio']['batch']['modify_replace_batch'] = [
       '#type' => 'radios',
       '#title' => $this->t('Modify Existing or Replace'),
-      '#default_value' => 1,
+      '#default_value' => 0,
       '#options' => [ 0 => $this->t('Modify'), 1 => $this->t('Replace') ],
     ];
 
@@ -214,6 +218,9 @@ class NT8PropertyFormBase extends FormBase {
       5 => 16,
       6 => 32,
       7 => 64,
+      8 => 128,
+      9 => 256,
+      10 => 512,
     ];
     // Get list of properties to reload.
     $per_page = $batchSizeList[$batch_size];

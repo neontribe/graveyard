@@ -32,6 +32,8 @@ class NT8PropertyService {
   }
 
   public function updateNodeInstancesFromData(\stdClass $data) {
+    $updatedProperties = '';
+
     // Get the nodes to update with this data.
     $nodeQuery = $this->entityQuery->get('node');
     $nodeStorage = $this->entityTypeManager->getStorage('node');
@@ -42,14 +44,25 @@ class NT8PropertyService {
     if(count($nids) > 0) {
       $nodes = $nodeStorage->loadMultiple($nids);
 
+      // Just in case more than one exist.
       foreach ($nodes as $node) {
         $updated = $this->updateNodeInstanceFromData($updatedValues, $node);
 
         if($updated) {
+          $fields = $node->getFields();
+          $reference_field = self::iak($fields, 'field_cottage_reference_code');
+
+          if(isset($reference_field)) {
+            $field_value = $reference_field->getValue()[0]['value'];
+            $updatedProperties .= "$field_value, ";
+          }
+
           $node->save();
         }
       }
     }
+
+    return $updatedProperties;
   }
 
   /**
@@ -81,12 +94,12 @@ class NT8PropertyService {
           $index++;
         }
       } else {
-        $currentNodeFieldValue = self::iak($currentNodeFieldValue, 0);
-        if(is_array($currentNodeFieldValue)) {
-          $currentNodeFieldValue = self::stripNullValues($currentNodeFieldValue);
+        $field_data = self::iak($currentNodeFieldValue, 0);
+        if(is_array($field_data)) {
+          $field_data = self::stripNullValues($field_data);
         }
 
-        if(self::getFieldUpdateStatus($currentNodeFieldValue, $updatedValue)) continue;
+        if(self::getFieldUpdateStatus($field_data, $updatedValue)) continue;
 
         $currentNodeField->setValue($updatedValue);
         $updated = TRUE;
@@ -120,8 +133,8 @@ class NT8PropertyService {
   }
 
   // If a key is set in the provided array return the value or false if it isn't. (helper function).
-  public static function iak($array = [], $key = '') {
-    return isset($array[$key]) ? $array[$key] : false;
+  public static function iak($array, $key = '') {
+    return isset($array[$key]) ? $array[$key] : FALSE;
   }
 
   // Strips null values from the array.
@@ -130,6 +143,10 @@ class NT8PropertyService {
   }
 
   protected static function getFieldUpdateStatus($currentNodeField, $updatedValue) {
+    if(!(count($updatedValue) > 0)) {
+      $updatedValue = [];
+    }
+
     $fields_to_check = [
       'target_id',
       'value',

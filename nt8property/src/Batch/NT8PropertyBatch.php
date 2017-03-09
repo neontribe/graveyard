@@ -2,8 +2,6 @@
 
 namespace Drupal\nt8property\Batch;
 
-
-
 class NT8PropertyBatch {
   public static function propertyBatchLoadCallback($page_counter, $per_page, $search_instance_id, $modify_replace, &$context) {
     $nt8restService = \Drupal::service('nt8tabsio.tabs_service');
@@ -20,13 +18,17 @@ class NT8PropertyBatch {
     $data = json_decode($data);
     $results = $data->results;
 
+    if(!isset($context['results']['count_processed'])) {
+      $context['results']['count_processed'] = 0;
+    }
+
     foreach ($results as $result) {
+      $context['results']['count_processed']++;
+
       switch($modify_replace) {
         case 0:
-          $nt8PropertyMethods->updateNodeInstancesFromData($result);
-          break;
-        case 1:
-          $nt8PropertyMethods->createNodeInstanceFromData($result, TRUE);
+          $nodes_updated = $nt8PropertyMethods->updateNodeInstancesFromData($result);
+          $context['results']['nodes_updated'] .= $nodes_updated;
           break;
         default:
           $nt8PropertyMethods->createNodeInstanceFromData($result, TRUE);
@@ -36,6 +38,10 @@ class NT8PropertyBatch {
   }
 
   public static function propertyBatchLoadFinishedCallback($success, $results, $operations) {
-    dpm($success);
+    $updated_node_ids = $results['nodes_updated'];
+
+    $processed = $results['count_processed'];
+
+    drupal_set_message("Processed $processed nodes. And updated these: [$updated_node_ids] nodes.");
   }
 }
