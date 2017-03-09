@@ -185,6 +185,13 @@ class NT8PropertyService {
       $brandcode_info->pricing
     );
 
+    $image_data = [];
+    if(count($data->images) > 0) {
+      foreach ($data->images as $image) {
+        $image_data[] = json_encode($image);
+      }
+    }
+
     return [
       'type' => 'property',
       'title' => "$data->name",
@@ -207,7 +214,6 @@ class NT8PropertyService {
         (string) round($data->coordinates->latitude, 4),
         (string) round($data->coordinates->longitude, 4),
       ],
-//      'field_cottage_last_updated' => time(),
       'field_cottage_address' => [
         'address_line1' => $address->addr1,
         'address_line2' => $address->addr2,
@@ -216,6 +222,7 @@ class NT8PropertyService {
         'postal_code' => $address->postcode,
         'country_code' => $address->country,
       ],
+      'field_cottage_image_info' => $image_data,
     ];
   }
 }

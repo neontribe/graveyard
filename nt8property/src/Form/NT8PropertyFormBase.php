@@ -111,9 +111,12 @@ class NT8PropertyFormBase extends FormBase {
     ];
 
     $form['nt8_tabsio']['batch']['actions']['#type'] = 'actions';
+
+    // @TODO: Implement this submit button feature.
     $form['nt8_tabsio']['batch']['actions']['submit_property_batch_listed'] = [
       '#type' => 'submit',
       '#name' => 'submit_property_batch_all',
+      '#disabled' => 'disabled',
       '#value' => $this->t('Batch Load Listed Properties'),
       '#submit' => [ [ $this, 'loadPropertyBatchAll' ] ],
     ];
@@ -264,7 +267,7 @@ class NT8PropertyFormBase extends FormBase {
    * {@inheritdoc}
    */
   public function loadFixture(array &$form, FormStateInterface $form_state) {
-    $propref = $form['fixtures']['load_single_prop_fixture']['#value'];
+    $propref = $form['fixtures']['single_fixture']['load_single_prop_fixture']['#value'];
 
     $req_path = Url::fromRoute('property.getFixture', ['propRef' => $propref], ['absolute' => TRUE])->toString();
 
