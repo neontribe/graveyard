@@ -100,7 +100,6 @@ class NT8PropertyFormBase extends FormBase {
         7 => 64,
         8 => 128,
         9 => 256,
-        10 => 512,
       ],
     ];
 
@@ -220,13 +219,12 @@ class NT8PropertyFormBase extends FormBase {
       7 => 64,
       8 => 128,
       9 => 256,
-      10 => 512,
     ];
     // Get list of properties to reload.
     $per_page = $batchSizeList[$batch_size];
 
     // Get page count.
-    $first_page = $this->nt8RestService->get("property", ["page" => 1, "pageSize" => 1]);
+    $first_page = $this->nt8RestService->get("property", ["page" => 1, "pageSize" => $per_page]);
 
     $first_page = json_decode($first_page);
 
@@ -241,12 +239,18 @@ class NT8PropertyFormBase extends FormBase {
     ];
 
     $pages = ceil($total_results / $per_page);
-    for ($page_counter = 1; $page_counter < $pages; $page_counter++) {
+    $last_page = $total_results - ($per_page * ($pages - 1));
+
+    for ($page_counter = 0; $page_counter < $pages; $page_counter++) {
       $batch["operations"][] = [
         '\Drupal\nt8property\Batch\NT8PropertyBatch::propertyBatchLoadCallback',
         [
           $page_counter,
-          $per_page,
+          [
+            'per_page' => $per_page,
+            'last_page' => $last_page,
+            'pages' => $pages,
+          ],
           $search_instance_id,
           $modify_replace,
         ],

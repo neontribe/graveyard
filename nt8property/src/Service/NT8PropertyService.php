@@ -32,7 +32,7 @@ class NT8PropertyService {
   }
 
   public function updateNodeInstancesFromData(\stdClass $data) {
-    $updatedProperties = '';
+    $updatedProperties = [];
 
     // Get the nodes to update with this data.
     $nodeQuery = $this->entityQuery->get('node');
@@ -47,14 +47,14 @@ class NT8PropertyService {
       // Just in case more than one exist.
       foreach ($nodes as $node) {
         $updated = $this->updateNodeInstanceFromData($updatedValues, $node);
-
+        //TODO: refactor field logging.
         if($updated) {
           $fields = $node->getFields();
           $reference_field = self::iak($fields, 'field_cottage_reference_code');
 
           if(isset($reference_field)) {
             $field_value = $reference_field->getValue()[0]['value'];
-            $updatedProperties .= "$field_value, ";
+            $updatedProperties[] = $field_value;
           }
 
           $node->save();
@@ -95,9 +95,6 @@ class NT8PropertyService {
         }
       } else {
         $field_data = self::iak($currentNodeFieldValue, 0);
-        if(is_array($field_data)) {
-          $field_data = self::stripNullValues($field_data);
-        }
 
         if(self::getFieldUpdateStatus($field_data, $updatedValue)) continue;
 
@@ -143,10 +140,6 @@ class NT8PropertyService {
   }
 
   protected static function getFieldUpdateStatus($currentNodeField, $updatedValue) {
-    if(!(count($updatedValue) > 0)) {
-      $updatedValue = [];
-    }
-
     $fields_to_check = [
       'target_id',
       'value',
@@ -159,17 +152,27 @@ class NT8PropertyService {
       'address_line2',
     ];
 
-    $changed = FALSE;
+    if(is_array($currentNodeField)) {
+      $currentNodeField = self::stripNullValues($currentNodeField);
+    }
+
+    $not_changed = FALSE;
     foreach($fields_to_check as $current_field) {
       $current_field_value = self::iak($currentNodeField, $current_field);
-      $current_updated_value = self::iak($updatedValue, $current_field);
+      $current_updated_value = $updatedValue;
+      if(is_array($updatedValue)) {
+        $current_updated_value = self::iak($updatedValue, $current_field);
+      }
 
-      if($current_field_value === $current_updated_value) {
-        $changed = TRUE;
+
+      $found_one = !(($current_field_value === false) || ($current_updated_value === false));
+
+      if($current_field_value === $current_updated_value && $found_one) {
+        $not_changed = TRUE;
       }
     }
 
-    return $changed;
+    return $not_changed;
   }
 
   protected static function generateUpdateArray(\stdClass $data) {
