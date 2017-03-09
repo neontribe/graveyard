@@ -29,7 +29,7 @@ dependencies:
     - text
     - user
 _core:
-  default_config_hash: s2KZHKU2C13096Zgehzj1N3B0m34I_FAb-kNrbDAnZQ
+  default_config_hash: u28DTYU5SIAu7tHQKW2QCp4gSZ4v7pDPHIo-zYF63Nw
 id: node.property.teaser
 targetEntityType: node
 bundle: property

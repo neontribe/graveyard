@@ -31,16 +31,72 @@ class NT8PropertyService {
     $this->nt8RestService = $nt8RestService;
   }
 
+  public function updateNodeInstancesFromData(\stdClass $data) {
+    // Get the nodes to update with this data.
+    $nodeQuery = $this->entityQuery->get('node');
+    $nodeStorage = $this->entityTypeManager->getStorage('node');
+    $nids = $nodeQuery->condition('field_cottage_reference_code.value', $data->propertyRef, '=')->execute();
+
+    $updatedValues = self::generateUpdateArray($data);
+
+    if(count($nids) > 0) {
+      $nodes = $nodeStorage->loadMultiple($nids);
+
+      foreach ($nodes as $node) {
+        $updated = $this->updateNodeInstanceFromData($updatedValues, $node);
+
+        if($updated) {
+          $node->save();
+        }
+      }
+    }
+  }
+
+  /**
+   * @param array $updatedValues
+   * @param $nodeInstance
+   */
+  public function updateNodeInstanceFromData(array $updatedValues, &$nodeInstance) {
+    $currentNodeFields = $nodeInstance->getFields() ?: [];
+    $updated = FALSE;
+
+
+    // Compare for differences and update if there is one.
+    foreach($updatedValues as $updatedValueKey => $updatedValue) {
+      $currentNodeField = self::iak($currentNodeFields, $updatedValueKey);
+      $currentNodeFieldValue = $currentNodeField->getValue();
+
+      if(is_array($currentNodeFieldValue) && count($currentNodeFieldValue) > 1) {
+        $index = 0;
+
+        foreach($currentNodeFieldValue as $currentNodeFieldValueInc) {
+          if(self::getFieldUpdateStatus($currentNodeFieldValueInc, self::iak($updatedValue, $index))) {
+            $index++;
+            continue;
+          }
+
+          $currentNodeField->setValue($updatedValue);
+          $updated = TRUE;
+
+          $index++;
+        }
+      } else {
+        $currentNodeFieldValue = self::iak($currentNodeFieldValue, 0);
+        if(is_array($currentNodeFieldValue)) {
+          $currentNodeFieldValue = self::stripNullValues($currentNodeFieldValue);
+        }
+
+        if(self::getFieldUpdateStatus($currentNodeFieldValue, $updatedValue)) continue;
+
+        $currentNodeField->setValue($updatedValue);
+        $updated = TRUE;
+      }
+    }
+
+    return $updated;
+  }
+
   public function createNodeInstanceFromData(\stdClass $data, $deleteExisting = FALSE) {
-    $brandcode = $data->brandCode;
-    $brandcode_info = $data->brands->{$brandcode};
-
-    $address = $data->address;
-
-    $pricing = json_encode(
-      $brandcode_info->pricing
-    );
-
     if($deleteExisting) {
       $nodeQuery = $this->entityQuery->get('node');
       $nodeStorage = $this->entityTypeManager->getStorage('node');
@@ -53,44 +109,93 @@ class NT8PropertyService {
       }
     }
 
+    $creationArray = self::generateUpdateArray($data);
+
     // Use the entity manager.
-    $node = $nodeStorage->create(
-      array(
-        'type' => 'property',
-        'title' => "$data->name",
-        'field_cottage_name' => $data->name,
-        'field_cottage_brandcode' => $brandcode,
-        'field_cottage_slug' => $data->slug,
-        'field_cottage_ownercode' => $data->ownerCode,
-        'field_cottage_url' => $data->url,
-        'field_cottage_teaser_description' => $brandcode_info->teaser,
-        'field_cottage_reference_code' => $data->propertyRef,
-        'field_cottage_booking' => $data->booking,
-        'field_cottage_accommodates' => $data->accommodates,
-        'field_cottage_pets' => $data->pets,
-        'field_cottage_bedrooms' => $data->bedrooms,
-        'field_cottage_promote' => $data->promote,
-        'field_cottage_rating' => $data->rating,
-        'field_cottage_changeover_day' => $data->changeOverDay,
-        'field_cottage_pricing' => $pricing,
-        'field_cottage_coordinates' => [
-          $data->coordinates->latitude,
-          $data->coordinates->longitude,
-        ],
-        'field_cottage_address' => [
-          'address_line1' => $address->addr1,
-          'address_line2' => $address->addr2,
-          'locality' => $address->town,
-          'administrative_area' => $address->county,
-          'postal_code' => $address->postcode,
-          'country_code' => $address->country,
-        ]
-      )
-    );
+    $node = $nodeStorage->create($creationArray);
     $node->enforceIsNew();
     $node->save();
 
     return $node;
   }
 
+  // If a key is set in the provided array return the value or false if it isn't. (helper function).
+  public static function iak($array = [], $key = '') {
+    return isset($array[$key]) ? $array[$key] : false;
+  }
+
+  // Strips null values from the array.
+  public static function stripNullValues(array $array = []) {
+    return array_filter($array, create_function('$value', 'return $value !== NULL;'));
+  }
+
+  protected static function getFieldUpdateStatus($currentNodeField, $updatedValue) {
+    $fields_to_check = [
+      'target_id',
+      'value',
+      'uri',
+      'country_code',
+      'administrative_area',
+      'locality',
+      'postal_code',
+      'address_line1',
+      'address_line2',
+    ];
+
+    $changed = FALSE;
+    foreach($fields_to_check as $current_field) {
+      $current_field_value = self::iak($currentNodeField, $current_field);
+      $current_updated_value = self::iak($updatedValue, $current_field);
+
+      if($current_field_value === $current_updated_value) {
+        $changed = TRUE;
+      }
+    }
+
+    return $changed;
+  }
+
+  protected static function generateUpdateArray(\stdClass $data) {
+    $brandcode = $data->brandCode;
+    $brandcode_info = $data->brands->{$brandcode};
+
+    $address = $data->address;
+
+    $pricing = json_encode(
+      $brandcode_info->pricing
+    );
+
+    return [
+      'type' => 'property',
+      'title' => "$data->name",
+      'field_cottage_name' => $data->name,
+      'field_cottage_brandcode' => $brandcode,
+      'field_cottage_slug' => $data->slug,
+      'field_cottage_ownercode' => $data->ownerCode,
+      'field_cottage_url' => $data->url,
+      'field_cottage_teaser_description' => $brandcode_info->teaser,
+      'field_cottage_reference_code' => $data->propertyRef,
+      'field_cottage_booking' => $data->booking,
+      'field_cottage_accommodates' => (string) $data->accommodates,
+      'field_cottage_pets' => (string) ((int) $data->pets),
+      'field_cottage_bedrooms' => (string) $data->bedrooms,
+      'field_cottage_promote' => (string) ((int) $data->promote),
+      'field_cottage_rating' => (string) $data->rating,
+      'field_cottage_changeover_day' => $data->changeOverDay,
+      'field_cottage_pricing' => $pricing,
+      'field_cottage_coordinates' => [
+        (string) round($data->coordinates->latitude, 4),
+        (string) round($data->coordinates->longitude, 4),
+      ],
+//      'field_cottage_last_updated' => time(),
+      'field_cottage_address' => [
+        'address_line1' => $address->addr1,
+        'address_line2' => $address->addr2,
+        'locality' => $address->town,
+        'administrative_area' => $address->county,
+        'postal_code' => $address->postcode,
+        'country_code' => $address->country,
+      ],
+    ];
+  }
 }
