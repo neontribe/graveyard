@@ -1,0 +1,26 @@
+uuid: f94f8413-6e95-4856-bdef-01b7aed444e7
+langcode: en
+status: true
+dependencies:
+  module:
+    - nt8search
+    - system
+  theme:
+    - profile_site
+id: nt8search_block
+theme: profile_site
+region: content
+weight: 0
+provider: null
+plugin: nt8search_block
+settings:
+  id: broken
+  label: 'Neontabs 8 Search Block'
+  provider: nt8search
+  label_display: '0'
+visibility:
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: false
+    context_mapping: {  }

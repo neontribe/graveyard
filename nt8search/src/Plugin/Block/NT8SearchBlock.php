@@ -62,9 +62,7 @@ class NT8SearchBlock extends BlockBase implements ContainerFactoryPluginInterfac
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return [
-         'placeholder_config_textfield' => $this->t('cottage 100'),
-        ] + parent::defaultConfiguration();
+    return parent::defaultConfiguration();
 
  }
 
@@ -72,15 +70,15 @@ class NT8SearchBlock extends BlockBase implements ContainerFactoryPluginInterfac
    * {@inheritdoc}
    */
   public function blockForm($form, FormStateInterface $form_state) {
-    $form['placeholder_config_textfield'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Placeholder Config Textfield'),
-      '#description' => $this->t(''),
-      '#default_value' => $this->configuration['placeholder_config_textfield'],
-      '#maxlength' => 64,
-      '#size' => 64,
-      '#weight' => '0',
-    ];
+//    $form['placeholder_config_textfield'] = [
+//      '#type' => 'textfield',
+//      '#title' => $this->t('Placeholder Config Textfield'),
+//      '#description' => $this->t(''),
+//      '#default_value' => $this->configuration['placeholder_config_textfield'],
+//      '#maxlength' => 64,
+//      '#size' => 64,
+//      '#weight' => '0',
+//    ];
 
     return $form;
   }
@@ -89,7 +87,7 @@ class NT8SearchBlock extends BlockBase implements ContainerFactoryPluginInterfac
    * {@inheritdoc}
    */
   public function blockSubmit($form, FormStateInterface $form_state) {
-    $this->configuration['placeholder_config_textfield'] = $form_state->getValue('placeholder_config_textfield');
+//    $this->configuration['placeholder_config_textfield'] = $form_state->getValue('placeholder_config_textfield');
   }
 
   /**
