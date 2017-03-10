@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Description of NT8PropertyService
  *
- * @author oliver
+ * @author oliver@neontribe.co.uk
  */
 class NT8PropertyService {
   protected $entityTypeManager;
@@ -29,6 +29,30 @@ class NT8PropertyService {
     $this->entityQuery = $entityQuery;
     $this->entityTypeManager = $entityTypeManager;
     $this->nt8RestService = $nt8RestService;
+  }
+
+  public function loadNodesFromProprefs(array $proprefs) {
+    $loadedNodes = [];
+
+    foreach($proprefs as $propref) {
+      $nodes = $this->loadNodesFromPropref($propref);
+
+      foreach($nodes as $node) {
+        $loadedNodes[$propref][] = $node;
+      }
+    }
+
+    return $loadedNodes;
+  }
+
+  public function loadNodesFromPropref($propref) {
+    // Get the nodes to update with this data.
+    $nodeQuery = $this->entityQuery->get('node');
+    $nodeStorage = $this->entityTypeManager->getStorage('node');
+    $nids = $nodeQuery->condition('field_cottage_reference_code.value', $propref, '=')->execute();
+    $nodes = $nodeStorage->loadMultiple($nids);
+
+    return $nodes;
   }
 
   public function updateNodeInstancesFromData(\stdClass $data) {

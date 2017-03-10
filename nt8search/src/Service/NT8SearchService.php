@@ -2,6 +2,7 @@
 
 namespace Drupal\nt8search\Service;
 
+use Drupal\nt8property\Service\NT8PropertyService;
 use Drupal\nt8tabsio\Service\NT8TabsRestService;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Entity\Query\QueryFactory;
@@ -11,6 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
  * Class NT8SearchService.
  *
  * @package Drupal\nt8search
+ * @author oliver@neontribe.co.uk
  */
 class NT8SearchService {
 
@@ -22,20 +24,23 @@ class NT8SearchService {
   protected $nt8tabsioTabsService;
   protected $entityTypeManager;
   protected $entityQuery;
+  protected $nt8propertymethods;
 
   /**
    * Constructor.
    */
   public function __construct(NT8TabsRestService $nt8tabsio_tabs_service,
                               QueryFactory $entityQuery,
-                              EntityTypeManager $entityTypeManager) {
+                              EntityTypeManager $entityTypeManager,
+                              NT8PropertyService $nt8propertymethods) {
 
     $this->nt8tabsioTabsService = $nt8tabsio_tabs_service;
     $this->entityQuery = $entityQuery;
     $this->entityTypeManager = $entityTypeManager;
+    $this->nt8propertymethods = $nt8propertymethods;
   }
 
-  public function performSearchFromParams(array $param_values) {
+  public function performSearchFromParams(array $param_values, $loadNodes = FALSE) {
     $queryInfo = self::extractQueryInfoFromValues($param_values);
 
     // Filters
@@ -45,7 +50,13 @@ class NT8SearchService {
       'fields' => 'propertyRef'
     ] + $filterInfo;
 
-    return $this->executeSearchRequest($requestData);
+    $searchResult = $this->executeSearchRequest($requestData);
+
+    if($loadNodes) {
+      $searchResult = self::loadResultIntoNodes($searchResult);
+    }
+
+    return $searchResult;
   }
 
   /**
@@ -101,6 +112,26 @@ class NT8SearchService {
     }
 
     return $queryInfo;
+  }
+
+  /**
+   * @param \stdClass $apiSearchResult
+   * @return array
+   */
+  protected function loadResultIntoNodes(\stdClass $apiSearchResult) {
+    $result = $apiSearchResult->results;
+    $loadedNodes = [];
+
+    if(isset($result) && is_array($result)) {
+      $result = array_map(function( $property ) {
+        return $property->propertyRef;
+      }, $result);
+
+      $loadedNodes = $this->nt8propertymethods->loadNodesFromProprefs($result);
+
+    }
+
+    return $loadedNodes;
   }
 
   // Converts a date into Tabs' date required date format.

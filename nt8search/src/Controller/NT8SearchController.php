@@ -49,17 +49,19 @@ class NT8SearchController extends ControllerBase {
   public function search(Request $request) {
     $posted_values = $request->query->all();
 
-    $search_results = $this->nt8searchMethodsService->performSearchFromParams($posted_values);
 
-//    $build_arr = ['#markup' => 'jho'];
-//
-//    $search_results = $this->nt8searchMethodsService->performSearchUsingFormState($form_state);
-//    $property_results = $search_results->results;
-//
-//    return $build_arr;
-    return [
-      '#markup' => print_r($search_results, TRUE )
-    ];
+    $renderOutput = [];
+
+    $search_results = $this->nt8searchMethodsService->performSearchFromParams($posted_values, TRUE);
+
+    foreach($search_results as $search_result_key => $search_result) {
+      $first_of_type = $this->nt8searchMethodsService->iak($search_result, 0);
+      if($first_of_type) {
+        $renderOutput[] = \Drupal::entityTypeManager()->getViewBuilder('node')->view($first_of_type, 'teaser');
+      }
+    }
+
+    return $renderOutput;
   }
 
 }
