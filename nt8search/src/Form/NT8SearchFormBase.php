@@ -58,19 +58,20 @@ class NT8SearchFormBase extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $query_items = \Drupal::request()->query->all();
 
+    $form['#cache'] = ['max-age' => 0];
 
     //TODO: break these out into their own field definitions??
     $form['fromDate'] = [
       '#type' => 'date',
       '#title' => $this->t('Arrival Date'),
-      '#default_value' => $this->nt8searchMethodsService->iak($query_items, 'fromDate') ?: '2016-11-07',
+      '#default_value' => $this->nt8searchMethodsService->iak($query_items, 'fromDate') ?: '2017-05-05',
       '#date_date_format' => 'd-m-Y',
     ];
 
     $form['nights'] = [
       '#type' => 'select',
       '#title' => $this->t('Nights'),
-      '#default_value' => $this->nt8searchMethodsService->iak($query_items, 'nights') ?: '',
+
       '#options' => array( // TODO: Move these options into configuation (NOT leave them hardcoded).
         '' => $this->t('Any'),
         '1' => $this->t('1'),
@@ -79,12 +80,12 @@ class NT8SearchFormBase extends FormBase {
         '4' => $this->t('4'),
         '5' => $this->t('5'),
       ),
+      '#default_value' => $this->nt8searchMethodsService->iak($query_items, 'nights') ?: '',
     ];
 
     $form['accommodates'] = [
       '#type' => 'select',
       '#title' => $this->t('People'),
-      '#default_value' => $this->nt8searchMethodsService->iak($query_items, 'accommodates') ?: '',
       '#options' => array(
         '' => $this->t('Any'),
         '1' => $this->t('1'),
@@ -93,7 +94,7 @@ class NT8SearchFormBase extends FormBase {
         '4' => $this->t('4'),
         '>5' => $this->t('5+'),
       ),
-
+      '#default_value' => $this->nt8searchMethodsService->iak($query_items, 'accommodates') ?: '',
     ];
 
     $form['name'] = [
