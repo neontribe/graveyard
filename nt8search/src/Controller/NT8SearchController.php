@@ -73,7 +73,7 @@ class NT8SearchController extends ControllerBase {
         'title' => [
           '#prefix' => '<h3>',
           '#suffix' => '</h3>',
-          '#markup' => $this->t('Search Results'),
+          '#markup' => $this->t('Search Results (@count)', array('@count' => $totalResults)),
         ],
         'pager_top' => [
           '#type' => 'pager',
