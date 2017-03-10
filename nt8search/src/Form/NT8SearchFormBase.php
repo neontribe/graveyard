@@ -56,30 +56,54 @@ class NT8SearchFormBase extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+    $query_items = \Drupal::request()->query->all();
+
+
+    //TODO: break these out into their own field definitions??
     $form['fromDate'] = [
       '#type' => 'date',
       '#title' => $this->t('Arrival Date'),
-      '#default_value' => '2016-11-07',
+      '#default_value' => $this->nt8searchMethodsService->iak($query_items, 'fromDate') ?: '2016-11-07',
       '#date_date_format' => 'd-m-Y',
     ];
+
     $form['nights'] = [
       '#type' => 'select',
       '#title' => $this->t('Nights'),
-      '#options' => array('1' => $this->t('1'), '2' => $this->t('2'), '3' => $this->t('3'), '4' => $this->t('4')),
-
+      '#default_value' => $this->nt8searchMethodsService->iak($query_items, 'nights') ?: '',
+      '#options' => array( // TODO: Move these options into configuation (NOT leave them hardcoded).
+        '' => $this->t('Any'),
+        '1' => $this->t('1'),
+        '2' => $this->t('2'),
+        '3' => $this->t('3'),
+        '4' => $this->t('4'),
+        '5' => $this->t('5'),
+      ),
     ];
-    $form['bedrooms'] = [
+
+    $form['accommodates'] = [
       '#type' => 'select',
       '#title' => $this->t('People'),
-      '#options' => array('1' => $this->t('1'), '2' => $this->t('2'), '3' => $this->t('3'), '4' => $this->t('4')),
+      '#default_value' => $this->nt8searchMethodsService->iak($query_items, 'accommodates') ?: '',
+      '#options' => array(
+        '' => $this->t('Any'),
+        '1' => $this->t('1'),
+        '2' => $this->t('2'),
+        '3' => $this->t('3'),
+        '4' => $this->t('4'),
+        '>5' => $this->t('5+'),
+      ),
 
     ];
+
     $form['name'] = [
       '#type' => 'textfield',
+      '#default_value' => $this->nt8searchMethodsService->iak($query_items, 'name') ?: '',
       '#title' => $this->t('Property Name/Reference'),
       '#maxlength' => 32,
       '#size' => 15
     ];
+
     $form['search'] = [
       '#type' => 'submit',
       '#title' => $this->t('Search'),

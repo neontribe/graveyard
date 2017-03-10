@@ -58,10 +58,27 @@ class NT8SearchController extends ControllerBase {
     $search_results = $this->nt8searchMethodsService->performSearchFromParams($posted_values, TRUE);
     $node_results = $search_results->loaded_node_results;
 
+    $totalResults = $search_results->totalResults;
+    $pageSize = $search_results->pageSize;
+
+
+    $page = pager_default_initialize($totalResults, $pageSize);
+
     $renderOutput['result_container'] = [
       '#type' => 'container',
-      '#title' => $this->t('Search Results'),
-      'results' => [],
+      '#attributes' => [
+        'class' => 'container',
+      ],
+      'results' => [
+        'title' => [
+          '#prefix' => '<h3>',
+          '#suffix' => '</h3>',
+          '#markup' => $this->t('Search Results'),
+        ],
+        'pager_top' => [
+          '#type' => 'pager',
+        ],
+      ],
     ];
 
     foreach($node_results as $search_result_key => $search_result) {
@@ -70,6 +87,10 @@ class NT8SearchController extends ControllerBase {
         $renderOutput['result_container']['results'][] = \Drupal::entityTypeManager()->getViewBuilder('node')->view($first_of_type, 'teaser');
       }
     }
+
+    $renderOutput['result_container']['pager_bottom'] = [
+      '#type' => 'pager',
+    ];
 
     return $renderOutput;
   }

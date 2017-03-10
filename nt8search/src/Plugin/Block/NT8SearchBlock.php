@@ -88,7 +88,11 @@ class NT8SearchBlock extends BlockBase implements ContainerFactoryPluginInterfac
     $build = [];
 
     $builtForm = \Drupal::formBuilder()->getForm('Drupal\nt8search\Form\NT8SearchFormBase');
-    $build['form'] = $builtForm;
+
+    $build['searchForm'] = [
+      '#type' => 'container',
+      'form' => $builtForm,
+    ];
 
     return $build;
   }
