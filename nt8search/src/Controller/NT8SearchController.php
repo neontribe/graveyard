@@ -46,18 +46,28 @@ class NT8SearchController extends ControllerBase {
     );
   }
 
+  public function getTitle() {
+    return 'Cottage Search';
+  }
+
   public function search(Request $request) {
     $posted_values = $request->query->all();
-
 
     $renderOutput = [];
 
     $search_results = $this->nt8searchMethodsService->performSearchFromParams($posted_values, TRUE);
+    $node_results = $search_results->loaded_node_results;
 
-    foreach($search_results as $search_result_key => $search_result) {
+    $renderOutput['result_container'] = [
+      '#type' => 'container',
+      '#title' => $this->t('Search Results'),
+      'results' => [],
+    ];
+
+    foreach($node_results as $search_result_key => $search_result) {
       $first_of_type = $this->nt8searchMethodsService->iak($search_result, 0);
       if($first_of_type) {
-        $renderOutput[] = \Drupal::entityTypeManager()->getViewBuilder('node')->view($first_of_type, 'teaser');
+        $renderOutput['result_container']['results'][] = \Drupal::entityTypeManager()->getViewBuilder('node')->view($first_of_type, 'teaser');
       }
     }
 

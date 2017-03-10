@@ -53,7 +53,7 @@ class NT8SearchService {
     $searchResult = $this->executeSearchRequest($requestData);
 
     if($loadNodes) {
-      $searchResult = self::loadResultIntoNodes($searchResult);
+      $searchResult->loaded_node_results = self::loadResultIntoNodes($searchResult);
     }
 
     return $searchResult;
