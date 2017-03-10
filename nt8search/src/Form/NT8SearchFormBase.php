@@ -4,9 +4,10 @@ namespace Drupal\nt8search\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Datetime\DrupalDateTime;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\nt8tabsio\Service\NT8TabsRestService;
-
+use Drupal\nt8search\Service\NT8SearchService;
 /**
  * Class NT8SearchFormBase.
  *
@@ -20,15 +21,26 @@ class NT8SearchFormBase extends FormBase {
    * @var \Drupal\nt8tabsio\Service\NT8TabsRestService
    */
   protected $nt8tabsioTabsService;
+
+  /**
+   * Drupal\nt8search\Service\NT8SearchService definition.
+   *
+   * @var \Drupal\nt8search\Service\NT8SearchService
+   */
+  protected $nt8searchMethodsService;
+
   public function __construct(
-    NT8TabsRestService $nt8tabsio_tabs_service
+    NT8TabsRestService $nt8tabsio_tabs_service,
+    NT8SearchService $nt8search_methods_service
   ) {
     $this->nt8tabsioTabsService = $nt8tabsio_tabs_service;
+    $this->nt8searchMethodsService = $nt8search_methods_service;
   }
 
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('nt8tabsio.tabs_service')
+      $container->get('nt8tabsio.tabs_service'),
+      $container->get('nt8search.methods')
     );
   }
 
@@ -44,29 +56,31 @@ class NT8SearchFormBase extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form['nt8_search_form_field_arrival_date'] = [
+    $form['fromDate'] = [
       '#type' => 'date',
       '#title' => $this->t('Arrival Date'),
+      '#default_value' => '2016-11-07',
+      '#date_date_format' => 'd-m-Y',
     ];
-    $form['nt8_search_form_field_nights'] = [
+    $form['nights'] = [
       '#type' => 'select',
       '#title' => $this->t('Nights'),
       '#options' => array('1' => $this->t('1'), '2' => $this->t('2'), '3' => $this->t('3'), '4' => $this->t('4')),
 
     ];
-    $form['nt8_search_form_field_people'] = [
+    $form['bedrooms'] = [
       '#type' => 'select',
       '#title' => $this->t('People'),
       '#options' => array('1' => $this->t('1'), '2' => $this->t('2'), '3' => $this->t('3'), '4' => $this->t('4')),
 
     ];
-    $form['nt8_search_form_field_property_name_reference'] = [
+    $form['name'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Property Name/Reference'),
       '#maxlength' => 32,
       '#size' => 15
     ];
-    $form['nt8_search_form_field_search'] = [
+    $form['search'] = [
       '#type' => 'submit',
       '#title' => $this->t('Search'),
       '#value' => $this->t('Search'),
@@ -86,11 +100,8 @@ class NT8SearchFormBase extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    // Display result.
-    foreach ($form_state->getValues() as $key => $value) {
-        drupal_set_message($key . ': ' . $value);
-    }
-
+    $form_state->cleanValues();
+    $form_state->setRedirect('nt8search.nt8_search_form_base', $form_state->getValues());
   }
 
 }

@@ -194,6 +194,7 @@ class NT8PropertyService {
 
     return [
       'type' => 'property',
+      'promote' => '0',
       'title' => "$data->name",
       'field_cottage_name' => $data->name,
       'field_cottage_brandcode' => $brandcode,
