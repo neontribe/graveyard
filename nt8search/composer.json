@@ -1,0 +1,14 @@
+{
+  "name": "drupal/nt8search",
+  "type": "drupal-module",
+  "description": "Search module for Neontabs 8",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/nt8search",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/nt8search",
+    "source": "http://cgit.drupalcode.org/nt8search"
+  },
+  "require": { }
+}
