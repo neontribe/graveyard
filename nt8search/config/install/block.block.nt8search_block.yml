@@ -6,10 +6,10 @@ dependencies:
     - nt8search
     - system
   theme:
-    - profile_site
+    - bartik
 id: nt8search_block
-theme: profile_site
-region: content
+theme: bartik
+region: sidebar_first
 weight: 0
 provider: null
 plugin: nt8search_block
