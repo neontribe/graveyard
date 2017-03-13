@@ -55,42 +55,54 @@ class NT8SearchController extends ControllerBase {
 
     $renderOutput = [];
 
-    $search_results = $this->nt8searchMethodsService->performSearchFromParams($posted_values, TRUE);
-    $node_results = $search_results->loaded_node_results;
+    $loadedResultsAsNodes = [];
+    $search_results = $this->nt8searchMethodsService->performSearchFromParams($posted_values, $loadedResultsAsNodes);
 
-    $totalResults = $search_results->totalResults;
-    $pageSize = $search_results->pageSize;
+    if(isset($search_results) && isset($loadedResultsAsNodes)) {
+      $totalResults = $search_results->totalResults;
+      $pageSize = $search_results->pageSize;
 
 
-    $page = pager_default_initialize($totalResults, $pageSize);
+      $page = pager_default_initialize($totalResults, $pageSize);
 
-    $renderOutput['result_container'] = [
-      '#type' => 'container',
-      '#attributes' => [
-        'class' => 'container',
-      ],
-      'results' => [
-        'title' => [
-          '#prefix' => '<h3>',
-          '#suffix' => '</h3>',
-          '#markup' => $this->t('Search Results (@count)', array('@count' => $totalResults)),
+      $renderOutput['result_container'] = [
+        '#type' => 'container',
+        '#attributes' => [
+          'class' => 'container',
         ],
-        'pager_top' => [
-          '#type' => 'pager',
+        'results' => [
+          'title' => [
+            '#prefix' => '<h3>',
+            '#suffix' => '</h3>',
+            '#markup' => $this->t('Search Results (@count)', ['@count' => $totalResults]),
+          ],
+          'pager_top' => [
+            '#type' => 'pager',
+          ],
         ],
-      ],
-    ];
+      ];
 
-    foreach($node_results as $search_result_key => $search_result) {
-      $first_of_type = $this->nt8searchMethodsService->iak($search_result, 0);
-      if($first_of_type) {
-        $renderOutput['result_container']['results'][] = \Drupal::entityTypeManager()->getViewBuilder('node')->view($first_of_type, 'teaser');
+      foreach($loadedResultsAsNodes as $search_result_key => $search_result) {
+        $first_of_type = $this->nt8searchMethodsService->iak($search_result, 0);
+        $error_msg = $this->nt8searchMethodsService->iak($search_result, 'error');
+
+        // TODO: Create config option which allows us to toggle error messages like this.
+        if($error_msg) {
+          $renderOutput['result_container']['results'][] = [
+            '#prefix' => '<h4>',
+            '#suffix' => '</h4>',
+            '#markup' => $this->t('Error loading property: @error [@key]', ['@error' => $error_msg, '@key' => $search_result_key]),
+          ];
+        } else if($first_of_type) {
+          $renderOutput['result_container']['results'][] = \Drupal::entityTypeManager()->getViewBuilder('node')->view($first_of_type, 'teaser');
+        }
       }
+
+      $renderOutput['result_container']['pager_bottom'] = [
+        '#type' => 'pager',
+      ];
     }
 
-    $renderOutput['result_container']['pager_bottom'] = [
-      '#type' => 'pager',
-    ];
 
     return $renderOutput;
   }

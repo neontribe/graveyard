@@ -36,6 +36,10 @@ class NT8PropertyService {
 
     foreach($proprefs as $propref) {
       $nodes = $this->loadNodesFromPropref($propref);
+      if(!isset($nodes)) {
+        $loadedNodes[$propref] = ['error' => 'No nodes found under this propref.'];
+        continue;
+      }
 
       foreach($nodes as $node) {
         $loadedNodes[$propref][] = $node;
@@ -51,6 +55,12 @@ class NT8PropertyService {
     $nodeStorage = $this->entityTypeManager->getStorage('node');
     $nids = $nodeQuery->condition('field_cottage_reference_code.value', $propref, '=')->execute();
     $nodes = $nodeStorage->loadMultiple($nids);
+
+    if(count($nodes) === 0) {
+      \Drupal::logger('NT8PropertyService')->notice("Could not load a node for this propref: @propref", ['@propref' => print_r($propref, TRUE)]);
+
+      $nodes = NULL;
+    }
 
     return $nodes;
   }

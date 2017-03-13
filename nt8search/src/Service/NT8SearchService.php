@@ -40,20 +40,30 @@ class NT8SearchService {
     $this->nt8propertymethods = $nt8propertymethods;
   }
 
-  public function performSearchFromParams(array $param_values, $loadNodes = FALSE) {
+  public function performSearchFromParams(array $param_values, array &$loadNodes) {
+    // Get the sanitised query information.
     $queryInfo = self::extractQueryInfoFromValues($param_values);
 
     // Filters
     $filterInfo = $queryInfo['filters'];
 
+    // Build a request data array for our search request.
     $requestData = [
       'fields' => 'propertyRef'
     ] + $filterInfo;
 
+    // Execute the search request.
     $searchResult = $this->executeSearchRequest($requestData);
 
-    if($loadNodes) {
-      $searchResult->loaded_node_results = self::loadResultIntoNodes($searchResult);
+    // If the user has passed an array into $loadNodes fill it.
+    if(isset($loadNodes) && isset($searchResult->results)) {
+      $loadNodes = self::loadResultIntoNodes($searchResult->results);
+
+      if(!isset($loadNodes)) {
+        $loadNodes['error'] = \Drupal::translation()->translate('We failed to load any properties for this request.');
+      }
+    } else {
+      $loadNodes['error'] = \Drupal::translation()->translate('A fatal error has occurred. Error Code: @errorCode.', ['@errorCode' => $searchResult->errorCode ?: 'Unknown.']);
     }
 
     return $searchResult;
@@ -68,9 +78,18 @@ class NT8SearchService {
       'property', $searchRequest
     );
 
-    $api_response = json_decode($api_response);
+    $decoded_api_response = json_decode($api_response);
 
-    return $api_response;
+    if(isset($decoded_api_response->errorCode)) {
+      \Drupal::logger('NT8SearchService')->error(
+        "Tabs property search returned an error: \r\n @tabsErrorCode: @tabsErrorMessage.",
+        [
+          '@tabsErrorCode' => $decoded_api_response->errorCode,
+          '@tabsErrorMessage' => $decoded_api_response->errorDescription ?: 'No Description Provided'
+      ]);
+    }
+
+    return $decoded_api_response;
   }
 
   /**
@@ -118,17 +137,16 @@ class NT8SearchService {
    * @param \stdClass $apiSearchResult
    * @return array
    */
-  protected function loadResultIntoNodes(\stdClass $apiSearchResult) {
-    $result = $apiSearchResult->results;
-    $loadedNodes = [];
+  protected function loadResultIntoNodes(array $apiSearchResults) {
+    $loadedNodes = NULL;
 
-    if(isset($result) && is_array($result)) {
-      $result = array_map(function( $property ) {
+    if(isset($apiSearchResults)) {
+      // Map the API search result (Proprefs) into a simple array of Proprefs.
+      $mappedResults = array_map(function( $property ) {
         return $property->propertyRef;
-      }, $result);
+      }, $apiSearchResults);
 
-      $loadedNodes = $this->nt8propertymethods->loadNodesFromProprefs($result);
-
+      $loadedNodes = $this->nt8propertymethods->loadNodesFromProprefs($mappedResults);
     }
 
     return $loadedNodes;
@@ -142,6 +160,13 @@ class NT8SearchService {
   }
 
   // If a key is set in the provided array return the value or false if it isn't. (helper function).
+
+
+  /**
+   * @param $array
+   * @param string $key
+   * @return mixed
+   */
   public static function iak($array, $key = '') {
     return isset($array[$key]) ? $array[$key] : FALSE;
   }
