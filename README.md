@@ -9,7 +9,7 @@ The aim of this project is to create a series of modules which, when tied togeth
  
  Currently the core of this project is under development; with the core modules being created currently. Over time this description will expand with more information as the project develops.
  
- ## Neontabs Core Modules
+### Neontabs Core Modules
  
 | Name                                     | Description                              | Introduced |
 | ---------------------------------------- | ---------------------------------------- | ---------- |
@@ -18,7 +18,7 @@ The aim of this project is to create a series of modules which, when tied togeth
 | [Neontabs 8 TabsIO](https://github.com/neontribe/nt8/blob/master/nt8tabsio/nt8tabsio.info.yml)                        | Provides the core service used to interact with the tabs api. Handles all requests made to and from the API. | Initial Release        |
 | [Neontabs 8 Images](https://github.com/neontribe/nt8/blob/master/nt8images/nt8images.info.yml)                         | Under Development                        | Initial Release        |
  
- ## Current Installation Procedure
+### Current Installation Procedure
  **Could change at any time**
  
  ```
