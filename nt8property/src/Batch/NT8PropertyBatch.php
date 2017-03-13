@@ -19,7 +19,13 @@ class NT8PropertyBatch {
     );
 
     $data = json_decode($data);
-    $results = $data->results;
+    $results = [];
+    if($data instanceof \stdClass && ($data->results)) {
+      $results = $data->results;
+    } else {
+      throw new \Exception('No Results Returned During Batch Load');
+    }
+
 
     if(!isset($context['results']['count_processed'])) {
       $context['results']['count_processed'] = 0;
