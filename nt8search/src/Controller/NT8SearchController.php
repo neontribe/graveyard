@@ -58,6 +58,19 @@ class NT8SearchController extends ControllerBase {
     $loadedResultsAsNodes = [];
     $search_results = $this->nt8searchMethodsService->performSearchFromParams($posted_values, $loadedResultsAsNodes);
 
+    $search_error = $this->nt8searchMethodsService->iak($loadedResultsAsNodes, 'error') ?: NULL;
+
+    if(isset($search_error)) {
+      //TODO: Make this output optional/configurable.
+      $renderOutput['error'] = [
+        '#prefix' => '<h2>',
+        '#suffix' => '</h2>',
+        '#markup' => $this->t('Error performing search. Error code: @errorCode', ['@errorCode' => $search_error]),
+      ];
+
+      return $renderOutput;
+    }
+
     if(isset($search_results) && isset($loadedResultsAsNodes)) {
       $totalResults = $search_results->totalResults;
       $pageSize = $search_results->pageSize;
@@ -102,7 +115,6 @@ class NT8SearchController extends ControllerBase {
         '#type' => 'pager',
       ];
     }
-
 
     return $renderOutput;
   }

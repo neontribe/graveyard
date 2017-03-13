@@ -56,14 +56,16 @@ class NT8SearchService {
     $searchResult = $this->executeSearchRequest($requestData);
 
     // If the user has passed an array into $loadNodes fill it.
-    if(isset($loadNodes) && isset($searchResult->results)) {
+    if(isset($searchResult->results)) {
       $loadNodes = self::loadResultIntoNodes($searchResult->results);
 
       if(!isset($loadNodes)) {
         $loadNodes['error'] = \Drupal::translation()->translate('We failed to load any properties for this request.');
       }
+    } else if(isset($searchResult->errorCode)) {
+      $loadNodes['error'] = \Drupal::translation()->translate('A fatal TABS error has occurred. Error Code: @errorCode.', ['@errorCode' => $searchResult->errorCode ?: 'Unknown.']);
     } else {
-      $loadNodes['error'] = \Drupal::translation()->translate('A fatal error has occurred. Error Code: @errorCode.', ['@errorCode' => $searchResult->errorCode ?: 'Unknown.']);
+      $loadNodes['error'] = \Drupal::translation()->translate('We couldn\'t hit the TABS API.');
     }
 
     return $searchResult;
