@@ -69,4 +69,8 @@ class NT8PropertyController extends ControllerBase {
     return $response;
   }
 
+  public function propertyUpdate($propRef) {
+    //TODO: Implement this.
+  }
+
 }

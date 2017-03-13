@@ -11,6 +11,13 @@ property.generate_single:
       _title: ''
   requirements:
     _permission: 'administer content'
+property.freshen_single:
+  path: '/admin/config/property/freshen/{propRef}'
+  defaults:
+      _controller: '\Drupal\nt8property\Controller\NT8PropertyController::propertyUpdate'
+      _title: ''
+  requirements:
+    _permission: 'administer content'
 property.getFixture:
   path: 'fixtures/property/{propRef}'
   defaults:
