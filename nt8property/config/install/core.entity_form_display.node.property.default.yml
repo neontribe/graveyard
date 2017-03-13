@@ -1,4 +1,4 @@
-uuid: 14a0829c-cc26-4944-a376-971fdea95adc
+uuid: 651c09b4-6c58-43d7-876c-2757369c3508
 langcode: en
 status: true
 dependencies:
@@ -13,7 +13,6 @@ dependencies:
     - field.field.node.property.field_cottage_coordinates
     - field.field.node.property.field_cottage_description
     - field.field.node.property.field_cottage_image_info
-    - field.field.node.property.field_cottage_last_updated
     - field.field.node.property.field_cottage_name
     - field.field.node.property.field_cottage_ownercode
     - field.field.node.property.field_cottage_pets
@@ -30,6 +29,8 @@ dependencies:
     - link
     - path
     - text
+_core:
+  default_config_hash: djw3ZLB8xe04xJib35Lnb-0crBG71q4cgn2DI_nEMto
 id: node.property.default
 targetEntityType: node
 bundle: property
@@ -37,7 +38,7 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 0
+    weight: 31
     settings:
       rows: 9
       summary_rows: 3
@@ -48,138 +49,140 @@ content:
     weight: 10
     settings: {  }
     third_party_settings: {  }
+  field_cottage_accommo:
+    weight: 38
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
   field_cottage_accommodates:
-    type: number
-    weight: 0
+    weight: 37
     settings:
       placeholder: ''
     third_party_settings: {  }
+    type: number
   field_cottage_address:
-    type: address_default
-    weight: 0
+    weight: 49
     settings:
       default_country: null
     third_party_settings: {  }
+    type: address_default
   field_cottage_bedrooms:
-    type: number
-    weight: 0
+    weight: 41
     settings:
       placeholder: ''
     third_party_settings: {  }
+    type: number
   field_cottage_booking:
-    type: link_default
-    weight: 0
+    weight: 46
     settings:
       placeholder_url: ''
       placeholder_title: ''
     third_party_settings: {  }
+    type: link_default
   field_cottage_brandcode:
-    type: string_textfield
-    weight: 0
+    weight: 33
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    type: string_textfield
   field_cottage_changeover_day:
-    type: string_textfield
-    weight: 0
+    weight: 42
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    type: string_textfield
   field_cottage_coordinates:
-    type: number
-    weight: 0
+    weight: 50
     settings:
       placeholder: ''
     third_party_settings: {  }
+    type: number
   field_cottage_description:
-    type: text_textarea_with_summary
-    weight: 0
+    weight: 39
     settings:
       rows: 9
       summary_rows: 3
       placeholder: ''
     third_party_settings: {  }
+    type: text_textarea_with_summary
   field_cottage_image_info:
-    type: string_textarea
-    weight: 0
+    weight: 52
     settings:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
-  field_cottage_last_updated:
-    type: datetime_timestamp
-    weight: 0
-    settings: {  }
-    third_party_settings: {  }
+    type: string_textarea
   field_cottage_name:
-    type: string_textfield
-    weight: 0
+    weight: 36
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    type: string_textfield
   field_cottage_ownercode:
-    type: string_textfield
-    weight: 0
+    weight: 47
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    type: string_textfield
   field_cottage_pets:
-    type: number
-    weight: 0
+    weight: 44
     settings:
       placeholder: ''
     third_party_settings: {  }
+    type: number
   field_cottage_pricing:
-    type: string_textarea
-    weight: 0
+    weight: 51
     settings:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
+    type: string_textarea
   field_cottage_promote:
-    type: boolean_checkbox
-    weight: 0
+    weight: 45
     settings:
       display_label: true
     third_party_settings: {  }
+    type: boolean_checkbox
   field_cottage_rating:
+    weight: 43
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
     type: number
-    weight: 0
-    settings:
-      placeholder: ''
-    third_party_settings: {  }
   field_cottage_reference_code:
-    type: string_textfield
-    weight: 0
+    weight: 32
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    type: string_textfield
   field_cottage_slug:
-    type: string_textfield
-    weight: 0
+    weight: 35
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    type: string_textfield
   field_cottage_teaser_description:
-    type: text_textarea
-    weight: 0
+    weight: 40
     settings:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
+    type: text_textarea
   field_cottage_url:
-    type: link_default
-    weight: 0
+    weight: 34
     settings:
       placeholder_url: ''
       placeholder_title: ''
     third_party_settings: {  }
+    type: link_default
   path:
     type: path
     weight: 30

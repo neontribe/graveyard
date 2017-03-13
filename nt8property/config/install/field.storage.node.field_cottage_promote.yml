@@ -4,6 +4,8 @@ status: true
 dependencies:
   module:
     - node
+_core:
+  default_config_hash: BJQImPsXzprSwG4mp7M95jfepibNPwDFNqLsX9RKL14
 id: node.field_cottage_promote
 field_name: field_cottage_promote
 entity_type: node

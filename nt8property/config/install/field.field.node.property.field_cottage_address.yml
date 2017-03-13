@@ -7,6 +7,8 @@ dependencies:
     - node.type.property
   module:
     - address
+_core:
+  default_config_hash: FUF62iWlbgshOeumk2a2wwtRW224540xRWwRQ32UAxI
 id: node.property.field_cottage_address
 field_name: field_cottage_address
 entity_type: node

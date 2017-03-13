@@ -7,6 +7,8 @@ dependencies:
     - node.type.property
   module:
     - text
+_core:
+  default_config_hash: TnJWGYi4PJ--GVOluQYyWv5xdV9_sHbHhlnukuS0lhI
 id: node.property.field_cottage_description
 field_name: field_cottage_description
 entity_type: node

@@ -4,6 +4,8 @@ status: true
 dependencies:
   module:
     - node
+_core:
+  default_config_hash: DRzPqlng024FzWia09gLh-vyFI-rwuR4eH73g60BUBQ
 id: node.field_cottage_rating
 field_name: field_cottage_rating
 entity_type: node

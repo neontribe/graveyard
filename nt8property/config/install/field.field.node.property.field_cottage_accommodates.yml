@@ -5,6 +5,8 @@ dependencies:
   config:
     - field.storage.node.field_cottage_accommodates
     - node.type.property
+_core:
+  default_config_hash: 0rDRkNh7qH9uOKjNFxQRSmCfpFWnNCyz111Bi2DOWUA
 id: node.property.field_cottage_accommodates
 field_name: field_cottage_accommodates
 entity_type: node

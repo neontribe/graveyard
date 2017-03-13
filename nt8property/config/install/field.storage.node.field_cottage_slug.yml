@@ -4,6 +4,8 @@ status: true
 dependencies:
   module:
     - node
+_core:
+  default_config_hash: 1MhjNunEFAYjWxJnUWSqjYAS_9ohsIyqZ2yXeFGOZ30
 id: node.field_cottage_slug
 field_name: field_cottage_slug
 entity_type: node

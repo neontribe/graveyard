@@ -5,6 +5,8 @@ dependencies:
   config:
     - field.storage.node.field_cottage_reference_code
     - node.type.property
+_core:
+  default_config_hash: Y94B0LqxlYKne1tz55MELH1t4sJ9xxm5qJmXSot2NQY
 id: node.property.field_cottage_reference_code
 field_name: field_cottage_reference_code
 entity_type: node

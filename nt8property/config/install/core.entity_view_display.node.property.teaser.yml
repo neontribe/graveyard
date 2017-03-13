@@ -13,7 +13,6 @@ dependencies:
     - field.field.node.property.field_cottage_changeover_day
     - field.field.node.property.field_cottage_coordinates
     - field.field.node.property.field_cottage_description
-    - field.field.node.property.field_cottage_image_info
     - field.field.node.property.field_cottage_name
     - field.field.node.property.field_cottage_ownercode
     - field.field.node.property.field_cottage_pets
@@ -29,7 +28,7 @@ dependencies:
     - text
     - user
 _core:
-  default_config_hash: u28DTYU5SIAu7tHQKW2QCp4gSZ4v7pDPHIo-zYF63Nw
+  default_config_hash: nvab5zDgmMgF06R7oedQ7WYIt3RIrNXopHrtQxRC2vA
 id: node.property.teaser
 targetEntityType: node
 bundle: property
@@ -68,7 +67,6 @@ hidden:
   field_cottage_changeover_day: true
   field_cottage_coordinates: true
   field_cottage_description: true
-  field_cottage_image_info: true
   field_cottage_ownercode: true
   field_cottage_pets: true
   field_cottage_pricing: true

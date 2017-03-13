@@ -4,6 +4,8 @@ status: true
 dependencies:
   module:
     - node
+_core:
+  default_config_hash: fm2UOtYXhelvjqEGyEJxsp3VzbiRWfvL3VjpJdrGYoI
 id: node.field_cottage_coordinates
 field_name: field_cottage_coordinates
 entity_type: node

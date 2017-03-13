@@ -4,6 +4,8 @@ status: true
 dependencies:
   module:
     - node
+_core:
+  default_config_hash: pT_94Wvl0IGPZg-EWtCF7pAnQLCu55EzFZtiB1boB4c
 id: node.field_cottage_accommodates
 field_name: field_cottage_accommodates
 entity_type: node

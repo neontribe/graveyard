@@ -13,11 +13,11 @@ third_party_settings:
       - main
     parent: 'main:'
 _core:
-  default_config_hash: 4e8MMU8Idgup1GQjbybguiv4Ri9qPiX9rjr7I1qo9zA
+  default_config_hash: ERRS--c81wYJ9bAzpuCJ92Zi9sLJBLz0ugLzZq2wN5s
 name: property
 type: property
 description: 'Neontabs 8 Property Node Type'
 help: ''
 new_revision: false
 preview_mode: 1
-display_submitted: false
+display_submitted: true

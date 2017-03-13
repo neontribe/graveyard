@@ -7,6 +7,8 @@ dependencies:
     - node.type.property
   module:
     - link
+_core:
+  default_config_hash: f-ZwR_KG62aV9vJ2ic5YEjwJwIXx-uhymxiVOH7P3pg
 id: node.property.field_cottage_booking
 field_name: field_cottage_booking
 entity_type: node

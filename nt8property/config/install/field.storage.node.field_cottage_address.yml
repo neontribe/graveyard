@@ -5,6 +5,8 @@ dependencies:
   module:
     - address
     - node
+_core:
+  default_config_hash: 3Co5DCmbC8DnpTUgZISX2x1n5ARDUn1_AtAIlEF7b-4
 id: node.field_cottage_address
 field_name: field_cottage_address
 entity_type: node

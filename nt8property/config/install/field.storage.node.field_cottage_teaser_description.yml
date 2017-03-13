@@ -5,6 +5,8 @@ dependencies:
   module:
     - node
     - text
+_core:
+  default_config_hash: jgiMLRnHeR-xFSAxnQ0FgHzrhx-oWl7kjWvNgLnCX60
 id: node.field_cottage_teaser_description
 field_name: field_cottage_teaser_description
 entity_type: node

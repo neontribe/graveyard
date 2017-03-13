@@ -5,6 +5,8 @@ dependencies:
   config:
     - field.storage.node.field_cottage_changeover_day
     - node.type.property
+_core:
+  default_config_hash: xH0wyPukYxlcEb277ftfGlDrRsHfVTAUoZrQQ1Df_nI
 id: node.property.field_cottage_changeover_day
 field_name: field_cottage_changeover_day
 entity_type: node

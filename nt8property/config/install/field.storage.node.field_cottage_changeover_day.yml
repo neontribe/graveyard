@@ -4,6 +4,8 @@ status: true
 dependencies:
   module:
     - node
+_core:
+  default_config_hash: yN16DSwBJXv_CLdELZF_YhFfknrvZKLEX9N2LLO8nnY
 id: node.field_cottage_changeover_day
 field_name: field_cottage_changeover_day
 entity_type: node

@@ -4,6 +4,8 @@ status: true
 dependencies:
   module:
     - node
+_core:
+  default_config_hash: MO-9KIM-xnEtJHbhedO9j7OoGgKQUUKp2YhUllgH9dU
 id: node.field_cottage_pricing
 field_name: field_cottage_pricing
 entity_type: node

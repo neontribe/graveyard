@@ -5,6 +5,8 @@ dependencies:
   config:
     - field.storage.node.field_cottage_rating
     - node.type.property
+_core:
+  default_config_hash: zlXS5cKVMYXrmLmtqp4-s6of6BAR2RmCjjmDFCKiha0
 id: node.property.field_cottage_rating
 field_name: field_cottage_rating
 entity_type: node

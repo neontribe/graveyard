@@ -4,6 +4,8 @@ status: true
 dependencies:
   module:
     - node
+_core:
+  default_config_hash: APquDOx-noje-4Plcr00XgQi5ls6mPv6z1VYMRw1vIo
 id: node.field_cottage_bedrooms
 field_name: field_cottage_bedrooms
 entity_type: node
