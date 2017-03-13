@@ -169,7 +169,7 @@ class NT8SearchService {
    * @param string $key
    * @return mixed
    */
-  public static function iak($array, $key = '') {
+  public static function iak(array $array, $key = '') {
     return isset($array[$key]) ? $array[$key] : FALSE;
   }
 }

@@ -3,6 +3,7 @@
 namespace Drupal\nt8search\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\node\Entity\Node;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\nt8tabsio\Service\NT8TabsRestService;
@@ -97,16 +98,30 @@ class NT8SearchController extends ControllerBase {
 
       foreach($loadedResultsAsNodes as $search_result_key => $search_result) {
         $first_of_type = $this->nt8searchMethodsService->iak($search_result, 0);
-        $error_msg = $this->nt8searchMethodsService->iak($search_result, 'error');
+
+        $error_msg = NULL;
+        if(is_array($first_of_type)) {
+          $error_msg = $this->nt8searchMethodsService->iak($first_of_type, 'error');
+        }
 
         // TODO: Create config option which allows us to toggle error messages like this.
         if($error_msg) {
           $renderOutput['result_container']['results'][] = [
             '#prefix' => '<h4>',
             '#suffix' => '</h4>',
-            '#markup' => $this->t('Error loading property: @error [@key]', ['@error' => $error_msg, '@key' => $search_result_key]),
+            '#markup' => $this->t('Error loading property: @error [@key].', ['@error' => $error_msg, '@key' => $search_result_key]),
+            'loadit' => [
+              '#markup' => 'Would you like to try and load it? ',
+              '#prefix' => '<p>',
+              '#suffix' => '</p>',
+              'submit' => [
+                '#title' => $this->t('Load Property'),
+                '#type' => 'link',
+                '#url' => \Drupal\Core\Url::fromRoute('property.generate_single', ['propRef' => $search_result_key . '_' . \Drupal::config('nt8tabsio.settings')->get('id')])
+              ]
+            ]
           ];
-        } else if($first_of_type) {
+        } else if($first_of_type instanceof Node) {
           $renderOutput['result_container']['results'][] = \Drupal::entityTypeManager()->getViewBuilder('node')->view($first_of_type, 'teaser');
         }
       }

@@ -2,12 +2,9 @@
 
 namespace Drupal\nt8property\Form;
 
-use Drupal\Core\Entity\EntityTypeManager;
-use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Url;
 use Drupal\Core\Form\FormStateInterface;
-use \GuzzleHttp\Client;
 
 use Drupal\nt8property\Service\NT8PropertyService;
 use Drupal\nt8tabsio\Service\NT8TabsRestService;
@@ -194,14 +191,15 @@ class NT8PropertyFormBase extends FormBase {
   public function loadProperty(array &$form, FormStateInterface $formState) {
     $propref = $form['nt8_tabsio']['single']['load_single_prop']['#value'] ?: '';
 
-    $_api_property_data = $this->nt8RestService->get("property/$propref");
-    $data = json_decode($_api_property_data);
+    $node = $this->propertyMethods->createNodeInstanceFromPropref($propref);
 
-    if($data) {
-      $this->propertyMethods->createNodeInstanceFromData($data, TRUE);
-      drupal_set_message("New Property Node: [Name: $data->name, Reference: $data->propertyRef] Successfully Created Using Data From The API.");
+    if(isset($node)) {
+      $node_name = $node->get('field_cottage_name')->getValue()[0]['value'];
+      $node_ref =  $node->get('field_cottage_reference_code')->getValue()[0]['value'];
+
+      drupal_set_message("New Property Node: [Name: $node_name, Reference: $node_ref] Successfully Created Using Data From The API.");
     } else {
-      drupal_set_message("API Call unsuccessful: $_api_property_data");
+      drupal_set_message("Node creation unsuccessful: $node");
     }
   }
 

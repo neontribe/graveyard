@@ -37,7 +37,7 @@ class NT8PropertyService {
     foreach($proprefs as $propref) {
       $nodes = $this->loadNodesFromPropref($propref);
       if(!isset($nodes)) {
-        $loadedNodes[$propref] = ['error' => 'No nodes found under this propref.'];
+        $loadedNodes[$propref][] = ['error' => 'No nodes found under this propref.'];
         continue;
       }
 
@@ -147,6 +147,10 @@ class NT8PropertyService {
   }
 
   public function createNodeInstanceFromData(\stdClass $data, $deleteExisting = FALSE) {
+    if(isset($data->errorCode)) {
+      return NULL;
+    }
+
     if($deleteExisting) {
       $nodeQuery = $this->entityQuery->get('node');
       $nodeStorage = $this->entityTypeManager->getStorage('node');
@@ -167,6 +171,24 @@ class NT8PropertyService {
     $node->save();
 
     return $node;
+  }
+
+  public function createNodeInstanceFromPropref($propRef = "") {
+    $data = $this->getPropertyFromAPI($propRef);
+
+    $created_node = NULL;
+    if($data && $data instanceof \stdClass) {
+      $created_node = $this->createNodeInstanceFromData($data, TRUE);
+    }
+
+    return $created_node;
+  }
+
+  public function getPropertyFromAPI($propRef = "") {
+    $_api_property_data = $this->nt8RestService->get("property/$propRef");
+    $data = json_decode($_api_property_data);
+
+    return $data;
   }
 
   // If a key is set in the provided array return the value or false if it isn't. (helper function).
@@ -270,6 +292,7 @@ class NT8PropertyService {
         'country_code' => $address->country,
       ],
       'field_cottage_image_info' => $image_data,
+      'field_cottage_featured_image' => self::iak($image_links, 0) ?: [],
       'field_cottage_images' => $image_links,
     ];
   }
