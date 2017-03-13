@@ -1,0 +1,5 @@
+name: nt8images
+type: module
+description: Handles images in Neontabs 8
+core: 8.x
+package: nt8

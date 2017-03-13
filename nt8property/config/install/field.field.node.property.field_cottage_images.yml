@@ -1,0 +1,23 @@
+uuid: 5925e65a-7a9c-4506-91ac-3311dfdbbf83
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_cottage_images
+    - node.type.property
+  module:
+    - link
+id: node.property.field_cottage_images
+field_name: field_cottage_images
+entity_type: node
+bundle: property
+label: 'Cottage Images'
+description: 'Links to each of the external cottage images - to be formatted using the "ImagecacheExternalImage" formatter.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  link_type: 17
+  title: 1
+field_type: link

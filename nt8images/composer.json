@@ -1,0 +1,14 @@
+{
+  "name": "drupal/nt8images",
+  "type": "drupal-module",
+  "description": "Handles images in Neontabs 8",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/nt8images",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/nt8images",
+    "source": "http://cgit.drupalcode.org/nt8images"
+  },
+  "require": { }
+}

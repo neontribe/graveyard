@@ -13,6 +13,8 @@ dependencies:
     - field.field.node.property.field_cottage_changeover_day
     - field.field.node.property.field_cottage_coordinates
     - field.field.node.property.field_cottage_description
+    - field.field.node.property.field_cottage_image_info
+    - field.field.node.property.field_cottage_images
     - field.field.node.property.field_cottage_name
     - field.field.node.property.field_cottage_ownercode
     - field.field.node.property.field_cottage_pets
@@ -25,6 +27,7 @@ dependencies:
     - field.field.node.property.field_cottage_url
     - node.type.property
   module:
+    - imagecache_external
     - text
     - user
 _core:
@@ -34,12 +37,13 @@ targetEntityType: node
 bundle: property
 mode: teaser
 content:
-  body:
-    label: hidden
-    type: text_summary_or_trimmed
-    weight: 3
+  field_cottage_images:
+    type: imagecache_external_image
+    weight: 2
+    label: above
     settings:
-      trim_length: 600
+      imagecache_external_style: ''
+      imagecache_external_link: ''
     third_party_settings: {  }
   field_cottage_name:
     type: string
@@ -54,11 +58,8 @@ content:
     label: above
     settings: {  }
     third_party_settings: {  }
-  links:
-    weight: 2
-    settings: {  }
-    third_party_settings: {  }
 hidden:
+  body: true
   field_cottage_accommodates: true
   field_cottage_address: true
   field_cottage_bedrooms: true
@@ -67,6 +68,7 @@ hidden:
   field_cottage_changeover_day: true
   field_cottage_coordinates: true
   field_cottage_description: true
+  field_cottage_image_info: true
   field_cottage_ownercode: true
   field_cottage_pets: true
   field_cottage_pricing: true
@@ -75,3 +77,4 @@ hidden:
   field_cottage_reference_code: true
   field_cottage_slug: true
   field_cottage_url: true
+  links: true

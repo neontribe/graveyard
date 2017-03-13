@@ -13,6 +13,7 @@ dependencies:
     - field.field.node.property.field_cottage_coordinates
     - field.field.node.property.field_cottage_description
     - field.field.node.property.field_cottage_image_info
+    - field.field.node.property.field_cottage_images
     - field.field.node.property.field_cottage_name
     - field.field.node.property.field_cottage_ownercode
     - field.field.node.property.field_cottage_pets
@@ -116,6 +117,13 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textarea
+  field_cottage_images:
+    weight: 53
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+    type: link_default
   field_cottage_name:
     weight: 36
     settings:

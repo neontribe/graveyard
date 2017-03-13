@@ -216,9 +216,15 @@ class NT8PropertyService {
     );
 
     $image_data = [];
+    $image_links = [];
     if(count($data->images) > 0) {
       foreach ($data->images as $image) {
         $image_data[] = json_encode($image);
+
+        $image_links[] = [
+          'uri' => $image->url,
+          'title' => $image->alt,
+        ];
       }
     }
 
@@ -254,6 +260,7 @@ class NT8PropertyService {
         'country_code' => $address->country,
       ],
       'field_cottage_image_info' => $image_data,
+      'field_cottage_images' => $image_links,
     ];
   }
 }
