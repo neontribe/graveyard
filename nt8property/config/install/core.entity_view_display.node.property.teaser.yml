@@ -13,6 +13,7 @@ dependencies:
     - field.field.node.property.field_cottage_changeover_day
     - field.field.node.property.field_cottage_coordinates
     - field.field.node.property.field_cottage_description
+    - field.field.node.property.field_cottage_featured_image
     - field.field.node.property.field_cottage_image_info
     - field.field.node.property.field_cottage_images
     - field.field.node.property.field_cottage_name
@@ -31,18 +32,18 @@ dependencies:
     - text
     - user
 _core:
-  default_config_hash: nvab5zDgmMgF06R7oedQ7WYIt3RIrNXopHrtQxRC2vA
+  default_config_hash: 47HhsUZta4bS8EmLhFT4ScinczqxvjJWCUD3u5APEKM
 id: node.property.teaser
 targetEntityType: node
 bundle: property
 mode: teaser
 content:
-  field_cottage_images:
+  field_cottage_featured_image:
     type: imagecache_external_image
-    weight: 2
+    weight: 1
     label: above
     settings:
-      imagecache_external_style: ''
+      imagecache_external_style: medium
       imagecache_external_link: ''
     third_party_settings: {  }
   field_cottage_name:
@@ -54,7 +55,7 @@ content:
     third_party_settings: {  }
   field_cottage_teaser_description:
     type: text_default
-    weight: 1
+    weight: 2
     label: above
     settings: {  }
     third_party_settings: {  }
@@ -69,6 +70,7 @@ hidden:
   field_cottage_coordinates: true
   field_cottage_description: true
   field_cottage_image_info: true
+  field_cottage_images: true
   field_cottage_ownercode: true
   field_cottage_pets: true
   field_cottage_pricing: true

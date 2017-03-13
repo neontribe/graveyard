@@ -12,6 +12,7 @@ dependencies:
     - field.field.node.property.field_cottage_changeover_day
     - field.field.node.property.field_cottage_coordinates
     - field.field.node.property.field_cottage_description
+    - field.field.node.property.field_cottage_featured_image
     - field.field.node.property.field_cottage_image_info
     - field.field.node.property.field_cottage_images
     - field.field.node.property.field_cottage_name
@@ -31,7 +32,7 @@ dependencies:
     - path
     - text
 _core:
-  default_config_hash: djw3ZLB8xe04xJib35Lnb-0crBG71q4cgn2DI_nEMto
+  default_config_hash: 7TGmW1M1OpSsbkcJRn39Hp3IFfcdjM6ZMx5R4g50o8Y
 id: node.property.default
 targetEntityType: node
 bundle: property
@@ -110,6 +111,13 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: text_textarea_with_summary
+  field_cottage_featured_image:
+    weight: 54
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+    type: link_default
   field_cottage_image_info:
     weight: 52
     settings:

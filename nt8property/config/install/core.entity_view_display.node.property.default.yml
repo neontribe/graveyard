@@ -12,6 +12,7 @@ dependencies:
     - field.field.node.property.field_cottage_changeover_day
     - field.field.node.property.field_cottage_coordinates
     - field.field.node.property.field_cottage_description
+    - field.field.node.property.field_cottage_featured_image
     - field.field.node.property.field_cottage_image_info
     - field.field.node.property.field_cottage_images
     - field.field.node.property.field_cottage_name
@@ -32,7 +33,7 @@ dependencies:
     - text
     - user
 _core:
-  default_config_hash: pg-kGlzA6lSAL0VUj-jVN9Aj2SVoN9lkaCdP5K7NjXY
+  default_config_hash: z99UwaGacBKzea1eyaAy5wV3Lg5O7cQMbzzvbhS4hEs
 id: node.property.default
 targetEntityType: node
 bundle: property
@@ -45,7 +46,7 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_cottage_accommodates:
-    weight: 8
+    weight: 9
     label: above
     settings:
       thousand_separator: ''
@@ -53,13 +54,13 @@ content:
     third_party_settings: {  }
     type: number_integer
   field_cottage_address:
-    weight: 18
+    weight: 19
     label: above
     settings: {  }
     third_party_settings: {  }
     type: address_default
   field_cottage_bedrooms:
-    weight: 11
+    weight: 12
     label: above
     settings:
       thousand_separator: ''
@@ -67,7 +68,7 @@ content:
     third_party_settings: {  }
     type: number_integer
   field_cottage_booking:
-    weight: 16
+    weight: 17
     label: above
     settings:
       trim_length: 80
@@ -85,14 +86,14 @@ content:
     third_party_settings: {  }
     type: string
   field_cottage_changeover_day:
-    weight: 12
+    weight: 13
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
     type: string
   field_cottage_coordinates:
-    weight: 19
+    weight: 20
     label: above
     settings:
       thousand_separator: ''
@@ -102,41 +103,49 @@ content:
     third_party_settings: {  }
     type: number_decimal
   field_cottage_description:
-    weight: 9
+    weight: 10
     label: above
     settings: {  }
     third_party_settings: {  }
     type: text_default
+  field_cottage_featured_image:
+    weight: 6
+    label: above
+    settings:
+      imagecache_external_style: medium
+      imagecache_external_link: ''
+    third_party_settings: {  }
+    type: imagecache_external_image
   field_cottage_image_info:
-    weight: 21
+    weight: 22
     label: above
     settings: {  }
     third_party_settings: {  }
     type: basic_string
   field_cottage_images:
-    weight: 6
+    weight: 7
     label: above
     settings:
-      imagecache_external_style: ''
+      imagecache_external_style: medium
       imagecache_external_link: ''
     third_party_settings: {  }
     type: imagecache_external_image
   field_cottage_name:
-    weight: 7
+    weight: 8
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
     type: string
   field_cottage_ownercode:
-    weight: 17
+    weight: 18
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
     type: string
   field_cottage_pets:
-    weight: 14
+    weight: 15
     label: above
     settings:
       thousand_separator: ''
@@ -144,13 +153,13 @@ content:
     third_party_settings: {  }
     type: number_integer
   field_cottage_pricing:
-    weight: 20
+    weight: 21
     label: above
     settings: {  }
     third_party_settings: {  }
     type: basic_string
   field_cottage_promote:
-    weight: 15
+    weight: 16
     label: above
     settings:
       format: default
@@ -159,7 +168,7 @@ content:
     third_party_settings: {  }
     type: boolean
   field_cottage_rating:
-    weight: 13
+    weight: 14
     label: above
     settings:
       thousand_separator: ''
@@ -181,7 +190,7 @@ content:
     third_party_settings: {  }
     type: string
   field_cottage_teaser_description:
-    weight: 10
+    weight: 11
     label: above
     settings: {  }
     third_party_settings: {  }
