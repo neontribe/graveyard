@@ -101,7 +101,13 @@ class NT8PropertyService {
     // Compare for differences and update if there is one.
     foreach($updatedValues as $updatedValueKey => $updatedValue) {
       $currentNodeField = self::iak($currentNodeFields, $updatedValueKey);
-      $currentNodeFieldValue = $currentNodeField->getValue();
+      if($currentNodeField instanceof \Drupal\Core\Field\FieldItemList) {
+        $currentNodeFieldValue = $currentNodeField->getValue();
+      } else {
+        \Drupal::logger('NT8PropertyService')->info('Failed to load field: @currentNodeField.', array('@currentNodeField' => $updatedValueKey));
+        continue;
+      }
+
 
       if(is_array($currentNodeFieldValue) && count($currentNodeFieldValue) > 1) {
         $index = 0;
