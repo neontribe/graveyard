@@ -23,7 +23,7 @@ The aim of this project is to create a series of modules which, when tied togeth
  
  ```
     Initial Setup:
-      -> Make sure that you have a fresh install of drupal ready.
+      -> Make sure that you have a fresh install of Drupal 8.2 ready.
       -> Make sure that you have a recent version of Drush installed.
       -> Make sure that you have a recent version of Composer installed.
       
