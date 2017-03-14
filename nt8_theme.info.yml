@@ -1,0 +1,17 @@
+name: NT8 Theme
+description: Base Drupal 8 Theme For The NT8 Project.
+type: theme
+base theme: classy
+core: 8.x
+libraries:
+  - 'nt8_theme/styling'
+  - 'nt8_theme/scripts'
+stylesheets-remove:
+  - core/assets/vendor/normalize-css/normalize.css
+  - core/themes/classy/css/components/menu.css
+  - core/themes/classy/css/components/form.css
+  - core/themes/classy/css/components/button.css
+regions:
+  header: Header
+  content: Content
+  footer: Footer

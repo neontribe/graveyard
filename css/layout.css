@@ -1,0 +1,229 @@
+html {
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.5;
+    font-family: Montserrat, serif;
+}
+
+.layout-container {
+    display: flex;
+    height: 100%;
+    min-height: 100vh;
+    flex-direction: column;
+    margin: 0;
+}
+
+main {
+    flex: 1;
+}
+
+/* Normalisation */
+
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    vertical-align: baseline;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    text-decoration: none;
+    outline-offset: 0.125em;
+    font-size: 1em;
+    font-weight: normal;
+    font-style: normal;
+}
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+main,
+nav,
+section,
+summary {
+    display: block;
+}
+
+* + * {
+    margin-top: 1em;
+}
+
+body,
+.layout-container,
+.layout-content,
+.site-name,
+.toolbar-lining > div,
+.toolbar-bar > div {
+    margin-top: 0;
+}
+
+.container {
+    max-width: 70%;
+    max-width: 70vw;
+
+    margin: 0 auto;
+}
+
+.field {
+    margin-top: 0;
+}
+
+* + h1, * + h2, * + h3 {
+    margin-top: 2.5rem;
+}
+
+
+/* Paragraphs & Text Content */
+
+p {
+    line-height: 1.5;
+    text-align: left;
+}
+
+p + p {
+    margin-top: 0.5em;
+}
+
+em, i, q, cite {
+    font-style: italic;
+}
+
+strong, b, abbr, h2, h3 {
+    font-weight: 700;
+}
+
+/* Headings */
+
+h1, h2, h3, h4 {
+    font-weight: 700;
+    line-height: 1.125;
+}
+
+h1 {
+    font-family: Audimat, serif;
+    font-weight: 400;
+    text-align: center;
+}
+
+h1 + p {
+    display: block;
+    font-family: Audimat, serif;
+    font-style: italic;
+    font-size: 1.5em;
+    margin-top: 0;
+    line-height: 1.125;
+    text-align: center;
+}
+
+h1 {
+    font-size: 5em;
+    font-weight: normal;
+}
+
+h2 {
+    font-size: 2.5em;
+    text-align: center;
+}
+
+h3 {
+    font-size: 1.75em;
+}
+
+h4 {
+    font-size: 1.25em;
+}
+
+
+/* Main Navigation */
+nav[role="navigation"].navigation {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* Links */
+a, a:visited {
+    color: black;
+    border-bottom: 1px solid;
+}
+
+a:hover, a:active {
+    border-bottom: 2px solid;
+}
+
+/* Form Fields */
+form {
+    margin: 1em auto;
+    padding: 1em;
+    min-width: 50vw;
+}
+
+input, textarea, select, button {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    font-weight: 400;
+    text-transform: none;
+    font-size: 1em;
+    line-height: 1.25;
+    width: 100%;
+    padding: .25em;
+    background: transparent;
+    border: .1em solid;
+}
+
+input:focus, textarea:focus, select:focus, button:focus {
+    outline: .15em solid #51A35F;
+    outline-offset: 0;
+}
+
+label {
+    font-weight: 400;
+    text-transform: none;
+    font-size: 1em;
+    display: block;
+    color: #0b0c0c;
+    line-height: 1.25;
+}
+
+label + *,
+input + label,
+.details-wrapper {
+    margin-top: .25em;
+}
+
+@media (min-width: 750px) {
+    form {
+        max-width: 40%;
+        max-width: 40vw;
+    }
+
+    /* Checkbox specific styles */
+    .form-type-checkbox > label {
+        display: inline-block;
+    }
+
+    [type=checkbox] {
+        width: auto;
+    }
+}
+
+
+.form-item {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+legend {
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+textarea {
+    vertical-align: top;
+}
