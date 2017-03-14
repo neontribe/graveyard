@@ -1,0 +1,7 @@
+cuddly-slider:
+  version: 1.x
+  css:
+    theme:
+      js/
+  js:
+    js/neonmap/dist/neonmap.js: {}
