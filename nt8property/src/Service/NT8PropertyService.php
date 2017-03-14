@@ -226,7 +226,6 @@ class NT8PropertyService {
         $current_updated_value = self::iak($updatedValue, $current_field);
       }
 
-
       $found_one = !(($current_field_value === false) || ($current_updated_value === false));
 
       if($current_field_value === $current_updated_value && $found_one) {

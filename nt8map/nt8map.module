@@ -1,0 +1,36 @@
+<?php
+
+/**
+ * @file
+ * Contains nt8map.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function nt8map_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the nt8map module.
+    case 'help.page.nt8map':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Neontabs 8 Map Module') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function nt8map_theme() {
+  return [
+    'nt8map' => [
+      'template' => 'nt8map',
+      'render element' => 'children',
+    ],
+  ];
+}
