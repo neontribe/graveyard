@@ -5,3 +5,5 @@ cuddly-slider:
       js/
   js:
     js/neonmap/dist/neonmap.js: {}
+  dependencies:
+    - core/jquery
