@@ -71,7 +71,7 @@ article {
 }
 
 article > div {
-    border: 4px solid #00410B;
+
 }
 
 article .node__links {
@@ -79,7 +79,12 @@ article .node__links {
 }
 
 article.node--type-property.node--view-mode-teaser {
-    margin: .1em auto;
+    border: 4px solid #00410B;
+
+    margin: 0 auto;
+    margin-left: -4px;
+    margin-bottom: -4px;
+
     padding: 0;
     width: 33.33%; /* fallback */
     width: calc(100% / 3);
