@@ -292,7 +292,7 @@ class NT8PropertyService {
         'country_code' => $address->country,
       ],
       'field_cottage_image_info' => $image_data,
-      'field_cottage_featured_image' => self::iak($image_links, 0) ?: [],
+      'field_cottage_featured_image' => self::iak($image_links, 0) ?: ['uri' => 'http://www.placecage.com/300/300', title => 'Image Not Found!'],
       'field_cottage_images' => $image_links,
     ];
   }

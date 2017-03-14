@@ -48,9 +48,10 @@ class NT8SearchService {
     $filterInfo = $queryInfo['filters'];
 
     // Build a request data array for our search request.
-    $requestData = [
-      'fields' => 'propertyRef'
-    ] + $filterInfo;
+    $requestData = array_merge([
+      'fields' => 'propertyRef',
+      'pageSize' => 12 // TODO: Default page size should be stored in the site config.
+    ], $filterInfo);
 
     // Execute the search request.
     $searchResult = $this->executeSearchRequest($requestData);
