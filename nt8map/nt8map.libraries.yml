@@ -1,9 +1,12 @@
-cuddly-slider:
+nt8map:
   version: 1.x
-  css:
-    theme:
-      js/
   js:
-    js/neonmap/dist/neonmap.js: {}
+    vendor/neonmap/dist/neonmap.js: { }
+    js/nt8map.js: { }
   dependencies:
     - core/jquery
+    - core/drupal
+  css:
+    component:
+      vendor/neonmap/dist/neonmap.css: { }
+      css/nt8map.css: { }

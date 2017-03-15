@@ -31,6 +31,11 @@ function nt8map_theme() {
     'nt8map' => [
       'template' => 'nt8map',
       'render element' => 'children',
+      'variables' => array(
+        'mapdata' => array(),
+        'geojsonurl' => NULL,
+        'height' => '200px',
+      ),
     ],
   ];
 }
