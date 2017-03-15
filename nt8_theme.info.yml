@@ -6,6 +6,7 @@ core: 8.x
 libraries:
   - 'nt8_theme/styling'
   - 'nt8_theme/scripts'
+
 stylesheets-remove:
   - core/assets/vendor/normalize-css/normalize.css
   - core/themes/classy/css/components/menu.css

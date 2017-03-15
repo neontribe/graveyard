@@ -1,11 +1,12 @@
 styling:
   version: 0.1
   css:
-    theme:
-      css/fonts.css: {}
-      css/layout.css: {}
-      css/main.css: {}
+    base:
       'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css': { type: external }
+    theme:
+      css/fonts.css: { }
+      css/layout.css: { }
+      css/main.css: { }
 
 scripts:
   version: 0.1
