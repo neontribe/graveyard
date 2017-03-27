@@ -12,7 +12,7 @@ use Drupal\nt8tabsio\Service\NT8TabsRestService;
  *
  * @Block(
  *  id = "nt8map_block",
- *  admin_label = @Translation("Block intended to contain the Neontabs 8 map."),
+ *  admin_label = @Translation("NT8 Map"),
  * )
  */
 class NT8MapBlock extends BlockBase implements ContainerFactoryPluginInterface {
