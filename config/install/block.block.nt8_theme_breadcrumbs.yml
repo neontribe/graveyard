@@ -1,0 +1,22 @@
+uuid: 4985093d-7aff-49eb-8e5d-dd3478dbf391
+langcode: en
+status: false
+dependencies:
+  module:
+    - system
+  theme:
+    - nt8_theme
+_core:
+  default_config_hash: oXUb3JZR2WW5VOdw4HrhRicCsq51mCgLfRyvheG68ck
+id: nt8_theme_breadcrumbs
+theme: nt8_theme
+region: '-1'
+weight: -6
+provider: null
+plugin: system_breadcrumb_block
+settings:
+  id: system_breadcrumb_block
+  label: Breadcrumbs
+  provider: system
+  label_display: '0'
+visibility: {  }

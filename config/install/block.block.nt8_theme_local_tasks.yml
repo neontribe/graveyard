@@ -1,0 +1,22 @@
+uuid: bf065019-67a5-4fcc-93dc-59980567880d
+langcode: en
+status: false
+dependencies:
+  theme:
+    - nt8_theme
+_core:
+  default_config_hash: X9I1OB0W3WlWtrK-CNcg6hNWwa8wficanpH8pYnDZDE
+id: nt8_theme_local_tasks
+theme: nt8_theme
+region: '-1'
+weight: 4
+provider: null
+plugin: local_tasks_block
+settings:
+  id: local_tasks_block
+  label: Tabs
+  provider: core
+  label_display: '0'
+  primary: true
+  secondary: true
+visibility: {  }
