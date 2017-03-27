@@ -64,7 +64,7 @@ class NT8SearchFormBase extends FormBase {
     $form['fromDate'] = [
       '#type' => 'date',
       '#title' => $this->t('Arrival Date'),
-      '#default_value' => $this->nt8searchMethodsService->iak($query_items, 'fromDate') ?: '2017-05-05',
+      '#default_value' => $this->nt8searchMethodsService->iak($query_items, 'fromDate') ?: date('Y-m-d'),
       '#date_date_format' => 'd-m-Y',
     ];
 

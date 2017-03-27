@@ -1,5 +1,11 @@
-property.generate:
+system.admin_neontabs:
+  route_name: system.admin_neontabs
+  parent: system.admin_config
+  title: Neontabs
+  weight: -100
+
+system.admin_neontabs_property:
   title: 'Neontabs Property'
-  parent: system.admin_config_system
+  parent: system.admin_neontabs
   description: 'Generate a new instance of an nt8property.'
   route_name: property.generate

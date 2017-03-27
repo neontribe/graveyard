@@ -251,7 +251,7 @@ class NT8PropertyService {
     if(count($data->images) > 0) {
       foreach ($data->images as $image) {
         $image_data[] = json_encode($image);
-
+        if(strpos($image->url, '0x0') !== FALSE) continue;
         $image_links[] = [
           'uri' => $image->url,
           'title' => $image->alt,
@@ -291,7 +291,7 @@ class NT8PropertyService {
         'country_code' => $address->country,
       ],
       'field_cottage_image_info' => $image_data,
-      'field_cottage_featured_image' => self::iak($image_links, 0) ?: ['uri' => 'http://www.placecage.com/300/300', title => 'Image Not Found!'],
+      'field_cottage_featured_image' => self::iak($image_links, 0) ?: ['uri' => 'http://www.placecage.com/300/300', 'title' => 'Image Not Found!'],
       'field_cottage_images' => $image_links,
     ];
   }
