@@ -21,11 +21,11 @@ class NT8PropertyService {
   protected $nt8RestService;
 
 
-  public function __construct(QueryFactory $entityQuery,
-                              EntityTypeManager $entityTypeManager,
-                              NT8TabsRestService $nt8RestService
+  public function __construct(
+    QueryFactory $entityQuery,
+    EntityTypeManager $entityTypeManager,
+    NT8TabsRestService $nt8RestService
   ) {
-
     $this->entityQuery = $entityQuery;
     $this->entityTypeManager = $entityTypeManager;
     $this->nt8RestService = $nt8RestService;
@@ -36,10 +36,7 @@ class NT8PropertyService {
 
     foreach($proprefs as $propref) {
       $nodes = $this->loadNodesFromPropref($propref);
-      if(!isset($nodes)) {
-        $loadedNodes[$propref][] = ['error' => 'No nodes found under this propref.'];
-        continue;
-      }
+      if(!isset($nodes)) continue;
 
       foreach($nodes as $node) {
         $loadedNodes[$propref][] = $node;
@@ -78,25 +75,28 @@ class NT8PropertyService {
     if(count($nids) > 0) {
       $nodes = $nodeStorage->loadMultiple($nids);
 
-      // Just in case more than one exist.
       foreach ($nodes as $node) {
         $updated = $this->updateNodeInstanceFromData($updatedValues, $node);
-        //TODO: refactor field logging.
+
         if($updated) {
-          $fields = $node->getFields();
-          $reference_field = self::iak($fields, 'field_cottage_reference_code');
-
-          if(isset($reference_field)) {
-            $field_value = $reference_field->getValue()[0]['value'];
-            $updatedProperties[] = $field_value;
-          }
-
+          $updatedProperties[] = self::getNodeFieldValue($node, 'field_cottage_reference_code', 0);
           $node->save();
         }
       }
     }
 
     return $updatedProperties;
+  }
+
+  public static function getNodeFieldValue($node, $fieldName, $index = -1, $keyname = 'value') {
+    $field_instance = $node->get($fieldName)->getValue();
+    $field_value = $field_instance;
+
+    if($index > -1) {
+      $field_value = $field_instance[$index][$keyname];
+    }
+
+    return $field_value;
   }
 
   /**
@@ -110,7 +110,7 @@ class NT8PropertyService {
 
     // Compare for differences and update if there is one.
     foreach($updatedValues as $updatedValueKey => $updatedValue) {
-      $currentNodeField = self::iak($currentNodeFields, $updatedValueKey);
+      $currentNodeField = self::isset($currentNodeFields, $updatedValueKey);
       if($currentNodeField instanceof \Drupal\Core\Field\FieldItemList) {
         $currentNodeFieldValue = $currentNodeField->getValue();
       } else {
@@ -123,7 +123,7 @@ class NT8PropertyService {
         $index = 0;
 
         foreach($currentNodeFieldValue as $currentNodeFieldValueInc) {
-          if(self::getFieldUpdateStatus($currentNodeFieldValueInc, self::iak($updatedValue, $index))) {
+          if(self::getFieldUpdateStatus($currentNodeFieldValueInc, self::isset($updatedValue, $index))) {
             $index++;
             continue;
           }
@@ -134,7 +134,7 @@ class NT8PropertyService {
           $index++;
         }
       } else {
-        $field_data = self::iak($currentNodeFieldValue, 0);
+        $field_data = self::isset($currentNodeFieldValue, 0);
 
         if(self::getFieldUpdateStatus($field_data, $updatedValue)) continue;
 
@@ -148,7 +148,7 @@ class NT8PropertyService {
 
   public function createNodeInstanceFromData(\stdClass $data, $deleteExisting = FALSE) {
     if(isset($data->errorCode)) {
-      return NULL;
+      throw new \Exception($data->errorCode);
     }
 
     if($deleteExisting) {
@@ -192,7 +192,7 @@ class NT8PropertyService {
   }
 
   // If a key is set in the provided array return the value or false if it isn't. (helper function).
-  public static function iak($array, $key = '') {
+  public static function isset($array, $key = '') {
     return isset($array[$key]) ? $array[$key] : FALSE;
   }
 
@@ -220,10 +220,10 @@ class NT8PropertyService {
 
     $not_changed = FALSE;
     foreach($fields_to_check as $current_field) {
-      $current_field_value = self::iak($currentNodeField, $current_field);
+      $current_field_value = self::isset($currentNodeField, $current_field);
       $current_updated_value = $updatedValue;
       if(is_array($updatedValue)) {
-        $current_updated_value = self::iak($updatedValue, $current_field);
+        $current_updated_value = self::isset($updatedValue, $current_field);
       }
 
       $found_one = !(($current_field_value === false) || ($current_updated_value === false));
@@ -291,7 +291,7 @@ class NT8PropertyService {
         'country_code' => $address->country,
       ],
       'field_cottage_image_info' => $image_data,
-      'field_cottage_featured_image' => self::iak($image_links, 0) ?: ['uri' => 'http://www.placecage.com/300/300', 'title' => 'Image Not Found!'],
+      'field_cottage_featured_image' => self::isset($image_links, 0) ?: ['uri' => 'http://www.placecage.com/300/300', 'title' => 'Image Not Found!'],
       'field_cottage_images' => $image_links,
     ];
   }

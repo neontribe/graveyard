@@ -10,22 +10,17 @@ class NT8PropertyBatch {
     $pages = $per_page['pages'];
     $pageSize = $per_page['per_page'];
 
-    $data = $nt8restService->get("property",
-      array(
-        "page" => $page_counter + 1,
-        "pageSize" => $pageSize,
-        "searchId" => $search_instance_id,
+    $data = json_decode(
+      $nt8restService->get("property",
+        array(
+          "page" => $page_counter + 1,
+          "pageSize" => $pageSize,
+          "searchId" => $search_instance_id,
+        )
       )
     );
 
-    $data = json_decode($data);
-    $results = [];
-    if($data instanceof \stdClass && ($data->results)) {
-      $results = $data->results;
-    } else {
-      throw new \Exception('No Results Returned During Batch Load');
-    }
-
+    $results = $data->results;
 
     if(!isset($context['results']['count_processed'])) {
       $context['results']['count_processed'] = 0;
