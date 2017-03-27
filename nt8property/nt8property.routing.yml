@@ -1,5 +1,9 @@
+system.admin_neontabs:
+  path: 'admin/config/neontabs'
+  requirements:
+    _permission: 'administer content'
 property.generate:
-  path: '/admin/config/property'
+  path: '/admin/config/neontabs/property'
   defaults:
       _form: 'Drupal\nt8property\Form\NT8PropertyFormBase'
   requirements:
