@@ -32,7 +32,7 @@ dependencies:
     - text
     - user
 _core:
-  default_config_hash: 47HhsUZta4bS8EmLhFT4ScinczqxvjJWCUD3u5APEKM
+  default_config_hash: VO85abr2MZFtX_Wx9ZwEKEitgapB08uzT2hf2DpsqGI
 id: node.property.teaser
 targetEntityType: node
 bundle: property
@@ -41,22 +41,22 @@ content:
   field_cottage_featured_image:
     type: imagecache_external_image
     weight: 1
-    label: above
+    label: visually_hidden
     settings:
-      imagecache_external_style: medium
-      imagecache_external_link: ''
+      imagecache_external_style: neontabs_teaser_ima
+      imagecache_external_link: content
     third_party_settings: {  }
   field_cottage_name:
     type: string
     weight: 0
-    label: above
+    label: visually_hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
   field_cottage_teaser_description:
     type: text_default
     weight: 2
-    label: above
+    label: visually_hidden
     settings: {  }
     third_party_settings: {  }
 hidden:
