@@ -1,5 +1,5 @@
 services:
   nt8map.methods:
-    class: Drupal\nt8map\NT8MapService
+    class: Drupal\nt8map\Service\NT8MapService
     arguments: []
 

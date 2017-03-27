@@ -79,6 +79,11 @@ class NT8SearchController extends ControllerBase {
 
       $page = pager_default_initialize($totalResults, $pageSize);
 
+
+      $mapBlock = \Drupal::service('plugin.manager.block')->createInstance('nt8map_block', ['properties' => $loadedResultsAsNodes]);
+      $renderOutput['custom_block_output'] = $mapBlock->build();
+
+
       $renderOutput['result_container'] = [
         '#type' => 'container',
         '#attributes' => [
