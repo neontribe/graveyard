@@ -1,0 +1,9 @@
+{
+    "name": "neontribe/nt8",
+    "description": "Module Framework For TABS Based Cottage Websites",
+    "require": {
+        "php": "^7.0",
+        "drupal/address": "1.*",
+        "drupal/imagecache_external": "1.*"
+    }
+}
