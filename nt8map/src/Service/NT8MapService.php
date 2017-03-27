@@ -19,12 +19,27 @@ class NT8MapService {
   public function initMap($properties = []) {
     $config = \Drupal::config('nt8map.config');
     $map_settings = $config->get('map-settings');
-    
+
     $mapdata = self::getMapTiles($map_settings['tiles']);
     $mapdata['image_path'] = self::getMapImagePath();
     $mapdata['initial_zoom'] = $map_settings['zoom'];
     $mapdata['center'] = [$map_settings['lat'], $map_settings['lon']];
     $mapdata['geojson'] = self::getFeatures($properties, 'FeatureCollection', 'Feature', 'Point');
+
+    $mapdata['popups'] = array(
+      'template' => "
+        <a target=_blank href={{url}}>
+          <h3>{{title}}</h3>
+        </a>
+        <ul>
+          <li>Sleeps: {{sleeps}}</li>
+          <li>Bedrooms: {{bedrooms}}</li>
+        </ul>
+        <img width=100 height=75 src={{imagetag}}></img>",
+      'options' => array(
+        'className' => 'neonmap-popup',
+      ),
+    );
 
     return $mapdata;
   }
@@ -48,6 +63,8 @@ class NT8MapService {
           $propertySleeps        = self::getNodeFieldValue($property_node, 'field_cottage_accommodates',   0);
           $propertyBedrooms      = self::getNodeFieldValue($property_node, 'field_cottage_bedrooms',       0);
           $propertyPricing       = self::getNodeFieldValue($property_node, 'field_cottage_pricing',        0);
+          $propertyFeaturedImage = self::getNodeFieldValue($property_node, 'field_cottage_featured_image', 0, 'uri');
+          $propertyLink          = $property_node->toUrl()->setAbsolute()->toString();
 
           // Setup an array containing the geojson to send to Neonmap.
           $geojson['features'][] = array(
@@ -65,6 +82,8 @@ class NT8MapService {
               'sleeps' => $propertySleeps,
               'bedrooms'  => $propertyBedrooms,
               'pricerange' => $propertyPricing,
+              'url' => $propertyLink,
+              'imagetag' => $propertyFeaturedImage,
             ),
           );
         }
@@ -75,12 +94,12 @@ class NT8MapService {
     return $geojson;
   }
 
-  public static function getNodeFieldValue($node, $fieldName, $index = -1) {
+  public static function getNodeFieldValue($node, $fieldName, $index = -1, $keyname = 'value') {
     $field_instance = $node->get($fieldName)->getValue();
     $field_value = $field_instance;
 
     if($index > -1) {
-      $field_value = $field_instance[$index]['value'];
+      $field_value = $field_instance[$index][$keyname];
     }
 
     return $field_value;

@@ -1,6 +1,6 @@
 {{ attach_library('nt8map/nt8map') }}
 
 <div id="neontabs-property-map" class="gmap" style="width: 100%; height: {{ height }}"
-     data-locations='{{ mapdata | json_encode(constant('JSON_HEX_APOS', 'JSON_HEX_TAG', 'JSON_HEX_AMP', 'JSON_HEX_QUOT')) }}'
+     data-locations='{{ mapdata | json_encode(JSON_HEX_APOS, JSON_HEX_TAG, JSON_HEX_AMP, JSON_HEX_QUOT) }}'
      data-geojsonurl='{{ geojsonurl }}'
 ></div>

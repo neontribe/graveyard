@@ -80,7 +80,7 @@ class NT8MapBlock extends BlockBase implements ContainerFactoryPluginInterface {
     $build['map'] = [
       '#theme' => 'nt8map',
       '#mapdata' => $mapData,
-
+      '#height' => '300px',
     ];
 
     return $build;
