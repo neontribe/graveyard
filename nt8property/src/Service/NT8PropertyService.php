@@ -77,7 +77,7 @@ class NT8PropertyService {
         $updated = $this->updateNodeInstanceFromData($updatedValues, $node);
 
         if($updated) {
-          $updatedProperties[] = self::getNodeFieldValue($node, 'field_cottage_reference_code', 0);
+          $updatedProperties[] = $data->propertyRef;
           $node->save();
         }
       }
