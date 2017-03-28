@@ -107,10 +107,24 @@ class NT8PropertyService {
     // Compare for differences and update if a difference is found.
     foreach($updatedValues as $updatedValueKey => $updatedValue) {
       $currentNodeField = self::getNodeFieldValue($nodeInstance, $updatedValueKey);
-//      dpm(print_r($currentNodeField, TRUE), print_r($updatedValue, TRUE));
-      dpm($currentNodeField);
-      dpm($updatedValue);
 
+      $length_of_node_fields   = count($currentNodeField);
+      $length_of_update_fields = count($updatedValue);
+
+      if($length_of_node_fields !== $length_of_update_fields) {
+        // Handle this or throw an error.
+      }
+
+      foreach($currentNodeField as $index => $nodeFieldValue) {
+        dpm($nodeFieldValue);
+        $comparisonUpdate = $updatedValue;
+//        if($length_of_update_fields > 1) {
+//          $comparisonUpdate = $updatedValue[$index];
+//        }
+
+        dpm($comparisonUpdate);
+
+      }
     }
 
     return $updated;
@@ -169,31 +183,6 @@ class NT8PropertyService {
   // Strips null values from the array.
   public static function stripNullValues(array $array = []) {
     return array_filter($array, create_function('$value', 'return $value !== NULL;'));
-  }
-
-  protected static function getFieldUpdateStatus(array $currentNodeField, $updatedValue) {
-    $fields_to_check = [
-      'target_id',
-      'value',
-      'uri',
-      'country_code',
-      'administrative_area',
-      'locality',
-      'postal_code',
-      'address_line1',
-      'address_line2',
-    ];
-
-    $changed = TRUE;
-    foreach($fields_to_check as $current_field) {
-      $current_field_value = self::isset($currentNodeField, $current_field);
-
-      if($current_field_value === $updatedValue) {
-        $changed = FALSE;
-      }
-    }
-
-    return $changed;
   }
 
   protected static function generateUpdateArray(\stdClass $data, bool $is_node = TRUE) {
