@@ -1,19 +1,42 @@
 # Composer template for Drupal projects
 
-## Quick start
+## Install drupla 8 with nt8 ready to go:
 ```
 composer \
-    create-project neontribe/nt8-installer some-dir \
+    create-project neontribe/nt8-installer EntyAte \
     --stability dev \
     --no-interaction
-    
+```
+
+## drush must be run from the web folder
+
+    cd EntyAte\web
+
+## Install the site using sqlite
+
+```
 drush \
     -y site-install \
     --db-url=sqlite://sites/default/files/.ht.sqlite \
-    --account-mail=tobias@neontribe.co.uk \
-    --account-name=tobias \
-    --account-pass=b191wkm \
-    --site-mail=tobias@neontribe.co.uk \
+    --account-mail=${USER}@neontribe.co.uk \
+    --account-name=superadmin \
+    --site-mail=${USER}@neontribe.co.uk \
     --site-name=EntyAte
-sudo chown www-data:www-data sites/default/files/.ht.sqlite*
 ```
+
+Check the output for the random superadmin password
+
+## Enable nt8 modules
+
+````
+drush en nt8_theme
+drush config-set system.theme default nt8_theme
+drush en ...
+
+## Chown files to run as www-data user
+
+    sudo chown -R www-data:www-data sites/default/files
+
+## Or run using drush
+
+    drush rs

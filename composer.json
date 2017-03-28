@@ -60,9 +60,7 @@
             "DrupalProject\\composer\\ScriptHandler::createRequiredFiles"
         ],
         "post-update-cmd": [
-            "DrupalProject\\composer\\ScriptHandler::createRequiredFiles",
-            "./vendor/drush/drush/drush -r ../../../web -y site-install --db-url=sqlite://sites/default/files/.ht.sqlite --account-mail=nt8@neontribe.co.uk --account-name=superadmin --site-mail=nt8@neontribe.co.uk --site-name=EntyAte",
-            "chmod 777 ./web/sites/default/files/.ht.sqlite*"
+            "DrupalProject\\composer\\ScriptHandler::createRequiredFiles"
         ]
     },
     "extra": {
