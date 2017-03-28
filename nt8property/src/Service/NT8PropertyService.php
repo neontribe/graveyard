@@ -115,26 +115,37 @@ class NT8PropertyService {
       $length_of_update_fields = count($updatedValue);
 
       $updateIndex = 0;
+
+      // For each field on the current node iterate through its' children.
       foreach($currentNodeField as $index => $nodeFieldValue) {
         $comparisonUpdate = $updatedValue;
+
+        // If the field has more than 1 entries set the comparison the value of the entry.
+        // We keep track of entries by incrementing the `updateIndex` counter.
         if($length_of_update_fields > 1) {
           $comparisonUpdate = self::isset($updatedValue, $updateIndex++) ?: $updatedValue;
         }
 
+        // Sometimes the data to compare is nested another level deep.
+        // This retrieves it and lets the program continue as if it were a flat array.
         $nestedComparison = self::isset($comparisonUpdate, 0);
         if($nestedComparison && is_array($nestedComparison)) {
           $comparisonUpdate = $nestedComparison;
         }
 
+        // Sort both arrays to the equality check below evaluates correctly.
         sort($comparisonUpdate);
         sort($nodeFieldValue);
 
+        // Compare the two field entries for differences.
         $difference = ($comparisonUpdate == $nodeFieldValue);
 
         if($difference == 0) {
+          // If a difference is found update the whole field entry.
           $fieldRef = self::getNodeField($nodeInstance, $updatedValueKey);
-
           $fieldRef->setValue($updatedValue);
+
+          // We should only save if $updated is equal to TRUE.
           $updated = TRUE;
         }
       }
