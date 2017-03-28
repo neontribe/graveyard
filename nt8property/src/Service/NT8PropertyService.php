@@ -86,6 +86,7 @@ class NT8PropertyService {
     return $updatedProperties;
   }
 
+  /*-----------@todo Ship these out into a global set of helper functions----------------*/
   public static function getNodeFieldValue($node, $fieldName, $index = -1, $keyname = 'value') {
     $field_instance = $node->get($fieldName)->getValue();
     $field_value = $field_instance;
@@ -100,6 +101,7 @@ class NT8PropertyService {
   public static function getNodeField($node, $fieldName) {
     return $node->get($fieldName);
   }
+  /*---------------------------------------------------------------------------------------*/
 
   /**
    * @param array $updatedValues
@@ -116,12 +118,13 @@ class NT8PropertyService {
 
       $updateIndex = 0;
 
-      // For each field on the current node iterate through its' children.
+      // For each field on the current node iterate through the child entries attached to the field.
+      // This works for all fields even those with cardinality: 1.
       foreach($currentNodeField as $index => $nodeFieldValue) {
         $comparisonUpdate = $updatedValue;
 
-        // If the field has more than 1 entries set the comparison the value of the entry.
-        // We keep track of entries by incrementing the `updateIndex` counter.
+        // If the field has more than 1 entries set the comparison to the value of the current entry.
+        // We keep track of current entry by incrementing the `updateIndex` counter.
         if($length_of_update_fields > 1) {
           $comparisonUpdate = self::isset($updatedValue, $updateIndex++) ?: $updatedValue;
         }
@@ -133,7 +136,7 @@ class NT8PropertyService {
           $comparisonUpdate = $nestedComparison;
         }
 
-        // Sort both arrays to the equality check below evaluates correctly.
+        // Sort both arrays so the equality check below evaluates correctly.
         sort($comparisonUpdate);
         sort($nodeFieldValue);
 
