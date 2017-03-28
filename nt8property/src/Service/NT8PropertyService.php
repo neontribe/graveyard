@@ -243,12 +243,15 @@ class NT8PropertyService {
       ],
       'field_cottage_teaser_description' => [
         'value' => $brandcode_info->teaser,
+        'format' => NULL,
       ],
       'field_cottage_reference_code' => [
         'value' => $data->propertyRef,
       ],
       'field_cottage_booking' => [
-        'value' => $data->booking,
+        'uri' => $data->booking,
+        'title' => 'Booking',
+        'options' => [],
       ],
       'field_cottage_accommodates' => [
         'value' => (string) $data->accommodates
@@ -286,11 +289,19 @@ class NT8PropertyService {
         'administrative_area' => $address->county,
         'postal_code' => $address->postcode,
         'country_code' => $address->country,
+        'langcode' => NULL,
+        'dependent_locality' => NULL,
+        'sorting_code' => NULL,
+        'organization' => NULL,
+        'given_name' => NULL,
+        'additional_name' => NULL,
+        'family_name' => NULL,
       ],
       'field_cottage_image_info' => $image_data,
       'field_cottage_featured_image' => self::isset($image_links, 0) ?: [
         'uri' => '',
-        'title' => ''
+        'title' => '',
+        'options' => [],
       ],
       'field_cottage_images' => $image_links,
     ];
