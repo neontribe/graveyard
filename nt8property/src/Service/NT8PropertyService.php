@@ -97,6 +97,10 @@ class NT8PropertyService {
     return $field_value;
   }
 
+  public static function getNodeField($node, $fieldName) {
+    return $node->get($fieldName);
+  }
+
   /**
    * @param array $updatedValues
    * @param $nodeInstance
@@ -108,22 +112,31 @@ class NT8PropertyService {
     foreach($updatedValues as $updatedValueKey => $updatedValue) {
       $currentNodeField = self::getNodeFieldValue($nodeInstance, $updatedValueKey);
 
-      $length_of_node_fields   = count($currentNodeField);
       $length_of_update_fields = count($updatedValue);
 
-      if($length_of_node_fields !== $length_of_update_fields) {
-        // Handle this or throw an error.
-      }
-
+      $updateIndex = 0;
       foreach($currentNodeField as $index => $nodeFieldValue) {
-        dpm($nodeFieldValue);
         $comparisonUpdate = $updatedValue;
-//        if($length_of_update_fields > 1) {
-//          $comparisonUpdate = $updatedValue[$index];
-//        }
+        if($length_of_update_fields > 1) {
+          $comparisonUpdate = self::isset($updatedValue, $updateIndex++) ?: $updatedValue;
+        }
 
-        dpm($comparisonUpdate);
+        $nestedComparison = self::isset($comparisonUpdate, 0);
+        if($nestedComparison && is_array($nestedComparison)) {
+          $comparisonUpdate = $nestedComparison;
+        }
 
+        sort($comparisonUpdate);
+        sort($nodeFieldValue);
+
+        $difference = ($comparisonUpdate == $nodeFieldValue);
+
+        if($difference == 0) {
+          $fieldRef = self::getNodeField($nodeInstance, $updatedValueKey);
+
+          $fieldRef->setValue($updatedValue);
+          $updated = TRUE;
+        }
       }
     }
 
