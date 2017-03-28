@@ -61,7 +61,7 @@
         ],
         "post-update-cmd": [
             "DrupalProject\\composer\\ScriptHandler::createRequiredFiles",
-            "bash pwd > /tmp/debug"
+            "pwd > /tmp/debug"
         ]
     },
     "extra": {
