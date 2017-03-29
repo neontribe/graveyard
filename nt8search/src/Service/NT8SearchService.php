@@ -40,6 +40,12 @@ class NT8SearchService {
     $this->nt8propertymethods = $nt8propertymethods;
   }
 
+  /**
+   * @param array $param_values
+   * @param array $loadNodes
+   *
+   * @return mixed
+   */
   public function performSearchFromParams(array $param_values, array &$loadNodes) {
     // Get the sanitised query information.
     $queryInfo = self::extractQueryInfoFromValues($param_values);

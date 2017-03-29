@@ -7,5 +7,8 @@
         "drupal/address": "1.*",
         "drupal/imagecache_external": "1.*"
     },
+    "require-dev": {
+        "phpmd/phpmd" : "@stable"
+    },
     "type": "drupal-custom-module"
 }

@@ -1,0 +1,9 @@
+map-settings:
+  zoom : 1
+  lon : '51.482905'
+  lat : '0'
+  tiles : 'osmmap'
+  imagestyle : 'thumbnail'
+  image_width : 100
+  image_height : 100
+langcode: 'en'

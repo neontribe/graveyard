@@ -21,11 +21,11 @@ class NT8PropertyService {
   protected $nt8RestService;
 
 
-  public function __construct(QueryFactory $entityQuery,
-                              EntityTypeManager $entityTypeManager,
-                              NT8TabsRestService $nt8RestService
+  public function __construct(
+    QueryFactory $entityQuery,
+    EntityTypeManager $entityTypeManager,
+    NT8TabsRestService $nt8RestService
   ) {
-
     $this->entityQuery = $entityQuery;
     $this->entityTypeManager = $entityTypeManager;
     $this->nt8RestService = $nt8RestService;
@@ -36,10 +36,7 @@ class NT8PropertyService {
 
     foreach($proprefs as $propref) {
       $nodes = $this->loadNodesFromPropref($propref);
-      if(!isset($nodes)) {
-        $loadedNodes[$propref][] = ['error' => 'No nodes found under this propref.'];
-        continue;
-      }
+      if(!isset($nodes)) continue;
 
       foreach($nodes as $node) {
         $loadedNodes[$propref][] = $node;
@@ -49,16 +46,18 @@ class NT8PropertyService {
     return $loadedNodes;
   }
 
-  public function loadNodesFromPropref($propref) {
+  public function loadNodesFromPropref($propref, $load = TRUE) {
     // Get the nodes to update with this data.
     $nodeQuery = $this->entityQuery->get('node');
     $nodeStorage = $this->entityTypeManager->getStorage('node');
     $nids = $nodeQuery->condition('field_cottage_reference_code.value', $propref, '=')->execute();
+
+    if(!$load) return $nids;
+
     $nodes = $nodeStorage->loadMultiple($nids);
 
     if(count($nodes) === 0) {
       \Drupal::logger('NT8PropertyService')->notice("Could not load a node for this propref: @propref", ['@propref' => print_r($propref, TRUE)]);
-
       $nodes = NULL;
     }
 
@@ -68,29 +67,17 @@ class NT8PropertyService {
   public function updateNodeInstancesFromData(\stdClass $data) {
     $updatedProperties = [];
 
-    // Get the nodes to update with this data.
-    $nodeQuery = $this->entityQuery->get('node');
-    $nodeStorage = $this->entityTypeManager->getStorage('node');
-    $nids = $nodeQuery->condition('field_cottage_reference_code.value', $data->propertyRef, '=')->execute();
-
-    $updatedValues = self::generateUpdateArray($data);
+    $nids = self::loadNodesFromPropref($data->propertyRef, FALSE);
+    $updatedValues = self::generateUpdateArray($data, FALSE);
 
     if(count($nids) > 0) {
-      $nodes = $nodeStorage->loadMultiple($nids);
+      $nodes = $this->entityTypeManager->getStorage('node')->loadMultiple($nids);
 
-      // Just in case more than one exist.
       foreach ($nodes as $node) {
         $updated = $this->updateNodeInstanceFromData($updatedValues, $node);
-        //TODO: refactor field logging.
+
         if($updated) {
-          $fields = $node->getFields();
-          $reference_field = self::iak($fields, 'field_cottage_reference_code');
-
-          if(isset($reference_field)) {
-            $field_value = $reference_field->getValue()[0]['value'];
-            $updatedProperties[] = $field_value;
-          }
-
+          $updatedProperties[] = $data->propertyRef;
           $node->save();
         }
       }
@@ -99,47 +86,71 @@ class NT8PropertyService {
     return $updatedProperties;
   }
 
+  /*-----------@todo Ship these out into a global set of helper functions----------------*/
+  public static function getNodeFieldValue($node, $fieldName, $index = -1, $keyname = 'value') {
+    $field_instance = $node->get($fieldName)->getValue();
+    $field_value = $field_instance;
+
+    if($index > -1) {
+      $field_value = $field_instance[$index][$keyname];
+    }
+
+    return $field_value;
+  }
+
+  public static function getNodeField($node, $fieldName) {
+    return $node->get($fieldName);
+  }
+  /*---------------------------------------------------------------------------------------*/
+
   /**
    * @param array $updatedValues
    * @param $nodeInstance
    */
   public function updateNodeInstanceFromData(array $updatedValues, &$nodeInstance) {
-    $currentNodeFields = $nodeInstance->getFields() ?: [];
     $updated = FALSE;
 
-
-    // Compare for differences and update if there is one.
+    // Compare for differences and update if a difference is found.
     foreach($updatedValues as $updatedValueKey => $updatedValue) {
-      $currentNodeField = self::iak($currentNodeFields, $updatedValueKey);
-      if($currentNodeField instanceof \Drupal\Core\Field\FieldItemList) {
-        $currentNodeFieldValue = $currentNodeField->getValue();
-      } else {
-        \Drupal::logger('NT8PropertyService')->info('Failed to load field: @currentNodeField.', array('@currentNodeField' => $updatedValueKey));
-        continue;
-      }
+      $currentNodeField = self::getNodeFieldValue($nodeInstance, $updatedValueKey);
 
+      $length_of_update_fields = count($updatedValue);
 
-      if(is_array($currentNodeFieldValue) && count($currentNodeFieldValue) > 1) {
-        $index = 0;
+      $updateIndex = 0;
 
-        foreach($currentNodeFieldValue as $currentNodeFieldValueInc) {
-          if(self::getFieldUpdateStatus($currentNodeFieldValueInc, self::iak($updatedValue, $index))) {
-            $index++;
-            continue;
-          }
+      // For each field on the current node iterate through the child entries attached to the field.
+      // This works for all fields even those with cardinality: 1.
+      foreach($currentNodeField as $index => $nodeFieldValue) {
+        $comparisonUpdate = $updatedValue;
 
-          $currentNodeField->setValue($updatedValue);
-          $updated = TRUE;
-
-          $index++;
+        // If the field has more than 1 entries set the comparison to the value of the current entry.
+        // We keep track of current entry by incrementing the `updateIndex` counter.
+        if($length_of_update_fields > 1) {
+          $comparisonUpdate = self::isset($updatedValue, $updateIndex++) ?: $updatedValue;
         }
-      } else {
-        $field_data = self::iak($currentNodeFieldValue, 0);
 
-        if(self::getFieldUpdateStatus($field_data, $updatedValue)) continue;
+        // Sometimes the data to compare is nested another level deep.
+        // This retrieves it and lets the program continue as if it were a flat array.
+        $nestedComparison = self::isset($comparisonUpdate, 0);
+        if($nestedComparison && is_array($nestedComparison)) {
+          $comparisonUpdate = $nestedComparison;
+        }
 
-        $currentNodeField->setValue($updatedValue);
-        $updated = TRUE;
+        // Sort both arrays so the equality check below evaluates correctly.
+        sort($comparisonUpdate);
+        sort($nodeFieldValue);
+
+        // Compare the two field entries for differences.
+        $difference = ($comparisonUpdate == $nodeFieldValue);
+
+        if($difference == 0) {
+          // If a difference is found update the whole field entry.
+          $fieldRef = self::getNodeField($nodeInstance, $updatedValueKey);
+          $fieldRef->setValue($updatedValue);
+
+          // We should only save if $updated is equal to TRUE.
+          $updated = TRUE;
+        }
       }
     }
 
@@ -148,7 +159,7 @@ class NT8PropertyService {
 
   public function createNodeInstanceFromData(\stdClass $data, $deleteExisting = FALSE) {
     if(isset($data->errorCode)) {
-      return NULL;
+      throw new \Exception($data->errorCode);
     }
 
     if($deleteExisting) {
@@ -192,7 +203,7 @@ class NT8PropertyService {
   }
 
   // If a key is set in the provided array return the value or false if it isn't. (helper function).
-  public static function iak($array, $key = '') {
+  public static function isset($array, $key = '') {
     return isset($array[$key]) ? $array[$key] : FALSE;
   }
 
@@ -201,47 +212,10 @@ class NT8PropertyService {
     return array_filter($array, create_function('$value', 'return $value !== NULL;'));
   }
 
-  protected static function getFieldUpdateStatus($currentNodeField, $updatedValue) {
-    $fields_to_check = [
-      'target_id',
-      'value',
-      'uri',
-      'country_code',
-      'administrative_area',
-      'locality',
-      'postal_code',
-      'address_line1',
-      'address_line2',
-    ];
-
-    if(is_array($currentNodeField)) {
-      $currentNodeField = self::stripNullValues($currentNodeField);
-    }
-
-    $not_changed = FALSE;
-    foreach($fields_to_check as $current_field) {
-      $current_field_value = self::iak($currentNodeField, $current_field);
-      $current_updated_value = $updatedValue;
-      if(is_array($updatedValue)) {
-        $current_updated_value = self::iak($updatedValue, $current_field);
-      }
-
-      $found_one = !(($current_field_value === false) || ($current_updated_value === false));
-
-      if($current_field_value === $current_updated_value && $found_one) {
-        $not_changed = TRUE;
-      }
-    }
-
-    return $not_changed;
-  }
-
-  protected static function generateUpdateArray(\stdClass $data) {
+  protected static function generateUpdateArray(\stdClass $data, bool $is_node = TRUE) {
     $brandcode = $data->brandCode;
     $brandcode_info = $data->brands->{$brandcode};
-
     $address = $data->address;
-
     $pricing = json_encode(
       $brandcode_info->pricing
     );
@@ -250,37 +224,79 @@ class NT8PropertyService {
     $image_links = [];
     if(count($data->images) > 0) {
       foreach ($data->images as $image) {
-        $image_data[] = json_encode($image);
-        if(strpos($image->url, '0x0') !== FALSE) continue;
+        $image_data[] = [
+          'value' => json_encode($image),
+        ];
+
         $image_links[] = [
           'uri' => $image->url,
           'title' => $image->alt,
+          'options' => [],
         ];
       }
     }
 
-    return [
+    $return_definition = [
       'type' => 'property',
       'promote' => '0',
       'title' => "$data->name",
-      'field_cottage_name' => $data->name,
-      'field_cottage_brandcode' => $brandcode,
-      'field_cottage_slug' => $data->slug,
-      'field_cottage_ownercode' => $data->ownerCode,
-      'field_cottage_url' => $data->url,
-      'field_cottage_teaser_description' => $brandcode_info->teaser,
-      'field_cottage_reference_code' => $data->propertyRef,
-      'field_cottage_booking' => $data->booking,
-      'field_cottage_accommodates' => (string) $data->accommodates,
-      'field_cottage_pets' => (string) ((int) $data->pets),
-      'field_cottage_bedrooms' => (string) $data->bedrooms,
-      'field_cottage_promote' => (string) ((int) $data->promote),
-      'field_cottage_rating' => (string) $data->rating,
-      'field_cottage_changeover_day' => $data->changeOverDay,
-      'field_cottage_pricing' => $pricing,
+      'field_cottage_name' => [
+        'value' => $data->name,
+      ],
+      'field_cottage_brandcode' => [
+        'value' => $brandcode,
+      ],
+      'field_cottage_slug' => [
+        'value' => $data->slug,
+      ],
+      'field_cottage_ownercode' => [
+        'value' => $data->ownerCode,
+      ],
+      'field_cottage_url' => [
+        'uri' => $data->url,
+        'title' => $data->name,
+        'options' => [],
+      ],
+      'field_cottage_teaser_description' => [
+        'value' => $brandcode_info->teaser,
+        'format' => NULL,
+      ],
+      'field_cottage_reference_code' => [
+        'value' => $data->propertyRef,
+      ],
+      'field_cottage_booking' => [
+        'uri' => $data->booking,
+        'title' => 'Booking',
+        'options' => [],
+      ],
+      'field_cottage_accommodates' => [
+        'value' => (string) $data->accommodates
+      ],
+      'field_cottage_pets' => [
+        'value' => (string) ((int) $data->pets)
+      ],
+      'field_cottage_bedrooms' => [
+        'value' => (string) $data->bedrooms
+      ],
+      'field_cottage_promote' => [
+        'value' => (string) ((int) $data->promote),
+      ],
+      'field_cottage_rating' => [
+        'value' => (string) $data->rating
+      ],
+      'field_cottage_changeover_day' => [
+        'value' => $data->changeOverDay
+      ],
+      'field_cottage_pricing' => [
+        'value' => $pricing,
+      ],
       'field_cottage_coordinates' => [
-        (string) round($data->coordinates->latitude, 4),
-        (string) round($data->coordinates->longitude, 4),
+        [
+          'value' => (string) round($data->coordinates->latitude, 4)
+        ],
+        [
+          'value' => (string) round($data->coordinates->longitude, 4),
+        ]
       ],
       'field_cottage_address' => [
         'address_line1' => $address->addr1,
@@ -289,10 +305,30 @@ class NT8PropertyService {
         'administrative_area' => $address->county,
         'postal_code' => $address->postcode,
         'country_code' => $address->country,
+        'langcode' => NULL,
+        'dependent_locality' => NULL,
+        'sorting_code' => NULL,
+        'organization' => NULL,
+        'given_name' => NULL,
+        'additional_name' => NULL,
+        'family_name' => NULL,
       ],
       'field_cottage_image_info' => $image_data,
-      'field_cottage_featured_image' => self::iak($image_links, 0) ?: ['uri' => 'http://www.placecage.com/300/300', 'title' => 'Image Not Found!'],
+      'field_cottage_featured_image' => self::isset($image_links, 0) ?: [
+        'uri' => '',
+        'title' => '',
+        'options' => [],
+      ],
       'field_cottage_images' => $image_links,
     ];
+
+    // If this isn't for a node discard the Drupal node specific keys.
+    if(!$is_node) {
+      unset($return_definition['type']);
+      unset($return_definition['promote']);
+      unset($return_definition['title']);
+    }
+
+    return $return_definition;
   }
 }

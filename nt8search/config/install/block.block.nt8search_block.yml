@@ -6,21 +6,23 @@ dependencies:
     - nt8search
     - system
   theme:
-    - bartik
+    - nt8_theme
+_core:
+  default_config_hash: AclA8DFoVFuTFyN6UzASwVdnvLC-1cnGz-NC6hwB3VM
 id: nt8search_block
-theme: bartik
-region: sidebar_first
+theme: nt8_theme
+region: content
 weight: 0
 provider: null
 plugin: nt8search_block
 settings:
-  id: broken
+  id: nt8search_block
   label: 'Neontabs 8 Search Block'
   provider: nt8search
   label_display: '0'
 visibility:
   request_path:
     id: request_path
-    pages: ''
+    pages: "<front>\r\n/cottages\r\n/cottages/*"
     negate: false
     context_mapping: {  }
