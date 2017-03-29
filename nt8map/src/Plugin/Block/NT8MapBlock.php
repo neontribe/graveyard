@@ -77,6 +77,12 @@ class NT8MapBlock extends BlockBase implements ContainerFactoryPluginInterface {
 
     $mapData = $this->nt8mapService->initMap($properties);
 
+    $build['#attached'] = array(
+      'library' => array(
+        'nt8map/nt8map_lib',
+      ),
+    );
+
     $build['map'] = [
       '#theme' => 'nt8map',
       '#mapdata' => $mapData,
