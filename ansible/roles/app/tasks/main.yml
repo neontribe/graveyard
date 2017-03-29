@@ -1,9 +1,36 @@
 ---
 # application tasks to be customized and to run after the main provision
 
-- name: SDet doc root to /vagrant/web
+- name: Set doc root to /vagrant/web
   lineinfile:
     dest: /etc/apache2/sites-enabled/000-default.conf
     regexp: '^    DocumentRoot /vagrant'
     line: '    DocumentRoot /vagrant/web'
   notify: restart apache
+
+- name: Set doc root to /vagrant/web
+  file:
+    src: /vagrant/vendor/drush/drush/drush
+    dest: /usr/local/bin/drush
+    state: link
+
+- name: Enable the NT8 Theme
+  shell: drush -y en nt8_theme
+  args:
+    chdir: /vagrant/web
+
+- name: Set default theme
+  shell: drush -y config-set system.theme default nt8_theme
+  args:
+    chdir: /vagrant/web
+
+- name: Enable the NT8 Modules
+  shell: drush -y en nt8images nt8map nt8property nt8search nt8tabsio
+  args:
+    chdir: /vagrant/web
+
+#- name: Import properties
+#  shell: ls
+#  args:
+#    chdir: /vagrant/web
+
