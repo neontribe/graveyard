@@ -1,2 +1,9 @@
 ---
 # application tasks to be customized and to run after the main provision
+
+- name: SDet doc root to /vagrant/web
+  lineinfile:
+    dest: /etc/apache2/sites-enabled/000-default.conf
+    regexp: '^    DocumentRoot /vagrant'
+    line: '    DocumentRoot /vagrant/web'
+  notify: restart apache

@@ -1,3 +1,5 @@
+Vagrant.require_version ">= 1.9"
+
 Vagrant.configure("2") do |config|
 
     config.vm.provider :virtualbox do |v|
@@ -12,14 +14,11 @@ Vagrant.configure("2") do |config|
     end
 
     config.vm.box = "ubuntu/xenial64"
-    config.vm.box_url = "https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-vagrant.box"
 
 
     config.vm.network :private_network, ip: "192.168.33.99"
     config.ssh.forward_agent = true
 
-    # If ansible is in your path it will provision from your HOST machine
-    # If ansible is not found in the path it will be instaled in the VM and provisioned from there
     config.vm.provision "ansible" do |ansible|
         ansible.playbook = "ansible/playbook.yml"
         ansible.inventory_path = "ansible/inventories/dev"
@@ -28,3 +27,5 @@ Vagrant.configure("2") do |config|
 
     config.vm.synced_folder "./", "/vagrant", type: "nfs"
 end
+
+# vim: ai ts=2 sts=2 et sw=2 ft=ruby
