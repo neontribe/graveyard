@@ -220,6 +220,10 @@ class NT8PropertyService {
       $brandcode_info->pricing
     );
 
+    // Placeholder Image Data
+    $config = \Drupal::config('nt8property.config');
+    $placeholder_image_url = $config->get('property-teaser.placeholder-image.url');
+
     $image_data = [];
     $image_links = [];
     if(count($data->images) > 0) {
@@ -234,6 +238,12 @@ class NT8PropertyService {
           'options' => [],
         ];
       }
+    } else {
+      $image_links[] = [
+        'uri' => $placeholder_image_url,
+        'title' => 'Placeholder Image',
+        'options' => [],
+      ];
     }
 
     $return_definition = [
@@ -314,11 +324,7 @@ class NT8PropertyService {
         'family_name' => NULL,
       ],
       'field_cottage_image_info' => $image_data,
-      'field_cottage_featured_image' => self::isset($image_links, 0) ?: [
-        'uri' => '',
-        'title' => '',
-        'options' => [],
-      ],
+      'field_cottage_featured_image' => self::isset($image_links, 0),
       'field_cottage_images' => $image_links,
     ];
 
