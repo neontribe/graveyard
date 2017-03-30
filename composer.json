@@ -1,0 +1,12 @@
+{
+    "name": "neontabs/nt8_theme",
+    "description": "Module Framework For TABS Based Cottage Websites",
+    "license": "GPL-2.0+",
+    "require": {
+        "php": "^7.0",
+    },
+    "require-dev": {
+        "phpmd/phpmd" : "@stable"
+    },
+    "type": "drupal-theme"
+}
