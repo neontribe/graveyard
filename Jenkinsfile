@@ -1,4 +1,4 @@
-node {
+pipeline {
     agent any
 
     stages {
@@ -7,7 +7,7 @@ node {
                 git url: 'git@github.com:neontabs/nt8.git', branch: 'develop'
             }
         }
-        stage('Test') {
+        stage('Test'){
             steps {
                 sh 'find . \\( -name \'*.php\' -o -name \'*.module\' -o -name \'*.inc\' -o -name \'*.install\' \\) -exec phpcs --standard=Drupal {} +'
             }
