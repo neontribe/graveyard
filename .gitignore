@@ -34,3 +34,7 @@ xmlrpc.php
 /profiles
 /scripts
 /themes
+
+# Netbeans Related Ignores
+/nbproject/private/
+nbproject
