@@ -38,3 +38,6 @@ xmlrpc.php
 # Netbeans Related Ignores
 /nbproject/private/
 nbproject
+
+# PHPStorm Related Ignores
+.idea
