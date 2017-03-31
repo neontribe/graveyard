@@ -36,7 +36,8 @@ class NT8PropertyService {
 
     foreach($proprefs as $propref) {
       $nodes = $this->loadNodesFromPropref($propref);
-      if(!isset($nodes)) continue;
+      if (!isset($nodes))
+        continue;
 
       foreach($nodes as $node) {
         $loadedNodes[$propref][] = $node;
@@ -126,12 +127,12 @@ class NT8PropertyService {
         // If the field has more than 1 entries set the comparison to the value of the current entry.
         // We keep track of current entry by incrementing the `updateIndex` counter.
         if($length_of_update_fields > 1) {
-          $comparisonUpdate = self::isset($updatedValue, $updateIndex++) ?: $updatedValue;
+          $comparisonUpdate = self::_isset($updatedValue, $updateIndex++) ? : $updatedValue;
         }
 
         // Sometimes the data to compare is nested another level deep.
         // This retrieves it and lets the program continue as if it were a flat array.
-        $nestedComparison = self::isset($comparisonUpdate, 0);
+        $nestedComparison = self::_isset($comparisonUpdate, 0);
         if($nestedComparison && is_array($nestedComparison)) {
           $comparisonUpdate = $nestedComparison;
         }
@@ -162,9 +163,10 @@ class NT8PropertyService {
       throw new \Exception($data->errorCode);
     }
 
+    $nodeStorage = $this->entityTypeManager->getStorage('node');
+
     if($deleteExisting) {
       $nodeQuery = $this->entityQuery->get('node');
-      $nodeStorage = $this->entityTypeManager->getStorage('node');
       $nids = $nodeQuery->condition('field_cottage_reference_code.value', $data->propertyRef, '=')->execute();
 
       if(count($nids) > 0) {
@@ -203,7 +205,7 @@ class NT8PropertyService {
   }
 
   // If a key is set in the provided array return the value or false if it isn't. (helper function).
-  public static function isset($array, $key = '') {
+  public static function _isset($array, $key = '') {
     return isset($array[$key]) ? $array[$key] : FALSE;
   }
 
@@ -324,7 +326,7 @@ class NT8PropertyService {
         'family_name' => NULL,
       ],
       'field_cottage_image_info' => $image_data,
-      'field_cottage_featured_image' => self::isset($image_links, 0),
+      'field_cottage_featured_image' => self::_isset($image_links, 0),
       'field_cottage_images' => $image_links,
     ];
 

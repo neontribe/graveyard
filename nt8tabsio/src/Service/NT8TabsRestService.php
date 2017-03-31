@@ -21,10 +21,6 @@ class NT8TabsRestService {
     $this->pubkey = \Drupal::config('nt8tabsio.settings')->get('key');
     $this->secret = \Drupal::config('nt8tabsio.settings')->get('secret');
     $this->uri = \Drupal::config('nt8tabsio.settings')->get('uri');
-
-    \Drupal::logger('NT8TabsRestService')->info('Pubkey: @pubkey', array('@pubkey' => $this->pubkey));
-    \Drupal::logger('NT8TabsRestService')->info('Secret: @secret', array('@secret' => $this->secret));
-    \Drupal::logger('NT8TabsRestService')->info('URI: @uri', array('@uri' => $this->uri));
   }
 
   /**
