@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                git url: 'git@github.com:neontabs/nt8.git', branch: 'develop'
+                git url: 'git@github.com:neontabs/nt8.git'
             }
         }
         stage('Test'){
