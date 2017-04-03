@@ -7,14 +7,16 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\nt8tabsio\Service\NT8TabsRestService;
 
 /**
- * Description of NT8TabsIOController
+ * Description of NT8TabsIOController.
  *
  * @author tobias@neontribe.co.uk
  */
 class NT8TabsIOController extends ControllerBase {
 
   /**
-   * @var \Drupal\nt8tabsio\Service\NT8TabsRestService
+   * Instance of NT8TabsRestService.
+   *
+   * @var \Drupal\nttabsio\Service\NTTabsRestService
    */
   protected $nt8TabsRestService;
 
@@ -32,6 +34,9 @@ class NT8TabsIOController extends ControllerBase {
     return new static($container->get('nt8tabsio.tabs_service'));
   }
 
+  /**
+   * A sample status page.
+   */
   public function status() {
     $apidata = $this->nt8TabsRestService->get('property/H610_ZZ');
     return [

@@ -6,7 +6,6 @@ use Drupal\nt8property\Service\NT8PropertyService;
 use Drupal\nt8tabsio\Service\NT8TabsRestService;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Entity\Query\QueryFactory;
-use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Class NT8SearchService.
@@ -41,37 +40,46 @@ class NT8SearchService {
   }
 
   /**
-   * @param array $param_values
-   * @param array $loadNodes
+   * Performs a search on the TABS API with the specified paramaters.
    *
-   * @return mixed
+   * @param array $param_values
+   *   Search definition provided as an array of parameter values.
+   * @param array $loadNodes
+   *   Array into which the result of the search should be loaded as nodes.
+   *
+   * @return \stdClass
+   *   The json decoded result of the search.
    */
   public function performSearchFromParams(array $param_values, array &$loadNodes) {
     // Get the sanitised query information.
     $queryInfo = self::extractQueryInfoFromValues($param_values);
 
-    // Filters
+    // Filters.
     $filterInfo = $queryInfo['filters'];
 
     // Build a request data array for our search request.
     $requestData = array_merge([
       'fields' => 'propertyRef',
-      'pageSize' => 12 // TODO: Default page size should be stored in the site config.
+    // TODO: Default page size should be stored in the site config.
+      'pageSize' => 12,
     ], $filterInfo);
 
     // Execute the search request.
     $searchResult = $this->executeSearchRequest($requestData);
 
+    // @TODO Never show errors to the user! Change how logging is done here.
     // If the user has passed an array into $loadNodes fill it.
-    if(isset($searchResult->results)) {
+    if (isset($searchResult->results)) {
       $loadNodes = self::loadResultIntoNodes($searchResult->results);
 
-      if(!isset($loadNodes)) {
+      if (!isset($loadNodes)) {
         $loadNodes['error'] = \Drupal::translation()->translate('We failed to load any properties for this request.');
       }
-    } else if(isset($searchResult->errorCode)) {
+    }
+    elseif (isset($searchResult->errorCode)) {
       $loadNodes['error'] = \Drupal::translation()->translate('A fatal TABS error has occurred. Error Code: @errorCode.', ['@errorCode' => $searchResult->errorCode ?: 'Unknown.']);
-    } else {
+    }
+    else {
       $loadNodes['error'] = \Drupal::translation()->translate('We couldn\'t hit the TABS API.');
     }
 
@@ -79,31 +87,42 @@ class NT8SearchService {
   }
 
   /**
-   * @param $searchRequest
-   * @return mixed
+   * Executes a search request based upon the provided params.
+   *
+   * @param array $searchRequest
+   *   Array of filters used to define the search.
+   *
+   * @return \stdClass
+   *   json_decoded TABS search result.
    */
-  public function executeSearchRequest($searchRequest) {
+  public function executeSearchRequest(array $searchRequest) {
     $api_response = $this->nt8tabsioTabsService->get(
       'property', $searchRequest
     );
 
     $decoded_api_response = json_decode($api_response);
 
-    if(isset($decoded_api_response->errorCode)) {
+    if (isset($decoded_api_response->errorCode)) {
       \Drupal::logger('NT8SearchService')->error(
         "Tabs property search returned an error: \r\n @tabsErrorCode: @tabsErrorMessage.",
         [
           '@tabsErrorCode' => $decoded_api_response->errorCode,
-          '@tabsErrorMessage' => $decoded_api_response->errorDescription ?: 'No Description Provided'
-      ]);
+          '@tabsErrorMessage' => $decoded_api_response->errorDescription ?: 'No Description Provided',
+        ]
+      );
     }
 
     return $decoded_api_response;
   }
 
   /**
+   * Sanitises user inputted search field values before passing to TABS.
+   *
    * @param array $form_values
+   *   Values passed in upon form post.
+   *
    * @return array
+   *   Returns an array of filtered parameters.
    */
   protected static function extractQueryInfoFromValues(array $form_values) {
     $queryInfo = [
@@ -119,17 +138,17 @@ class NT8SearchService {
     foreach ($form_values as $value_key => $value_data) {
       $name_type = explode('-', $value_key);
 
-      $value_name = self::iak($name_type, 0);
-      $value_type = self::iak($name_type, 1) ?: 'filters';
+      $value_name = self::issetGet($name_type, 0);
+      $value_type = self::issetGet($name_type, 1) ?: 'filters';
 
-      if(isset($queryInfo[$value_type])) {
-        if($value_data !== '') {
+      if (isset($queryInfo[$value_type])) {
+        if ($value_data !== '') {
 
-          $typeModification = self::iak($typeModifications, $value_name);
-          if($typeModification) {
+          $typeModification = self::issetGet($typeModifications, $value_name);
+          if ($typeModification) {
             $value_data_mod = call_user_func(__NAMESPACE__ . $typeModification, $value_data);
 
-            if(isset($value_data_mod) && $value_data_mod) {
+            if (isset($value_data_mod) && $value_data_mod) {
               $value_data = $value_data_mod;
             }
           }
@@ -143,15 +162,22 @@ class NT8SearchService {
   }
 
   /**
-   * @param \stdClass $apiSearchResult
-   * @return array
+   * Loads a set of NIDs returned by a property search from the database.
+   *
+   * @param array $apiSearchResults
+   *   Array of NIDs.
+   *
+   * @return array|null
+   *   Array of nodes loaded from the DB.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    */
   protected function loadResultIntoNodes(array $apiSearchResults) {
     $loadedNodes = NULL;
 
-    if(isset($apiSearchResults)) {
+    if (isset($apiSearchResults)) {
       // Map the API search result (Proprefs) into a simple array of Proprefs.
-      $mappedResults = array_map(function( $property ) {
+      $mappedResults = array_map(function ($property) {
         return $property->propertyRef;
       }, $apiSearchResults);
 
@@ -161,22 +187,28 @@ class NT8SearchService {
     return $loadedNodes;
   }
 
-  // Converts a date into Tabs' date required date format.
+  /**
+   * Converts a date into Tabs' date required date format.
+   */
   protected static function tabsDateFormat($originalDate) {
-    $converted = date("d-m-Y", strtotime($originalDate) );
+    $converted = date("d-m-Y", strtotime($originalDate));
 
     return $converted;
   }
 
-  // If a key is set in the provided array return the value or false if it isn't. (helper function).
-
-
   /**
-   * @param $array
-   * @param string $key
-   * @return mixed
+   * Checks if a value is set in an array and returns the value if is true.
+   *
+   * @param array $array
+   *   Array to check.
+   * @param mixed $key
+   *   Key to access the passed in array.
+   *
+   * @return bool|mixed
+   *   Returns value stored under $key in the array otherwise defaults to FALSE.
    */
-  public static function iak(array $array, $key = '') {
+  public static function issetGet(array $array, $key) {
     return isset($array[$key]) ? $array[$key] : FALSE;
   }
+
 }

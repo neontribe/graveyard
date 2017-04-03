@@ -32,16 +32,19 @@ class NT8MapBlock extends BlockBase implements ContainerFactoryPluginInterface {
    */
   protected $nt8mapService;
 
-
   /**
-   * Construct.
+   * NT8MapBlock constructor.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
    * @param string $plugin_id
    *   The plugin_id for the plugin instance.
-   * @param string $plugin_definition
+   * @param mixed $plugin_definition
    *   The plugin implementation definition.
+   * @param \Drupal\nt8tabsio\Service\NT8TabsRestService $nt8tabsio_tabs_service
+   *   Instance of NT8TabsRestService.
+   * @param \Drupal\nt8map\Service\NT8MapService $nt8map_service
+   *   Instance of NT8MapService.
    */
   public function __construct(
         array $configuration,
@@ -54,6 +57,7 @@ class NT8MapBlock extends BlockBase implements ContainerFactoryPluginInterface {
     $this->nt8tabsioTabsService = $nt8tabsio_tabs_service;
     $this->nt8mapService = $nt8map_service;
   }
+
   /**
    * {@inheritdoc}
    */
@@ -66,6 +70,7 @@ class NT8MapBlock extends BlockBase implements ContainerFactoryPluginInterface {
       $container->get('nt8map.methods')
     );
   }
+
   /**
    * {@inheritdoc}
    */
@@ -77,11 +82,11 @@ class NT8MapBlock extends BlockBase implements ContainerFactoryPluginInterface {
 
     $mapData = $this->nt8mapService->initMap($properties);
 
-    $build['#attached'] = array(
-      'library' => array(
+    $build['#attached'] = [
+      'library' => [
         'nt8map/nt8map_lib',
-      ),
-    );
+      ],
+    ];
 
     $build['map'] = [
       '#theme' => 'nt8map',

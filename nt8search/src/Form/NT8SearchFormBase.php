@@ -4,10 +4,10 @@ namespace Drupal\nt8search\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Datetime\DrupalDateTime;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\nt8tabsio\Service\NT8TabsRestService;
 use Drupal\nt8search\Service\NT8SearchService;
+
 /**
  * Class NT8SearchFormBase.
  *
@@ -29,21 +29,38 @@ class NT8SearchFormBase extends FormBase {
    */
   protected $nt8searchMethodsService;
 
+  /**
+   * NT8SearchFormBase constructor.
+   *
+   * @param \Drupal\nt8tabsio\Service\NT8TabsRestService $nt8tabsio_tabs_service
+   *   Instance of the tabs rest service.
+   * @param \Drupal\nt8search\Service\NT8SearchService $nt8search_methods_service
+   *   Instance of the tabs search service.
+   */
   public function __construct(
     NT8TabsRestService $nt8tabsio_tabs_service,
     NT8SearchService $nt8search_methods_service
   ) {
     $this->nt8tabsioTabsService = $nt8tabsio_tabs_service;
+
+    // @TODO: We only include this service for access to the helper function.
     $this->nt8searchMethodsService = $nt8search_methods_service;
   }
 
+  /**
+   * Drupal container instantiation wrapper function.
+   *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   Container used for dependency injection via Symfony and .service.yml.
+   *
+   * @return static
+   */
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('nt8tabsio.tabs_service'),
       $container->get('nt8search.methods')
     );
   }
-
 
   /**
    * {@inheritdoc}
@@ -60,11 +77,11 @@ class NT8SearchFormBase extends FormBase {
 
     $form['#cache'] = ['max-age' => 0];
 
-    //TODO: break these out into their own field definitions??
+    // TODO: break these out into their own field definitions??
     $form['fromDate'] = [
       '#type' => 'date',
       '#title' => $this->t('Arrival Date'),
-      '#default_value' => $this->nt8searchMethodsService->iak($query_items, 'fromDate') ?: date('Y-m-d'),
+      '#default_value' => $this->nt8searchMethodsService->issetGet($query_items, 'fromDate') ?: date('Y-m-d'),
       '#date_date_format' => 'd-m-Y',
     ];
 
@@ -72,37 +89,38 @@ class NT8SearchFormBase extends FormBase {
       '#type' => 'select',
       '#title' => $this->t('Nights'),
 
-      '#options' => array( // TODO: Move these options into configuation (NOT leave them hardcoded).
+    // TODO: Move these options into configuation (NOT leave them hardcoded).
+      '#options' => [
         '' => $this->t('Any'),
         '1' => $this->t('1'),
         '2' => $this->t('2'),
         '3' => $this->t('3'),
         '4' => $this->t('4'),
         '5' => $this->t('5'),
-      ),
-      '#default_value' => $this->nt8searchMethodsService->iak($query_items, 'nights') ?: '',
+      ],
+      '#default_value' => $this->nt8searchMethodsService->issetGet($query_items, 'nights') ?: '',
     ];
 
     $form['accommodates'] = [
       '#type' => 'select',
       '#title' => $this->t('People'),
-      '#options' => array(
+      '#options' => [
         '' => $this->t('Any'),
         '1' => $this->t('1'),
         '2' => $this->t('2'),
         '3' => $this->t('3'),
         '4' => $this->t('4'),
         '>5' => $this->t('5+'),
-      ),
-      '#default_value' => $this->nt8searchMethodsService->iak($query_items, 'accommodates') ?: '',
+      ],
+      '#default_value' => $this->nt8searchMethodsService->issetGet($query_items, 'accommodates') ?: '',
     ];
 
     $form['name'] = [
       '#type' => 'textfield',
-      '#default_value' => $this->nt8searchMethodsService->iak($query_items, 'name') ?: '',
+      '#default_value' => $this->nt8searchMethodsService->issetGet($query_items, 'name') ?: '',
       '#title' => $this->t('Property Name/Reference'),
       '#maxlength' => 32,
-      '#size' => 15
+      '#size' => 15,
     ];
 
     $form['search'] = [
@@ -112,13 +130,6 @@ class NT8SearchFormBase extends FormBase {
     ];
 
     return $form;
-  }
-
-  /**
-    * {@inheritdoc}
-    */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    parent::validateForm($form, $form_state);
   }
 
   /**

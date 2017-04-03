@@ -10,7 +10,7 @@ use Drupal\simpletest\WebTestBase;
  *
  * @group nt8property
  */
-class LoadTest extends WebTestBase{
+class LoadTest extends WebTestBase {
 
   /**
    * Modules to enable.
