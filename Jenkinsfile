@@ -9,7 +9,7 @@ pipeline {
         }
         stage('Test'){
             steps {
-                sh 'find . \\( -name \'*.php\' -o -name \'*.module\' -o -name \'*.inc\' -o -name \'*.install\' \\) -exec phpcs --standard=Drupal {} +'
+                sh 'find . \\( -name \'*.php\' -o -name \'*.module\' -o -name \'*.inc\' -o -name \'*.install\' \\) -exec ~/.composer/vendor/bin/phpcs --standard=Drupal {} +'
             }
         }
     }
