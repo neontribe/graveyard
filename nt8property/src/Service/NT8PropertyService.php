@@ -7,6 +7,8 @@ use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\nt8tabsio\Service\NT8TabsRestService;
 
+use Drupal\taxonomy\Entity\Term;
+
 /**
  * Provides the methods necessary to manage properties in Neontabs.
  *
@@ -35,6 +37,148 @@ class NT8PropertyService {
     $this->entityQuery = $entityQuery;
     $this->entityTypeManager = $entityTypeManager;
     $this->nt8RestService = $nt8RestService;
+  }
+
+  /**
+   * Fetches data for the specified attributes from Tabs.
+   *
+   * @param array $limit
+   *   Limit the returned results by attribute code.
+   *   Example: $limit = [ 'ATTR01', 'ATTR02' ]
+   *   This will only return data for those attributes from the API.
+   *   If an empty array is passed all of the data will be returned.
+   *
+   * @return array
+   *   Data for each attribute contained in an array.
+   */
+  public function getAttributeDataFromTabs(array $limit = []) {
+    $api_root_data = json_decode($this->nt8RestService->get('/'));
+    $attrib_data = $api_root_data->constants->attributes;
+
+    if (count($limit) > 0) {
+      $attrib_data = array_filter($attrib_data, function ($value) use ($limit) {
+        $attr_code = $value->code ?: '';
+        if (in_array($attr_code, $limit)) {
+          return TRUE;
+        }
+
+        return FALSE;
+      });
+    }
+
+    return $attrib_data;
+  }
+
+  /**
+   * Loads every term listed in $term_names.
+   *
+   * @param string $vocab_name
+   *   Vocabulary Name.
+   * @param array $term_names
+   *   Array of term names to load. Leave blank to load all terms in vocab.
+   * @param callable $term_callback
+   *   Callback which is fired for each term loaded.
+   *   $term_callback($termEntity, $id).
+   *
+   * @return array
+   *   An array of loaded term entities.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   */
+  public static function loadTermsByNames(string $vocab_name, array $term_names = [], callable $term_callback = NULL) {
+    $loaded_terms = NULL;
+
+    if (count($term_names) === 0) {
+      $loaded_terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vocab_name, 0, 1, TRUE);
+    }
+    else {
+      foreach ($term_names as $term_name) {
+        $_loaded = taxonomy_term_load_multiple_by_name($term_name, $vocab_name);
+        if (isset($_loaded) && $_loaded) {
+          foreach ($_loaded as $tid => $termEntity) {
+            if ($termEntity instanceof Term) {
+              $loaded_terms[$tid] = $termEntity;
+            }
+            else {
+              $loaded_terms[$tid] = NULL;
+            }
+          }
+        }
+      }
+    }
+
+    if (is_callable($term_callback) &&
+      is_array($loaded_terms) &&
+      count($loaded_terms) > 0
+    ) {
+      foreach ($loaded_terms as $id => $termEntity) {
+        if ($termEntity instanceof Term) {
+          $term_callback($termEntity, $id);
+        }
+      }
+    }
+
+    return $loaded_terms;
+  }
+
+  /**
+   * Populates the cottage_attributes taxonomy with data from TABS.
+   *
+   * @param array $attrib_data
+   *   The response array retrieved from TABS.
+   *
+   * @return string
+   *   A comma separated list of created/updated entries in the taxonomy.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   * @throws \Drupal\Core\Entity\Exception\AmbiguousEntityClassException
+   * @throws \Drupal\Core\Entity\Exception\NoCorrespondingEntityClassException
+   */
+  public function createAttributesFromTabs(array $attrib_data = []) {
+    // Return value.
+    $updatedAttrs = "";
+
+    $save_status = FALSE;
+
+    foreach ($attrib_data as $attr_key => $attribute) {
+
+      $attr_array = [
+        'field_attribute_code' => ['value' => $attribute->code],
+        'field_attribute_brand' => ['value' => $attribute->brand],
+        'field_attribute_labl' => ['value' => $attribute->label],
+        'field_attribute_group' => ['value' => $attribute->group],
+        'field_attribute_type' => ['value' => $attribute->type],
+      ];
+
+      // TODO: make this a configurable option or let the admin specify it.
+      $attr_array['vid'] = 'cottage_attributes';
+      // The name is needed by the Drupal Taxonomy API.
+      $attr_array['name'] = $attribute->label;
+
+      $term = Term::create($attr_array);
+
+      // Modify terms of the same name if they already exist.
+      $terms = self::loadTermsByNames('cottage_attributes', [$attr_array['name']], function (&$term) use ($attr_array, &$save_status) {
+        $term->field_attribute_code->setValue($attr_array['field_attribute_code']);
+        $term->field_attribute_brand->setValue($attr_array['field_attribute_brand']);
+        $term->field_attribute_labl->setValue($attr_array['field_attribute_labl']);
+        $term->field_attribute_group->setValue($attr_array['field_attribute_group']);
+        $term->field_attribute_type->setValue($attr_array['field_attribute_type']);
+
+        $save_status = $term->save();
+      });
+
+      if (is_null($terms)) {
+        $save_status = $term->save();
+      }
+
+      if ($save_status) {
+        $updatedAttrs .= $attr_array['field_attribute_code']['value'] . ", ";
+      }
+    }
+
+    return $updatedAttrs;
   }
 
   /**
@@ -185,6 +329,21 @@ class NT8PropertyService {
   public static function getNodeField(EntityInterface $node, string $fieldName) {
     return $node->get($fieldName);
   }
+
+  /**
+   * Retrieves a TID for a given term name. Rturns -1 if term couldn't be found.
+   */
+  public static function getTidFromTermName($term_name, $vocab_name) {
+    $tid = -1;
+    if ($terms = taxonomy_term_load_multiple_by_name($term_name, $vocab_name)) {
+      $term = reset($terms);
+      $tid = $term->id();
+    }
+
+    return $tid;
+  }
+
+  /*---------------------------------------------------------------------------------------*/
 
   /**
    * Updates an EntityInterface from a provided array of updated values.
@@ -416,10 +575,32 @@ class NT8PropertyService {
       ];
     }
 
+    $attr_build = [];
+
+    $property_attr_array = (array) $data->attributes ?: [];
+    $attr_keys = array_keys($property_attr_array);
+
+    // Attributes.
+    self::loadTermsByNames(
+      'cottage_attributes',
+      $attr_keys,
+      function (&$term, $id) use ($property_attr_array, &$attr_build) {
+        $attr_name = self::getNodeFieldValue($term, 'field_attribute_labl', 0);
+        $attr_name_val = self::issetGet($property_attr_array, $attr_name);
+        $attr_build[] = [
+          'target_id' => (string) $id,
+          'value' => json_encode($attr_name_val),
+        ];
+      }
+    );
+
     $return_definition = [
       'type' => 'property',
+      'body' => [],
       'promote' => '0',
-      'title' => "$data->name",
+      'title' => [
+        'value' => "$data->name",
+      ],
       'field_cottage_name' => [
         'value' => $data->name,
       ],
@@ -496,13 +677,13 @@ class NT8PropertyService {
       'field_cottage_image_info' => $image_data,
       'field_cottage_featured_image' => self::issetGet($image_links, 0),
       'field_cottage_images' => $image_links,
+      'field_cottage_attributes' => $attr_build,
     ];
 
     // If this isn't for a node discard the Drupal node specific keys.
     if (!$is_node) {
       unset($return_definition['type']);
       unset($return_definition['promote']);
-      unset($return_definition['title']);
     }
 
     return $return_definition;
