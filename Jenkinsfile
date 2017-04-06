@@ -4,12 +4,12 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                git url: 'git@github.com:neontabs/nt8.git', branch: 'develop'
+                git url: 'git@github.com:neontabs/nt8.git', branch: env.BRANCH_NAME
             }
         }
-        stage('Test'){
+        stage('Code Standard'){
             steps {
-                sh 'find . \\( -name \'*.php\' -o -name \'*.module\' -o -name \'*.inc\' -o -name \'*.install\' \\) -exec phpcs --standard=Drupal {} +'
+                sh 'find . \\( -name \'*.php\' -o -name \'*.module\' -o -name \'*.inc\' -o -name \'*.install\' \\) -exec ~/.composer/vendor/bin/phpcs --standard=Drupal {} +'
             }
         }
     }

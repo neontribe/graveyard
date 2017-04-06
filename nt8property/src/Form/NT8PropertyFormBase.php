@@ -2,6 +2,7 @@
 
 namespace Drupal\nt8property\Form;
 
+use GuzzleHttp\Client;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Url;
 use Drupal\Core\Form\FormStateInterface;
@@ -10,6 +11,7 @@ use Drupal\nt8property\Service\NT8PropertyService;
 use Drupal\nt8tabsio\Service\NT8TabsRestService;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
+
 /**
  * Implements an example form.
  */
@@ -36,8 +38,8 @@ class NT8PropertyFormBase extends FormBase {
       '#type' => 'container',
       'title' => [
         '#type' => 'page_title',
-        '#title' => 'NT8 Tabs IO (API)'
-      ]
+        '#title' => 'NT8 Tabs IO (API)',
+      ],
     ];
 
     /*
@@ -51,14 +53,14 @@ class NT8PropertyFormBase extends FormBase {
     $form['nt8_tabsio']['single']['load_single_prop'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Load a single property into drupal (from propref_brandcode).'),
-      '#default_value' => 'H610_ZZ'
+      '#default_value' => 'H610_ZZ',
     ];
 
     $form['nt8_tabsio']['single']['modify_replace_single'] = [
       '#type' => 'radios',
       '#title' => $this->t('Modify Existing or Replace'),
       '#default_value' => 0,
-      '#options' => [ 0 => $this->t('Modify'), 1 => $this->t('Replace') ],
+      '#options' => [0 => $this->t('Modify'), 1 => $this->t('Replace')],
     ];
 
     $form['nt8_tabsio']['single']['actions']['#type'] = 'actions';
@@ -66,7 +68,7 @@ class NT8PropertyFormBase extends FormBase {
       '#type' => 'submit',
       '#name' => 'submit_property',
       '#value' => $this->t('Load Property'),
-      '#submit' => [ [ $this, 'loadProperty' ] ],
+      '#submit' => [[$this, 'loadProperty']],
     ];
 
     /*
@@ -104,7 +106,7 @@ class NT8PropertyFormBase extends FormBase {
       '#type' => 'radios',
       '#title' => $this->t('Modify Existing or Replace'),
       '#default_value' => 0,
-      '#options' => [ 0 => $this->t('Modify'), 1 => $this->t('Replace') ],
+      '#options' => [0 => $this->t('Modify'), 1 => $this->t('Replace')],
     ];
 
     $form['nt8_tabsio']['batch']['actions']['#type'] = 'actions';
@@ -115,14 +117,14 @@ class NT8PropertyFormBase extends FormBase {
       '#name' => 'submit_property_batch_all',
       '#disabled' => 'disabled',
       '#value' => $this->t('Batch Load Listed Properties'),
-      '#submit' => [ [ $this, 'loadPropertyBatchAll' ] ],
+      '#submit' => [[$this, 'loadPropertyBatchAll']],
     ];
 
     $form['nt8_tabsio']['batch']['actions']['submit_property_batch_all'] = [
       '#type' => 'submit',
       '#name' => 'submit_property_batch_all',
       '#value' => $this->t('Batch Load All Properties'),
-      '#submit' => [ [ $this, 'loadPropertyBatchAll' ] ],
+      '#submit' => [[$this, 'loadPropertyBatchAll']],
     ];
 
     /*
@@ -133,8 +135,8 @@ class NT8PropertyFormBase extends FormBase {
       '#type' => 'container',
       'title' => [
         '#type' => 'page_title',
-        '#title' => 'Fixtures'
-      ]
+        '#title' => 'Fixtures',
+      ],
     ];
 
     $form['fixtures']['single_fixture'] = [
@@ -145,7 +147,7 @@ class NT8PropertyFormBase extends FormBase {
     $form['fixtures']['single_fixture']['load_single_prop_fixture'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Load a single property fixture into drupal (from propref_brandcode).'),
-      '#default_value' => 'H610_ZZ'
+      '#default_value' => 'H610_ZZ',
     ];
 
     $form['fixtures']['single_fixture']['actions']['#type'] = 'actions';
@@ -153,13 +155,16 @@ class NT8PropertyFormBase extends FormBase {
       '#type' => 'submit',
       '#name' => 'submit_property_fixture',
       '#value' => $this->t('Load Property'),
-      '#submit' => [ [ $this, 'loadFixture' ] ],
+      '#submit' => [[$this, 'loadFixture']],
     ];
 
     return $form;
   }
 
-  public function __construct(\GuzzleHttp\Client $httpClient,
+  /**
+   * NT8PropertyFormBase class construct method.
+   */
+  public function __construct(Client $httpClient,
                               NT8PropertyService $propertyMethods,
                               NT8TabsRestService $nt8RestService) {
     $this->httpClient = $httpClient;
@@ -193,21 +198,25 @@ class NT8PropertyFormBase extends FormBase {
 
     $node = $this->propertyMethods->createNodeInstanceFromPropref($propref);
 
-    if(isset($node)) {
+    if (isset($node)) {
       $node_name = $node->get('field_cottage_name')->getValue()[0]['value'];
-      $node_ref =  $node->get('field_cottage_reference_code')->getValue()[0]['value'];
+      $node_ref = $node->get('field_cottage_reference_code')->getValue()[0]['value'];
 
       drupal_set_message("New Property Node: [Name: $node_name, Reference: $node_ref] Successfully Created Using Data From The API.");
-    } else {
+    }
+    else {
       drupal_set_message("Node creation unsuccessful: $node");
     }
   }
 
+  /**
+   * Initiates a batch method to load all properties.
+   */
   public function loadPropertyBatchAll(array &$form, FormStateInterface $formState) {
     $batch_size = $form['nt8_tabsio']['batch']['batch_size']['#value'] ?: 6;
 
     // 0 => 'Modify'
-    // 1 => 'Replace'
+    // 1 => 'Replace'.
     $modify_replace = $form['nt8_tabsio']['batch']['modify_replace_batch']['#value'];
 
     $batchSizeList = [
@@ -276,4 +285,5 @@ class NT8PropertyFormBase extends FormBase {
 
     drupal_set_message("New Property Node: [Name: $data->name, Reference: $data->propertyRef] Successfully Created Using The Specified Fixture Data.");
   }
+
 }

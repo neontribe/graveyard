@@ -8,8 +8,6 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\nt8tabsio\Service\NT8TabsRestService;
 
-use Drupal\nt8search\Form;
-
 /**
  * Provides a 'NT8SearchBlock' block.
  *
@@ -26,8 +24,9 @@ class NT8SearchBlock extends BlockBase implements ContainerFactoryPluginInterfac
    * @var \Drupal\nt8tabsio\Service\NT8TabsRestService
    */
   protected $nt8tabsioTabsService;
+
   /**
-   * Construct.
+   * NT8SearchBlock constructor.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -35,6 +34,8 @@ class NT8SearchBlock extends BlockBase implements ContainerFactoryPluginInterfac
    *   The plugin_id for the plugin instance.
    * @param string $plugin_definition
    *   The plugin implementation definition.
+   * @param \Drupal\nt8tabsio\Service\NT8TabsRestService $nt8tabsio_tabs_service
+   *   Instance of NT8TabsIO service.
    */
   public function __construct(
         array $configuration,
@@ -61,16 +62,7 @@ class NT8SearchBlock extends BlockBase implements ContainerFactoryPluginInterfac
   /**
    * {@inheritdoc}
    */
-  public function defaultConfiguration() {
-    return parent::defaultConfiguration();
-
- }
-
-  /**
-   * {@inheritdoc}
-   */
   public function blockForm($form, FormStateInterface $form_state) {
-
     return $form;
   }
 
@@ -86,11 +78,11 @@ class NT8SearchBlock extends BlockBase implements ContainerFactoryPluginInterfac
    */
   public function build() {
     $build = [
-      '#cache' => array(
-        'contexts' => array(
+      '#cache' => [
+        'contexts' => [
           'url.path',
-        ),
-      ),
+        ],
+      ],
     ];
 
     $builtForm = \Drupal::formBuilder()->getForm('Drupal\nt8search\Form\NT8SearchFormBase');

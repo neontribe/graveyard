@@ -2,6 +2,7 @@
 
 namespace Drupal\nt8search\Controller;
 
+use Drupal\Core\Url;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\node\Entity\Node;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -10,13 +11,15 @@ use Drupal\nt8tabsio\Service\NT8TabsRestService;
 use Drupal\nt8search\Service\NT8SearchService;
 
 /**
- * Description of NT8TabsIOController
+ * Description of NT8TabsIOController.
  *
  * @author tobias@neontribe.co.uk
  */
 class NT8SearchController extends ControllerBase {
 
   /**
+   * Drupal\nt8tabsio\Service\NT8TabsRestService definition.
+   *
    * @var \Drupal\nt8tabsio\Service\NT8TabsRestService
    */
   protected $nt8TabsRestService;
@@ -47,10 +50,24 @@ class NT8SearchController extends ControllerBase {
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getTitle() {
     return 'Cottage Search';
   }
 
+  /**
+   * Search page controller.
+   *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   Request as passed by Symfony.
+   *
+   * @return array
+   *   Render array describing the search page.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   */
   public function search(Request $request) {
     $posted_values = $request->query->all();
 
@@ -59,10 +76,10 @@ class NT8SearchController extends ControllerBase {
     $loadedResultsAsNodes = [];
     $search_results = $this->nt8searchMethodsService->performSearchFromParams($posted_values, $loadedResultsAsNodes);
 
-    $search_error = $this->nt8searchMethodsService->iak($loadedResultsAsNodes, 'error') ?: NULL;
+    $search_error = $this->nt8searchMethodsService->issetGet($loadedResultsAsNodes, 'error') ?: NULL;
 
-    if(isset($search_error)) {
-      //TODO: Make this output optional/configurable.
+    if (isset($search_error)) {
+      // TODO: Make this output optional/configurable.
       $renderOutput['error'] = [
         '#prefix' => '<h2>',
         '#suffix' => '</h2>',
@@ -72,17 +89,14 @@ class NT8SearchController extends ControllerBase {
       return $renderOutput;
     }
 
-    if(isset($search_results) && isset($loadedResultsAsNodes)) {
+    if (isset($search_results) && isset($loadedResultsAsNodes)) {
       $totalResults = $search_results->totalResults;
       $pageSize = $search_results->pageSize;
 
-
       $page = pager_default_initialize($totalResults, $pageSize);
-
 
       $mapBlock = \Drupal::service('plugin.manager.block')->createInstance('nt8map_block', ['properties' => $loadedResultsAsNodes]);
       $renderOutput['custom_block_output'] = $mapBlock->build();
-
 
       $renderOutput['result_container'] = [
         '#type' => 'container',
@@ -101,16 +115,16 @@ class NT8SearchController extends ControllerBase {
         ],
       ];
 
-      foreach($loadedResultsAsNodes as $search_result_key => $search_result) {
-        $first_of_type = $this->nt8searchMethodsService->iak($search_result, 0);
+      foreach ($loadedResultsAsNodes as $search_result_key => $search_result) {
+        $first_of_type = $this->nt8searchMethodsService->issetGet($search_result, 0);
 
         $error_msg = NULL;
-        if(is_array($first_of_type)) {
-          $error_msg = $this->nt8searchMethodsService->iak($first_of_type, 'error');
+        if (is_array($first_of_type)) {
+          $error_msg = $this->nt8searchMethodsService->issetGet($first_of_type, 'error');
         }
 
-        // TODO: Create config option which allows us to toggle error messages like this.
-        if($error_msg) {
+        // TODO: Create config option for toggling error messages like this.
+        if ($error_msg) {
           $renderOutput['result_container']['results'][] = [
             '#prefix' => '<h4>',
             '#suffix' => '</h4>',
@@ -122,11 +136,12 @@ class NT8SearchController extends ControllerBase {
               'submit' => [
                 '#title' => $this->t('Load Property'),
                 '#type' => 'link',
-                '#url' => \Drupal\Core\Url::fromRoute('property.generate_single', ['propRef' => $search_result_key . '_' . \Drupal::config('nt8tabsio.settings')->get('id')])
-              ]
-            ]
+                '#url' => Url::fromRoute('property.generate_single', ['propRef' => $search_result_key . '_' . \Drupal::config('nt8tabsio.settings')->get('id')]),
+              ],
+            ],
           ];
-        } else if($first_of_type instanceof Node) {
+        }
+        elseif ($first_of_type instanceof Node) {
           $renderOutput['result_container']['results'][] = \Drupal::entityTypeManager()->getViewBuilder('node')->view($first_of_type, 'teaser');
         }
       }

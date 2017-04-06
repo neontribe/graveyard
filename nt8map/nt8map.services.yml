@@ -2,4 +2,3 @@ services:
   nt8map.methods:
     class: Drupal\nt8map\Service\NT8MapService
     arguments: []
-

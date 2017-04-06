@@ -16,7 +16,7 @@ The aim of this project is to create a series of modules which, when tied togeth
 | [Neontabs 8 Property](https://github.com/neontribe/nt8/blob/master/nt8property/nt8property.info.yml)                        | Provides a "Property" content type and all the necessary functionality wrapped in a service in order to load a property (via fixture or the Drupal Batch API) from TABS. | Initial Release |
 | [Neontabs 8 Search](https://github.com/neontribe/nt8/blob/master/nt8search/nt8search.info.yml)                        | This will provide a service which exposes all the necessary functionality to easily interact with the TABS property search API along with a base search form and block implementation (will be expanded) | Initial Release        |
 | [Neontabs 8 TabsIO](https://github.com/neontribe/nt8/blob/master/nt8tabsio/nt8tabsio.info.yml)                        | Provides the core service used to interact with the tabs api. Handles all requests made to and from the API. | Initial Release        |
-| [Neontabs 8 Images](https://github.com/neontribe/nt8/blob/master/nt8images/nt8images.info.yml)                         | Under Development                        | Initial Release        |
+
  
 ### Current Installation Procedure
  **Could change at any time**
@@ -37,4 +37,3 @@ The aim of this project is to create a series of modules which, when tied togeth
     
 ```
  **Please log any errors or problems which you may encounter as an issue - please remember that this is at a very early stage of development so a lot of things may be broken/not working.**
-

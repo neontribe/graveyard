@@ -3,7 +3,7 @@
 namespace Drupal\nt8tabsio\Service;
 
 /**
- * Description of NT8TabsIOController
+ * Description of NT8TabsIOController.
  *
  * @author tobias
  */
@@ -46,12 +46,12 @@ class NT8TabsRestService {
    *
    * @throws \Exception
    */
-  public function __call($method, $arguments) {
-    $verbs = array('get', 'post', 'put', 'delete', 'del', 'options');
+  public function __call($method, array $arguments) {
+    $verbs = ['get', 'post', 'put', 'delete', 'del', 'options'];
     if (in_array($method, $verbs)) {
       array_unshift($arguments, strtoupper($method));
 
-      return call_user_func_array(array($this, 'rest'), $arguments);
+      return call_user_func_array([$this, 'rest'], $arguments);
     }
 
     if (strlen($method) > 3) {
@@ -96,11 +96,11 @@ class NT8TabsRestService {
       $params = $args[1];
     }
     else {
-      $params = array();
+      $params = [];
     }
 
-    $restdata = $this->hmacEncode(array('data' => json_encode($params)));
-    $querydata = array();
+    $restdata = $this->hmacEncode(['data' => json_encode($params)]);
+    $querydata = [];
 
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
@@ -109,7 +109,7 @@ class NT8TabsRestService {
     curl_setopt($curl, CURLOPT_USERAGENT, "neontribe/nt8");
     curl_setopt($curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
     curl_setopt($curl, CURLOPT_SAFE_UPLOAD, TRUE);
-    curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
+    curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
 
     switch ($method) {
       case 'OPTIONS':
@@ -123,13 +123,13 @@ class NT8TabsRestService {
       case 'POST':
         curl_setopt($curl, CURLOPT_POST, TRUE);
         curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($restdata, NULL, '&'));
-        $restdata = array();
+        $restdata = [];
         break;
 
       case 'PUT':
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PUT');
         curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($restdata, NULL, '&'));
-        $restdata = array();
+        $restdata = [];
         break;
 
       case 'DELETE':
@@ -138,7 +138,7 @@ class NT8TabsRestService {
         break;
 
       default:
-        watchdog(__METHOD__, 'Invalid method (:method) specified', array(':method' => $method), WATCHDOG_ERROR);
+        watchdog(__METHOD__, 'Invalid method (:method) specified', [':method' => $method], WATCHDOG_ERROR);
         return FALSE;
     }
 
@@ -153,12 +153,12 @@ class NT8TabsRestService {
     if (substr($response_code, 0, 1) != '2') {
       // If we didn't get a 2xx HTTP response, log the responsebody as an error.
       $this->lastError = trim($response_body);
-      $_params = array(
+      $_params = [
         '@method' => $method,
         '@path' => $path,
         '@err' => $this->lastError,
         '@json' => json_encode($params),
-      );
+      ];
       \Drupal::logger('NT8TabsRestService')->error('@method: @path @err @json', $_params);
     }
 
@@ -168,7 +168,9 @@ class NT8TabsRestService {
   }
 
   /**
-   * Extracts page control parameters from the list and stashes the rest in a data element.
+   * Extracts page control parameters.
+   *
+   * From the list and stashes the rest in a data element.
    *
    * @param array $params
    *   The parameters ready to send to the API.
@@ -176,8 +178,8 @@ class NT8TabsRestService {
    * @return array
    *   Cleaned array.
    */
-  protected function filterParams($params) {
-    $filtered_params = array();
+  protected function filterParams(array $params) {
+    $filtered_params = [];
 
     if (isset($params['pageSize'])) {
       $filtered_params['pageSize'] = $params['pageSize'];
@@ -203,7 +205,9 @@ class NT8TabsRestService {
   }
 
   /**
-   * Parse arguments sent to the rest function.  Might be extended in future for callbacks.
+   * Parse arguments sent to the rest function.
+   *
+   * Might be extended in future for callbacks.
    *
    * @param string $method
    *   The HTTP verb to be used to access the service.
@@ -215,9 +219,9 @@ class NT8TabsRestService {
    * @return string
    *   The URI to access the API with.
    */
-  public function buildRequestUrl($method, $path, $data) {
+  public function buildRequestUrl($method, $path, array $data) {
     $url = $this->uri . '/' . $path;
-    if (in_array($method, array('GET', 'DELETE', 'DEL', 'OPTIONS')) && !empty($data)) {
+    if (in_array($method, ['GET', 'DELETE', 'DEL', 'OPTIONS']) && !empty($data)) {
       $url .= '?' . http_build_query($data, '', '&');
     }
 
@@ -246,7 +250,7 @@ class NT8TabsRestService {
    */
   public function toArray() {
     $fields = $this->getFields();
-    $data = array();
+    $data = [];
     foreach ($fields as $field) {
       $func = 'get' . ucfirst($field);
       $data[$field] = $this->$func();
@@ -263,7 +267,7 @@ class NT8TabsRestService {
    * @param string $class
    *   The name of the class to be created.
    *
-   * @return \class
+   * @return \stdClass
    *   The class created.
    */
   public static function factory($data, $class) {
@@ -296,15 +300,11 @@ class NT8TabsRestService {
    *
    * @param array $params
    *   Parameters to encode.
-   * @param string $secret
-   *   Secret key.
-   * @param string $key
-   *   Key.
    *
    * @return array
    *   Parameters.
    */
-  function hmacEncode($params) {
+  public function hmacEncode(array $params) {
     $params['APIKEY'] = $this->pubkey;
     $params['APISECRET'] = $this->secret;
     ksort($params);
@@ -326,7 +326,7 @@ class NT8TabsRestService {
    * @return bool
    *   Passed or failed.
    */
-  function hmacCheck($params, $secret) {
+  public function hmacCheck($params, $secret) {
 
     $hash = $params['hash'];
     unset($params['hash']);
@@ -340,17 +340,17 @@ class NT8TabsRestService {
   /**
    * Hash function.
    *
-   * @param array $data
+   * @param string $data
    *   Data.
    *
    * @return string
    *   The hashed data.
    */
-  function hmacHash($data) {
+  public function hmacHash(string $data) {
 
     return hash('SHA256', $data, FALSE);
   }
 
 }
 
-// vim: set filetype=php expandtab tabstop=2 shiftwidth=2 autoindent smartindent:
+// vim: set filetype=php expandtab ts=2 shiftwidth=2 autoindent smartindent:

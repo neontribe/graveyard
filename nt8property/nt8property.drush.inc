@@ -1,15 +1,15 @@
 <?php
-/**
-* @file
-*
-* Drush property commands.
-*/
 
 /**
-* Implements hook_drush_command().
-*/
+ * @file
+ * Drush property commands.
+ */
+
+/**
+ * Implements hook_drush_command().
+ */
 function nt8property_drush_command() {
-  $items = array();
+  $items = [];
   $items['nt8-import-all'] = [
     'description' => 'Bulk import all properties.',
     'options' => [
@@ -24,10 +24,11 @@ function nt8property_drush_command() {
 }
 
 /**
-* Call back function drush_custom_drush_command_say_hello()
-* The call back function name in the  following format
-*   drush_{module_name}_{item_id_for_command}()
-*/
+ * Call back function drush_custom_drush_command_say_hello()
+ *
+ * The call back function name in the  following format
+ *   drush_{module_name}_{item_id_for_command}()
+ */
 function drush_nt8property_nt8_import_all($name = '') {
   $pageSize = drush_get_option('count', '99999');
   $page = drush_get_option('offset', '0');
@@ -48,10 +49,10 @@ function drush_nt8property_nt8_import_all($name = '') {
   $nt8PropertyMethods = $container->get('nt8property.property_methods');
 
   $response = file_get_contents('/tmp/props.json');
-//  $response = $nt8restService->get("property", $searchParams);
-//  $fh = fopen('/tmp/props.json', 'w');
-//  fwrite($fh, $response);
-//  fclose($fh);
+  // $response = $nt8restService->get("property", $searchParams);
+  // $fh = fopen('/tmp/props.json', 'w');
+  // fwrite($fh, $response);
+  // fclose($fh);
   $data = json_decode($response);
 
   $nodes_updated = [];
