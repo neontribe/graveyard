@@ -10,7 +10,7 @@ composer \
 
 ## drush must be run from the web folder
 
-    cd EntyAte\web
+    cd EntyAte/web
 
 ## Install the site using sqlite
 
@@ -29,9 +29,11 @@ Check the output for the random superadmin password
 ## Enable nt8 modules
 
 ````
-drush en nt8_theme
-drush config-set system.theme default nt8_theme
-drush en ...
+drush en -y nt8_theme
+drush -y config-set system.theme default nt8_theme
+drush en -y nt8tabsio
+drush en -y nt8property
+drush en -y nt8search nt8map
 
 ## Chown files to run as www-data user
 
