@@ -1,56 +1,49 @@
 ---
-# application tasks to be customized and to run after the main provision
 
-- name: Set doc root to /vagrant/web
-  lineinfile:
-    dest: /etc/apache2/sites-enabled/000-default.conf
-    regexp: '^    DocumentRoot /vagrant'
-    line: '    DocumentRoot /vagrant/web'
-  notify: restart apache
-
-- name: Set doc root to /vagrant/web
+- name: Set up drush
   file:
     src: /vagrant/vendor/drush/drush/drush
     dest: /usr/local/bin/drush
     state: link
+  when: installer_root == "/vagrant/web"
 
 - name: Check if site is installed
   stat:
-    path: /vagrant/web/sites/default/files/.ht.sqlite
+    path: "{{ installer_root }}/sites/default/files/.ht.sqlite"
   register: sqlite
 
 - name: Install the default site
   shell: drush -y site-install --db-url=sqlite://sites/default/files/.ht.sqlite --account-mail=${USER}@neontribe.co.uk --account-name=superadmin --site-mail=${USER}@neontribe.co.uk --site-name=EntyAte
   args:
-    chdir: /vagrant/web
-  when: not sqlite.stat.exists
+    chdir: "{{ installer_root }}"
+  when: ( not sqlite.stat.exists ) or ( sqlite.stat.size == 0 )
 
 - name: Enable the NT8 Theme
   shell: drush -y en nt8_theme
   args:
-    chdir: /vagrant/web
+    chdir: "{{ installer_root }}"
 
 - name: Set default theme
   shell: drush -y config-set system.theme default nt8_theme
   args:
-    chdir: /vagrant/web
+    chdir: "{{ installer_root }}"
 
 - name: Enable the NT8 Rest Module
   shell: drush -y en nt8tabsio
   args:
-    chdir: /vagrant/web
+    chdir: "{{ installer_root }}"
 
 - name: Enable the NT8 Property Module
   shell: drush -y en nt8property
   args:
-    chdir: /vagrant/web
+    chdir: "{{ installer_root }}"
 
 - name: Enable the NT8 Search and Map Modules
   shell: drush -y en nt8map nt8search
   args:
-    chdir: /vagrant/web
+    chdir: "{{ installer_root }}"
 
 - name: Import properties
   shell: drush -y nt8-import-all
   args:
-    chdir: /vagrant/web
+    chdir: "{{ installer_root }}"
