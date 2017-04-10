@@ -8,37 +8,10 @@ composer \
     --no-interaction
 ```
 
-## drush must be run from the web folder
+## Chnage to the folder where the vagrant file is:
 
-    cd EntyAte/web
+    cd EntyAte
 
-## Install the site using sqlite
+## The run Vagrant up:
 
-```
-drush \
-    -y site-install \
-    --db-url=sqlite://sites/default/files/.ht.sqlite \
-    --account-mail=${USER}@neontribe.co.uk \
-    --account-name=superadmin \
-    --site-mail=${USER}@neontribe.co.uk \
-    --site-name=EntyAte
-```
-
-Check the output for the random superadmin password
-
-## Enable nt8 modules
-
-````
-drush en -y nt8_theme
-drush -y config-set system.theme default nt8_theme
-drush en -y nt8tabsio
-drush en -y nt8property
-drush en -y nt8search nt8map
-
-## Chown files to run as www-data user
-
-    sudo chown -R www-data:www-data sites/default/files
-
-## Or run using drush
-
-    drush rs
+    vagrant up
