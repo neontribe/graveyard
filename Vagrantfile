@@ -28,7 +28,7 @@ Vagrant.configure("2") do |config|
     end
 
 #     config.vm.synced_folder "./", "/vagrant", type: "nfs"
-    config.vm.synced_folder "./", "/vagrant/web", type: "nfs", mount_options: ['rw', 'vers=3', 'tcp', 'fsc' ,'actimeo=2']
+    config.vm.synced_folder "./", "/vagrant/web", type: "nfs", mount_options: ['rw', 'vers=3', 'tcp', 'fsc' ,'actimeo=2', 'nolock']
 end
 
 # vim: ai ts=2 sts=2 et sw=2 ft=ruby

@@ -13,7 +13,7 @@
   register: sqlite
 
 - name: Install the default site
-  shell: drush -y site-install --db-url=sqlite://sites/default/files/.ht.sqlite --account-mail=${USER}@neontribe.co.uk --account-name=superadmin --site-mail=${USER}@neontribe.co.uk --site-name=EntyAte
+  shell: drush -y site-install --db-url=mysql://nt8:nt8@localhost/nt8 --db-su=root --db-su-pw=change_me --account-mail=${USER}@neontribe.co.uk --account-name=superadmin --site-mail=${USER}@neontribe.co.uk --site-name=EntyAte
   args:
     chdir: "{{ installer_root }}"
   when: ( not sqlite.stat.exists ) or ( sqlite.stat.size == 0 )
