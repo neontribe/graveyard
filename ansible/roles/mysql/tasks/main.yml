@@ -11,6 +11,8 @@
     - mysql-client
     - python-mysqldb
 
+- debug: var=mysql.root_password
+
 - name: mysql | Update root password for all root accounts
   mysql_user: name=root host={{ item }} check_implicit_admin=yes password={{ mysql.root_password }} login_user=root login_password={{ mysql.root_password }}
   with_items:

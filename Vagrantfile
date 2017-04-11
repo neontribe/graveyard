@@ -24,11 +24,11 @@ Vagrant.configure("2") do |config|
         ansible.inventory_path = "ansible/inventories/dev"
         ansible.limit = 'all'
         ansible.extra_vars = { installer_root: '/vagrant/web' }
-        ansible.verbose = "vvv"
+        ansible.verbose = "vv"
     end
 
-#     config.vm.synced_folder "./", "/vagrant", type: "nfs"
-    config.vm.synced_folder "./", "/vagrant/web", type: "nfs", mount_options: ['rw', 'vers=3', 'tcp', 'fsc' ,'actimeo=2', 'nolock']
+    config.vm.synced_folder "./", "/vagrant", type: "nfs"
+    # config.vm.synced_folder "./", "/vagrant/web", type: "nfs", mount_options: ['rw', 'vers=3', 'tcp', 'fsc' ,'actimeo=2', 'nolock']
 end
 
 # vim: ai ts=2 sts=2 et sw=2 ft=ruby
