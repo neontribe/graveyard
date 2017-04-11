@@ -50,7 +50,8 @@ function drush_nt8property_nt8_import_all($name = '') {
 
   if (file_exists('/tmp/props.json')) {
     $response = file_get_contents('/tmp/props.json');
-  } else {
+  }
+  else {
     $response = $nt8restService->get("property", $searchParams);
     $fh = fopen('/tmp/props.json', 'w');
     fwrite($fh, $response);

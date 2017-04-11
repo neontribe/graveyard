@@ -315,11 +315,20 @@ class NT8PropertyFormBase extends FormBase {
   public function loadFixture(array &$form, FormStateInterface $form_state) {
     $propref = $form['fixtures']['single_fixture']['load_single_prop_fixture']['#value'];
 
-    $req_path = Url::fromRoute('property.getFixture', ['propRef' => $propref], ['absolute' => TRUE])->toString();
+    $session_manager = \Drupal::service('session_manager');
 
-    $response = $this->httpClient->get($req_path, []);
+    $session_name = $session_manager->getName();
+    $session_id = $session_manager->getID();
+
+    $req_path = Url::fromRoute('property.getFixture', ['propRef' => $propref], ['absolute' => TRUE]);
+
+    $response = \Drupal::httpClient()->get($req_path->toString(), [
+      'headers' => [
+        'Cookie' => $session_name . '=' . $session_id,
+      ],
+    ]);
+
     $data = json_decode($response->getBody());
-
     $this->propertyMethods->createNodeInstanceFromData($data, TRUE);
 
     drupal_set_message("New Property Node: [Name: $data->name, Reference: $data->propertyRef] Successfully Created Using The Specified Fixture Data.");

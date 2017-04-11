@@ -2,7 +2,6 @@
 
 namespace Drupal\nt8property\Service;
 
-use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Entity\EntityInterface;
