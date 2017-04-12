@@ -17,13 +17,13 @@
 - name: Swap apache to run as uid 1000
   lineinfile:
     path: /etc/apache2/envvars
-    regexp: '^export APACHE_RUN_USER="
+    regexp: '^export APACHE_RUN_USER='
     line: 'export APACHE_RUN_USER=ubuntu'
 
 - name: Swap apache to run as gid 1000
   lineinfile:
     path: /etc/apache2/envvars
-    regexp: '^export APACHE_RUN_GROUP="
+    regexp: '^export APACHE_RUN_GROUP='
     line: 'export APACHE_RUN_GROUP=ubuntu'
 
 - name: Slaken settings.php permnissions
