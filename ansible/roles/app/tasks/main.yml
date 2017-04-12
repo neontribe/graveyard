@@ -16,14 +16,14 @@
 
 - name: Swap apache to run as uid 1000
   lineinfile:
-    path: /etc/apache2/envvars
+    dest: /etc/apache2/envvars
     regexp: '^export APACHE_RUN_USER='
     line: 'export APACHE_RUN_USER=ubuntu'
   when: installer_root == "/vagrant/web"
 
 - name: Swap apache to run as gid 1000
   lineinfile:
-    path: /etc/apache2/envvars
+    dest: /etc/apache2/envvars
     regexp: '^export APACHE_RUN_GROUP='
     line: 'export APACHE_RUN_GROUP=ubuntu'
   when: installer_root == "/vagrant/web"
