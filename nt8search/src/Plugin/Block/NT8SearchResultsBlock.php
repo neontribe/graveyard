@@ -73,6 +73,9 @@ class NT8SearchResultsBlock extends BlockBase implements ContainerFactoryPluginI
     ];
 
 
+    // @TODO: Make this a config option.
+    $displayPagination = true;
+
     $search_results = NT8SearchService::getSearchState();
 
     // Map the API search result into a simple array of Proprefs.
@@ -89,22 +92,14 @@ class NT8SearchResultsBlock extends BlockBase implements ContainerFactoryPluginI
 
       $page = pager_default_initialize($totalResults, $pageSize);
 
-      $renderOutput['result_container'] = [
-        '#type' => 'container',
-        '#attributes' => [
-          'class' => 'container',
-        ],
-        'results' => [
-          'title' => [
-            '#prefix' => '<h3>',
-            '#suffix' => '</h3>',
-            '#markup' => $this->t('Search Results (@count)', ['@count' => $totalResults]),
-          ],
-          'pager_top' => [
+      if($displayPagination) {
+        $renderOutput['result_container'] = [
+          'pager' => [
             '#type' => 'pager',
-          ],
-        ],
-      ];
+            '#weight' => 10,
+          ]
+        ];
+      }
 
       foreach ($loadedResultsAsNodes as $search_result_key => $search_result) {
         $first_of_type = $this->nt8searchMethods->issetGet($search_result, 0);
@@ -115,10 +110,6 @@ class NT8SearchResultsBlock extends BlockBase implements ContainerFactoryPluginI
           \Drupal::logger('nt8searchcontroller.search')->notice("Unable to load property: $search_result_key.");
         }
       }
-
-      $renderOutput['result_container']['pager_bottom'] = [
-        '#type' => 'pager',
-      ];
     }
 
     return $renderOutput;
