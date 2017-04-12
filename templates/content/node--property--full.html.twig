@@ -80,42 +80,29 @@ not node.isPublished() ? 'node--unpublished',
 view_mode ? 'node--view-mode-' ~ view_mode|clean_class,
 ]
 %}
-{{ attach_library('classy/node') }}<article{{ attributes.addClass(classes) }}>
+{{ attach_library('classy/node') }}
+<article{{ attributes.addClass(classes) }}>
 
-    {% if display_submitted %}
-        <footer class="node__meta">
-            {{ author_picture }}
-            <div{{ author_attributes.addClass('node__submitted') }}>
-                {% trans %}Submitted by {{ author_name }} on {{ date }}{% endtrans %}
-                {{ metadata }}
-            </div>
-        </footer>
-    {% endif %}
+  {{ title_prefix }}
+  {% if not page %}
+    <h3{{ title_attributes }}>
+      <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+    </h3>
+  {% endif %}
+  {{ title_suffix }}
 
-    <div{{ content_attributes.addClass('node__content') }}>
-        {{ content.field_cottage_featured_image }}
+  {% if display_submitted %}
+    <footer class="node__meta">
+      {{ author_picture }}
+      <div{{ author_attributes.addClass('node__submitted') }}>
+        {% trans %}Submitted by {{ author_name }} on {{ date }}{% endtrans %}
+        {{ metadata }}
+      </div>
+    </footer>
+  {% endif %}
 
-        <section class="property-teaser-content">
-          <section class="property-teaser-details">
-            {{ title_prefix }}
-            {% if not page %}
-              <h3{{ title_attributes }}>
-                <a href="{{ url }}" rel="bookmark">{{ label }}</a>
-              </h3>
-            {% endif %}
-            {{ title_suffix }}
-
-            {{ content.field_cottage_rating }}
-
-            {{ content.field_cottage_pets }}
-            {{ content.field_cottage_bedrooms }}
-            {{ content.field_cottage_accommodates }}
-          </section>
-
-          <section class="property-teaser-pricing">
-            {{ content.field_cottage_pricing }}
-          </section>
-        </section>
-    </div>
+  <div{{ content_attributes.addClass('node__content') }}>
+    {{ content.field_cottage_featured_image }}
+  </div>
 
 </article>

@@ -1,0 +1,22 @@
+.region {
+  padding: .25em;
+}
+
+.region-container {
+  display: -ms-flex;
+  display: -webkit-flex;
+  display: flex;
+
+  width: 60%;
+  width: 60vw;
+  margin: 0 auto;
+
+  .region-sidebar-left {
+    width: 20%;
+  }
+
+  .region-content {
+    width: 80%;
+  }
+
+}
