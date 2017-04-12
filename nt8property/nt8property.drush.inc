@@ -48,15 +48,7 @@ function drush_nt8property_nt8_import_all($name = '') {
   $nt8restService = $container->get('nt8tabsio.tabs_service');
   $nt8PropertyMethods = $container->get('nt8property.property_methods');
 
-  if (file_exists('/tmp/props.json')) {
-    $response = file_get_contents('/tmp/props.json');
-  }
-  else {
-    $response = $nt8restService->get("property", $searchParams);
-    $fh = fopen('/tmp/props.json', 'w');
-    fwrite($fh, $response);
-    fclose($fh);
-  }
+  $response = $nt8restService->get("property", $searchParams);
   $data = json_decode($response);
 
   $nodes_updated = [];
