@@ -8,16 +8,35 @@
   when: installer_root == "/vagrant/web"
 
 - name: Check if site is installed
-  stat:
-    path: "{{ installer_root }}/sites/default/files/.ht.sqlite"
-  register: sqlite
+  shell: 'drush status bootstrap | grep -q Successful'
+  args:
+    chdir: "{{ installer_root }}"
+  register: site_status
+  ignore_errors: yes
 
-- name: Install the default site
-  # shell: drush -y site-install --db-url=sqlite://var/tmp/nt8.ht.sqlite --account-mail=${USER}@neontribe.co.uk --account-name=superadmin --site-mail=${USER}@neontribe.co.uk --site-name=EntyAte
+- name: Slaken settings.php permnissions
+  file:
+    path: "{{ installer_root }}/sites/default/settings.php"
+    mode: 0666
+  when: site_status.rc == 1
+
+- name: Install the default site if in VM
   shell: drush -y site-install --db-url=mysql://nt8:nt8@localhost/nt8 --account-mail=${USER}@neontribe.co.uk --account-name=superadmin --site-mail=${USER}@neontribe.co.uk --site-name=EntyAte
   args:
     chdir: "{{ installer_root }}"
-  when: ( not sqlite.stat.exists ) or ( sqlite.stat.size == 0 )
+  when: site_status.rc == 1 and installer_root == "/vagrant/web"
+
+- name: Install the default site if in local machine
+  shell: drush -y site-install --db-url=sqlite://var/tmp/nt8.ht.sqlite --account-mail=${USER}@neontribe.co.uk --account-name=superadmin --site-mail=${USER}@neontribe.co.uk --site-name=EntyAte
+  args:
+    chdir: "{{ installer_root }}"
+  when: site_status.rc == 1 and installer_root != "/vagrant/web"
+
+- name: Tighten settings.php permnissions
+  file:
+    path: "{{ installer_root }}/sites/default/settings.php"
+    mode: 0444
+  when: site_status.rc == 1
 
 - name: Enable the NT8 Theme
   shell: drush -y en nt8_theme

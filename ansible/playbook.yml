@@ -8,7 +8,7 @@
     - vagrant_local
     - apache
     - mysql
-    # - sqlite
+    - sqlite
     - php
     - xdebug
     - composer
