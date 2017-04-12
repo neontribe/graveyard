@@ -14,7 +14,7 @@ third_party_settings:
     parent: 'main:'
 _core:
   default_config_hash: 7ot4RGn3Cpn8rVDq1X2JAE2oklWlZVHqCGSAuLwD5pY
-name: property
+name: Property
 type: property
 description: 'Neontabs 8 Property Node Type'
 help: ''

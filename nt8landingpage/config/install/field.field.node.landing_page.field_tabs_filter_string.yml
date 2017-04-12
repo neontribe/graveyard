@@ -1,0 +1,19 @@
+uuid: 6ecd7f0d-17b5-487b-b449-92034c1f0f3c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_tabs_filter_string
+    - node.type.landing_page
+id: node.landing_page.field_tabs_filter_string
+field_name: field_tabs_filter_string
+entity_type: node
+bundle: landing_page
+label: 'Filter String'
+description: "A set of filter strings to run against a TABS search.\r\nIf more than one is specified all searches will be performed and checked for duplicate properties."
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

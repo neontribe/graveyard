@@ -2,18 +2,16 @@
 
 namespace Drupal\nt8search\Controller;
 
-use Drupal\Core\Url;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\node\Entity\Node;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\nt8tabsio\Service\NT8TabsRestService;
 use Drupal\nt8search\Service\NT8SearchService;
 
 /**
- * Description of NT8TabsIOController.
+ * Description of NT8SearchController.
  *
- * @author tobias@neontribe.co.uk
+ * @author oliver@neontribe.co.uk
  */
 class NT8SearchController extends ControllerBase {
 
@@ -29,7 +27,7 @@ class NT8SearchController extends ControllerBase {
    *
    * @var \Drupal\nt8search\Service\NT8SearchService
    */
-  protected $nt8searchMethodsService;
+  protected $nt8searchMethods;
 
   /**
    * {@inheritdoc}
@@ -37,7 +35,7 @@ class NT8SearchController extends ControllerBase {
   public function __construct(NT8TabsRestService $nt8TabsRestService,
                               NT8SearchService $nt8search_methods_service) {
     $this->nt8TabsRestService = $nt8TabsRestService;
-    $this->nt8searchMethodsService = $nt8search_methods_service;
+    $this->nt8searchMethods = $nt8search_methods_service;
   }
 
   /**
@@ -72,7 +70,8 @@ class NT8SearchController extends ControllerBase {
     $posted_values = $request->query->all();
 
     $renderOutput = [];
-    $this->nt8searchMethodsService->performSearchFromParams($posted_values, TRUE);
+
+    $this->nt8searchMethods->performSearchFromParams($posted_values, TRUE);
 
 //
 //    $search_error = $this->nt8searchMethodsService->issetGet($loadedResultsAsNodes, 'error') ?: NULL;
@@ -149,6 +148,47 @@ class NT8SearchController extends ControllerBase {
 //        '#type' => 'pager',
 //      ];
 //    }
+
+
+    // Execute the search
+//    {
+//      $loadedResultsAsNodes = [];
+//      $search_results = $this->nt8searchMethods->performSearchFromParams($posted_values, $loadedResultsAsNodes);
+//
+//      $search_error = $this->nt8searchMethods->issetGet($loadedResultsAsNodes, 'error') ?: NULL;
+//
+//      if (isset($search_error)) {
+//        // TODO: Make this output optional/configurable.
+//        $renderOutput['error'] = [
+//          '#prefix' => '<h2>',
+//          '#suffix' => '</h2>',
+//          '#markup' => $this->t('Error performing search. Error code: @errorCode', ['@errorCode' => $search_error]),
+//        ];
+//
+//        return $renderOutput;
+//      }
+//    }
+//
+//    // Setup the blocks.
+//    {
+//      $mapBlock = \Drupal::service('plugin.manager.block')->createInstance(
+//        'nt8map_block',
+//        [
+//          'properties' => $loadedResultsAsNodes
+//        ]
+//      );
+//
+//      $searchResultsBlock = \Drupal::service('plugin.manager.block')->createInstance(
+//        'nt8search_results_block',
+//        [
+//          'properties' => $loadedResultsAsNodes,
+//          'search_results' => $search_results
+//        ]
+//      );
+//    }
+
+//    $renderOutput['results_map'] = $mapBlock->build();
+//    $renderOutput['results_search'] = $searchResultsBlock->build();
 
     return $renderOutput;
   }
