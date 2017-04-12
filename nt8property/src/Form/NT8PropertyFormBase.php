@@ -43,6 +43,27 @@ class NT8PropertyFormBase extends FormBase {
     ];
 
     /*
+     * Vocabs
+     */
+    $form['nt8_tabsio']['vocab'] = [
+      '#type' => 'fieldset',
+      '#title' => 'Taxonomy / Vocabulary Options',
+    ];
+
+    $form['nt8_tabsio']['vocab']['attribute_code_limit'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Specify which attributes to load/update (leave blank for all).'),
+      '#placeholder' => 'ATTR01, ATTR02',
+    ];
+
+    $form['nt8_tabsio']['vocab']['populate_attribs'] = [
+      '#type' => 'submit',
+      '#name' => 'submit_property',
+      '#value' => $this->t('Populate Property Attribute Taxonomy'),
+      '#submit' => [[$this, 'setupAttributeTaxonomy']],
+    ];
+
+    /*
      * Single loading.
      */
     $form['nt8_tabsio']['single'] = [
@@ -114,8 +135,8 @@ class NT8PropertyFormBase extends FormBase {
     // @TODO: Implement this submit button feature.
     $form['nt8_tabsio']['batch']['actions']['submit_property_batch_listed'] = [
       '#type' => 'submit',
-      '#name' => 'submit_property_batch_all',
-      '#disabled' => 'disabled',
+      '#name' => 'submit_property_batch_listed',
+      '#disabled' => TRUE,
       '#value' => $this->t('Batch Load Listed Properties'),
       '#submit' => [[$this, 'loadPropertyBatchAll']],
     ];
@@ -193,8 +214,24 @@ class NT8PropertyFormBase extends FormBase {
   /**
    * {@inheritdoc}
    */
+  public function setupAttributeTaxonomy(array &$form, FormStateInterface $formState) {
+    $limit_attrs = $formState->getValue('attribute_code_limit') ?: [];
+    $new_arr = array_map(
+      'trim',
+      explode(',', $limit_attrs)
+    ) ?: [];
+
+    $attrib_data = $this->propertyMethods->getAttributeDataFromTabs($new_arr);
+    $attrib_update_status = $this->propertyMethods->createAttributesFromTabs($attrib_data);
+
+    drupal_set_message("Updated The Following Attributes: ${attrib_update_status}");
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function loadProperty(array &$form, FormStateInterface $formState) {
-    $propref = $form['nt8_tabsio']['single']['load_single_prop']['#value'] ?: '';
+    $propref = $formState->getValue('load_single_prop') ?: '';
 
     $node = $this->propertyMethods->createNodeInstanceFromPropref($propref);
 
@@ -213,11 +250,12 @@ class NT8PropertyFormBase extends FormBase {
    * Initiates a batch method to load all properties.
    */
   public function loadPropertyBatchAll(array &$form, FormStateInterface $formState) {
-    $batch_size = $form['nt8_tabsio']['batch']['batch_size']['#value'] ?: 6;
+    $batch_mode = $formState->getTriggeringElement()['#name'];
+    $batch_size = $formState->getValue('batch_size') ?: 6;
 
     // 0 => 'Modify'
     // 1 => 'Replace'.
-    $modify_replace = $form['nt8_tabsio']['batch']['modify_replace_batch']['#value'];
+    $modify_replace = $formState->getValue('modify_replace_batch') ?: 0;
 
     $batchSizeList = [
       1 => 1,
@@ -276,11 +314,20 @@ class NT8PropertyFormBase extends FormBase {
   public function loadFixture(array &$form, FormStateInterface $form_state) {
     $propref = $form['fixtures']['single_fixture']['load_single_prop_fixture']['#value'];
 
-    $req_path = Url::fromRoute('property.getFixture', ['propRef' => $propref], ['absolute' => TRUE])->toString();
+    $session_manager = \Drupal::service('session_manager');
 
-    $response = $this->httpClient->get($req_path, []);
+    $session_name = $session_manager->getName();
+    $session_id = $session_manager->getID();
+
+    $req_path = Url::fromRoute('property.getFixture', ['propRef' => $propref], ['absolute' => TRUE]);
+
+    $response = \Drupal::httpClient()->get($req_path->toString(), [
+      'headers' => [
+        'Cookie' => $session_name . '=' . $session_id,
+      ],
+    ]);
+
     $data = json_decode($response->getBody());
-
     $this->propertyMethods->createNodeInstanceFromData($data, TRUE);
 
     drupal_set_message("New Property Node: [Name: $data->name, Reference: $data->propertyRef] Successfully Created Using The Specified Fixture Data.");

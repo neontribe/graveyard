@@ -41,18 +41,24 @@ function drush_nt8property_nt8_import_all($name = '') {
   ];
 
   if ($searchId) {
-    $searchParams['searchId'] = $search_instance_id;
+    $searchParams['searchId'] = $searchId;
   }
 
   $container = Drupal::getContainer();
+
   $nt8restService = $container->get('nt8tabsio.tabs_service');
   $nt8PropertyMethods = $container->get('nt8property.property_methods');
 
-  $response = file_get_contents('/tmp/props.json');
-  // $response = $nt8restService->get("property", $searchParams);
-  // $fh = fopen('/tmp/props.json', 'w');
-  // fwrite($fh, $response);
-  // fclose($fh);
+  // Pull/freshen attribute data
+  $attrib_data = $nt8PropertyMethods->getAttributeDataFromTabs();
+  $status = $nt8PropertyMethods->createAttributesFromTabs($attrib_data);
+
+  \Drupal::logger('nt8property.drush')->notice(
+    sprintf('Updated property attribute taxonomy. Attributes Updated: %s', print_r($status, TRUE))
+  );
+
+  $response = $nt8restService->get("property", $searchParams);
+
   $data = json_decode($response);
 
   $nodes_updated = [];

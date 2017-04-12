@@ -46,22 +46,28 @@ class NT8SearchService {
    *   Search definition provided as an array of parameter values.
    * @param array $loadNodes
    *   Array into which the result of the search should be loaded as nodes.
+   * @param int $pageSize
+   *   Specifies how many property IDs TABS returns per page.
    *
-   * @return \stdClass
-   *   The json decoded result of the search.
+   * @return \stdClass The json decoded result of the search.
+   * The json decoded result of the search.
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    */
-  public function performSearchFromParams(array $param_values, array &$loadNodes) {
+  public function performSearchFromParams(array $param_values, array &$loadNodes, int $pageSize = 12) {
     // Get the sanitised query information.
     $queryInfo = self::extractQueryInfoFromValues($param_values);
 
     // Filters.
     $filterInfo = $queryInfo['filters'];
 
+    // Guess at the page number.
+    $page_number = \Drupal::request()->query->get('page') ?: NULL;
+
     // Build a request data array for our search request.
     $requestData = array_merge([
       'fields' => 'propertyRef',
-    // TODO: Default page size should be stored in the site config.
-      'pageSize' => 12,
+      'pageSize' => $pageSize,
+      'page' => $page_number,
     ], $filterInfo);
 
     // Execute the search request.
@@ -73,14 +79,17 @@ class NT8SearchService {
       $loadNodes = self::loadResultIntoNodes($searchResult->results);
 
       if (!isset($loadNodes)) {
-        $loadNodes['error'] = \Drupal::translation()->translate('We failed to load any properties for this request.');
+        // Replace with a drupal logger.
+        //        $loadNodes['error'] = \Drupal::translation()->translate('We failed to load any properties for this request.');
       }
     }
     elseif (isset($searchResult->errorCode)) {
-      $loadNodes['error'] = \Drupal::translation()->translate('A fatal TABS error has occurred. Error Code: @errorCode.', ['@errorCode' => $searchResult->errorCode ?: 'Unknown.']);
+      // Replace with a drupal logger.
+      //      $loadNodes['error'] = \Drupal::translation()->translate('A fatal TABS error has occurred. Error Code: @errorCode.', ['@errorCode' => $searchResult->errorCode ?: 'Unknown.']);
     }
     else {
-      $loadNodes['error'] = \Drupal::translation()->translate('We couldn\'t hit the TABS API.');
+      // Replace with a drupal logger.
+      //      $loadNodes['error'] = \Drupal::translation()->translate('We couldn\'t hit the TABS API.');
     }
 
     return $searchResult;

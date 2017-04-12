@@ -1,0 +1,14 @@
+{
+  "name": "drupal/nt8landingpage",
+  "type": "drupal-module",
+  "description": "Defines the landing page content type and its' functionality.",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/nt8landingpage",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/nt8landingpage",
+    "source": "http://cgit.drupalcode.org/nt8landingpage"
+  },
+  "require": { }
+}

@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.property.body
     - field.field.node.property.field_cottage_accommodates
     - field.field.node.property.field_cottage_address
+    - field.field.node.property.field_cottage_attributes
     - field.field.node.property.field_cottage_bedrooms
     - field.field.node.property.field_cottage_booking
     - field.field.node.property.field_cottage_brandcode
@@ -33,7 +34,7 @@ dependencies:
     - text
     - user
 _core:
-  default_config_hash: z99UwaGacBKzea1eyaAy5wV3Lg5O7cQMbzzvbhS4hEs
+  default_config_hash: VRxj7E4IDZeZEtABSJPLvsIz6nkmqH9JZiiF6jM-whM
 id: node.property.default
 targetEntityType: node
 bundle: property
@@ -54,7 +55,7 @@ content:
     third_party_settings: {  }
     type: number_integer
   field_cottage_address:
-    weight: 19
+    weight: 20
     label: above
     settings: {  }
     third_party_settings: {  }
@@ -93,7 +94,7 @@ content:
     third_party_settings: {  }
     type: string
   field_cottage_coordinates:
-    weight: 20
+    weight: 21
     label: above
     settings:
       thousand_separator: ''
@@ -117,7 +118,7 @@ content:
     third_party_settings: {  }
     type: imagecache_external_image
   field_cottage_image_info:
-    weight: 22
+    weight: 23
     label: above
     settings: {  }
     third_party_settings: {  }
@@ -138,7 +139,7 @@ content:
     third_party_settings: {  }
     type: string
   field_cottage_ownercode:
-    weight: 18
+    weight: 19
     label: above
     settings:
       link_to_entity: false
@@ -153,7 +154,7 @@ content:
     third_party_settings: {  }
     type: number_integer
   field_cottage_pricing:
-    weight: 21
+    weight: 22
     label: above
     settings: {  }
     third_party_settings: {  }
@@ -210,4 +211,5 @@ content:
     weight: 0
     settings: {  }
     third_party_settings: {  }
-hidden: {  }
+hidden:
+  field_cottage_attributes: true
