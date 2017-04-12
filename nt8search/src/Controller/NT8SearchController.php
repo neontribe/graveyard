@@ -76,6 +76,19 @@ class NT8SearchController extends ControllerBase {
     $loadedResultsAsNodes = [];
     $search_results = $this->nt8searchMethodsService->performSearchFromParams($posted_values, $loadedResultsAsNodes);
 
+
+
+
+
+
+
+
+
+
+
+
+
+
     $search_error = $this->nt8searchMethodsService->issetGet($loadedResultsAsNodes, 'error') ?: NULL;
 
     if (isset($search_error)) {

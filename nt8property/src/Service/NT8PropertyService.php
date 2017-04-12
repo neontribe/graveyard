@@ -30,8 +30,8 @@ class NT8PropertyService {
    *   Container injection.
    */
   public function __construct(
-    QueryFactory $entityQuery,
-    EntityTypeManager $entityTypeManager,
+    $entityQuery,
+    $entityTypeManager,
     NT8TabsRestService $nt8RestService
   ) {
     $this->entityQuery = $entityQuery;

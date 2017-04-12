@@ -29,8 +29,8 @@ class NT8SearchService {
    * Constructor.
    */
   public function __construct(NT8TabsRestService $nt8tabsio_tabs_service,
-                              QueryFactory $entityQuery,
-                              EntityTypeManager $entityTypeManager,
+                              $entityQuery,
+                              $entityTypeManager,
                               NT8PropertyService $nt8propertymethods) {
 
     $this->nt8tabsioTabsService = $nt8tabsio_tabs_service;
