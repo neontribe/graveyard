@@ -84,13 +84,8 @@ class NT8SearchService {
       }
 
       if($setState) {
-        // Map the API search result (Proprefs) into a simple array of Proprefs.
-        $mappedResults = array_map(function ($property) {
-          return $property->propertyRef;
-        }, $searchResult->results);
-
         // Set the search state.
-        \Drupal::state()->set('nt8search.results', $mappedResults);
+        \Drupal::state()->set('nt8search.results', $searchResult);
       }
 
       if (!isset($loadNodes)) {
@@ -108,6 +103,11 @@ class NT8SearchService {
     }
 
     return $searchResult;
+  }
+
+  public static function getSearchState() {
+    // Get the current search state.
+    return \Drupal::state()->get('nt8search.results');
   }
 
   /**

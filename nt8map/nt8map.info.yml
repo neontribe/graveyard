@@ -3,3 +3,6 @@ type: module
 description: Neontabs 8 Map Module
 core: 8.x
 package: nt8
+dependencies:
+  - nt8property
+  - nt8search

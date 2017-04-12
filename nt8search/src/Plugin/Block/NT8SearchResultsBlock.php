@@ -24,6 +24,8 @@ class NT8SearchResultsBlock extends BlockBase implements ContainerFactoryPluginI
    * @var \Drupal\nt8search\Service\NT8SearchService
    */
   protected $nt8searchMethods;
+  protected $nt8propertyMethods;
+
   /**
    * Construct.
    *
@@ -38,10 +40,12 @@ class NT8SearchResultsBlock extends BlockBase implements ContainerFactoryPluginI
         array $configuration,
         $plugin_id,
         $plugin_definition,
-        NT8SearchService $nt8search_methods
+        $nt8search_methods,
+        $nt8property_methods
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->nt8searchMethods = $nt8search_methods;
+    $this->nt8propertyMethods = $nt8property_methods;
   }
   /**
    * {@inheritdoc}
@@ -51,19 +55,33 @@ class NT8SearchResultsBlock extends BlockBase implements ContainerFactoryPluginI
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('nt8search.methods')
+      $container->get('nt8search.methods'),
+      $container->get('nt8property.property_methods')
     );
   }
   /**
    * {@inheritdoc}
    */
   public function build() {
-    $config = $this->getConfiguration();
+    $renderOutput = [
+      '#cache' => [
+        'contexts' => [
+          'url.path',
+          'url.query_args',
+        ],
+      ],
+    ];
 
-    $renderOutput = [];
 
-    $loadedResultsAsNodes = $this->nt8searchMethods->issetGet($config, 'properties') ?: [];
-    $search_results       = $this->nt8searchMethods->issetGet($config, 'search_results') ?: [];
+    $search_results = NT8SearchService::getSearchState();
+
+    // Map the API search result into a simple array of Proprefs.
+    $mappedResults = array_map(function ($property) {
+      return $property->propertyRef;
+    }, $search_results->results);
+
+    $loadedResultsAsNodes = $this->nt8propertyMethods->loadNodesFromProprefs($mappedResults);
+
 
     if (isset($search_results, $loadedResultsAsNodes)) {
       $totalResults = $search_results->totalResults;
