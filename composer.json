@@ -5,8 +5,8 @@
     "license": "GPL-2.0+",
     "authors": [
         {
-            "name": "",
-            "role": ""
+            "name": "Toby Batch <tobias@neontribe.co.uk>",
+            "role": "Deployment and Architcture"
         }
     ],
     "repositories": [
