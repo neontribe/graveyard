@@ -24,8 +24,8 @@
         "drush/drush": "~8.0",
         "webflo/drupal-finder": "^0.2.1",
         "webmozart/path-util": "^2.3",
-        "neontabs/nt8": "dev-master",
-        "neontabs/nt8_theme": "dev-master"
+        "neontabs/nt8": "dev-develop",
+        "neontabs/nt8_theme": "dev-develop"
     },
     "require-dev": {
         "behat/mink": "~1.7",
