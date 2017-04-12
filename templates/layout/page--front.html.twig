@@ -55,9 +55,17 @@
   <main>
     <a id="main-content" tabindex="-1"></a>{# link is in html.html.twig #}
 
+    <div class="layout-sidebar-left">
+        {{ page['sidebar-left'] }}
+    </div>
+
     <div class="layout-content">
       {{ page.content }}
     </div>{# /.layout-content #}
+
+    {#<div class="layout-sidebar-right">#}
+        {#{{ page['sidebar-right'] }}#}
+    {#</div>#}
 
   </main>
 

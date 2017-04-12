@@ -56,11 +56,23 @@ body,
     margin-top: 0;
 }
 
-.container {
-    max-width: 70%;
-    max-width: 70vw;
+.region-container {
+    display: -ms-flex;
+    display: -webkit-flex;
+    display: flex;
+}
 
-    margin: 0 auto;
+.region-sidebar-left {
+  width: 20%;
+}
+
+.region-content {
+  width: 80%;
+}
+
+.block {
+    margin-top: 1em;
+    margin: .2em;
 }
 
 .field {
@@ -151,9 +163,6 @@ a:hover, a:active {
 
 /* Form Fields */
 form {
-    margin: 1em auto;
-    padding: 1em;
-    min-width: 50vw;
 }
 
 input, textarea, select, button {
@@ -191,11 +200,6 @@ input + label,
 }
 
 @media (min-width: 750px) {
-    form {
-        max-width: 40%;
-        max-width: 40vw;
-    }
-
     /* Checkbox specific styles */
     .form-type-checkbox > label {
         display: inline-block;
