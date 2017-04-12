@@ -44,13 +44,16 @@ class NT8SearchService {
    *
    * @param array $param_values
    *   Search definition provided as an array of parameter values.
+   * @param bool $setConfig
+   *   Should we update the `nt8search.results` state with loaded proprefs?
    * @param array $loadNodes
    *   Array into which the result of the search should be loaded as nodes.
+   *   If this isn't set no nodes are loaded.
    *
    * @return \stdClass
    *   The json decoded result of the search.
    */
-  public function performSearchFromParams(array $param_values, array &$loadNodes) {
+  public function performSearchFromParams(array $param_values, bool $setState = FALSE, array &$loadNodes = NULL) {
     // Get the sanitised query information.
     $queryInfo = self::extractQueryInfoFromValues($param_values);
 
@@ -70,7 +73,19 @@ class NT8SearchService {
     // @TODO Never show errors to the user! Change how logging is done here.
     // If the user has passed an array into $loadNodes fill it.
     if (isset($searchResult->results)) {
-      $loadNodes = self::loadResultIntoNodes($searchResult->results);
+      if(isset($loadNodes)) {
+        $loadNodes = self::loadResultIntoNodes($searchResult->results);
+      }
+
+      if($setState) {
+        // Map the API search result (Proprefs) into a simple array of Proprefs.
+        $mappedResults = array_map(function ($property) {
+          return $property->propertyRef;
+        }, $searchResult->results);
+
+        // Set the search state.
+        \Drupal::state()->set('nt8search.results', $mappedResults);
+      }
 
       if (!isset($loadNodes)) {
         $loadNodes['error'] = \Drupal::translation()->translate('We failed to load any properties for this request.');
