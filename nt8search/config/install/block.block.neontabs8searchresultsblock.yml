@@ -1,4 +1,4 @@
-uuid: f94f8413-6e95-4856-bdef-01b7aed444e7
+uuid: 63f01b9d-33c3-48cf-b208-b9a191caa985
 langcode: en
 status: true
 dependencies:
@@ -7,22 +7,20 @@ dependencies:
     - system
   theme:
     - nt8_theme
-_core:
-  default_config_hash: k2h-HbVoVK79Rfycs19ta1aV1xkHgpqbS-jZ4WHA9nk
-id: nt8search_block
+id: neontabs8searchresultsblock
 theme: nt8_theme
-region: sidebar-left
+region: content
 weight: -7
 provider: null
-plugin: nt8search_block
+plugin: nt8search_results_block
 settings:
-  id: nt8search_block
-  label: 'Neontabs 8 Search Block'
+  id: nt8search_results_block
+  label: 'Neontabs 8 Search Results Block'
   provider: nt8search
   label_display: '0'
 visibility:
   request_path:
     id: request_path
-    pages: "<front>\r\n/cottages\r\n/cottages/*"
+    pages: "/cottages\r\n/cottages/*"
     negate: false
     context_mapping: {  }
