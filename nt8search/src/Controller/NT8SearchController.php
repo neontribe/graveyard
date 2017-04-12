@@ -70,7 +70,6 @@ class NT8SearchController extends ControllerBase {
     $posted_values = $request->query->all();
 
     $renderOutput = [];
-
     $this->nt8searchMethods->performSearchFromParams($posted_values, TRUE);
 
 //

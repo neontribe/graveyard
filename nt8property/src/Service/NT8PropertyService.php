@@ -194,13 +194,12 @@ class NT8PropertyService {
     $loadedNodes = [];
 
     foreach ($proprefs as $propref) {
-      $nodes = $this->loadNodesFromPropref($propref);
-      if (!isset($nodes)) {
-        continue;
-      }
+      $nodes = $this->loadNodesFromPropref($propref) ?: [];
 
-      foreach ($nodes as $node) {
-        $loadedNodes[$propref][] = $node;
+      if(count($nodes) > 0) {
+        foreach ($nodes as $node) {
+          $loadedNodes[$propref][] = $node;
+        }
       }
     }
 
