@@ -34,10 +34,11 @@ Check the output for the random superadmin password
 
 ## Enable nt8 modules
 
-    drush en nt8_theme
-    drush config-set system.theme default nt8_theme
-    drush en nt8property
-    drush en nt8map nt8search
+    drush -y en nt8_theme
+    drush -y config-set system.theme default nt8_theme
+    drush -y en nt8property
+    drush -y en nt8map nt8search
+    drush -y nt8-import-all
 
 ## Chown files to run as www-data user
 
