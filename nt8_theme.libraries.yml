@@ -4,16 +4,15 @@ styling:
     base:
       'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css': { type: external }
     theme:
-      css/fonts.css: { }
-      css/layout.css: { }
       css/main.css: { }
 
 scripts:
   version: 0.1
   js:
+    js/vendor/jquery.sticky-kit.min.js: {}
     js/main.js: {}
   dependencies:
-#    - core/jquery
+    - core/jquery
 #    - core/jquery.once
 #    - core/modernizr
 #    - core/jquery.ui
