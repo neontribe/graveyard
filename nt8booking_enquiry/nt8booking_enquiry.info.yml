@@ -1,0 +1,7 @@
+name: NT8Booking Enquiry
+type: module
+description: Neontabs Property
+core: 8.x
+package: NT8
+dependencies:
+  - nt8tabsio
