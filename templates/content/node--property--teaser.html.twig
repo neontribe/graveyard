@@ -96,7 +96,7 @@ view_mode ? 'node--view-mode-' ~ view_mode|clean_class,
         {{ content.field_cottage_featured_image }}
 
         <section class="property-teaser-content">
-          <section class="property-teaser-details">
+
             {{ title_prefix }}
             {% if not page %}
               <h3{{ title_attributes }}>
@@ -107,15 +107,24 @@ view_mode ? 'node--view-mode-' ~ view_mode|clean_class,
 
             {{ content.field_cottage_rating }}
 
+          <section class="property-teaser-details">
             {{ content.field_cottage_pets }}
             {{ content.field_cottage_bedrooms }}
             {{ content.field_cottage_accommodates }}
           </section>
 
+
           <section class="property-teaser-pricing">
             {{ content.field_cottage_pricing }}
           </section>
         </section>
+
+        <section class="property-teaser-info">
+          {{ content.field_cottage_teaser_description }}
+
+        </section>
+
+
     </div>
 
 </article>

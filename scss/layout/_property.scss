@@ -9,18 +9,35 @@
 
   .node__content {
     height: 250px;
-    h3 {
-      margin: 0;
-    }
     .field--name-field-cottage-featured-image {
       float: left;
-
       img {
         display: block;
         max-height: 250px;
         width: auto;
         height: auto;
       }
+    }
+    .property-teaser-content {
+      float: left;
+      padding: 0 .5em .5em .5em;
+      height: 100%;
+      text-align: center;
+      border-right: 1px solid $brand_highlight_colour;
+      border-left: 1px solid $brand_highlight_colour;
+      min-width: 200px;
+      .property-teaser-details {
+        > .field {
+          display: block;
+          > i {
+            margin-right: .5em;
+          }
+        }
+      }
+    }
+
+    .property-teaser-pricing {
+      overflow: hidden;
     }
   }
 }

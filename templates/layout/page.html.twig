@@ -45,18 +45,11 @@
 <div class="layout-container">
 
   <header role="banner">
-    {{ page.header }}
-
     <div class="banner">
-        <h1>
-          <a href="{{ node ? path('entity.node.canonical', {'node': node.id }) : '' }}">
-            {{ node.getTitle() ? node.getTitle() : page.title ? page.title : page['#title'] }}
-          </a>
-        </h1>
-        <p>{{ node.body.summary }}</p>
-      {{ pager }}
+      <h1>Neontabs 8</h1>
     </div>
 
+    {{ page.header }}
   </header>
 
   <main>

@@ -30,6 +30,16 @@ label {
   line-height: 1.25;
 }
 
+legend {
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+textarea {
+  vertical-align: top;
+}
+
 label + *,
 input + label,
 .details-wrapper {
@@ -47,20 +57,3 @@ input + label,
   }
 }
 
-
-.form-item {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  width: 100%;
-}
-
-legend {
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-}
-
-textarea {
-  vertical-align: top;
-}
