@@ -9,7 +9,7 @@ styling:
 scripts:
   version: 0.1
   js:
-    js/vendor/jquery.sticky-kit.min.js: {}
+    js/vendor/stickyfill.min.js: {}
     js/main.js: {}
   dependencies:
     - core/jquery

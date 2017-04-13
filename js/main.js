@@ -12,9 +12,6 @@
     var $leftSidebar = $('.region-sidebar-left > .content-wrap');
 
     // Sticky sidebar.
-    $leftSidebar.stick_in_parent({
-        offset_top: options.scrollOffset,
-        inner_scrolling: false
-    });
+    $leftSidebar.Stickyfill();
 
 })(jQuery);
