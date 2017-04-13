@@ -1,4 +1,4 @@
 services:
   nt8booking_enquiry.service:
     class: Drupal\nt8booking_enquiry\Service\NT8BookingEnquiryService
-    arguments: []
+    arguments: ['@nt8tabsio.tabs_service']

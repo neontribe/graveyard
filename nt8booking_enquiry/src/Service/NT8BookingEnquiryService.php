@@ -55,18 +55,19 @@ class NT8BookingEnquiryService {
   public function enquire($propref, $from_date = FALSE, $to_date = FALSE, $party_size = 1, $pets = 0) {
     $params = array();
 
-    list($_propref, $_brandcode) = nt_util_split_propref_and_brandcode($propref);
+    list($_propref, $_brandcode) = $this->nt8TabsRestService->splitPropref($propref);
     $_from_date = $from_date ? $from_date : date('Y-m-d');
     $to_date = $to_date ? $to_date : mktime(0, 0, 0, date("m"), date("d") + 7, date("Y"));
 
     $params['propertyRef'] = $_propref;
     $params['brandCode'] = $_brandcode;
-    $params['fromDate'] = nt_util_strtodate($_from_date);
-    $params['toDate'] = nt_util_strtodate($to_date);
+    $params['fromDate'] = $this->nt8TabsRestService->strToDate($_from_date);
+    $params['toDate'] = $this->nt8TabsRestService->strToDate($to_date);
     $params['partySize'] = (int) $party_size;
     $params['pets'] = (int) $pets;
 
-    $data = $this->nt8TabsRestService->post('booking-enquiry', $params);
+    $rawdata = $this->nt8TabsRestService->post('booking-enquiry', $params);
+    $data = json_decode($rawdata, TRUE);
 
     if ($data) {
       $data['status'] = TRUE;

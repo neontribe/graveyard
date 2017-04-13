@@ -7,6 +7,11 @@
 
 namespace Drupal\nt8booking_enquiry\Form;
 
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\ChangedCommand;
+use Drupal\Core\Ajax\CssCommand;
+use Drupal\Core\Ajax\HtmlCommand;
+use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -59,6 +64,14 @@ class NT8BookingEnquiryForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+    $propref = FALSE;
+
+    $node = \Drupal::routeMatch()->getParameter('node');
+    if ($node) {
+      if ($node->getType() == 'property') {
+        $propref = self::getNodeFieldValue($node, 'field_cottage_reference_code', 0);
+      }
+    }
 
     $propref = $form_state->getValue('propref');
     if (!$propref) {
@@ -91,7 +104,7 @@ class NT8BookingEnquiryForm extends FormBase {
       // '#pre_render' => array('nt2_booking_enquiry_date_prerender'),
     );
 
-    $date = $form_state->getValue('duration');
+    $duration = $form_state->getValue('duration');
     $form['duration'] = array(
       '#type' => 'select',
       '#title' => t('Length of stay'),
@@ -100,7 +113,7 @@ class NT8BookingEnquiryForm extends FormBase {
         '7' => t('7 nights'),
         '14' => t('14 nights'),
       ),
-      '#default_value' => isset($date)? : $date,
+      '#default_value' => $duration ? : '7',
     );
 
     $form['adults'] = array(
@@ -145,11 +158,11 @@ class NT8BookingEnquiryForm extends FormBase {
       '#type' => 'button',
       '#value' => 'Enquire',
       '#ajax' => array(
+        'callback' => 'Drupal\nt8booking_enquiry\Form\NT8BookingEnquiryForm::ajaxEnquire',
         'wrapper' => 'nt2-booking-enquiry-results',
         'method' => 'html',
         'effect' => 'fade',
-        'callback' => 'Drupal\nt8booking_enquiry\Form\NT8BookingEnquiryForm::ajaxEnquire',
-        'event' => 'keyup',
+        // 'event' => 'keyup',
         'progress' => array(
           'type' => 'throbber',
           'message' => NULL,
@@ -163,11 +176,11 @@ class NT8BookingEnquiryForm extends FormBase {
     );
 
     $form['actions']['#type'] = 'actions';
-    $form['actions']['submit'] = array(
-      '#type' => 'submit',
-      '#value' => $this->t('Register'),
-      '#button_type' => 'primary',
-    );
+//    $form['actions']['submit'] = array(
+//      '#type' => 'submit',
+//      '#value' => $this->t('Register'),
+//      '#button_type' => 'primary',
+//    );
     return $form;
   }
 
@@ -178,39 +191,74 @@ class NT8BookingEnquiryForm extends FormBase {
     drupal_set_message($this->t('@emp_name ,Your application is being submitted!', array('@emp_name' => $form_state->getValue('employee_name'))));
   }
 
-  public function ajaxEnquire(array &$form, FormStateInterface $form_state) {
+  public static function ajaxEnquire(array &$form, FormStateInterface $form_state) {
     // Instantiate an AjaxResponse Object to return.
     $ajax_response = new AjaxResponse();
 
-    $propref = $form_state->getValue('user_name');
-    $from_date = $form_state->getValue('user_name');
-    $to_date = $form_state->getValue('user_name');
-    $party_size = $form_state->getValue('user_name');
-    $pets = $form_state->getValue('user_name');
+    $propref = $form_state->getValue('propref');
+    $from_date = $form_state->getValue('from');
+    $nights = $form_state->getValue('nights');
+    $to_date = $form_state->getValue('to');
 
+    if (!$nights) {
+      $nights = 7;
+    }
 
-    // Check if Username exists and is not Anonymous User ('').
-    if (TRUE) {
-      $text = 'User Found';
-      $color = 'green';
+    if (!$to_date) {
+      $to_date = date('Y-m-d', strtotime('+' . $nights . ' days', strtotime($from_date)));
+    }
+
+    $adults = $form_state->getValue('adults');
+    $children = $form_state->getValue('children');
+    $infants = $form_state->getValue('infants');
+    $party_size = $adults + $children + $infants;
+
+    $pets = $form_state->getValue('pets');
+
+    // This is a static method so access the service statically.
+    $enquiryService = \Drupal::service('nt8booking_enquiry.service');
+    $data = $enquiryService->enquire($propref, $from_date, $to_date, $party_size, $pets);
+
+    if (isset($data['errorCode'])) {
+      $errorCode = $data['errorCode'];
+      $errorMesg = '';
+      $color = 'red';
+      $text = $data['errorDescription'];
     }
     else {
-      $text = 'No User Found';
-      $color = 'red';
+      $text = '&pound;' . $data['price']['totalPrice'];
+      $color = 'green';
     }
+
+    $ajax_response->addAttachments(array('data' => $data));
 
     // Add a command to execute on form, jQuery .html() replaces content between tags.
     // In this case, we replace the desription with wheter the username was found or not.
-    $ajax_response->addCommand(new HtmlCommand('#edit-user-name--description', $text));
+    $ajax_response->addCommand(new HtmlCommand('#nt2-booking-enquiry-results', $text));
 
     // CssCommand did not work.
     //$ajax_response->addCommand(new CssCommand('#edit-user-name--description', array('color', $color)));
     // Add a command, InvokeCommand, which allows for custom jQuery commands.
     // In this case, we alter the color of the description.
-    $ajax_response->addCommand(new InvokeCommand('#edit-user-name--description', 'css', array('color', $color)));
+    $ajax_response->addCommand(new InvokeCommand('#nt2-booking-enquiry-results', 'css', array('color', $color)));
 
     // Return the AjaxResponse Object.
     return $ajax_response;
+  }
+
+  /**
+   * Returns the value of a specified field on a node.
+   */
+  public static function getNodeFieldValue($node, $fieldName, $index = -1, $keyname = 'value') {
+    // TODO Make this a globally available function.
+    $field_instance = $node->get($fieldName)->getValue();
+    $field_value = $field_instance;
+
+    if ($index > -1) {
+      $field_value = $field_instance[$index][$keyname];
+    }
+
+    return $field_value;
   }
 
 }
