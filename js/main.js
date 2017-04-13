@@ -13,7 +13,8 @@
 
     // Sticky sidebar.
     $leftSidebar.stick_in_parent({
-        offset_top: options.scrollOffset
+        offset_top: options.scrollOffset,
+        inner_scrolling: false
     });
 
 })(jQuery);
