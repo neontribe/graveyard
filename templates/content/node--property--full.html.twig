@@ -102,7 +102,9 @@ view_mode ? 'node--view-mode-' ~ view_mode|clean_class,
   {% endif %}
 
   <div{{ content_attributes.addClass('node__content') }}>
-    {{ content.field_cottage_featured_image }}
+    <h1>{{ label }}</h1>
+
+    {{ content.field_cottage_images }}
   </div>
 
 </article>
