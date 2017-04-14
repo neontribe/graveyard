@@ -93,7 +93,8 @@ view_mode ? 'node--view-mode-' ~ view_mode|clean_class,
     {% endif %}
 
     <div{{ content_attributes.addClass('node__content') }}>
-        {{ content.field_cottage_featured_image }}
+        {{ content.field_cottage_images }}
+        {#{{ content.field_cottage_featured_image }}#}
 
         <section class="property-teaser-content">
 
