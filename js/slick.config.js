@@ -4,7 +4,6 @@
         attach: function (context, settings) {
 
             $(".js-slick-single-item-center").slick({
-                dots: true,
                 infinite: true,
                 speed: 1000,
                 autoplay: true,
