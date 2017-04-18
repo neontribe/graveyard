@@ -6,7 +6,7 @@ use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\nt8tabsio\Service\NT8TabsRestService;
-use Drupal\nt8booking_enquiry\Service\NT8BookingEnquiryService;
+use Drupal\nt8booking_enquiry\Service\NT8BookingService;
 
 /**
  * Provides a 'NT8BookingEnquiryBlock' block.
@@ -30,7 +30,7 @@ class NT8BookingEnquiryBlock extends BlockBase implements ContainerFactoryPlugin
    *
    * var \Drupal\nt8map\Service\NT8MapService
    */
-  protected $nt8bookingEnquiryService;
+  protected $nt8bookingService;
 
   /**
    * NT8MapBlock constructor.
@@ -51,11 +51,11 @@ class NT8BookingEnquiryBlock extends BlockBase implements ContainerFactoryPlugin
         $plugin_id,
         $plugin_definition,
         NT8TabsRestService $nt8tabsio_tabs_service,
-        NT8BookingEnquiryService $nt8bookingEnquiryService
+        NT8BookingService $nt8bookingService
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->nt8tabsioTabsService = $nt8tabsio_tabs_service;
-    $this->nt8bookingEnquiryService = $nt8bookingEnquiryService;
+    $this->nt8bookingService = $nt8bookingService;
   }
 
   /**
@@ -67,7 +67,7 @@ class NT8BookingEnquiryBlock extends BlockBase implements ContainerFactoryPlugin
       $plugin_id,
       $plugin_definition,
       $container->get('nt8tabsio.tabs_service'),
-      $container->get('nt8booking_enquiry.service')
+      $container->get('nt8booking.service')
     );
   }
 

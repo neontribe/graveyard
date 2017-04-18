@@ -14,9 +14,10 @@ use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Datetime\DrupalDateTime;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\nt8tabsio\Service\NT8TabsRestService;
-use Drupal\nt8booking_enquiry\Service\NT8BookingEnquiryService;
+use Drupal\nt8booking_enquiry\Service\NT8BookingService;
 
 class NT8BookingEnquiryForm extends FormBase {
 
@@ -28,18 +29,18 @@ class NT8BookingEnquiryForm extends FormBase {
   protected $nt8TabsRestService;
 
   /**
-   * Instance of NT8BookingEnquiryService.
+   * Instance of NT8BookingService.
    *
-   * @var \Drupal\nt8booking_enquiry\Service\NT8BookingEnquiryService
+   * @var \Drupal\nt8booking_enquiry\Service\NT8BookingService
    */
-  protected $nt8bookingEnquityService;
+  protected $nt8bookingService;
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(NT8TabsRestService $nt8TabsRestService, NT8BookingEnquiryService $nt8bookingEnquityService) {
+  public function __construct(NT8TabsRestService $nt8TabsRestService, NT8BookingService $nt8bookingService) {
     $this->nt8TabsRestService = $nt8TabsRestService;
-    $this->nt8bookingEnquityService = $nt8bookingEnquityService;
+    $this->nt8bookingService = $nt8bookingService;
   }
 
   /**
@@ -49,7 +50,7 @@ class NT8BookingEnquiryForm extends FormBase {
     // Instantiates this form class.
     return new static(
       // Load the service required to construct this class.
-      $container->get('nt8tabsio.tabs_service'), $container->get('nt8booking_enquiry.service')
+      $container->get('nt8tabsio.tabs_service'), $container->get('nt8booking.service')
     );
   }
 
@@ -73,7 +74,6 @@ class NT8BookingEnquiryForm extends FormBase {
       }
     }
 
-    $propref = $form_state->getValue('propref');
     if (!$propref) {
       $rawdata = $this->nt8TabsRestService->get(
         'property', array('pageSize' => 9999, 'fields' => 'propertyRef:name')
@@ -93,14 +93,15 @@ class NT8BookingEnquiryForm extends FormBase {
     else {
       $form['propref'] = array(
         '#type' => 'hidden',
-        '#value' => isset($propref) ? : $propref,
+        '#value' => $propref,
       );
     }
 
     $form['from'] = array(
       '#type' => 'date',
       '#required' => TRUE,
-      '#date_format' => 'd-m-Y',
+      '#default_value' => DrupalDateTime::createFromTimestamp(strtotime('+2 weeks')),
+      '#date_date_format' => 'd-m-Y',
       // '#pre_render' => array('nt2_booking_enquiry_date_prerender'),
     );
 
@@ -146,14 +147,6 @@ class NT8BookingEnquiryForm extends FormBase {
       '#default_value' => '0',
     );
 
-    $form['book'] = array(
-      '#type' => 'submit',
-      '#value' => t('Book Now'),
-      '#name' => 'book_now',
-      '#id' => 'nt2-booking-book-now-btn',
-      '#attributes' => array('disabled' => 'disabled'),
-    );
-
     $form['enquire'] = array(
       '#type' => 'button',
       '#value' => 'Enquire',
@@ -176,11 +169,14 @@ class NT8BookingEnquiryForm extends FormBase {
     );
 
     $form['actions']['#type'] = 'actions';
-//    $form['actions']['submit'] = array(
-//      '#type' => 'submit',
-//      '#value' => $this->t('Register'),
-//      '#button_type' => 'primary',
-//    );
+    $form['actions']['submit'] = array(
+      '#type' => 'submit',
+      '#value' => $this->t('Book Now'),
+      '#name' => 'book_now',
+      '#id' => 'nt2-booking-book-now-btn',
+      '#button_type' => 'primary',
+      '#attributes' => array('disabled' => 'disabled'),
+    );
     return $form;
   }
 
@@ -188,7 +184,27 @@ class NT8BookingEnquiryForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    drupal_set_message($this->t('@emp_name ,Your application is being submitted!', array('@emp_name' => $form_state->getValue('employee_name'))));
+    $propref = $form_state->getValue('propref');
+    $from_date = $form_state->getValue('from');
+    $nights = $form_state->getValue('nights');
+    $to_date = $form_state->getValue('to');
+
+    if (!$nights) {
+      $nights = 7;
+    }
+
+    if (!$to_date) {
+      $to_date = date('Y-m-d', strtotime('+' . $nights . ' days', strtotime($from_date)));
+    }
+
+    $adults = $form_state->getValue('adults');
+    $children = $form_state->getValue('children');
+    $infants = $form_state->getValue('infants');
+    $pets = $form_state->getValue('pets');
+
+    $data = $this->nt8bookingService->booking($propref, $from_date, $to_date, $adults, $children, $infants, $pets);
+    \Drupal::logger(__METHOD__)->info($data);
+    // NOTIFY HERE!
   }
 
   public static function ajaxEnquire(array &$form, FormStateInterface $form_state) {
@@ -216,7 +232,7 @@ class NT8BookingEnquiryForm extends FormBase {
     $pets = $form_state->getValue('pets');
 
     // This is a static method so access the service statically.
-    $enquiryService = \Drupal::service('nt8booking_enquiry.service');
+    $enquiryService = \Drupal::service('nt8booking.service');
     $data = $enquiryService->enquire($propref, $from_date, $to_date, $party_size, $pets);
 
     if (isset($data['errorCode'])) {
@@ -224,10 +240,18 @@ class NT8BookingEnquiryForm extends FormBase {
       $errorMesg = '';
       $color = 'red';
       $text = $data['errorDescription'];
+      // Enable the book button.
+      $ajax_response->addCommand(
+        new InvokeCommand('#nt2-booking-book-now-btn', 'attr', array('disabled', TRUE))
+      );
     }
     else {
       $text = '&pound;' . $data['price']['totalPrice'];
       $color = 'green';
+      // Enable the book button.
+      $ajax_response->addCommand(
+        new InvokeCommand('#nt2-booking-book-now-btn', 'attr', array('disabled', FALSE))
+      );
     }
 
     $ajax_response->addAttachments(array('data' => $data));
@@ -237,7 +261,7 @@ class NT8BookingEnquiryForm extends FormBase {
     $ajax_response->addCommand(new HtmlCommand('#nt2-booking-enquiry-results', $text));
 
     // CssCommand did not work.
-    //$ajax_response->addCommand(new CssCommand('#edit-user-name--description', array('color', $color)));
+    // $ajax_response->addCommand(new CssCommand('#edit-user-name--description', array('color', $color)));
     // Add a command, InvokeCommand, which allows for custom jQuery commands.
     // In this case, we alter the color of the description.
     $ajax_response->addCommand(new InvokeCommand('#nt2-booking-enquiry-results', 'css', array('color', $color)));
