@@ -28,7 +28,7 @@ class NT8BookingEnquiryBlock extends BlockBase implements ContainerFactoryPlugin
   /**
    * Drupal\nt8map\Service\NT8MapService definition.
    *
-   * var \Drupal\nt8map\Service\NT8MapService
+   * @var \Drupal\nt8map\Service\NT8MapService
    */
   protected $nt8bookingService;
 
@@ -43,8 +43,8 @@ class NT8BookingEnquiryBlock extends BlockBase implements ContainerFactoryPlugin
    *   The plugin implementation definition.
    * @param \Drupal\nt8tabsio\Service\NT8TabsRestService $nt8tabsio_tabs_service
    *   Instance of NT8TabsRestService.
-   * @param \Drupal\nt8map\Service\NT8MapService $nt8map_service
-   *   Instance of NT8MapService.
+   * @param \Drupal\nt8booking_enquiry\Service\NT8BookingService $nt8bookingService
+   *   Instance of NT8BookingService.
    */
   public function __construct(
         array $configuration,
@@ -63,11 +63,7 @@ class NT8BookingEnquiryBlock extends BlockBase implements ContainerFactoryPlugin
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('nt8tabsio.tabs_service'),
-      $container->get('nt8booking.service')
+      $configuration, $plugin_id, $plugin_definition, $container->get('nt8tabsio.tabs_service'), $container->get('nt8booking.service')
     );
   }
 

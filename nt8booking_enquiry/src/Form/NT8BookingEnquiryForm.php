@@ -1,15 +1,8 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\resume\Form\WorkForm.
- */
-
 namespace Drupal\nt8booking_enquiry\Form;
 
 use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\Core\Ajax\ChangedCommand;
-use Drupal\Core\Ajax\CssCommand;
 use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\Form\FormBase;
@@ -19,6 +12,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\nt8tabsio\Service\NT8TabsRestService;
 use Drupal\nt8booking_enquiry\Service\NT8BookingService;
 
+/**
+ * The booking path Enquiry form.
+ */
 class NT8BookingEnquiryForm extends FormBase {
 
   /**
@@ -59,7 +55,7 @@ class NT8BookingEnquiryForm extends FormBase {
    */
   public function getFormId() {
     return 'nt8booking_enquiry_form';
-    }
+  }
 
   /**
    * {@inheritdoc}
@@ -76,107 +72,109 @@ class NT8BookingEnquiryForm extends FormBase {
 
     if (!$propref) {
       $rawdata = $this->nt8TabsRestService->get(
-        'property', array('pageSize' => 9999, 'fields' => 'propertyRef:name')
+        'property', ['pageSize' => 9999, 'fields' => 'propertyRef:name']
       );
       $data = json_decode($rawdata, TRUE);
-      $proprefs = array();
+      $proprefs = [];
       foreach ($data['results'] as $value) {
         $proprefs[$value['propertyRef']] = $value['name'];
       }
       asort($proprefs);
-      $form['propref'] = array(
+      $form['propref'] = [
         '#type' => 'select',
         '#title' => 'Choose property',
         '#options' => $proprefs,
-      );
+      ];
     }
     else {
-      $form['propref'] = array(
+      $form['propref'] = [
         '#type' => 'hidden',
         '#value' => $propref,
-      );
+      ];
     }
 
-    $form['from'] = array(
+    $form['from'] = [
       '#type' => 'date',
       '#required' => TRUE,
       '#default_value' => DrupalDateTime::createFromTimestamp(strtotime('+2 weeks')),
       '#date_date_format' => 'd-m-Y',
-      // '#pre_render' => array('nt2_booking_enquiry_date_prerender'),
-    );
+    ];
 
     $duration = $form_state->getValue('duration');
-    $form['duration'] = array(
+    $form['duration'] = [
       '#type' => 'select',
       '#title' => t('Length of stay'),
-      '#options' => array(
+      '#options' => [
         '3' => t('3 nights'),
         '7' => t('7 nights'),
         '14' => t('14 nights'),
-      ),
-      '#default_value' => $duration ? : '7',
-    );
+      ],
+      '#default_value' => $duration ?:'7',
+    ];
 
-    $form['adults'] = array(
+    $form['adults'] = [
       '#title' => t('Adults'),
       '#required' => TRUE,
       '#type' => 'textfield',
       '#size' => 10,
       '#default_value' => '1',
-    );
+    ];
 
-    $form['children'] = array(
+    $form['children'] = [
       '#title' => t('Children'),
       '#type' => 'textfield',
       '#size' => 10,
       '#default_value' => '0',
-    );
+    ];
 
-    $form['infants'] = array(
+    $form['infants'] = [
       '#title' => t('Infants'),
       '#type' => 'textfield',
       '#size' => 10,
       '#default_value' => '0',
-    );
+    ];
 
-    // TODO: Check if property takes pets
-    $form['pets'] = array(
+    // TODO: Check if property takes pets.
+    $form['pets'] = [
       '#title' => t('Pets'),
       '#type' => 'textfield',
       '#size' => 10,
       '#default_value' => '0',
-    );
+    ];
 
-    $form['enquire'] = array(
+    $form['enquire'] = [
       '#type' => 'button',
       '#value' => 'Enquire',
-      '#ajax' => array(
+      '#ajax' => [
         'callback' => 'Drupal\nt8booking_enquiry\Form\NT8BookingEnquiryForm::ajaxEnquire',
         'wrapper' => 'nt2-booking-enquiry-results',
         'method' => 'html',
         'effect' => 'fade',
-        // 'event' => 'keyup',
-        'progress' => array(
+        // 'event' => 'keyup',.
+        'progress' => [
           'type' => 'throbber',
           'message' => NULL,
-        ),
-      ),
-    );
+        ],
+      ],
+    ];
 
-    $form['results'] = array(
+    $form['results'] = [
       '#type' => 'container',
       '#id' => 'nt2-booking-enquiry-results',
-    );
+    ];
 
     $form['actions']['#type'] = 'actions';
-    $form['actions']['submit'] = array(
+    $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Book Now'),
       '#name' => 'book_now',
       '#id' => 'nt2-booking-book-now-btn',
       '#button_type' => 'primary',
-      '#attributes' => array('disabled' => 'disabled'),
-    );
+      '#attributes' => ['disabled' => 'disabled'],
+    ];
+
+    $form['#cache'] = ['max-age' => 0];
+
     return $form;
   }
 
@@ -207,6 +205,9 @@ class NT8BookingEnquiryForm extends FormBase {
     // NOTIFY HERE!
   }
 
+  /**
+   * Ajax call back to make the actual enquiry.
+   */
   public static function ajaxEnquire(array &$form, FormStateInterface $form_state) {
     // Instantiate an AjaxResponse Object to return.
     $ajax_response = new AjaxResponse();
@@ -242,7 +243,7 @@ class NT8BookingEnquiryForm extends FormBase {
       $text = $data['errorDescription'];
       // Enable the book button.
       $ajax_response->addCommand(
-        new InvokeCommand('#nt2-booking-book-now-btn', 'attr', array('disabled', TRUE))
+        new InvokeCommand('#nt2-booking-book-now-btn', 'attr', ['disabled', TRUE])
       );
     }
     else {
@@ -250,21 +251,13 @@ class NT8BookingEnquiryForm extends FormBase {
       $color = 'green';
       // Enable the book button.
       $ajax_response->addCommand(
-        new InvokeCommand('#nt2-booking-book-now-btn', 'attr', array('disabled', FALSE))
+        new InvokeCommand('#nt2-booking-book-now-btn', 'attr', ['disabled', FALSE])
       );
     }
 
-    $ajax_response->addAttachments(array('data' => $data));
-
-    // Add a command to execute on form, jQuery .html() replaces content between tags.
-    // In this case, we replace the desription with wheter the username was found or not.
+    $ajax_response->addAttachments(['data' => $data]);
     $ajax_response->addCommand(new HtmlCommand('#nt2-booking-enquiry-results', $text));
-
-    // CssCommand did not work.
-    // $ajax_response->addCommand(new CssCommand('#edit-user-name--description', array('color', $color)));
-    // Add a command, InvokeCommand, which allows for custom jQuery commands.
-    // In this case, we alter the color of the description.
-    $ajax_response->addCommand(new InvokeCommand('#nt2-booking-enquiry-results', 'css', array('color', $color)));
+    $ajax_response->addCommand(new InvokeCommand('#nt2-booking-enquiry-results', 'css', ['color', $color]));
 
     // Return the AjaxResponse Object.
     return $ajax_response;

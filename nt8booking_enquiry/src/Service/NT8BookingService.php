@@ -9,7 +9,7 @@ use Drupal\nt8tabsio\Service\NT8TabsRestService;
  *
  * @package Drupal\nt8_booking
  */
-class nt8bookingService {
+class NT8BookingService {
 
   /**
    * Instance of NT8TabsRestService.
@@ -53,10 +53,10 @@ class nt8bookingService {
    * </code>
    */
   public function enquire($propref, $from_date = FALSE, $to_date = FALSE, $party_size = 1, $pets = 0) {
-    $params = array();
+    $params = [];
 
     list($_propref, $_brandcode) = $this->nt8TabsRestService->splitPropref($propref);
-    $_from_date = $from_date ? $from_date : date('Y-m-d');
+    $_from_date = $from_date ?:date('Y-m-d');
     $to_date = $to_date ? $to_date : mktime(0, 0, 0, date("m"), date("d") + 7, date("Y"));
 
     $params['propertyRef'] = $_propref;
@@ -73,10 +73,10 @@ class nt8bookingService {
       $data['status'] = TRUE;
     }
     else {
-      return array(
+      return [
         'status' => FALSE,
         'error' => $api->lastError,
-      );
+      ];
     }
 
     return $data;
@@ -105,10 +105,10 @@ class nt8bookingService {
    * </code>
    */
   public function booking($propref, $from_date = FALSE, $to_date = FALSE, $adults = 1, $children = 1, $infants = 1, $pets = 0) {
-    $params = array();
+    $params = [];
 
     list($_propref, $_brandcode) = $this->nt8TabsRestService->splitPropref($propref);
-    $_from_date = $from_date ? $from_date : date('Y-m-d');
+    $_from_date = $from_date ?: date('Y-m-d');
     $to_date = $to_date ? $to_date : mktime(0, 0, 0, date("m"), date("d") + 7, date("Y"));
 
     $params['propertyRef'] = $_propref;
@@ -127,14 +127,13 @@ class nt8bookingService {
       $data['status'] = TRUE;
     }
     else {
-      return array(
+      return [
         'status' => FALSE,
         'error' => $api->lastError,
-      );
+      ];
     }
 
     return $data;
   }
-
 
 }
