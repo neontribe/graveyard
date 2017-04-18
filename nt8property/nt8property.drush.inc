@@ -58,6 +58,7 @@ function drush_nt8property_nt8_import_all($name = '') {
   );
 
   $response = $nt8restService->get("property", $searchParams);
+
   $data = json_decode($response);
 
   $nodes_updated = [];

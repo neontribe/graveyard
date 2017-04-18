@@ -139,7 +139,6 @@ class NT8PropertyFormBase extends FormBase {
       '#disabled' => TRUE,
       '#value' => $this->t('Batch Load Listed Properties'),
       '#submit' => [[$this, 'loadPropertyBatchAll']],
-
     ];
 
     $form['nt8_tabsio']['batch']['actions']['submit_property_batch_all'] = [

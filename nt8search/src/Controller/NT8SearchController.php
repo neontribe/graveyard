@@ -2,6 +2,7 @@
 
 namespace Drupal\nt8search\Controller;
 
+use Drupal\Core\Url;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
