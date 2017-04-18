@@ -6,6 +6,8 @@ dependencies:
     - node
     - nt8property
     - taxonomy
+_core:
+  default_config_hash: V3AiWaJ4VHWRacDcOkxkCS0YAq07YyiKC638tHqsupk
 id: node.field_cottage_attributes
 field_name: field_cottage_attributes
 entity_type: node

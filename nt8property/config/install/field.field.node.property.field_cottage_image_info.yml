@@ -5,6 +5,8 @@ dependencies:
   config:
     - field.storage.node.field_cottage_image_info
     - node.type.property
+_core:
+  default_config_hash: ez9l6cMsqJRVP00-SbjPyO68b4nO0HjOMQzCX3b5_jQ
 id: node.property.field_cottage_image_info
 field_name: field_cottage_image_info
 entity_type: node

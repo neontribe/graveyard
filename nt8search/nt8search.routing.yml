@@ -2,5 +2,6 @@ nt8search.nt8_search_form_base:
   path: '/cottages'
   defaults:
     _controller: '\Drupal\nt8search\Controller\NT8SearchController::search'
+    _title: 'Search'
   requirements:
     _access: 'TRUE'

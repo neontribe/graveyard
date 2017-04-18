@@ -7,6 +7,8 @@ dependencies:
     - node.type.property
   module:
     - link
+_core:
+  default_config_hash: on4N67aiKQsR5rSUzbSjBJpjcIR1JqH1CEb97iUF-UI
 id: node.property.field_cottage_images
 field_name: field_cottage_images
 entity_type: node

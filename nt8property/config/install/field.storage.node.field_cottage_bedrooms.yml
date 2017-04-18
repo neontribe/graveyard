@@ -5,7 +5,7 @@ dependencies:
   module:
     - node
 _core:
-  default_config_hash: APquDOx-noje-4Plcr00XgQi5ls6mPv6z1VYMRw1vIo
+  default_config_hash: bM3kYAJ814nu1A4us24eG2lgb1ASwtpskChBcUqmDwU
 id: node.field_cottage_bedrooms
 field_name: field_cottage_bedrooms
 entity_type: node

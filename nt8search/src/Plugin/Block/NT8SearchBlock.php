@@ -81,6 +81,7 @@ class NT8SearchBlock extends BlockBase implements ContainerFactoryPluginInterfac
       '#cache' => [
         'contexts' => [
           'url.path',
+          'url.query_args',
         ],
       ],
     ];

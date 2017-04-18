@@ -6,6 +6,8 @@ dependencies:
     - field.storage.node.field_landing_page_featured_prop
     - node.type.landing_page
     - node.type.property
+_core:
+  default_config_hash: EMdngNi4iKQeCWSBHlKOkjoB7ihPEaXofHiHDcdgB3g
 id: node.landing_page.field_landing_page_featured_prop
 field_name: field_landing_page_featured_prop
 entity_type: node

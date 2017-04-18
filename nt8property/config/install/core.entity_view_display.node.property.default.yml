@@ -34,7 +34,7 @@ dependencies:
     - text
     - user
 _core:
-  default_config_hash: VRxj7E4IDZeZEtABSJPLvsIz6nkmqH9JZiiF6jM-whM
+  default_config_hash: pQCO_YzRFGSe_ztvQ3xtOFY-7-gW4M7GzN65I8juRxg
 id: node.property.default
 targetEntityType: node
 bundle: property
@@ -46,6 +46,7 @@ content:
     weight: 1
     settings: {  }
     third_party_settings: {  }
+    region: content
   field_cottage_accommodates:
     weight: 9
     label: above
@@ -54,12 +55,14 @@ content:
       prefix_suffix: true
     third_party_settings: {  }
     type: number_integer
+    region: content
   field_cottage_address:
     weight: 20
     label: above
     settings: {  }
     third_party_settings: {  }
     type: address_default
+    region: content
   field_cottage_bedrooms:
     weight: 12
     label: above
@@ -68,6 +71,7 @@ content:
       prefix_suffix: true
     third_party_settings: {  }
     type: number_integer
+    region: content
   field_cottage_booking:
     weight: 17
     label: above
@@ -79,6 +83,7 @@ content:
       target: ''
     third_party_settings: {  }
     type: link
+    region: content
   field_cottage_brandcode:
     weight: 3
     label: above
@@ -86,6 +91,7 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     type: string
+    region: content
   field_cottage_changeover_day:
     weight: 13
     label: above
@@ -93,6 +99,7 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     type: string
+    region: content
   field_cottage_coordinates:
     weight: 21
     label: above
@@ -103,34 +110,39 @@ content:
       prefix_suffix: true
     third_party_settings: {  }
     type: number_decimal
+    region: content
   field_cottage_description:
     weight: 10
     label: above
     settings: {  }
     third_party_settings: {  }
     type: text_default
+    region: content
   field_cottage_featured_image:
     weight: 6
     label: above
     settings:
-      imagecache_external_style: medium
+      imagecache_external_style: property_image
       imagecache_external_link: ''
     third_party_settings: {  }
     type: imagecache_external_image
+    region: content
   field_cottage_image_info:
     weight: 23
     label: above
     settings: {  }
     third_party_settings: {  }
     type: basic_string
+    region: content
   field_cottage_images:
     weight: 7
     label: above
     settings:
-      imagecache_external_style: medium
+      imagecache_external_style: property_image
       imagecache_external_link: ''
     third_party_settings: {  }
     type: imagecache_external_image
+    region: content
   field_cottage_name:
     weight: 8
     label: above
@@ -138,6 +150,7 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     type: string
+    region: content
   field_cottage_ownercode:
     weight: 19
     label: above
@@ -145,6 +158,7 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     type: string
+    region: content
   field_cottage_pets:
     weight: 15
     label: above
@@ -153,12 +167,14 @@ content:
       prefix_suffix: true
     third_party_settings: {  }
     type: number_integer
+    region: content
   field_cottage_pricing:
     weight: 22
     label: above
     settings: {  }
     third_party_settings: {  }
     type: basic_string
+    region: content
   field_cottage_promote:
     weight: 16
     label: above
@@ -168,6 +184,7 @@ content:
       format_custom_true: ''
     third_party_settings: {  }
     type: boolean
+    region: content
   field_cottage_rating:
     weight: 14
     label: above
@@ -176,6 +193,7 @@ content:
       prefix_suffix: true
     third_party_settings: {  }
     type: number_integer
+    region: content
   field_cottage_reference_code:
     weight: 2
     label: above
@@ -183,6 +201,7 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     type: string
+    region: content
   field_cottage_slug:
     weight: 5
     label: above
@@ -190,12 +209,14 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     type: string
+    region: content
   field_cottage_teaser_description:
     weight: 11
     label: above
     settings: {  }
     third_party_settings: {  }
     type: text_default
+    region: content
   field_cottage_url:
     weight: 4
     label: above
@@ -207,8 +228,10 @@ content:
       target: ''
     third_party_settings: {  }
     type: link
+    region: content
   links:
     weight: 0
+    region: content
     settings: {  }
     third_party_settings: {  }
 hidden:

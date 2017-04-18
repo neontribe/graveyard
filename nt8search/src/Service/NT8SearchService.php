@@ -5,7 +5,6 @@ namespace Drupal\nt8search\Service;
 use Drupal\nt8property\Service\NT8PropertyService;
 use Drupal\nt8tabsio\Service\NT8TabsRestService;
 use Drupal\Core\Entity\EntityTypeManager;
-use Drupal\Core\Entity\Query\QueryFactory;
 
 /**
  * Class NT8SearchService.
@@ -29,8 +28,8 @@ class NT8SearchService {
    * Constructor.
    */
   public function __construct(NT8TabsRestService $nt8tabsio_tabs_service,
-                              QueryFactory $entityQuery,
-                              EntityTypeManager $entityTypeManager,
+                              $entityQuery,
+                              $entityTypeManager,
                               NT8PropertyService $nt8propertymethods) {
 
     $this->nt8tabsioTabsService = $nt8tabsio_tabs_service;
@@ -44,16 +43,20 @@ class NT8SearchService {
    *
    * @param array $param_values
    *   Search definition provided as an array of parameter values.
-   * @param array $loadNodes
-   *   Array into which the result of the search should be loaded as nodes.
+   * @param bool $setState
+   *   Should we update the `nt8search.results` state with loaded proprefs?
    * @param int $pageSize
    *   Specifies how many property IDs TABS returns per page.
+   * @param array $loadNodes
+   *   Array into which the result of the search should be loaded as nodes.
+   *   If this isn't set no nodes are loaded.
    *
-   * @return \stdClass The json decoded result of the search.
-   * The json decoded result of the search.
+   * @return \stdClass
+   *   The json decoded result of the search.
+   *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    */
-  public function performSearchFromParams(array $param_values, array &$loadNodes, int $pageSize = 12) {
+  public function performSearchFromParams(array $param_values, bool $setState = FALSE, int $pageSize = 12, array &$loadNodes = NULL) {
     // Get the sanitised query information.
     $queryInfo = self::extractQueryInfoFromValues($param_values);
 
@@ -76,23 +79,42 @@ class NT8SearchService {
     // @TODO Never show errors to the user! Change how logging is done here.
     // If the user has passed an array into $loadNodes fill it.
     if (isset($searchResult->results)) {
-      $loadNodes = self::loadResultIntoNodes($searchResult->results);
+      if (isset($loadNodes)) {
+        $loadNodes = self::loadResultIntoNodes($searchResult->results);
+      }
+
+      if ($setState) {
+        // Set the search state.
+        \Drupal::state()->set('nt8search.results', $searchResult);
+      }
 
       if (!isset($loadNodes)) {
-        // Replace with a drupal logger.
-        //        $loadNodes['error'] = \Drupal::translation()->translate('We failed to load any properties for this request.');
+        // @TODO: Replace with a drupal logger.
+        // We failed to load any properties for this request.
       }
     }
     elseif (isset($searchResult->errorCode)) {
-      // Replace with a drupal logger.
-      //      $loadNodes['error'] = \Drupal::translation()->translate('A fatal TABS error has occurred. Error Code: @errorCode.', ['@errorCode' => $searchResult->errorCode ?: 'Unknown.']);
+      // @TODO: Replace with a drupal logger.
+      // ['@errorCode' => $searchResult->errorCode ?: 'Unknown.']
+      // A fatal TABS error has occurred. Error Code: @errorCode.
     }
     else {
-      // Replace with a drupal logger.
-      //      $loadNodes['error'] = \Drupal::translation()->translate('We couldn\'t hit the TABS API.');
+      // @TODO: Replace with a drupal logger.
+      // 'We couldn\'t hit the TABS API.
     }
 
     return $searchResult;
+  }
+
+  /**
+   * Returns the current search state as stored by the Drupal state mngr.
+   *
+   * @return mixed
+   *   The stored value, or NULL if no value exists.
+   */
+  public static function getSearchState() {
+    // Get the current search state.
+    return \Drupal::state()->get('nt8search.results');
   }
 
   /**

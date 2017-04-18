@@ -12,32 +12,25 @@ dependencies:
     - node.type.landing_page
   module:
     - image
-    - text
     - user
+_core:
+  default_config_hash: JM5cI3pPUmcbWPUl5g8MohoAzGx2YU46WVmzz1psA4M
 id: node.landing_page.teaser
 targetEntityType: node
 bundle: landing_page
 mode: teaser
 content:
-  body:
-    label: hidden
-    type: text_summary_or_trimmed
-    weight: 1
-    settings:
-      trim_length: 600
-    third_party_settings: {  }
   field_landing_page_featured_img:
     type: image
     weight: 0
-    label: above
+    label: hidden
     settings:
       image_style: medium
       image_link: content
     third_party_settings: {  }
-  links:
-    weight: 2
-    settings: {  }
-    third_party_settings: {  }
+    region: content
 hidden:
+  body: true
   field_landing_page_featured_prop: true
   field_tabs_filter_string: true
+  links: true

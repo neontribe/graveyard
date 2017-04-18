@@ -6,7 +6,7 @@ dependencies:
     - field.storage.node.field_cottage_slug
     - node.type.property
 _core:
-  default_config_hash: tzb4dijzwbzXdhqH5rPP2JmszdhOBbxQiG2o0aon9wE
+  default_config_hash: lW3Wnpav8uqpIn9Mto1_gr3trmyMOheSI7oobFZ0PAk
 id: node.property.field_cottage_slug
 field_name: field_cottage_slug
 entity_type: node

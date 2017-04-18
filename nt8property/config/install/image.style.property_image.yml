@@ -1,0 +1,14 @@
+uuid: 09b5789f-72b1-43ba-a74d-1f4bdf1fe952
+langcode: en
+status: true
+dependencies: {  }
+name: property_image
+label: 'Property Image'
+effects:
+  43a22996-312e-4a49-92e0-328fe4abdee0:
+    uuid: 43a22996-312e-4a49-92e0-328fe4abdee0
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 900
+      height: 600

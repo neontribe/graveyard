@@ -8,7 +8,7 @@ dependencies:
   module:
     - text
 _core:
-  default_config_hash: VdrPT2OnfpalDXLWFwKJqimDsnDLQ_CE5kcvjBagGYY
+  default_config_hash: UhNP-xco26JGCoTbOGtLcQ9evCZ-SbZC90DTaUT_MpA
 id: node.property.body
 field_name: body
 entity_type: node

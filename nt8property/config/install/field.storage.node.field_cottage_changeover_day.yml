@@ -5,7 +5,7 @@ dependencies:
   module:
     - node
 _core:
-  default_config_hash: yN16DSwBJXv_CLdELZF_YhFfknrvZKLEX9N2LLO8nnY
+  default_config_hash: bLAjPdK_ef0yUxRgxDsgVOaF4FraSWWlbSEE8-w6MH4
 id: node.field_cottage_changeover_day
 field_name: field_cottage_changeover_day
 entity_type: node

@@ -6,7 +6,7 @@ dependencies:
     - field.storage.node.field_cottage_coordinates
     - node.type.property
 _core:
-  default_config_hash: 58aBrv6l16dW2CQPeMruG19jJnmg8kCXiBcaLfQZ4JQ
+  default_config_hash: guM-IJkciVg4wPQ-gPq0C3a4_SLNTwZaAeP9y2rOPQQ
 id: node.property.field_cottage_coordinates
 field_name: field_cottage_coordinates
 entity_type: node

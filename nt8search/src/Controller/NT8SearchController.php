@@ -70,32 +70,9 @@ class NT8SearchController extends ControllerBase {
   public function search(Request $request) {
     $posted_values = $request->query->all();
 
-    $renderOutput = [];
+    $search_results = $this->nt8searchMethods->performSearchFromParams($posted_values, TRUE);
 
-    // Execute the search
-    $loadedResultsAsNodes = [];
-    $search_results = $this->nt8searchMethods->performSearchFromParams($posted_values, $loadedResultsAsNodes);
-
-    // Setup the blocks.
-    {
-      $mapBlock = \Drupal::service('plugin.manager.block')->createInstance(
-        'nt8map_block',
-        [
-          'properties' => $loadedResultsAsNodes
-        ]
-      );
-
-      $searchResultsBlock = \Drupal::service('plugin.manager.block')->createInstance(
-        'nt8search_results_block',
-        [
-          'properties' => $loadedResultsAsNodes,
-          'search_results' => $search_results
-        ]
-      );
-    }
-
-    $renderOutput['results_map'] = $mapBlock->build();
-    $renderOutput['results_search'] = $searchResultsBlock->build();
+    $renderOutput['#title'] = $this->t('Search Results (@count)', ['@count' => $search_results->totalResults]);
 
     return $renderOutput;
   }

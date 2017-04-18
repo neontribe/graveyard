@@ -5,6 +5,7 @@
  * Contains nt8landingpage.module.
  */
 
+use Drupal\block\Entity\Block;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -25,33 +26,33 @@ function nt8landingpage_help($route_name, RouteMatchInterface $route_match) {
   }
 }
 
+/**
+ * Implements hook_entity_view().
+ */
 function nt8landingpage_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
   $property_service = \Drupal::getContainer()->get('nt8property.property_methods');
   $search_service   = \Drupal::getContainer()->get('nt8search.methods');
 
   $entity_type = $entity->getType();
 
-  if($view_mode === 'full') {
+  if ($view_mode === 'full') {
     switch ($entity_type) {
       case 'landing_page':
-      {
         $filter_string = $property_service->getNodeFieldValue($entity, 'field_tabs_filter_string', 0, 'value');
         $filter_array = [];
         parse_str($filter_string, $filter_array);
 
-        $loadedResultsAsNodes = [];
-        $search_results = $search_service->performSearchFromParams($filter_array, $loadedResultsAsNodes);
+        $search_service->performSearchFromParams($filter_array, TRUE);
 
-        $searchResultsBlock = \Drupal::service('plugin.manager.block')->createInstance(
-          'nt8search_results_block',
-          [
-            'properties' => $loadedResultsAsNodes,
-            'search_results' => $search_results
-          ]
-        );
-
-        $build['filter_results'] = $searchResultsBlock->build();
-      }
+        // @TODO: Use a better module to manage block visiblity.
+        // There's a module which allows for specific block view settings.
+        // We should use that.
+        $block = Block::load('neontabs8searchresultsblock');
+        $render = \Drupal::entityTypeManager()
+          ->getViewBuilder('block')
+          ->view($block);
+        $build['content']['results'] = $render;
+        break;
     }
   }
 }

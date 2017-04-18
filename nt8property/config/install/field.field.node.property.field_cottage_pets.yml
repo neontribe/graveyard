@@ -6,7 +6,7 @@ dependencies:
     - field.storage.node.field_cottage_pets
     - node.type.property
 _core:
-  default_config_hash: Sh5IcdkTXiQlkgZfmzLtlKlvWjbWa-xRbJCunJZqNwI
+  default_config_hash: F0wr37IBeBoeTi0RjiTesMj7bWDuPqrDpl-wQ1YLGWg
 id: node.property.field_cottage_pets
 field_name: field_cottage_pets
 entity_type: node
