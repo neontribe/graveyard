@@ -8,7 +8,7 @@ dependencies:
   module:
     - link
 _core:
-  default_config_hash: PLQ6S3qnX0zGT-U-j-Lnu3gkZyuxJsgVL4z8u1YpOoc
+  default_config_hash: nCVH6Hjixrq9XipN4Gmf-bwG9rs-NbkvMh1r8psmsig
 id: node.property.field_cottage_url
 field_name: field_cottage_url
 entity_type: node

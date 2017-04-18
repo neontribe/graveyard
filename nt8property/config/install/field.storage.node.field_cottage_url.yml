@@ -6,7 +6,7 @@ dependencies:
     - link
     - node
 _core:
-  default_config_hash: wyQ4Y_oyt5bt7jfiRWFHx9Z3eo5eVpbkiWn2jBgWpT0
+  default_config_hash: 4GFiBLeSWAS42L1mFqqr4OPkMS8nYLGxxu8ozX4wlfs
 id: node.field_cottage_url
 field_name: field_cottage_url
 entity_type: node

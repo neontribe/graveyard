@@ -6,7 +6,7 @@ dependencies:
     - field.storage.node.field_cottage_brandcode
     - node.type.property
 _core:
-  default_config_hash: OA66SProHWxjrHVs4qk6Yt2EW3iv-DGdimbMArWkWoA
+  default_config_hash: kkoQ3qoJnkt8105n_qvbPM1YXRmw9HNq-FyxeKPGTso
 id: node.property.field_cottage_brandcode
 field_name: field_cottage_brandcode
 entity_type: node

@@ -3,7 +3,6 @@
 namespace Drupal\nt8property\Service;
 
 use Drupal\Core\Entity\EntityTypeManager;
-use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\nt8tabsio\Service\NT8TabsRestService;
 
@@ -22,9 +21,9 @@ class NT8PropertyService {
   /**
    * NT8PropertyService constructor.
    *
-   * @param \Drupal\Core\Entity\Query\QueryFactory $entityQuery
+   * @param mixed $entityQuery
    *   Container injection.
-   * @param \Drupal\Core\Entity\EntityTypeManager $entityTypeManager
+   * @param mixed $entityTypeManager
    *   Container injection.
    * @param \Drupal\nt8tabsio\Service\NT8TabsRestService $nt8RestService
    *   Container injection.
@@ -196,7 +195,7 @@ class NT8PropertyService {
     foreach ($proprefs as $propref) {
       $nodes = $this->loadNodesFromPropref($propref) ?: [];
 
-      if(count($nodes) > 0) {
+      if (count($nodes) > 0) {
         foreach ($nodes as $node) {
           $loadedNodes[$propref][] = $node;
         }

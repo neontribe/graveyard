@@ -6,7 +6,7 @@ dependencies:
     - field.storage.node.field_cottage_pricing
     - node.type.property
 _core:
-  default_config_hash: mir_AO3RQLVucJFLA44vGcVxfg68Y7camHlKobpt9BM
+  default_config_hash: z1dB67wNJurBVmmInHPZJiC8KSlWJfSYWdUaQUXfGo0
 id: node.property.field_cottage_pricing
 field_name: field_cottage_pricing
 entity_type: node

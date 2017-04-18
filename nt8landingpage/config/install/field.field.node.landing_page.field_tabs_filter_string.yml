@@ -5,6 +5,8 @@ dependencies:
   config:
     - field.storage.node.field_tabs_filter_string
     - node.type.landing_page
+_core:
+  default_config_hash: 774T1-eh2BRWNSn_-cWBt-FEG-KpnDANQjUhNlMMess
 id: node.landing_page.field_tabs_filter_string
 field_name: field_tabs_filter_string
 entity_type: node

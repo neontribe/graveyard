@@ -5,6 +5,8 @@ dependencies:
   module:
     - link
     - node
+_core:
+  default_config_hash: fFepfkUv_sr8_Z3drpXUPXHJJPjy3oZK8jNe7j9xyjg
 id: node.field_cottage_featured_image
 field_name: field_cottage_featured_image
 entity_type: node

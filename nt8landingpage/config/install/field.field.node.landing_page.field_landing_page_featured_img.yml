@@ -7,6 +7,8 @@ dependencies:
     - node.type.landing_page
   module:
     - image
+_core:
+  default_config_hash: Cv8sGft7tUgTjCsQFfGyWDNa776TC8QQPUNpg3FW8OI
 id: node.landing_page.field_landing_page_featured_img
 field_name: field_landing_page_featured_img
 entity_type: node

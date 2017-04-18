@@ -49,7 +49,7 @@ function drush_nt8property_nt8_import_all($name = '') {
   $nt8restService = $container->get('nt8tabsio.tabs_service');
   $nt8PropertyMethods = $container->get('nt8property.property_methods');
 
-  // Pull/freshen attribute data
+  // Pull/freshen attribute data.
   $attrib_data = $nt8PropertyMethods->getAttributeDataFromTabs();
   $status = $nt8PropertyMethods->createAttributesFromTabs($attrib_data);
 

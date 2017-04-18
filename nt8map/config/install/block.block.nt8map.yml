@@ -7,10 +7,12 @@ dependencies:
     - system
   theme:
     - nt8_theme
+_core:
+  default_config_hash: F8Anci_9WCWO6oDRfxHEMvekdJtwUPfoS1H6fIaFoEw
 id: nt8map
 theme: nt8_theme
 region: sidebar-left
-weight: -6
+weight: -7
 provider: null
 plugin: nt8map_block
 settings:
@@ -21,6 +23,6 @@ settings:
 visibility:
   request_path:
     id: request_path
-    pages: "/cottages\r\n/cottages/*"
-    negate: false
+    pages: '<front>'
+    negate: true
     context_mapping: {  }

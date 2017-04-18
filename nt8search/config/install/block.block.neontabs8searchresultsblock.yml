@@ -7,6 +7,8 @@ dependencies:
     - system
   theme:
     - nt8_theme
+_core:
+  default_config_hash: 6d1UaS7v0x4kFfuwePsIP6Q3h_Hpqf1HbAu_bVh-9G8
 id: neontabs8searchresultsblock
 theme: nt8_theme
 region: content

@@ -32,5 +32,18 @@ function nt8property_theme() {
       'template' => 'nt8property',
       'render element' => 'children',
     ],
+    'field_cottage_rating_formatter' => [
+      'template' => 'nt8property-field-cottage-rating-formatter',
+      'variables' => [
+        'value' => NULL,
+      ],
+    ],
+    'field_cottage_pricing_formatter' => [
+      'template' => 'nt8property-field-cottage-pricing-formatter',
+      'variables' => [
+        'pricing_data' => NULL,
+        'year' => NULL,
+      ],
+    ],
   ];
 }

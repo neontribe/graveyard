@@ -5,6 +5,7 @@ namespace Drupal\nt8search\Plugin\Block;
 use Drupal\node\Entity\Node;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\nt8property\Service\NT8PropertyService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\nt8search\Service\NT8SearchService;
 
@@ -24,6 +25,12 @@ class NT8SearchResultsBlock extends BlockBase implements ContainerFactoryPluginI
    * @var \Drupal\nt8search\Service\NT8SearchService
    */
   protected $nt8searchMethods;
+
+  /**
+   * Drupal\nt8property\Service\NT8PropertyMethods definition.
+   *
+   * @var \Drupal\nt8property\Service\NT8PropertyService
+   */
   protected $nt8propertyMethods;
 
   /**
@@ -35,18 +42,23 @@ class NT8SearchResultsBlock extends BlockBase implements ContainerFactoryPluginI
    *   The plugin_id for the plugin instance.
    * @param string $plugin_definition
    *   The plugin implementation definition.
+   * @param \Drupal\nt8search\Service\NT8SearchService $nt8search_methods
+   *   Instance of NT8SearchService.
+   * @param \Drupal\nt8property\Service\NT8PropertyService $nt8property_methods
+   *   Instance of NT8PropertyService.
    */
   public function __construct(
         array $configuration,
         $plugin_id,
         $plugin_definition,
-        $nt8search_methods,
-        $nt8property_methods
+        NT8SearchService $nt8search_methods,
+        NT8PropertyService $nt8property_methods
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->nt8searchMethods = $nt8search_methods;
     $this->nt8propertyMethods = $nt8property_methods;
   }
+
   /**
    * {@inheritdoc}
    */
@@ -59,6 +71,7 @@ class NT8SearchResultsBlock extends BlockBase implements ContainerFactoryPluginI
       $container->get('nt8property.property_methods')
     );
   }
+
   /**
    * {@inheritdoc}
    */
@@ -72,9 +85,8 @@ class NT8SearchResultsBlock extends BlockBase implements ContainerFactoryPluginI
       ],
     ];
 
-
     // @TODO: Make this a config option.
-    $displayPagination = true;
+    $displayPagination = TRUE;
 
     $search_results = NT8SearchService::getSearchState();
 
@@ -85,19 +97,18 @@ class NT8SearchResultsBlock extends BlockBase implements ContainerFactoryPluginI
 
     $loadedResultsAsNodes = $this->nt8propertyMethods->loadNodesFromProprefs($mappedResults);
 
-
     if (isset($search_results, $loadedResultsAsNodes)) {
       $totalResults = $search_results->totalResults;
       $pageSize = $search_results->pageSize;
 
       $page = pager_default_initialize($totalResults, $pageSize);
 
-      if($displayPagination) {
+      if ($displayPagination) {
         $renderOutput['result_container'] = [
           'pager' => [
             '#type' => 'pager',
             '#weight' => 10,
-          ]
+          ],
         ];
       }
 
@@ -106,7 +117,8 @@ class NT8SearchResultsBlock extends BlockBase implements ContainerFactoryPluginI
 
         if ($first_of_type instanceof Node) {
           $renderOutput['result_container']['results'][] = \Drupal::entityTypeManager()->getViewBuilder('node')->view($first_of_type, 'teaser');
-        } else {
+        }
+        else {
           \Drupal::logger('nt8searchcontroller.search')->notice("Unable to load property: $search_result_key.");
         }
       }

@@ -35,12 +35,16 @@ class NT8MapBlock extends BlockBase implements ContainerFactoryPluginInterface {
   protected $nt8mapService;
 
   /**
+   * Drupal\nt8search\Service\NT8SearchService definition.
    *
+   * @var \Drupal\nt8search\Service\NT8SearchService
    */
   protected $nt8searchMethods;
 
   /**
+   * Drupal\nt8property\Service\NT8PropertyMethods definition.
    *
+   * @var \Drupal\nt8property\Service\NT8PropertyService
    */
   protected $nt8propertyMethods;
 
@@ -57,6 +61,10 @@ class NT8MapBlock extends BlockBase implements ContainerFactoryPluginInterface {
    *   Instance of NT8TabsRestService.
    * @param \Drupal\nt8map\Service\NT8MapService $nt8map_service
    *   Instance of NT8MapService.
+   * @param \Drupal\nt8search\Service\NT8SearchService $nt8search_methods
+   *   Instance of NT8SearchService.
+   * @param \Drupal\nt8property\Service\NT8PropertyService $nt8property_methods
+   *   Instance of NT8PropertyService.
    */
   public function __construct(
         array $configuration,
@@ -111,7 +119,6 @@ class NT8MapBlock extends BlockBase implements ContainerFactoryPluginInterface {
     }, $search_results->results);
 
     $loadedResultsAsNodes = $this->nt8propertyMethods->loadNodesFromProprefs($mappedResults);
-
 
     $mapData = $this->nt8mapService->initMap($loadedResultsAsNodes);
 

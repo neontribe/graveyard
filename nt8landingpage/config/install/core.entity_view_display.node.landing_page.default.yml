@@ -13,6 +13,8 @@ dependencies:
     - image
     - text
     - user
+_core:
+  default_config_hash: GqK0cdZqGH5GVJfzUxC1rA4pkkyZqtlYQycij8kOYGE
 id: node.landing_page.default
 targetEntityType: node
 bundle: landing_page
@@ -24,6 +26,7 @@ content:
     weight: 2
     settings: {  }
     third_party_settings: {  }
+    region: content
   field_landing_page_featured_img:
     weight: 0
     label: above
@@ -32,6 +35,7 @@ content:
       image_link: ''
     third_party_settings: {  }
     type: image
+    region: content
   field_landing_page_featured_prop:
     weight: 1
     label: above
@@ -40,6 +44,7 @@ content:
       link: false
     third_party_settings: {  }
     type: entity_reference_entity_view
+    region: content
 hidden:
   field_tabs_filter_string: true
   links: true

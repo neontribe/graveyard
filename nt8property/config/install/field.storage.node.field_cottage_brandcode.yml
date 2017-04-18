@@ -5,7 +5,7 @@ dependencies:
   module:
     - node
 _core:
-  default_config_hash: duZ1GJ7lVhglI637Mq-llJWNPtb6NuBA8XyaiZngfBU
+  default_config_hash: buE0Ut3J6gCGV_U0lckvfVUkJMFIrGrTUvplM1Ratx4
 id: node.field_cottage_brandcode
 field_name: field_cottage_brandcode
 entity_type: node

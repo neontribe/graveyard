@@ -8,6 +8,8 @@ dependencies:
     - taxonomy.vocabulary.cottage_attributes
   module:
     - nt8property
+_core:
+  default_config_hash: Y8bqD_qof2h0FkcK8VwhVoKVBYO-7NlQRntQ8NcxQY4
 id: node.property.field_cottage_attributes
 field_name: field_cottage_attributes
 entity_type: node
