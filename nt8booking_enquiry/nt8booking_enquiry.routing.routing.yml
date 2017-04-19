@@ -1,7 +1,0 @@
-nt8booking_enquiry.enquire:
- path: '/nt8booking/enquire'
- defaults:
-   _title: 'Not needed, its a callback'
-   _form: '\Drupal\nt8booking_enquiry\Form\NT8BookingEnquiryForm'
- requirements:
-   _permission: 'access content'

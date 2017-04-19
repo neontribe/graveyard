@@ -71,8 +71,6 @@ class NT8BookingEnquiryBlock extends BlockBase implements ContainerFactoryPlugin
    * {@inheritdoc}
    */
   public function build() {
-    $build = [];
-
     $form = \Drupal::formBuilder()->getForm('Drupal\nt8booking_enquiry\Form\NT8BookingEnquiryForm');
     return $form;
   }

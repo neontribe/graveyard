@@ -57,3 +57,14 @@ function nt8booking_enquiry_permission() {
 function nt8booking_enquiry_page() {
   return 'NT8Booking Enquiry place holder text.';
 }
+
+/**
+ * Implements hook_nt8_booking_enquiry_create_alter().
+ */
+function nt8booking_enquiry_nt8_booking_enquiry_create_alter(&$enquiry_info, $data) {
+  if (!$enquiry_info['success']) {
+    // We set a default message, this should be overriden per brand.
+    $message = json_encode($data, JSON_PRETTY_PRINT);
+    $enquiry_info['message'] = $message;
+  }
+}

@@ -11,6 +11,7 @@ use Drupal\Core\Datetime\DrupalDateTime;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\nt8tabsio\Service\NT8TabsRestService;
 use Drupal\nt8booking_enquiry\Service\NT8BookingService;
+use Drupal\nt8booking_enquiry\Event\NT8BookingEvent;
 
 /**
  * The booking path Enquiry form.
@@ -43,10 +44,9 @@ class NT8BookingEnquiryForm extends FormBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    // Instantiates this form class.
     return new static(
       // Load the service required to construct this class.
-      $container->get('nt8tabsio.tabs_service'), $container->get('nt8booking.service')
+      $container->get('nt8tabsio.tabs_service'), $container->get('nt8booking.service'), $container->get('event_dispatcher')
     );
   }
 
@@ -71,27 +71,14 @@ class NT8BookingEnquiryForm extends FormBase {
     }
 
     if (!$propref) {
-      $rawdata = $this->nt8TabsRestService->get(
-        'property', ['pageSize' => 9999, 'fields' => 'propertyRef:name']
-      );
-      $data = json_decode($rawdata, TRUE);
-      $proprefs = [];
-      foreach ($data['results'] as $value) {
-        $proprefs[$value['propertyRef']] = $value['name'];
-      }
-      asort($proprefs);
-      $form['propref'] = [
-        '#type' => 'select',
-        '#title' => 'Choose property',
-        '#options' => $proprefs,
-      ];
+      drupal_set_message('Unable to determine property reference, is this a property node page?', 'error');
+      return [];
     }
-    else {
-      $form['propref'] = [
-        '#type' => 'hidden',
-        '#value' => $propref,
-      ];
-    }
+
+    $form['propref'] = [
+      '#type' => 'hidden',
+      '#value' => $propref,
+    ];
 
     $form['from'] = [
       '#type' => 'date',
@@ -201,8 +188,27 @@ class NT8BookingEnquiryForm extends FormBase {
     $pets = $form_state->getValue('pets');
 
     $data = $this->nt8bookingService->booking($propref, $from_date, $to_date, $adults, $children, $infants, $pets);
-    \Drupal::logger(__METHOD__)->info($data);
-    // NOTIFY HERE!
+
+    $success = isset($data['bookingId']);
+    $level = $success?'info':'error';
+    \Drupal::logger(__METHOD__)->$level(json_encode($data));
+    $enquiry_info = array(
+      'success' => $success,
+      'message' => FALSE,
+      'redirect' => FALSE,
+      'level' => $level,
+    );
+    $response = new \stdClass();
+    \Drupal::moduleHandler()->alter('nt8_booking_enquiry_create', $enquiry_info, $data);
+
+    if ($enquiry_info['message']) {
+      drupal_set_message($enquiry_info['message'], $enquiry_info['level']);
+    }
+
+    if ($enquiry_info['redirect']) {
+      $url = $enquiry_info['redirect'];
+      $form_state->setRedirectUrl($url);
+    }
   }
 
   /**
