@@ -3,34 +3,3 @@ system.admin_neontabs_booking:
   parent: system.admin_neontabs
   description: 'Administer the booking path.'
   route_name: nt8booking.admin
-
-system.admin_neontabs_booking:
-  title: 'Booking Path'
-  route_name: nt8booking.global
-  base_route: nt8booking.admin
-  weight: 00
-system.admin_neontabs_booking_enquiry:
-  title: 'Enquiry'
-  route_name: nt8booking_details.admin_enquiry
-  base_route: nt8booking.admin
-  weight: 10
-system.admin_neontabs_booking_primary_traveller:
-  title: 'Primary Traveller'
-  route_name: nt8booking_details.admin_primary_traveller
-  base_route: nt8booking_details.admin_primary_traveller
-  weight: 20
-system.admin_neontabs_booking_party_details:
-  title: 'Party Details'
-  route_name: nt8booking_details.admin_party_details
-  base_route: nt8booking_details.admin_primary_traveller
-  weight: 30
-system.admin_neontabs_booking_extras:
-  title: 'Extras'
-  route_name: nt8booking_details.admin_extras
-  base_route: nt8booking_details.admin_primary_traveller
-  weight: 40
-system.admin_neontabs_booking_finalize:
-  title: 'Finalize'
-  route_name: nt8booking_details.admin_finalize
-  base_route: nt8booking_details.admin_primary_traveller
-  weight: 50
