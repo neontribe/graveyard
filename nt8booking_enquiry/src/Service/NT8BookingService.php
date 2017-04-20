@@ -32,6 +32,11 @@ class NT8BookingService {
     return new static($container->get('nt8tabsio.tabs_service'));
   }
 
+  public function getBooking($booingId) {
+    $data = $this->nt8TabsRestService->get('booking/' . $booingId);
+    return $data;
+  }
+
   /**
    * Makes and availability enquiry against the API.
    *
