@@ -24,7 +24,11 @@
         "drush/drush": "~8.0",
         "webflo/drupal-finder": "^0.2.1",
         "webmozart/path-util": "^2.3",
-        "neontabs/nt8": "dev-develop",
+        "neontabs/nt8landingpage": "dev-develop",
+        "neontabs/nt8map": "dev-develop",
+        "neontabs/nt8property": "dev-develop",
+        "neontabs/nt8search": "dev-develop",
+        "neontabs/nt8tabsio": "dev-develop",
         "neontabs/nt8_booking": "dev-develop",
         "neontabs/nt8_theme": "dev-develop"
     },
