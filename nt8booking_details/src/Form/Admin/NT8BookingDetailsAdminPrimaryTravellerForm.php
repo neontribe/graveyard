@@ -20,50 +20,44 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class NT8BookingDetailsAdminPrimaryTravellerForm extends FormBase {
 
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $titles = \Drupal::config('nt8booking_details.settings')->get('titles_list');
-    $other_code = \Drupal::config('nt8booking_details.settings')->get('other_code');
-    $age_list = \Drupal::config('nt8booking_details.settings')->get('age_list');
-    $default_age = \Drupal::config('nt8booking_details.settings')->get('default_age');
+    $config = \Drupal::config('nt8booking_details.settings');
+
+    $titles_list = $config->get('titles_list');
+    $other_code = $config->get('other_code');
+    $default_age = $config->get('default_age');
 
     $form['titles_list'] = array(
       '#type' => 'textarea',
       '#title' => t('Traveller titles'),
-      //'#default_value' => variable_get('nt2_booking_details_titles_list', ''),
+      '#default_value' => json_encode(json_decode($titles_list), JSON_PRETTY_PRINT),
       '#rows' => 8,
-      '#description' => t('List the titles to appear in the drop down on the traveller details section.  One pair per line, separated by the | (pipe) character, e.g. Mr|Mister .'),
+      '#description' => t('List the titles to appear in the drop down on the traveller details section.  Json encoded please.'),
     );
 
     $form['other_code'] = array(
       '#type' => 'textfield',
       '#title' => t('Other Code'),
-      //'#default_value' => variable_get('nt2_booking_details_other_code', 'other'),
+      '#default_value' => $other_code,
       '#description' => t('The text to code to use the booking as Other, so we can skip this stage right now and complete it latter in the process.'),
     );
 
-    $form['age_list'] = array(
-      '#type' => 'select',
-      '#title' => t('Default traveller age'),
-      //'#options' => NT2BookingDetails::splitVar(variable_get('nt2_booking_details_age_adult', array())),
-      //'#default_value' => variable_get('nt2_booking_details_age_default', ''),
-      '#description' => t('Select the default age bracket for on the party details screen.'),
-    );
-
+    $adult_ages = json_decode($config->get('adult_ages'), TRUE);
+    $child_ages = json_decode($config->get('child_ages'), TRUE);
+    $infant_ages = json_decode($config->get('infant_ages'), TRUE);
+    $ages = array_merge($adult_ages, $child_ages, $infant_ages);
     $form['default_age'] = array(
       '#type' => 'select',
       '#title' => t('Default traveller age'),
-      //'#options' => NT2BookingDetails::splitVar(variable_get('nt2_booking_details_age_adult', array())),
-      //'#default_value' => variable_get('nt2_booking_details_age_default', ''),
+      '#options' => $ages,
+      '#default_value' => $default_age,
       '#description' => t('Select the default age bracket for on the party details screen.'),
     );
 
     $form['actions']['#type'] = 'actions';
     $form['actions']['submit'] = [
       '#type' => 'submit',
-      '#value' => $this->t('NT8BookingDetailsAdminPrimaryTravellerForm'),
-      '#name' => 'book_now',
-      '#id' => 'nt2-booking-book-now-btn',
+      '#value' => $this->t('Save Settings'),
       '#button_type' => 'primary',
-      '#attributes' => ['disabled' => 'disabled'],
     ];
 
     $form['#cache'] = ['max-age' => 0];
@@ -75,8 +69,30 @@ class NT8BookingDetailsAdminPrimaryTravellerForm extends FormBase {
     return __CLASS__;
   }
 
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    $titles_list = $form_state->getValue('titles_list');
 
+    $data = json_decode($titles_list, TRUE);
+    if (!$data) {
+      $form_state->setErrorByName('titles_list', t('Invalid JSON'));
+    }
+  }
+
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    $titles_list = $form_state->getValue('titles_list');
+    \Drupal::configFactory()->getEditable('nt8booking_details.settings')
+      ->set('titles_list', $titles_list)
+      ->save();
+
+    $other_code = $form_state->getValue('other_code');
+    \Drupal::configFactory()->getEditable('nt8booking_details.settings')
+      ->set('other_code', $other_code)
+      ->save();
+
+    $default_age = $form_state->getValue('default_age');
+    \Drupal::configFactory()->getEditable('nt8booking_details.settings')
+      ->set('default_age', $default_age)
+      ->save();
   }
 
 }

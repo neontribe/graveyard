@@ -7,14 +7,18 @@
 # Documentation for schema files like this one is located here:
 # https://drupal.org/node/1905070
 
-nt8booking_enquiry.settings:
+nt8booking_details.settings:
   type: mapping
-  label: 'NT8 Booking Enquiry'
+  label: 'NT8 Booking Details'
   mapping:
-    error_codes:
-      label: 'Error Codes'
+    titles_list:
+      label: 'Titles'
       type: string
   mapping:
-    lead_time:
-      label: 'Lead Time'
+    other_code:
+      label: 'Other code'
+      type: string
+  mapping:
+    age_list:
+      label: 'Age List'
       type: string

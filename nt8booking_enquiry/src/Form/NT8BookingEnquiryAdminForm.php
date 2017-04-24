@@ -20,15 +20,24 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class NT8BookingEnquiryAdminForm extends FormBase {
 
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $error_codes = \Drupal::config('nt8booking_enquiry.settings')->get('error_codes');
+    $config = \Drupal::config('nt8booking_enquiry.settings');
+    $error_codes = $config->get('error_codes');
+    $lead_time = $config->get('lead_time');
 
-    $form['error_codes'] = array(
+    $form['lead_time'] = [
+      '#type' => 'textfield',
+      '#title' => t('Web booking lead time'),
+      '#default_value' => $lead_time,
+      '#description' => t("Don't take a webbooking if it is within 'x' days."),
+    ];
+
+    $form['error_codes'] = [
       '#type' => 'textarea',
       '#title' => t('TABS Error Codes'),
       '#rows' => 25,
       '#description' => t('This text area translates the TABS Error code to readable text.'),
       '#default_value' => json_encode(json_decode($error_codes), JSON_PRETTY_PRINT),
-    );
+    ];
 
     $form['actions']['#type'] = 'actions';
     $form['actions']['submit'] = [
@@ -48,6 +57,7 @@ class NT8BookingEnquiryAdminForm extends FormBase {
 
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $error_codes = $form_state->getValue('error_codes');
+
     $data = json_decode($error_codes, TRUE);
     if (!$data) {
       $form_state->setErrorByName('error_codes', t('Invalid JSON'));
@@ -58,6 +68,11 @@ class NT8BookingEnquiryAdminForm extends FormBase {
     $error_codes = $form_state->getValue('error_codes');
     \Drupal::configFactory()->getEditable('nt8booking_enquiry.settings')
       ->set('error_codes', $error_codes)
+      ->save();
+
+    $lead_time = $form_state->getValue('lead_time');
+    \Drupal::configFactory()->getEditable('nt8booking_enquiry.settings')
+      ->set('lead_time', $lead_time)
       ->save();
   }
 

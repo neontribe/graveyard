@@ -1,10 +1,3 @@
-nt8booking_details.details:
-  path: 'nt8booking_details/details'
-  defaults:
-    _controller: '\Drupal\nt8booking_details\Controller\NT8BookingDetailsController::details'
-  requirements:
-    _access: 'TRUE'
-
 nt8booking.admin:
   path: '/admin/config/neontabs/booking'
   defaults:
