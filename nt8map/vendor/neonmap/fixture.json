@@ -1,0 +1,105 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "id": "205496",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [-2.937432, 50.725534]
+            },
+            "properties": {
+                "title": "Test Cottage",
+                "nid": "997",
+                "uri": "/Cottaging/sites/ly/super-control-property/test-cottage",
+                "image": {
+                    "uri": "http://localhost/Cottaging/sites/ly/sites/default/files/styles/neonsc_carousel_thumb/public/sc_ra_images/205496/main/1855580.jpg?itok=7Rt1n6hi",
+                    "alt": null,
+                    "title": null,
+                    "width": 136,
+                    "height": 88
+                }
+            }
+        },
+        {
+            "id": "205586",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [-3.188683, 50.799468]
+            },
+            "properties": {
+                "title": "Stable Cottage 1",
+                "nid": "998",
+                "uri": "/Cottaging/sites/ly/super-control-property/stable-cottage-1",
+                "image": {
+                    "uri": "http://localhost/Cottaging/sites/ly/sites/default/files/styles/neonsc_carousel_thumb/public/sc_ra_images/205586/main/1857908.jpg?itok=t36kPFh_",
+                    "alt": null,
+                    "title": null,
+                    "width": 136,
+                    "height": 88
+                }
+            }
+        },
+        {
+            "id": "205634",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [-2.986232, 50.803040]
+            },
+            "properties": {
+                "title": "Battleford Cottage",
+                "nid": "999",
+                "uri": "/Cottaging/sites/ly/super-control-property/battleford-cottage",
+                "image": {
+                    "uri": "http://localhost/Cottaging/sites/ly/sites/default/files/styles/neonsc_carousel_thumb/public/sc_ra_images/205634/main/1858886.jpg?itok=Uvvq9puo",
+                    "alt": "test",
+                    "title": null,
+                    "width": 136,
+                    "height": 88
+                }
+            }
+        },
+        {
+            "id": "206480",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [-2.937444, 50.728796]
+            },
+            "properties": {
+                "title": "20 Woodmead Road",
+                "nid": "1002",
+                "uri": "/Cottaging/sites/ly/super-control-property/20-woodmead-road",
+                "image": {
+                    "uri": "http://localhost/Cottaging/sites/ly/sites/default/files/styles/neonsc_carousel_thumb/public/sc_ra_images/206480/main/1880192.jpg?itok=v3478jj_",
+                    "alt": "",
+                    "title": null,
+                    "width": 136,
+                    "height": 88
+                }
+            }
+        },
+        {
+            "id": "206798",
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [-3.272719, 50.764147]
+            },
+            "properties": {
+                "title": "Bantam Cottage",
+                "nid": "1003",
+                "uri": "/Cottaging/sites/ly/super-control-property/bantam-cottage",
+                "image": {
+                    "uri": "http://localhost/Cottaging/sites/ly/sites/default/files/styles/neonsc_carousel_thumb/public/sc_ra_images/206798/main/1886312.jpg?itok=jdriPH-o",
+                    "alt": "Bedroom 1",
+                    "title": null,
+                    "width": 136,
+                    "height": 88
+                }
+            }
+        }
+    ]
+}
