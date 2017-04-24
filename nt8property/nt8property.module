@@ -1,0 +1,49 @@
+<?php
+
+/**
+ * @file
+ * Contains nt8property.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function nt8property_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the nt8property module.
+    case 'help.page.nt8property':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Neontabs Property') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function nt8property_theme() {
+  return [
+    'nt8property' => [
+      'template' => 'nt8property',
+      'render element' => 'children',
+    ],
+    'field_cottage_rating_formatter' => [
+      'template' => 'nt8property-field-cottage-rating-formatter',
+      'variables' => [
+        'value' => NULL,
+      ],
+    ],
+    'field_cottage_pricing_formatter' => [
+      'template' => 'nt8property-field-cottage-pricing-formatter',
+      'variables' => [
+        'pricing_data' => NULL,
+        'year' => NULL,
+      ],
+    ],
+  ];
+}

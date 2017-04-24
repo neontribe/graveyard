@@ -1,0 +1,21 @@
+uuid: 1526097d-58eb-4679-9427-9b734b92bdae
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_attribute_labl
+    - taxonomy.vocabulary.cottage_attributes
+id: taxonomy_term.cottage_attributes.field_attribute_labl
+field_name: field_attribute_labl
+entity_type: taxonomy_term
+bundle: cottage_attributes
+label: 'Attribute Label'
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: 'Label Text'
+default_value_callback: ''
+settings: {  }
+field_type: string

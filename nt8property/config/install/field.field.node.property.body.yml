@@ -1,0 +1,24 @@
+uuid: f1582ca0-1147-4c4d-94c0-409df0350970
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.property
+  module:
+    - text
+_core:
+  default_config_hash: UhNP-xco26JGCoTbOGtLcQ9evCZ-SbZC90DTaUT_MpA
+id: node.property.body
+field_name: body
+entity_type: node
+bundle: property
+label: Body
+description: 'Neontabs Property Body Info'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: true
+field_type: text_with_summary

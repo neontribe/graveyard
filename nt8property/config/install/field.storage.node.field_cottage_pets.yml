@@ -1,0 +1,22 @@
+uuid: 9d4b879b-96f8-4420-ae06-dd63149acbca
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+_core:
+  default_config_hash: FOS-YTqu6z_Y1y_OfpnOAsP1qUyPQ0lHl6_MH4OXNkQ
+id: node.field_cottage_pets
+field_name: field_cottage_pets
+entity_type: node
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
