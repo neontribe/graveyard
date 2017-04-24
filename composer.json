@@ -1,6 +1,6 @@
 {
-    "name": "neontabs/nt8",
-    "description": "Module Framework For TABS Based Cottage Websites",
+    "name": "neontabs/nt8map",
+    "description": "TABS Maps for searches",
     "license": "GPL-2.0+",
     "repositories": [
         {
@@ -13,12 +13,9 @@
         "drupal/address": "1.*",
         "drupal/imagecache_external": "1.*"
     },
-    "require-dev": {
-        "phpmd/phpmd" : "@stable"
-    },
     "minimum-stability": "dev",
     "prefer-stable": true,
-    "type": "drupal-custom-module",
+    "type": "nt8-module",
     "scripts": {
         "post-install-cmd": [
             "git submodule update --init --recursive"
