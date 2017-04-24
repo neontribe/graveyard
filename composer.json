@@ -10,7 +10,7 @@
     ],
     "require": {
         "php": "^7.0"
-    }
+    },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "type": "nt8-module"
