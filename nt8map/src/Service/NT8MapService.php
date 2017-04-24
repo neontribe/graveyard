@@ -104,6 +104,7 @@ class NT8MapService {
    * Returns the value of a specified field on a node.
    */
   public static function getNodeFieldValue($node, $fieldName, $index = -1, $keyname = 'value') {
+    // TODO Make this a globally available function.
     $field_instance = $node->get($fieldName)->getValue();
     $field_value = $field_instance;
 

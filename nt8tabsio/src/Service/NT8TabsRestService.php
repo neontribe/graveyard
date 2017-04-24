@@ -351,6 +351,74 @@ class NT8TabsRestService {
     return hash('SHA256', $data, FALSE);
   }
 
+  /**
+   * Split brand code into propref and brand code.
+   *
+   * Takes a property reference with or without a brand code and returns a two
+   * elelment array of propref and brand code.
+   *
+   * <code>
+   * drush ev "print_r(splitPropref('XXX'));";
+   * drush ev "print_r(splitPropref('XXX_YYY_BR'));";
+   * drush ev "print_r(splitPropref('_XXX_BR_'));";
+   * drush ev "print_r(splitPropref('X_BRXX_BR'));";
+   * drush ev "print_r(splitPropref('_X_BRXX_BR'));";
+   * drush ev "print_r(splitPropref('_BRX_BRXX_BR'));";
+   * </code>
+   *
+   * @param string $raw_propref
+   *   The propref.
+   *
+   * @return array
+   *   An array where propref is the first element and value as the second.
+   */
+  public function splitPropref($raw_propref) {
+    $propref = strtoupper(trim($raw_propref));
+    $length = strlen($propref);
+
+    $_brandcode = \Drupal::config('nt8tabsio.settings')->get('id');
+
+    // If the length of the propref is =< 3 chars it can't have a brand code.
+    if ($length <= 3) {
+      return [$propref, $_brandcode];
+    }
+
+    // If the 3rd last character is not an '_' it can't have a brandcode.
+    if (substr($propref, $length - 3, 1) != '_') {
+      return [$propref, $_brandcode];
+    }
+
+    // If the last 3 characters are _[BRAND CODE]?
+    // Grab the last three characters.
+    $last_three_chars = substr($propref, $length - 3);
+    if ($last_three_chars == '_' . $_brandcode) {
+      // Then trim the branc code off the the end.
+      $_propref = substr($propref, 0, $length - 3);
+      return [$_propref, $_brandcode];
+    }
+    else {
+      // Return the propref + the default brand code.
+      return [$propref, $_brandcode];
+    }
+  }
+
+  /**
+   * Normalise a string based date to agiven date format.
+   *
+   * @param string $date
+   *   The date to parse.
+   * @param string $format
+   *   The format to.
+   *
+   * @return string
+   *   Normalised date string.
+   */
+  public function strToDate($date, $format = 'Y-m-d') {
+    $time = strtotime(str_replace('/', '-', $date));
+
+    return date($format, $time);
+  }
+
 }
 
 // vim: set filetype=php expandtab ts=2 shiftwidth=2 autoindent smartindent:
