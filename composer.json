@@ -18,5 +18,13 @@
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
-    "type": "nt8-module"
+    "type": "nt8-module",
+    "scripts": {
+        "post-install-cmd": [
+            "git submodule update --init --recursive"
+        ],
+        "post-update-cmd": [
+            "git submodule update --init --recursive"
+        ]
+    }
 }
