@@ -1,0 +1,3 @@
+services:
+  nt8tabsio.tabs_service:
+    class: Drupal\nt8tabsio\Service\NT8TabsRestService

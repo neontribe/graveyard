@@ -1,0 +1,17 @@
+{
+    "name": "neontabs/nt8tabsio",
+    "description": "TABS rest service",
+    "license": "GPL-2.0+",
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packages.drupal.org/8"
+        }
+    ],
+    "require": {
+        "php": "^7.0",
+    }
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "type": "nt8-module"
+}
