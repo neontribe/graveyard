@@ -10,21 +10,10 @@
     ],
     "require": {
         "php": "^7.0",
-        "drupal/address": "1.*",
-        "drupal/imagecache_external": "1.*"
-    },
-    "require-dev": {
-        "phpmd/phpmd" : "@stable"
+        "neontabs/nt8": "*",
+        "neontabs/nt8map": "*"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
-    "type": "nt8-module",
-    "scripts": {
-        "post-install-cmd": [
-            "git submodule update --init --recursive"
-        ],
-        "post-update-cmd": [
-            "git submodule update --init --recursive"
-        ]
-    }
+    "type": "nt8-module"
 }
