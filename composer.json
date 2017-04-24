@@ -29,7 +29,7 @@
         "neontabs/nt8property": "dev-develop",
         "neontabs/nt8search": "dev-develop",
         "neontabs/nt8tabsio": "dev-develop",
-        "neontabs/nt8_booking": "dev-develop",
+        "neontabs/nt8booking": "dev-develop",
         "neontabs/nt8_theme": "dev-develop"
     },
     "require-dev": {
