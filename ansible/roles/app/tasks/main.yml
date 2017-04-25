@@ -63,7 +63,7 @@
     chdir: "{{ installer_root }}"
 
 - name: Compile SASS
-  shell: compass compile web/themes/contrib/nt8_theme/
+  shell: compass compile /vagrant/web/themes/contrib/nt8_theme/
   args:
     chdir: "{{ installer_root }}"
 
