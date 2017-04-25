@@ -1,27 +1,14 @@
 {
-    "name": "neontabs/nt8map",
-    "description": "TABS Maps for searches",
-    "license": "GPL-2.0+",
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://packages.drupal.org/8"
-        }
-    ],
-    "require": {
-        "php": "^7.0",
-        "drupal/address": "1.*",
-        "drupal/imagecache_external": "1.*"
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "type": "nt8-module",
-    "scripts": {
-        "post-install-cmd": [
-            "git submodule update --init --recursive"
-        ],
-        "post-update-cmd": [
-            "git submodule update --init --recursive"
-        ]
-    }
+  "name": "drupal/nt8map",
+  "type": "drupal-module",
+  "description": "Neontabs 8 Map Module",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/nt8map",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/nt8map",
+    "source": "http://cgit.drupalcode.org/nt8map"
+  },
+  "require": { }
 }
