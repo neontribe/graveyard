@@ -82,6 +82,11 @@
   args:
     chdir: "{{ installer_root }}"
 
+- name: Clear caches
+  shell: drush cr
+  args:
+    chdir: "{{ installer_root }}"
+
 - name: Import properties
   shell: drush -y nt8-import-all
   args:
