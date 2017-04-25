@@ -14,5 +14,7 @@ stylesheets-remove:
   - core/themes/classy/css/components/button.css
 regions:
   header: Header
+  sidebar-right: Right Sidebar
+  sidebar-left: Left Sidebar
   content: Content
   footer: Footer

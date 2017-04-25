@@ -1,0 +1,51 @@
+.region {
+  padding: .25em;
+}
+
+.region-container {
+  display: -ms-flex;
+  display: -webkit-flex;
+  display: flex;
+
+  margin: 0 auto;
+
+  .region-sidebar-left {
+    width: 20%;
+    width: 300px;
+
+    .content-wrap {
+      position: -webkit-sticky;
+      position: sticky;
+      top: 0;
+    }
+  }
+
+  .region-content {
+    width: 80%;
+  }
+}
+
+
+/* Small Devices, Tablets */
+@media only screen and (max-width : 1024px) {
+
+}
+
+/* Smartphones (portrait and landscape) ----------- */
+@media only screen and (max-width : 480px) {
+  .region {
+    margin: 0 auto;
+  }
+  .region-container {
+    display: block;
+    width: 100%;
+
+    .region-sidebar-left {
+      width: 100%;
+    }
+
+    .region-content {
+      width: 100%;
+    }
+  }
+}

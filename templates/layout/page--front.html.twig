@@ -44,22 +44,26 @@
 #}
 <div class="layout-container">
   <header>
-
-    {{ page.header }}
-
     <div class="banner">
       <h1>Neontabs 8</h1>
     </div>
+
+    {{ page.header }}
   </header>
 
   <main>
     <a id="main-content" tabindex="-1"></a>{# link is in html.html.twig #}
+    <div class="region-container">
+      {{ page['sidebar-left'] }}
 
-    <div class="layout-content">
       {{ page.content }}
-    </div>{# /.layout-content #}
+    </div>
+    {#<div class="layout-sidebar-right">#}
+    {#{{ page['sidebar-right'] }}#}
+    {#</div>#}
 
   </main>
+
 
   {% if page.footer %}
     <footer>
