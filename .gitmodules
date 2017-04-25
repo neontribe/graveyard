@@ -1,0 +1,3 @@
+[submodule "vendor/neonmap"]
+	path = vendor/neonmap
+	url = https://github.com/neontribe/neonmap.git
