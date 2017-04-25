@@ -1,6 +1,6 @@
 {
-  "name": "drupal/nt8map",
-  "type": "drupal-module",
+  "name": "neontabs/nt8map",
+  "type": "nt8-module",
   "description": "Neontabs 8 Map Module",
   "keywords": ["Drupal"],
   "license": "GPL-2.0+",
@@ -10,5 +10,13 @@
     "issues": "https://www.drupal.org/project/issues/nt8map",
     "source": "http://cgit.drupalcode.org/nt8map"
   },
-  "require": { }
+  "require": { },
+    "scripts": {
+        "post-install-cmd": [
+            "git submodule update --init --recursive"
+        ],
+        "post-update-cmd": [
+            "git submodule update --init --recursive"
+        ]
+    }
 }
