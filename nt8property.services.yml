@@ -1,0 +1,4 @@
+services:
+  nt8property.property_methods:
+    class: Drupal\nt8property\Service\NT8PropertyService
+    arguments: ['@entity.query', '@entity_type.manager', '@nt8tabsio.tabs_service']

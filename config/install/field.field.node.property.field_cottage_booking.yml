@@ -1,0 +1,25 @@
+uuid: 4d276b01-0a28-4423-a7d1-ab6c078f0a81
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_cottage_booking
+    - node.type.property
+  module:
+    - link
+_core:
+  default_config_hash: cRI8zB0Ca72gG3Pk_K7P_2pyGW5IxV2OnNjPEcxFu5k
+id: node.property.field_cottage_booking
+field_name: field_cottage_booking
+entity_type: node
+bundle: property
+label: 'Cottage Booking'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  link_type: 17
+  title: 1
+field_type: link
