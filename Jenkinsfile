@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'echo `pwd`'
+                sh 'composer install --dev --no-interaction'
             }
         }
         stage('Site install') {
