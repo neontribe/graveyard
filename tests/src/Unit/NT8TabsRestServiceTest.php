@@ -6,11 +6,9 @@ namespace Drupal\Tests\nt8tabsio\Unit;
  * @file
  * Defines a unit test for the nt8tabsrestservice.
  */
-use Drupal\Core\Config\ImmutableConfig;
+use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
-use Drupal\KernelTests\KernelTestBase;
 use Drupal\nt8tabsio\Service\NT8TabsRestService;
-use Drupal\Tests\BrowserTestBase;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -24,6 +22,9 @@ class NT8TabsRestServiceTest extends UnitTestCase {
 
   protected $serviceInstance;
 
+  /**
+   * {@inheritdoc}
+   */
   public function setUp() {
     parent::setUp();
 
@@ -32,17 +33,17 @@ class NT8TabsRestServiceTest extends UnitTestCase {
 
     // @TODO: Read this in from a yml file.
     $container->set('config.factory', $this->getConfigFactoryStub(
-      [
-        'nt8tabsio.settings' => [
-          'id' => 'ZZ',
-          'uri' => 'http://zz.api.carltonsoftware.co.uk/',
-          'key' => 'mouse',
-          'secret' => 'cottage',
-        ],
-      ]
+        [
+          'nt8tabsio.settings' => [
+            'id' => 'ZZ',
+            'uri' => 'http://zz.api.carltonsoftware.co.uk/',
+            'key' => 'mouse',
+            'secret' => 'cottage',
+          ],
+        ]
     ));
 
-    $container->set('logger.factory', new \Drupal\Core\Logger\LoggerChannelFactory());
+    $container->set('logger.factory', new LoggerChannelFactory());
 
     $this->serviceInstance = new NT8TabsRestService();
   }
@@ -57,11 +58,17 @@ class NT8TabsRestServiceTest extends UnitTestCase {
     $this->assertTrue(isset($api_response));
     $this->assertNotFalse($api_response);
 
-    // The response might be markup or json so we just test to see if char >= 1
+    // The response might be markup or json so we just test to see if char >= 1.
     $this->assertStringMatchesFormat("%a", $api_response);
   }
 
-  function restDataProvider() {
+  /**
+   * Data provider for rest paramaters.
+   *
+   * @return array
+   *   Sample rest parameters.
+   */
+  public function restDataProvider() {
     return [
       [
         ['GET', '/', []],
@@ -85,17 +92,23 @@ class NT8TabsRestServiceTest extends UnitTestCase {
    * @covers ::__call
    * @dataProvider callDataProvider
    */
-  public function test__Call($method, $args) {
+  public function testCall($method, $args) {
     $api_response = $this->serviceInstance->__call($method, $args);
 
     $this->assertTrue(isset($api_response));
     $this->assertNotFalse($api_response);
-    
-    // The response might be markup or json so we just test to see if char >= 1
+
+    // The response might be markup or json so we just test to see if char >= 1.
     $this->assertStringMatchesFormat("%a", $api_response);
   }
 
-  function callDataProvider() {
+  /**
+   * Data provider for call paramaters.
+   *
+   * @return array
+   *   Sample call parameters.
+   */
+  public function callDataProvider() {
     return [
       [
         'get',
@@ -147,21 +160,28 @@ class NT8TabsRestServiceTest extends UnitTestCase {
    * @dataProvider strToDateDataProvider
    */
   public function testStrToDate($date, $format, $expectedDate) {
-    if(isset($format)) {
+    if (isset($format)) {
       $date_string = $this->serviceInstance->strToDate($date, $format);
-    } else {
+    }
+    else {
       $date_string = $this->serviceInstance->strToDate($date);
     }
 
     $this->assertEquals($expectedDate, $date_string);
   }
 
-  function strToDateDataProvider() {
+  /**
+   * Data provider for date paramaters.
+   *
+   * @return array
+   *   Sample date parameters.
+   */
+  public function strToDateDataProvider() {
     return [
-      // Test that slashes are replaced
-      ['10/10/2010', NULL,   '2010-10-10'],
-      // Test that the default is 'Y-m-d'
-      ['10-10-2010', NULL,   '2010-10-10'],
+      // Test that slashes are replaced.
+      ['10/10/2010', NULL, '2010-10-10'],
+      // Test that the default is 'Y-m-d'.
+      ['10-10-2010', NULL, '2010-10-10'],
       // Test a custom format string.
       ['10-10-2010', 'd-m-Y', '10-10-2010'],
     ];
@@ -171,7 +191,7 @@ class NT8TabsRestServiceTest extends UnitTestCase {
    * @covers ::hmacHash
    * @dataProvider splitProprefDataProvider
    */
-  public function testSplitPropref(string $raw_propref = '', $expectedSplit, $expectedBrand) {
+  public function testSplitPropref(string $raw_propref = '', $expectedSplit = FALSE, $expectedBrand = FALSE) {
     $splitted = $this->serviceInstance->splitPropref($raw_propref);
 
     $this->assertTrue(isset($splitted[0]));
@@ -184,16 +204,22 @@ class NT8TabsRestServiceTest extends UnitTestCase {
     $this->assertEquals($expectedBrand, $splitted[1]);
   }
 
-  function splitProprefDataProvider() {
+  /**
+   * Data provider for propref paramaters.
+   *
+   * @return array
+   *   Sample propref parameters.
+   */
+  public function splitProprefDataProvider() {
     $id = 'ZZ';
 
     return [
-      ['',                '',          $id],
-      ["XXX",             'XXX',       $id],
-      ["XXX_YYY_${id}",   'XXX_YYY',   $id],
-      ["_XXX_ZZ_",        '_XXX_ZZ_',  $id],
-      ["X_BRXX_${id}",    'X_BRXX',    $id],
-      ["_X_BRXX_${id}",   '_X_BRXX',   $id],
+      ['', '', $id],
+      ["XXX", 'XXX', $id],
+      ["XXX_YYY_${id}", 'XXX_YYY', $id],
+      ["_XXX_ZZ_", '_XXX_ZZ_', $id],
+      ["X_BRXX_${id}", 'X_BRXX', $id],
+      ["_X_BRXX_${id}", '_X_BRXX', $id],
       ["_BRX_BRXX_${id}", '_BRX_BRXX', $id],
     ];
   }
@@ -223,7 +249,7 @@ class NT8TabsRestServiceTest extends UnitTestCase {
   public function hmacHashDataProvider() {
     return [
       [''],
-      ['&foo=bar']
+      ['&foo=bar'],
     ];
   }
 
@@ -245,14 +271,13 @@ class NT8TabsRestServiceTest extends UnitTestCase {
   public function hmacEncodeDataProvider() {
     return [
       [
-        ['foo' => 'bar']
+        ['foo' => 'bar'],
       ],
       [
-        []
-      ]
+        [],
+      ],
     ];
   }
-
 
   /**
    * @covers ::buildRequestUrl
@@ -275,7 +300,6 @@ class NT8TabsRestServiceTest extends UnitTestCase {
     return [
       ['GET', 'properties', ['foo' => 'bar']],
       ['POST', 'properties', ['foo' => 'bar']],
-
       ['GET', 'properties', []],
       ['POST', 'properties', []],
     ];
@@ -298,6 +322,12 @@ class NT8TabsRestServiceTest extends UnitTestCase {
     $this->assertArrayHasKey('filter', $filtered_params);
   }
 
+  /**
+   * Data provider for filter paramaters.
+   *
+   * @return array
+   *   Sample filter parameters.
+   */
   public function filterParamsDataProvider() {
     return [
       [
@@ -309,25 +339,28 @@ class NT8TabsRestServiceTest extends UnitTestCase {
           'filter' => 'ATTR01=true',
           'searchparam1' => 'lorem',
           'searchparam2' => 'ipsum',
-        ]
-      ]
+        ],
+      ],
     ];
   }
 
   /**
    * Call protected/private method of a class.
    *
-   * @param object &$object    Instantiated object that we will run method on.
-   * @param string $methodName Method name to call
-   * @param array  $parameters Array of parameters to pass into method.
+   * @param object &$object
+   *   Instantiated object that we will run method on.
+   * @param string $methodName
+   *   Method name to call.
+   * @param array $parameters
+   *   Array of parameters to pass into method.
    *
-   * @return mixed Method return.
+   * @return mixed
+   *   Method return.
    */
-  public function invokeMethod(&$object, $methodName, array $parameters = array())
-  {
+  public function invokeMethod(&$object, $methodName, array $parameters = []) {
     $reflection = new \ReflectionClass(get_class($object));
     $method = $reflection->getMethod($methodName);
-    $method->setAccessible(true);
+    $method->setAccessible(TRUE);
 
     return $method->invokeArgs($object, $parameters);
   }

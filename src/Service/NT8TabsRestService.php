@@ -138,7 +138,7 @@ class NT8TabsRestService {
         break;
 
       default:
-//        watchdog(__METHOD__, 'Invalid method (:method) specified', [':method' => $method], WATCHDOG_ERROR);
+        \Drupal::logger(__METHOD__)->error('@method: @path @err @json', $_params);
         return FALSE;
     }
 
