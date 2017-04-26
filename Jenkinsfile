@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                git url: 'git@github.com:neontabs/nt8-installer.git', env.BRANCH_NAME
+                echo "git out"
             }
         }
         stage('Test'){
