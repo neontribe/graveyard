@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'echo `pwd`'
+                sh 'echo HERE `pwd`'
             }
         }
     }
