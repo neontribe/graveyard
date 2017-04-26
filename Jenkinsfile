@@ -9,13 +9,14 @@ pipeline {
         }
         stage('Build') {
             steps {
+                sh 'rm -rf EntyAte'
                 sh 'composer create-project neontribe/nt8-installer EntyAte --stability dev --no-interaction'
             }
         }
         stage('Checkout branch') {
             steps {
                 dir('EntyAte/web/modules/custom/nt8')
-                sh 'rm nt8tabsio'
+                sh 'rm -rf nt8tabsio'
                 git branch: env.BRANCH_NAME, credentialsId: '59579991-1ec0-4255-96a2-d07d7d7bca73', url: 'git@github.com:neontabs/nt8tabsio.git'
             }
         }
