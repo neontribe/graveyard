@@ -2,14 +2,19 @@ pipeline {
     agent any
 
     stages {
-        stage('Build') {
-            steps {
-                git url: 'git@github.com:neontabs/nt8tabsio.git', branch: env.BRANCH_NAME
-            }
-        }
         stage('Code Standard'){
             steps {
                 sh 'find . \\( -name \'*.php\' -o -name \'*.module\' -o -name \'*.inc\' -o -name \'*.install\' \\) -exec ~/.composer/vendor/bin/phpcs --standard=Drupal {} +'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'composer create-project neontribe/nt8-installer EntyAte --stability dev --no-interaction'
+            }
+        }
+        stage('Tests') {
+            steps {
+                 sh 'echo Tests'
             }
         }
     }
