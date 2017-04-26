@@ -9,12 +9,7 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh 'composer create-project neontribe/nt8-installer EntyAte --stability dev --no-interaction'
-            }
-        }
-        stage('Tests') {
-            steps {
-                 sh 'phpunit --group nt8tabsio --configuration ./EntyAte/web/core/phpunit.xml.dist'
+                sh 'echo `pwd`'
             }
         }
     }
