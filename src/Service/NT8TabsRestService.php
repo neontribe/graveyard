@@ -138,7 +138,7 @@ class NT8TabsRestService {
         break;
 
       default:
-        watchdog(__METHOD__, 'Invalid method (:method) specified', [':method' => $method], WATCHDOG_ERROR);
+//        watchdog(__METHOD__, 'Invalid method (:method) specified', [':method' => $method], WATCHDOG_ERROR);
         return FALSE;
     }
 
