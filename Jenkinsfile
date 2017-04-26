@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'echp `pwd`'
+                sh 'echo `pwd`'
             }
         }
         stage('Site install') {
