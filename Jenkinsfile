@@ -15,7 +15,7 @@ pipeline {
         stage('Checkout branch') {
             steps {
                 dir('EntyAte/web/modules/custom/nt8')
-                deleteDir('nt8tabsio')
+                sh rm 'nt8tabsio'
                 git branch: env.BRANCH_NAME, credentialsId: '59579991-1ec0-4255-96a2-d07d7d7bca73', url: 'git@github.com:neontabs/nt8tabsio.git'
             }
         }
