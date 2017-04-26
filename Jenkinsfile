@@ -12,7 +12,7 @@ pipeline {
                 sh 'composer create-project neontribe/nt8-installer EntyAte --stability dev --no-interaction'
             }
         }
-        stage('Tests') {
+        stage('Checkout branch') {
             steps {
                 dir('EntyAte/web/modules/custom/nt8')
                 deleteDir('nt8tabsio')
