@@ -5,7 +5,7 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'rm -rf EntyAte'
-                sh 'composer create-project neontribe/nt8-installer EntyAte --stability dev --no-interaction'
+                sh 'composer create-project neontribe/nt8-installer EntyAte dev-develop --no-interaction --prefer-source'
             }
         }
         stage('Code Standard'){
