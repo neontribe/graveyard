@@ -17,7 +17,7 @@ pipeline {
         }
         stage('Tests') {
             steps {
-                 sh 'phpunit --group nt8tabsio --configuration ./EntyAte/web/core/phpunit.xml.dist'
+              sh './EntyAte/vendor/bin/phpunit --group nt8tabsio --configuration ./EntyAte/web/core/phpunit.xml.dist'
             }
         }
     }
