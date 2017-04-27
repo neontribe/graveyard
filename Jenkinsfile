@@ -2,15 +2,17 @@ pipeline {
     agent any
 
     stages {
-        stage('Build') {
-            steps {
-                sh 'rm -rf EntyAte'
-                sh 'composer create-project neontribe/nt8-installer EntyAte dev-develop --no-interaction --prefer-source'
-            }
-        }
         stage('Code Standard'){
             steps {
                 sh 'find EntyAte/web/modules/custom/nt8/nt8tabsio \\( -name \'*.php\' -o -name \'*.module\' -o -name \'*.inc\' -o -name \'*.install\' \\) -exec ~/.composer/vendor/bin/phpcs --standard=Drupal {} +'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'rm -rf EntyAte'
+                git branch: 'develop', credentialsId: '59579991-1ec0-4255-96a2-d07d7d7bca73', url: 'https://github.com/neontabs/nt8-installer.git'
+                dir('nt8-installer')
+                sh 'composer composer install --dev --no-interaction'
             }
         }
         stage('Tests') {
