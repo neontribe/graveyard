@@ -159,7 +159,7 @@ class NT8TabsRestServiceTest extends UnitTestCase {
    * @covers ::strToDate
    * @dataProvider strToDateDataProvider
    */
-  public function testStrToDate($date, $format, $expectedDate) {
+  public function _testStrToDate($date, $format, $expectedDate) {
     if (isset($format)) {
       $date_string = $this->serviceInstance->strToDate($date, $format);
     }
@@ -176,7 +176,7 @@ class NT8TabsRestServiceTest extends UnitTestCase {
    * @return array
    *   Sample date parameters.
    */
-  public function strToDateDataProvider() {
+  public function _strToDateDataProvider() {
     return [
       // Test that slashes are replaced.
       ['10/10/2010', NULL, '2010-10-10'],
@@ -191,7 +191,7 @@ class NT8TabsRestServiceTest extends UnitTestCase {
    * @covers ::hmacHash
    * @dataProvider splitProprefDataProvider
    */
-  public function testSplitPropref(string $raw_propref = '', $expectedSplit = FALSE, $expectedBrand = FALSE) {
+  public function _testSplitPropref(string $raw_propref = '', $expectedSplit = FALSE, $expectedBrand = FALSE) {
     $splitted = $this->serviceInstance->splitPropref($raw_propref);
 
     $this->assertTrue(isset($splitted[0]));
