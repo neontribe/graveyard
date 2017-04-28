@@ -111,29 +111,29 @@ class NT8MapBlock extends BlockBase implements ContainerFactoryPluginInterface {
       ],
     ];
 
-    $search_results = NT8SearchService::getSearchState();
+    $search_results = $this->nt8searchMethods->getSearchState();
+    if(isset($search_results->results)) {
+      // Map the API search result into a simple array of Proprefs.
+      $mappedResults = array_map(function ($property) {
+        return $property->propertyRef;
+      }, $search_results->results);
 
-    // Map the API search result into a simple array of Proprefs.
-    $mappedResults = array_map(function ($property) {
-      return $property->propertyRef;
-    }, $search_results->results);
+      $loadedResultsAsNodes = $this->nt8propertyMethods->loadNodesFromProprefs($mappedResults);
 
-    $loadedResultsAsNodes = $this->nt8propertyMethods->loadNodesFromProprefs($mappedResults);
+      $mapData = $this->nt8mapService->initMap($loadedResultsAsNodes);
 
-    $mapData = $this->nt8mapService->initMap($loadedResultsAsNodes);
+      $build['#attached'] = [
+        'library' => [
+          'nt8map/nt8map_lib',
+        ],
+      ];
 
-    $build['#attached'] = [
-      'library' => [
-        'nt8map/nt8map_lib',
-      ],
-    ];
-
-    $build['map'] = [
-      '#theme' => 'nt8map',
-      '#mapdata' => $mapData,
-      '#height' => '300px',
-    ];
-
+      $build['map'] = [
+        '#theme' => 'nt8map',
+        '#mapdata' => $mapData,
+        '#height' => '300px',
+      ];
+    }
     return $build;
   }
 
