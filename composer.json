@@ -18,8 +18,8 @@
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
-    "type": "drupal-custom-module",
-  "scripts": {
+    "type": "nt8-theme",
+    "scripts": {
         "post-install-cmd": [
             "git submodule update --init --recursive"
         ],
