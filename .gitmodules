@@ -1,6 +1,0 @@
-[submodule "nt8map/js/neonmap"]
-	path = nt8map/js/neonmap
-	url = git@github.com:neontribe/neonmap.git
-[submodule "nt8map/vendor/neonmap"]
-	path = nt8map/vendor/neonmap
-	url = git@github.com:neontribe/neonmap.git

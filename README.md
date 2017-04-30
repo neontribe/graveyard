@@ -1,5 +1,3 @@
-# DEPRICATED
+# Neontabs 8 Documentation and cruft
 
-DO NOT USE THIS REPO.
-
-Use the nt8-installer package instead.
+This repo is used as the store for our code snippets, howto's etc.

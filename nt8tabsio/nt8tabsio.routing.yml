@@ -1,6 +1,0 @@
-nt8tabsio:
-  path: 'nt8tabsio/status'
-  defaults:
-    _controller: '\Drupal\nt8tabsio\Controller\NT8TabsIOController::status'
-  requirements:
-    _access: 'TRUE'
