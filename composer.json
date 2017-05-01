@@ -30,7 +30,7 @@
         "neontabs/nt8search": "dev-develop",
         "neontabs/nt8tabsio": "dev-develop",
         "neontabs/nt8booking": "dev-develop",
-        "neontabs/nt8_theme": "dev-develop"
+        "neontabs/nt8theme": "dev-develop"
     },
     "require-dev": {
         "behat/mink": "~1.7",
