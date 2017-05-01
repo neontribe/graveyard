@@ -1,6 +1,5 @@
 {
   "name": "neontabs/nt8map",
-  "type": "nt8-module",
   "description": "Neontabs 8 Map Module",
   "keywords": ["Drupal"],
   "license": "GPL-2.0+",
@@ -18,5 +17,6 @@
         "post-update-cmd": [
             "git submodule update --init --recursive"
         ]
-    }
+    },
+    "type": "drupal-custom-module"
 }
