@@ -10,7 +10,7 @@
     ],
     "require": {
         "php": "^7.0",
-        "neontabs/nt8": "*",
+        "neontabs/nt8tabsio": "*",
         "neontabs/nt8map": "*"
     },
     "minimum-stability": "dev",
