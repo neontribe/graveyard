@@ -13,5 +13,5 @@
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
-    "type": "nt8-module"
+    "type": "drupal-custom-module"
 }
