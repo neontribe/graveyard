@@ -44,15 +44,15 @@ Check the output for the random superadmin password
 
 ## Enable nt8 modules
 
-    drush -y en nt8_theme
-    drush -y config-set system.theme default nt8_theme
+    drush -y en nt8theme
+    drush -y config-set system.theme default nt8theme
     drush -y en nt8property
     drush -y en nt8map nt8search
     drush -y nt8-import-all
 
 ## Compass compile
 
-    compass compile themes/contrib/nt8_theme/
+    compass compile themes/contrib/nt8theme/
 
 ## Chown files to run as www-data user
 
