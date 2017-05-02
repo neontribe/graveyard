@@ -5,7 +5,7 @@ dependencies:
   module:
     - nt8search
 id: neontabs8searchblock
-theme: nt8_theme
+theme: nt8theme
 region: sidebar_second
 weight: -7
 provider: null
