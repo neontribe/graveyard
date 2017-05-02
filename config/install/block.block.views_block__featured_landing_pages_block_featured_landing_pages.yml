@@ -8,9 +8,9 @@ dependencies:
     - system
     - views
   theme:
-    - nt8_theme
+    - nt8theme
 id: views_block__featured_landing_pages_block_featured_landing_pages
-theme: nt8_theme
+theme: nt8theme
 region: sidebar-left
 weight: 0
 provider: null
