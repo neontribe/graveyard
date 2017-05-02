@@ -1,19 +1,33 @@
-# NT8 Docker
+# NT8 Dockerfiles
 
-These docker files will build different versions of the nt8 stack.
+Each folder under this directory has a seperate Docker file in it. To use one cd intot he correct folder and build the image.
+Once built you can run it, extend it save it whatever. In each case you will need to build and then run it:
 
-## Raw NT8
-
-This is a basic nt8 project without DB or other set up.
+First pull the base image:
 
     docker pull tobybatch/nt8base
+
+Now you can build and run an image, each Docker file has a seperate readme.
+
+You could run this image with the following command but it's an empty framework:
+
     docker run -ti tobybatch/nt8base:latest
 
-Beware docker files are NOT persistent.  If you want to keep your changes you'll need to mount some folder, see below.
+```
+docker build --force-rm .
+docker run -ti -p 8888:80 [IMAGE_ID]
+```
+## Docker build better explained
 
-## Fully provisioned stack
+You will need to use IDs to manipulate the images and containers. An image is an initialised template for a container, a container is a running/initialised instance of an image.
 
-This docker sets up and runs the drupal stack.  After running this command you will need the image id (93349b2ac76f) and superadmin password (n746vUWC):
+## Building
+
+Run a build using:
+
+    docker build --force-rm .
+
+This is the sample output, snipped in the middle.
 
 ```
 tobias@tobias docker $ docker build --force-rm .
@@ -22,32 +36,30 @@ Step 1 : FROM tobybatch/nt8base
 ---> f4e1901bb837
 Step 2 : MAINTAINER tobias@neontribe.co.uk
 ---> 53ad448e0762
-Step 3 : WORKDIR /opt/EntyAte/web
----> Using cache
----> cda964a3157c
-Step 4 : RUN drush     -r /opt/EntyAte/web     -y site-install     --db-url=sqlite://sites/default/files/.ht.sqlite     --account-mail=root@localhost     --account-name=superadmin     --site-mail=root@localhost     --site-name=EntyAte
----> Running in 89a2d0fdb3e1
-You are about to CREATE the 'sites/default/files/.ht.sqlite' database. Do you want to continue? (y/n): y
-Starting Drupal installation. This takes a while. Consider using the        [ok]
---notify global option.
-Installation complete.  User name: superadmin  User password:               [ok]
-n746vUWC</strong>
-Congratulations, you installed Drupal!                                  [status]
----> 86b5354369c0
 ...
 [SNIP]
 ...
 ---> a1541d92d854
 Removing intermediate container 7ccbaf09efeb
-Step 12 : LABEL "mydrupal" ""
 ---> Running in 811951b1feb4
 ---> 93349b2ac76f
 Removing intermediate container 811951b1feb4
 Successfully built 93349b2ac76f
-tobias@tobias docker $ docker run -ti -p 8888:80 93349b2ac76f
 ```
 
-To connect to this running docker.
+The last line has the image ID in it, in this case 93349b2ac76f, we'll need that to start the image.
+
+## Running the Image
+
+Start a container passing host port 8888 to port 80 in the container:
+
+    docker run -ti -p 8888:80 93349b2ac76f
+
+You can list available images using the ```ps``` command:
+
+    docker ps -a
+
+Resulting in:
 
 ```
 tobias@tobias docker $ docker ps -a
@@ -55,17 +67,17 @@ CONTAINER ID        IMAGE               COMMAND                  CREATED        
 4ad40b8ad0cc        93349b2ac76f        "/usr/local/bin/drush"   13 seconds ago      Up 12 seconds                  8080/tcp, 0.0.0.0:8888->80/tcp   prickly_shirley
 28d544ca42a1        140122355c2f        "/usr/local/bin/drush"   About an hour ago   Exited (0) 31 minutes ago                                       gigantic_franklin
 917822d05917        c9f50ca5da0c        "/bin/bash"              2 hours ago         Exited (0) 37 minutes ago                                       dreamy_snyder
-tobias@tobias docker $ docker exec -it 4ad40b8ad0cc /bin/bash
 ```
 
-To save DB/config changes mount the files folder inside the docker:
-
-    docker run -ti -p 8888:80 -v $HOME/workspace/cottaging/project/files:/opt/EntyAte/web/sites/default/files [CONTAINER_ID]
-
-To allow you to work on the files insode the container  mount the files inside the docker:
+### Attaching a local directory
 
     docker run -ti -p 8888:80 -v $HOME/workspace/cottaging/nt8:/opt/EntyAte/web/modules/custom [CONTAINER_ID]
 
-To do both
+### Attaching a volume
 
-    docker run -ti -p 8888:80 -v $HOME/workspace/cottaging/project/files:/opt/EntyAte/web/sites/default/files -v $HOME/workspace/cottaging/nt8:/opt/EntyAte/web/modules/custom [CONTAINER_ID]
+## Attaching a process
+
+You can get a bash prompt on a running server using:
+
+    docker exec -it [CONTAINER_ID] /bin/bash
+
