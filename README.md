@@ -1,3 +1,6 @@
 # Neontabs 8 Documentation and cruft
 
-This repo is used as the store for our code snippets, howto's etc.
+## Docker
+
+    docker pull tobybatch/nt8base
+    docker run -ti tobybatch/nt8base
