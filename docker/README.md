@@ -55,7 +55,7 @@ CONTAINER ID        IMAGE               COMMAND                  CREATED        
 4ad40b8ad0cc        93349b2ac76f        "/usr/local/bin/drush"   13 seconds ago      Up 12 seconds                  8080/tcp, 0.0.0.0:8888->80/tcp   prickly_shirley
 28d544ca42a1        140122355c2f        "/usr/local/bin/drush"   About an hour ago   Exited (0) 31 minutes ago                                       gigantic_franklin
 917822d05917        c9f50ca5da0c        "/bin/bash"              2 hours ago         Exited (0) 37 minutes ago                                       dreamy_snyder
-```tobias@tobias docker $</span> docker exec -it <strong style='color: red'>29d40b8ad0cc</strong> /bin/bash
+tobias@tobias docker $</span> docker exec -it 29d40b8ad0cc /bin/bash
 ```
 
 To save DB/config changes mount the files folder inside the docker:
