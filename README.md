@@ -2,5 +2,4 @@
 
 ## Docker
 
-    docker pull tobybatch/nt8base
-    docker run -ti tobybatch/nt8base
+The docker folder holds docker files for building and running docker containers for the new drupal stack.
