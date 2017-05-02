@@ -6,11 +6,11 @@ dependencies:
     - nt8map
     - system
   theme:
-    - nt8_theme
+    - nt8theme
 _core:
   default_config_hash: F8Anci_9WCWO6oDRfxHEMvekdJtwUPfoS1H6fIaFoEw
 id: nt8map
-theme: nt8_theme
+theme: nt8theme
 region: sidebar-left
 weight: -7
 provider: null
