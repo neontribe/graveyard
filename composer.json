@@ -74,10 +74,8 @@
             "web/libraries/{$name}": ["type:drupal-library"],
             "web/modules/contrib/{$name}": ["type:drupal-module"],
             "web/modules/custom/{$name}": ["type:drupal-custom-module"],
-            "web/modules/custom/nt8/{$name}": ["type:nt8-module"],
             "web/profiles/contrib/{$name}": ["type:drupal-profile"],
             "web/themes/contrib/{$name}": ["type:drupal-theme"],
-            "web/themes/custom/nt8/{$name}": ["type:nt8-theme"],
             "drush/contrib/{$name}": ["type:drupal-drush"]
         }
     }
