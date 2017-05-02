@@ -4,8 +4,8 @@ type: theme
 base theme: classy
 core: 8.x
 libraries:
-  - 'nt8_theme/styling'
-  - 'nt8_theme/scripts'
+  - 'nt8theme/styling'
+  - 'nt8theme/scripts'
 
 stylesheets-remove:
   - core/assets/vendor/normalize-css/normalize.css

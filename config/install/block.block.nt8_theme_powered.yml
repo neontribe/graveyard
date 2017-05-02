@@ -5,11 +5,11 @@ dependencies:
   module:
     - system
   theme:
-    - nt8_theme
+    - nt8theme
 _core:
   default_config_hash: jQQUUWN2Uxr5qZtc9zcJKBCxpKY8orN1u2HPqYYRQDI
-id: nt8_theme_powered
-theme: nt8_theme
+id: nt8theme_powered
+theme: nt8theme
 region: '-1'
 weight: 0
 provider: null
