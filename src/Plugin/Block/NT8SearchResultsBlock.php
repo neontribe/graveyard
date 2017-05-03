@@ -88,41 +88,44 @@ class NT8SearchResultsBlock extends BlockBase implements ContainerFactoryPluginI
     // @TODO: Make this a config option.
     $displayPagination = TRUE;
 
-    $search_results = NT8SearchService::getSearchState();
+    $search_results = $this->nt8searchMethods->getSearchState();
 
-    // Map the API search result into a simple array of Proprefs.
-    $mappedResults = array_map(function ($property) {
-      return $property->propertyRef;
-    }, $search_results->results);
+    if(isset($search_results->results)) {
+      // Map the API search result into a simple array of Proprefs.
+      $mappedResults = array_map(function ($property) {
+        return $property->propertyRef;
+      }, $search_results->results);
 
-    $loadedResultsAsNodes = $this->nt8propertyMethods->loadNodesFromProprefs($mappedResults);
+      $loadedResultsAsNodes = $this->nt8propertyMethods->loadNodesFromProprefs($mappedResults);
 
-    if (isset($search_results, $loadedResultsAsNodes)) {
-      $totalResults = $search_results->totalResults;
-      $pageSize = $search_results->pageSize;
+      if (isset($search_results, $loadedResultsAsNodes)) {
+        $totalResults = $search_results->totalResults;
+        $pageSize = $search_results->pageSize;
 
-      $page = pager_default_initialize($totalResults, $pageSize);
+        $page = pager_default_initialize($totalResults, $pageSize);
 
-      if ($displayPagination) {
-        $renderOutput['result_container'] = [
-          'pager' => [
-            '#type' => 'pager',
-            '#weight' => 10,
-          ],
-        ];
-      }
-
-      foreach ($loadedResultsAsNodes as $search_result_key => $search_result) {
-        $first_of_type = $this->nt8searchMethods->issetGet($search_result, 0);
-
-        if ($first_of_type instanceof Node) {
-          $renderOutput['result_container']['results'][] = \Drupal::entityTypeManager()->getViewBuilder('node')->view($first_of_type, 'teaser');
+        if ($displayPagination) {
+          $renderOutput['result_container'] = [
+            'pager' => [
+              '#type' => 'pager',
+              '#weight' => 10,
+            ],
+          ];
         }
-        else {
-          \Drupal::logger('nt8searchcontroller.search')->notice("Unable to load property: $search_result_key.");
+
+        foreach ($loadedResultsAsNodes as $search_result_key => $search_result) {
+          $first_of_type = $this->nt8searchMethods->issetGet($search_result, 0);
+
+          if ($first_of_type instanceof Node) {
+            $renderOutput['result_container']['results'][] = \Drupal::entityTypeManager()->getViewBuilder('node')->view($first_of_type, 'teaser');
+          }
+          else {
+            \Drupal::logger('nt8searchcontroller.search')->notice("Unable to load property: $search_result_key.");
+          }
         }
       }
     }
+
 
     return $renderOutput;
   }

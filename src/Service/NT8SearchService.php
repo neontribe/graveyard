@@ -2,9 +2,14 @@
 
 namespace Drupal\nt8search\Service;
 
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Session\SessionManagerInterface;
 use Drupal\nt8property\Service\NT8PropertyService;
 use Drupal\nt8tabsio\Service\NT8TabsRestService;
 use Drupal\Core\Entity\EntityTypeManager;
+use Drupal\user\PrivateTempStoreFactory;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * Class NT8SearchService.
@@ -25,18 +30,64 @@ class NT8SearchService {
   protected $nt8propertymethods;
 
   /**
+   * @var \Drupal\user\PrivateTempStoreFactory
+   */
+  protected $tempStoreFactory;
+
+  /**
+   * @var \Symfony\Component\HttpFoundation\Session\SessionInterface
+   */
+  private $sessionManager;
+
+  /**
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  private $currentUser;
+
+  /**
+   * @var \Drupal\user\PrivateTempStore
+   */
+  protected $store;
+
+  /**
    * Constructor.
    */
   public function __construct(NT8TabsRestService $nt8tabsio_tabs_service,
                               $entityQuery,
                               $entityTypeManager,
-                              NT8PropertyService $nt8propertymethods) {
+                              NT8PropertyService $nt8propertymethods,
+                              PrivateTempStoreFactory $temp_store_factory,
+                              SessionInterface $session_manager,
+                              AccountInterface $current_user) {
 
     $this->nt8tabsioTabsService = $nt8tabsio_tabs_service;
     $this->entityQuery = $entityQuery;
     $this->entityTypeManager = $entityTypeManager;
     $this->nt8propertymethods = $nt8propertymethods;
+    $this->tempStoreFactory = $temp_store_factory;
+    $this->sessionManager = $session_manager;
+    $this->currentUser = $current_user;
+
+    if ($this->currentUser->isAnonymous() && !isset($_SESSION['session_started'])) {
+      $_SESSION['session_started'] = true;
+      $this->sessionManager->start();
+    }
+
+    $this->store = $this->tempStoreFactory->get('nt8search.search_results');
   }
+
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('nt8tabsio.tabs_service'),
+      $container->get( '@entity.query'),
+      $container->get('entity_type.manager'),
+      $container->get( 'nt8property.property_methods'),
+      $container->get('user.private_tempstore'),
+      $container->get('session'),
+      $container->get('current_user')
+    );
+  }
+
 
   /**
    * Performs a search on the TABS API with the specified paramaters.
@@ -85,7 +136,7 @@ class NT8SearchService {
 
       if ($setState) {
         // Set the search state.
-        \Drupal::state()->set('nt8search.results', $searchResult);
+        $this->store->set('nt8search.results', $searchResult);
       }
 
       if (!isset($loadNodes)) {
@@ -107,14 +158,14 @@ class NT8SearchService {
   }
 
   /**
-   * Returns the current search state as stored by the Drupal state mngr.
+   * Returns the current search state as stored by the Session mngr.
    *
    * @return mixed
    *   The stored value, or NULL if no value exists.
    */
-  public static function getSearchState() {
+  public function getSearchState() {
     // Get the current search state.
-    return \Drupal::state()->get('nt8search.results');
+    return $this->store->get('nt8search.results');
   }
 
   /**
