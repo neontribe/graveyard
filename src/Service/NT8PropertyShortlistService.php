@@ -1,13 +1,13 @@
 <?php
 
-namespace Drupal\nt8propertyshortlist;
+namespace Drupal\nt8propertyshortlist\Service;
 use Drupal\nt8property\Service\NT8PropertyService;
 use Drupal\nt8tabsio\Service\NT8TabsRestService;
 
 /**
  * Class NT8PropertyShortlistService.
  *
- * @package Drupal\nt8propertyshortlist
+ * @package Drupal\nt8propertyshortlist\Service
  */
 class NT8PropertyShortlistService {
 
