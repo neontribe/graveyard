@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * @file
+ * Contains nt8propertyshortlist.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function nt8propertyshortlist_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the nt8propertyshortlist module.
+    case 'help.page.nt8propertyshortlist':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Provides shortlist functionality to the nt8property module.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function nt8propertyshortlist_theme() {
+  return [
+    'nt8propertyshortlist' => [
+      'render element' => 'children',
+    ],
+  ];
+}
