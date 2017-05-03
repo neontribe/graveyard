@@ -31,4 +31,13 @@ class NT8PropertyShortlistService {
     $this->nt8tabsioTabsService = $nt8tabsio_tabs_service;
   }
 
+  /**
+   * Toggles an entry in the session shortlist.
+   *
+   * @param string $propRef
+   */
+  public function toggleEntry(string $propRef) {
+
+  }
+
 }

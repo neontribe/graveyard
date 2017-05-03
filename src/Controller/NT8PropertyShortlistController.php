@@ -68,4 +68,8 @@ class NT8PropertyShortlistController extends ControllerBase {
     ];
   }
 
+  public function shortlist_toggle($propRef) {
+    $this->nt8propertyshortlist->toggleEntry($propRef);
+  }
+
 }
