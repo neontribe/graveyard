@@ -5,11 +5,11 @@ dependencies:
   module:
     - nt8search
   theme:
-    - nt8theme
+    - nt8_theme
 _core:
   default_config_hash: R8WR-kkBYUhmTQNomeQ9CC6q1ZDPHj8gJ1ypxDfodFY
 id: nt8search_block
-theme: nt8theme
+theme: nt8_theme
 region: sidebar-left
 weight: -8
 provider: null
