@@ -1,0 +1,5 @@
+services:
+  nt8propertyshortlist.service:
+    class: Drupal\nt8propertyshortlist\NT8PropertyShortlistService
+    arguments: ['@nt8property.property_methods', '@nt8tabsio.tabs_service']
+

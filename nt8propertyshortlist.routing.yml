@@ -1,0 +1,7 @@
+nt8propertyshortlist.nt8_property_shortlist_controller_shortlist:
+  path: '/shortlist'
+  defaults:
+    _controller: '\Drupal\nt8propertyshortlist\Controller\NT8PropertyShortlistController::shortlist'
+    _title: 'Shortlist'
+  requirements:
+    _permission: 'access content'
