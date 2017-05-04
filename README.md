@@ -48,7 +48,9 @@ Check the output for the random superadmin password
     drush -y config-set system.theme default nt8theme
     drush -y en nt8property
     drush -y en nt8map nt8search
-    drush -y nt8-import-all
+    drush -y en nt8propertyshortlist nt8landingpage
+    drush -y nt8:ia
+    drush -y cr
 
 ## Compass compile
 
