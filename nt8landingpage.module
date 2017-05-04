@@ -29,11 +29,13 @@ function nt8landingpage_help($route_name, RouteMatchInterface $route_match) {
 /**
  * Implements hook_entity_view().
  */
-function nt8landingpage_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
+function nt8landingpage_entity_view(array &$build, \Drupal\Core\Entity\EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
   $property_service = \Drupal::getContainer()->get('nt8property.property_methods');
   $search_service   = \Drupal::getContainer()->get('nt8search.methods');
 
-  $entity_type = $entity->getType();
+  $canGetType = method_exists($entity, 'getType');
+  $entity_type = NULL;
+  if($canGetType) $entity_type = $entity->getType();
 
   if ($view_mode === 'full') {
     switch ($entity_type) {
