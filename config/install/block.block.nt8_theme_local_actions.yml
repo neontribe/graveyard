@@ -3,11 +3,11 @@ langcode: en
 status: false
 dependencies:
   theme:
-    - nt8_theme
+    - nt8theme
 _core:
   default_config_hash: 13GQpeITIJsp1kyPniXtWZfyFH87vb1xxJCHifL4UeE
-id: nt8_theme_local_actions
-theme: nt8_theme
+id: nt8theme_local_actions
+theme: nt8theme
 region: '-1'
 weight: 6
 provider: null

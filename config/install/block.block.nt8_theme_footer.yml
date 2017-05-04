@@ -7,11 +7,11 @@ dependencies:
   module:
     - system
   theme:
-    - nt8_theme
+    - nt8theme
 _core:
   default_config_hash: kkISXE1LT2FJEoYnqCrCpeFB-2pmGmMxMklVk7rQcfg
-id: nt8_theme_footer
-theme: nt8_theme
+id: nt8theme_footer
+theme: nt8theme
 region: '-1'
 weight: -5
 provider: null
