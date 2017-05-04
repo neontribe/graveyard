@@ -80,7 +80,7 @@ not node.isPublished() ? 'node--unpublished',
 view_mode ? 'node--view-mode-' ~ view_mode|clean_class,
 ]
 %}
-{{ attach_library('classy/node') }}<article{{ attributes.addClass(classes) }}>
+{{ attach_library('classy/node') }}<article{{ attributes.addClass(classes) }} data-propref="{{ content.field_cottage_reference_code[0]['#context']['value'] }}">
 
     {% if display_submitted %}
         <footer class="node__meta">
@@ -117,6 +117,10 @@ view_mode ? 'node--view-mode-' ~ view_mode|clean_class,
 
           <section class="property-teaser-pricing">
             {{ content.field_cottage_pricing }}
+          </section>
+
+          <section class="property-teaser-shortlist">
+            <a href=""><i class="fa fa-heart-o" aria-hidden="true"></i></a>
           </section>
         </section>
 

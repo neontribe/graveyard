@@ -13,5 +13,4 @@
 
     // Sticky sidebar.
     $leftSidebar.Stickyfill();
-
 })(jQuery);
