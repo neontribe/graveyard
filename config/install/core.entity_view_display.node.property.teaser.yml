@@ -34,7 +34,7 @@ dependencies:
     - text
     - user
 _core:
-  default_config_hash: uy8ijvQfW-btoRgMQToDup-MMrn3ZUbMUirc1jdJNoo
+  default_config_hash: J-4oGefKTGu1ncBuDbQadC0wwmWRahQOturoC6kZtwY
 id: node.property.teaser
 targetEntityType: node
 bundle: property
@@ -77,7 +77,7 @@ content:
     region: content
   field_cottage_images:
     type: imagecache_external_image
-    weight: 9
+    weight: 10
     region: content
     label: above
     settings:
@@ -115,6 +115,14 @@ content:
     label: hidden
     settings: {  }
     third_party_settings: {  }
+  field_cottage_reference_code:
+    type: string
+    weight: 9
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
   field_cottage_teaser_description:
     type: text_trimmed
     weight: 6
@@ -134,7 +142,6 @@ hidden:
   field_cottage_image_info: true
   field_cottage_ownercode: true
   field_cottage_promote: true
-  field_cottage_reference_code: true
   field_cottage_slug: true
   field_cottage_url: true
   links: true

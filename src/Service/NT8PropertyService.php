@@ -92,7 +92,7 @@ class NT8PropertyService {
     }
     else {
       foreach ($term_names as $term_name) {
-        $_loaded = taxonomy_term_load_multiple_by_name($term_name, $vocab_name);
+        $_loaded = static::loadMultipleTaxonomyTermsByName($term_name, $vocab_name);
         if (isset($_loaded) && $_loaded) {
           foreach ($_loaded as $tid => $termEntity) {
             if ($termEntity instanceof Term) {
@@ -118,6 +118,13 @@ class NT8PropertyService {
     }
 
     return $loaded_terms;
+  }
+
+  /**
+   * @codeCoverageIgnore
+   */
+  protected static function loadMultipleTaxonomyTermsByName($term_name, $vocab_name) {
+    return taxonomy_term_load_multiple_by_name($term_name, $vocab_name);
   }
 
   /**
@@ -159,17 +166,19 @@ class NT8PropertyService {
 
       // Modify terms of the same name if they already exist.
       $terms = self::loadTermsByNames('cottage_attributes', [$attr_array['name']], function (&$term) use ($attr_array, &$save_status) {
-        $term->field_attribute_code->setValue($attr_array['field_attribute_code']);
-        $term->field_attribute_brand->setValue($attr_array['field_attribute_brand']);
-        $term->field_attribute_labl->setValue($attr_array['field_attribute_labl']);
-        $term->field_attribute_group->setValue($attr_array['field_attribute_group']);
-        $term->field_attribute_type->setValue($attr_array['field_attribute_type']);
+        $term->get('field_attribute_code')->setValue($attr_array['field_attribute_code']);
+        $term->get('field_attribute_brand')->setValue($attr_array['field_attribute_brand']);
+        $term->get('field_attribute_labl')->setValue($attr_array['field_attribute_labl']);
+        $term->get('field_attribute_group')->setValue($attr_array['field_attribute_group']);
+        $term->get('field_attribute_type')->setValue($attr_array['field_attribute_type']);
 
         $save_status = $term->save();
       });
 
       if (is_null($terms)) {
+        // @codeCoverageIgnoreStart
         $save_status = $term->save();
+        // @codeCoverageIgnoreEnd
       }
 
       if ($save_status) {
@@ -215,7 +224,7 @@ class NT8PropertyService {
    *   False: Make no attempt to load and return an array of NIDs.
    *
    * @return array|\Drupal\Core\Entity\EntityInterface[]|int|null
-   *   An array of loaded property entities if the $load flag is true
+   *   An array of loaded property entities indexed by NID if $load = true
    *   otherwise an array of NIDs.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
@@ -303,7 +312,7 @@ class NT8PropertyService {
     int $index = -1,
     string $keyname = 'value'
   ) {
-    $field_instance = self::getNodeField($node, $fieldName);
+    $field_instance = static::getNodeField($node, $fieldName);
     $field_instance_value = $field_instance->getValue();
 
     if ($index > -1) {
@@ -359,7 +368,7 @@ class NT8PropertyService {
 
     // Compare for differences and update if a difference is found.
     foreach ($updatedValues as $updatedValueKey => $updatedValue) {
-      $currentNodeField = self::getNodeFieldValue($nodeInstance, $updatedValueKey);
+      $currentNodeField = static::getNodeFieldValue($nodeInstance, $updatedValueKey);
 
       $length_of_update_fields = count($updatedValue);
 
@@ -382,7 +391,9 @@ class NT8PropertyService {
         // This retrieves it and lets us continue as if it were a flat array.
         $nestedComparison = self::issetGet($comparisonUpdate, 0);
         if ($nestedComparison && is_array($nestedComparison)) {
+          // @codeCoverageIgnoreStart
           $comparisonUpdate = $nestedComparison;
+          // @codeCoverageIgnoreEnd
         }
 
         // Sort both arrays so the equality check below evaluates correctly.
@@ -394,7 +405,7 @@ class NT8PropertyService {
 
         if ($difference == 0) {
           // If a difference is found update the whole field entry.
-          $fieldRef = self::getNodeField($nodeInstance, $updatedValueKey);
+          $fieldRef = static::getNodeField($nodeInstance, $updatedValueKey);
           $fieldRef->setValue($updatedValue);
 
           // We should only save if $updated is equal to TRUE.
@@ -583,7 +594,7 @@ class NT8PropertyService {
       'cottage_attributes',
       $attr_keys,
       function (&$term, $id) use ($property_attr_array, &$attr_build) {
-        $attr_name = self::getNodeFieldValue($term, 'field_attribute_labl', 0);
+        $attr_name = static::getNodeFieldValue($term, 'field_attribute_labl', 0);
         $attr_name_val = self::issetGet($property_attr_array, $attr_name);
         $attr_build[] = [
           'target_id' => (string) $id,
