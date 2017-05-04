@@ -4,9 +4,12 @@ namespace Drupal\nt8propertyshortlist\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\nt8propertyshortlist\Service\NT8PropertyShortlistService;
+use Drupal\nt8search\Service\NT8SearchService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\nt8property\Service\NT8PropertyService;
 use Drupal\nt8tabsio\Service\NT8TabsRestService;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class NT8PropertyShortlistController.
@@ -33,6 +36,13 @@ class NT8PropertyShortlistController extends ControllerBase {
    * @var \Drupal\nt8propertyshortlist\Service\NT8PropertyShortlistService
    */
   protected $nt8propertyshortlist;
+  /**
+   * Drupal\nt8search\Service\NT8SearchService definition.
+   *
+   * @var \Drupal\nt8search\Service\NT8SearchService
+   */
+  protected $nt8searchMethods;
+
 
   /**
    * Constructs a new NT8PropertyShortlistController object.
@@ -40,11 +50,13 @@ class NT8PropertyShortlistController extends ControllerBase {
   public function __construct(
     NT8PropertyService $nt8property_property_methods,
     NT8TabsRestService $nt8tabsio_tabs_service,
-    NT8PropertyShortlistService $nt8propertyshortlist_service
+    NT8PropertyShortlistService $nt8propertyshortlist_service,
+    NT8SearchService $nt8search_methods
   ) {
     $this->nt8propertyPropertyMethods = $nt8property_property_methods;
     $this->nt8tabsioTabsService = $nt8tabsio_tabs_service;
     $this->nt8propertyshortlist = $nt8propertyshortlist_service;
+    $this->nt8searchMethods = $nt8search_methods;
   }
 
   /**
@@ -54,7 +66,8 @@ class NT8PropertyShortlistController extends ControllerBase {
     return new static(
       $container->get('nt8property.property_methods'),
       $container->get('nt8tabsio.tabs_service'),
-      $container->get('nt8propertyshortlist.service')
+      $container->get('nt8propertyshortlist.service'),
+      $container->get('nt8search.methods')
     );
   }
 
@@ -62,14 +75,28 @@ class NT8PropertyShortlistController extends ControllerBase {
    * {@inheritdoc}
    */
   public function shortlist() {
-    return [
-      '#type' => 'markup',
-      '#markup' => $this->t('Implement method: shortlist')
-    ];
+    return [];
   }
 
-  public function shortlist_toggle($propRef) {
-    $this->nt8propertyshortlist->toggleEntry($propRef);
+  /**
+   * {@inheritdoc}
+   */
+  public function shortlist_list() {
+    $currentShortlist = $this->nt8propertyshortlist->getStore();
+
+    return new JsonResponse($currentShortlist);
+  }
+
+  /**
+   * @param string $propRef
+   *
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
+   */
+  public function shortlist_toggle(string $propRef) {
+    $splittedPropref = $this->nt8tabsioTabsService->splitPropref($propRef)[0] ?: $propRef;
+    $currentShortlist = $this->nt8propertyshortlist->toggleEntry($splittedPropref);
+
+    return new JsonResponse($currentShortlist);
   }
 
 }
