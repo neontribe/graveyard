@@ -24,6 +24,13 @@ function nt8propertyshortlist_help($route_name, RouteMatchInterface $route_match
 }
 
 /**
+ * Implements hook_page_attachments().
+ */
+function nt8propertyshortlist_page_attachments(array &$attachments) {
+  $attachments['#attached']['library'][] = 'nt8propertyshortlist/nt8propertyshortlist_lib';
+}
+
+/**
  * Implements hook_theme().
  */
 function nt8propertyshortlist_theme() {
