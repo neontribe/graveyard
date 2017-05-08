@@ -120,7 +120,11 @@ view_mode ? 'node--view-mode-' ~ view_mode|clean_class,
           </section>
 
           <section class="property-teaser-shortlist">
-            <a href=""><i class="fa fa-heart-o" aria-hidden="true"></i></a>
+            {% if(on_shortlist) %}
+              <a href=""><i class="fa fa-heart" aria-hidden="true"></i></a>
+            {% else %}
+              <a href=""><i class="fa fa-heart-o" aria-hidden="true"></i></a>
+            {% endif %}
           </section>
         </section>
 
