@@ -37,11 +37,15 @@ function nt8propertyshortlist_preprocess_node__property(&$variables) {
   $propNode = $variables['node'];
 
   $propRef = $propNode->get('field_cottage_reference_code')->getValue()[0]['value'];
-
   $shortlistService = \Drupal::getContainer()->get('nt8propertyshortlist.service');
   $is_on_shortlist = $shortlistService->getEntry($propRef);
 
-  if($is_on_shortlist) $variables['nt8propertyshortlist.on_shortlist'] = TRUE;
+  $variables['on_shortlist'] = $is_on_shortlist ?: FALSE;
+
+  // Disable cache so that this is reflected immediately.
+  // This shouldn't have to be done, we should be disabling it only if it has
+  // changed.
+  $variables['#cache']['max-age'] = 0;
 }
 
 /**
