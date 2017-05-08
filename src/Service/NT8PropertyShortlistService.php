@@ -86,7 +86,7 @@ class NT8PropertyShortlistService {
    * @return array
    * @throws \Drupal\user\TempStoreException
    */
-  protected function setStore(array $newStore, string $name = 'nt8propertyshortlist.list') {
+  public function setStore(array $newStore, string $name = 'nt8propertyshortlist.list') {
     $this->store->set($name, $newStore);
     return $newStore;
   }
@@ -95,7 +95,7 @@ class NT8PropertyShortlistService {
    * @param string $propRef
    * @param bool $state
    */
-  protected function setEntry(string $propRef, bool $state = TRUE) {
+  public function setEntry(string $propRef, bool $state = TRUE) {
     $store = $this->getStore();
 
     $store[$propRef] = $propRef;
@@ -104,6 +104,17 @@ class NT8PropertyShortlistService {
     $this->setStore($store);
 
     return $store;
+  }
+
+
+  public function getEntry(string $propRef) {
+    $store = $this->getStore();
+
+    if($this->nt8propertyPropertyMethods->issetGet($store, $propRef)) {
+      return $propRef;
+    }
+
+    return NULL;
   }
 
   /**

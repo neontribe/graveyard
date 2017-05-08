@@ -31,6 +31,20 @@ function nt8propertyshortlist_page_attachments(array &$attachments) {
 }
 
 /**
+ * Implements hook_preprocess_HOOK().
+ */
+function nt8propertyshortlist_preprocess_node__property(&$variables) {
+  $propNode = $variables['node'];
+
+  $propRef = $propNode->get('field_cottage_reference_code')->getValue()[0]['value'];
+
+  $shortlistService = \Drupal::getContainer()->get('nt8propertyshortlist.service');
+  $is_on_shortlist = $shortlistService->getEntry($propRef);
+
+  if($is_on_shortlist) $variables['nt8propertyshortlist.on_shortlist'] = TRUE;
+}
+
+/**
  * Implements hook_theme().
  */
 function nt8propertyshortlist_theme() {
