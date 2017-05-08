@@ -69,6 +69,29 @@ class NT8PropertyService {
   }
 
   /**
+   * Fetches Area/Location data from TABS.
+   *
+   * @param array $areaLimit
+   *   Limit the returned results by Area code.
+   */
+  public function getAreaLocationDataFromTabs(array $areaLimit = []) {
+    $api_area_loc_data = json_decode($this->nt8RestService->get('utility/area'));
+
+    if (count($areaLimit) > 0) {
+      $api_area_loc_data = array_filter($api_area_loc_data, function ($value) use ($areaLimit) {
+        $attr_code = $value->code ?: '';
+        if (in_array($attr_code, $areaLimit)) {
+          return TRUE;
+        }
+
+        return FALSE;
+      });
+    }
+
+    return $api_area_loc_data;
+  }
+
+  /**
    * Loads every term listed in $term_names.
    *
    * @param string $vocab_name

@@ -63,6 +63,14 @@ class NT8PropertyFormBase extends FormBase {
       '#submit' => [[$this, 'setupAttributeTaxonomy']],
     ];
 
+    $form['nt8_tabsio']['vocab']['populate_locs'] = [
+      '#type' => 'submit',
+      '#name' => 'submit_property_arealoc',
+      '#value' => $this->t('Populate Property Area Location Taxonomy'),
+      '#submit' => [[$this, 'setupAreaLocTaxonomy']],
+    ];
+
+
     /*
      * Single loading.
      */
@@ -215,16 +223,35 @@ class NT8PropertyFormBase extends FormBase {
    * {@inheritdoc}
    */
   public function setupAttributeTaxonomy(array &$form, FormStateInterface $formState) {
-    $limit_attrs = $formState->getValue('attribute_code_limit') ?: [];
-    $new_arr = array_map(
-      'trim',
-      explode(',', $limit_attrs)
-    ) ?: [];
+    $limit_attrs = $formState->getValue('attribute_code_limit') ?: NULL;
+    $new_arr = [];
+    if(isset($limit_attrs)) {
+      $new_arr = array_map(
+        'trim',
+        explode(',', $limit_attrs)
+      ) ?: [];
+    }
 
     $attrib_data = $this->propertyMethods->getAttributeDataFromTabs($new_arr);
     $attrib_update_status = $this->propertyMethods->createAttributesFromTabs($attrib_data);
 
     drupal_set_message("Updated The Following Attributes: ${attrib_update_status}");
+  }
+
+  public function setupAreaLocTaxonomy(array &$form, FormStateInterface $formState) {
+    $limit_arealocs = $formState->getValue('attribute_code_limit') ?: NULL;
+
+    $new_arr = [];
+    if(isset($limit_arealocs)) {
+      $new_arr = array_map(
+        'trim',
+        explode(',', $limit_arealocs)
+      ) ?: [];
+    }
+
+    $locData = $this->propertyMethods->getAreaLocationDataFromTabs($new_arr);
+
+    drupal_set_message(print_r($locData, TRUE));
   }
 
   /**
