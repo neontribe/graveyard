@@ -1,6 +1,8 @@
 
 (function($) {
-    $.get('shortlist/list', function(res) {
+    var baseURL = drupalSettings.path.baseUrl;
+
+    $.get(baseURL + '/shortlist/list', function(res) {
         setShortlistButtonState(res);
     });
 
@@ -8,14 +10,14 @@
     $shortlistActions = $('article .property-teaser-shortlist a');
     $shortlistActions.on('click', function(e) {
         e.preventDefault();
-        var $parentArticle = $(this).parents('article');
+        var $parentArticle = $(this).closest('article');
         var propref = $parentArticle.data('propref');
 
         $shortlistIcon = $parentArticle.find('.property-teaser-shortlist i');
         $shortlistIcon.toggleClass('fa-heart-o');
         $shortlistIcon.toggleClass('fa-heart');
 
-        $.get('shortlist/toggle/' + propref, function(res) {
+        $.get(baseURL + '/shortlist/toggle/' + propref, function(res) {
             setShortlistButtonState(res);
         });
     });
