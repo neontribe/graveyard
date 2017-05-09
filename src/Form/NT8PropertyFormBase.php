@@ -250,8 +250,10 @@ class NT8PropertyFormBase extends FormBase {
     }
 
     $locData = $this->propertyMethods->getAreaLocationDataFromTabs($new_arr);
+    $arealocDataUpdateStatus = $this->propertyMethods->createAreaLocTermsFromTabs($locData);
 
-    drupal_set_message(print_r($locData, TRUE));
+    drupal_set_message(print_r('Updated Areas: ' . $arealocDataUpdateStatus[0], TRUE));
+    drupal_set_message(print_r('Updated Locations: ' . $arealocDataUpdateStatus[1], TRUE));
   }
 
   /**

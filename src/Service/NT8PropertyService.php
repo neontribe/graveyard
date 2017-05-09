@@ -7,6 +7,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\nt8tabsio\Service\NT8TabsRestService;
 
 use Drupal\taxonomy\Entity\Term;
+use Drupal\taxonomy\TermStorage;
 
 /**
  * Provides the methods necessary to manage properties in Neontabs.
@@ -14,6 +15,9 @@ use Drupal\taxonomy\Entity\Term;
  * @author oliver@neontribe.co.uk
  */
 class NT8PropertyService {
+  const AREA_LOC_VOCAB_ID = 'cottage_areas';
+  const ATTRIBUTE_VOCAB_ID = 'cottage_attributes';
+
   protected $entityTypeManager;
   protected $entityQuery;
   protected $nt8RestService;
@@ -111,7 +115,7 @@ class NT8PropertyService {
     $loaded_terms = NULL;
 
     if (count($term_names) === 0) {
-      $loaded_terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vocab_name, 0, 1, TRUE);
+      $loaded_terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vocab_name, 0, NULL, TRUE);
     }
     else {
       foreach ($term_names as $term_name) {
@@ -151,6 +155,113 @@ class NT8PropertyService {
   }
 
   /**
+   * @param array $arealoc_data
+   *   The response array retrieved from TABS. e.g getAreaLocationDataFromTabs()
+   */
+  public function createAreaLocTermsFromTabs(array $arealoc_data = []) {
+    $updatedAreas = '';
+    $updatedLocations = '';
+
+    $save_status = FALSE;
+
+    // Outer Loop For Areas
+    foreach($arealoc_data as $area_key => $area_info) {
+      $area_term_definition_array = [
+        'vid' => $this::AREA_LOC_VOCAB_ID,
+        'name' => $area_info->name,
+        'field_attribute_code' => ['value' => $area_info->code],
+        'field_attribute_labl' => ['value' => $area_info->name],
+        'field_attribute_brand' => ['value' => $area_info->brandcode],
+        'field_attribute_description' => ['value' => $area_info->description],
+      ];
+
+      $area_term = Term::create($area_term_definition_array);
+
+      // Modify terms of the same name if they already exist.
+      self::loadTermsByNames(
+        $this::AREA_LOC_VOCAB_ID,
+        [$area_info->name],
+        function (&$term) use ($area_term_definition_array, &$save_status, &$area_term) {
+          $term->get('field_attribute_code')->setValue($area_term_definition_array['field_attribute_code']);
+          $term->get('field_attribute_labl')->setValue($area_term_definition_array['field_attribute_labl']);
+          $term->get('field_attribute_brand')->setValue($area_term_definition_array['field_attribute_brand']);
+          $term->get('field_attribute_description')->setValue($area_term_definition_array['field_attribute_description']);
+
+          $area_term = $term;
+        }
+      );
+
+      // @codeCoverageIgnoreStart
+      $save_status = $area_term->save();
+      // @codeCoverageIgnoreEnd
+
+      if ($save_status) {
+        $updatedAreas .= $area_term_definition_array['field_attribute_code']['value'] . ", ";
+      }
+
+      $locations = $area_info->locations;
+      if(isset($locations) && count($locations) > 0) {
+        foreach($locations as $location_key => $location_info) {
+          $location_term_definition_array = [
+            'vid' => $this::AREA_LOC_VOCAB_ID,
+            'name' => $location_info->name,
+            'parent' => [$area_term->tid->value],
+            'field_attribute_code' => ['value' => $location_info->code],
+            'field_attribute_labl' => ['value' => $location_info->name],
+            'field_attribute_brand' => ['value' => $location_info->brandcode],
+            'field_attribute_description' => ['value' => $location_info->description],
+            'field_attribute_promoted' => ['value' => $location_info->promoted],
+            'field_attribute_coordinates' => [
+              ['value' => $location_info->coordinates->latitude],
+              ['value' => $location_info->coordinates->longitude],
+              ['value' => $location_info->coordinates->radius],
+            ],
+          ];
+
+          $location_term = Term::create($location_term_definition_array);
+
+          $storage = \Drupal::service('entity_type.manager')->getStorage('taxonomy_term');
+          $parents = $storage ->loadParents($location_term->tid->value);
+
+
+
+
+          // Modify terms of the same name if they already exist.
+          self::loadTermsByNames(
+            $this::AREA_LOC_VOCAB_ID,
+            [$location_info->name],
+            function (&$term) use ($location_term_definition_array, &$save_status, &$location_term) {
+
+
+//              if($location_term_definition_array['parent'] != $term->parent) return;
+
+              $term->get('field_attribute_code')->setValue($location_term_definition_array['field_attribute_code']);
+              $term->get('field_attribute_labl')->setValue($location_term_definition_array['field_attribute_labl']);
+              $term->get('field_attribute_brand')->setValue($location_term_definition_array['field_attribute_brand']);
+              $term->get('field_attribute_description')->setValue($location_term_definition_array['field_attribute_description']);
+              $term->get('field_attribute_promoted')->setValue($location_term_definition_array['field_attribute_promoted']);
+              $term->get('field_attribute_coordinates')->setValue($location_term_definition_array['field_attribute_coordinates']);
+
+              $location_term = $term;
+            }
+          );
+
+          // @codeCoverageIgnoreStart
+          $save_status = $location_term->delete();
+          // @codeCoverageIgnoreEnd
+
+          if ($save_status) {
+            $updatedLocations .= $location_term_definition_array['field_attribute_code']['value'] . ", ";
+          }
+        }
+      }
+    }
+
+
+    return [$updatedAreas, $updatedLocations];
+  }
+
+  /**
    * Populates the cottage_attributes taxonomy with data from TABS.
    *
    * @param array $attrib_data
@@ -181,14 +292,14 @@ class NT8PropertyService {
       ];
 
       // TODO: make this a configurable option or let the admin specify it.
-      $attr_array['vid'] = 'cottage_attributes';
+      $attr_array['vid'] = $this::ATTRIBUTE_VOCAB_ID;
       // The name is needed by the Drupal Taxonomy API.
       $attr_array['name'] = $attribute->label;
 
       $term = Term::create($attr_array);
 
       // Modify terms of the same name if they already exist.
-      $terms = self::loadTermsByNames('cottage_attributes', [$attr_array['name']], function (&$term) use ($attr_array, &$save_status) {
+      $terms = self::loadTermsByNames($this::ATTRIBUTE_VOCAB_ID, [$attr_array['name']], function (&$term) use ($attr_array, &$save_status) {
         $term->get('field_attribute_code')->setValue($attr_array['field_attribute_code']);
         $term->get('field_attribute_brand')->setValue($attr_array['field_attribute_brand']);
         $term->get('field_attribute_labl')->setValue($attr_array['field_attribute_labl']);
@@ -614,7 +725,7 @@ class NT8PropertyService {
 
     // Attributes.
     self::loadTermsByNames(
-      'cottage_attributes',
+      self::ATTRIBUTE_VOCAB_ID,
       $attr_keys,
       function (&$term, $id) use ($property_attr_array, &$attr_build) {
         $attr_name = static::getNodeFieldValue($term, 'field_attribute_labl', 0);
