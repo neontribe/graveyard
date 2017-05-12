@@ -162,10 +162,10 @@ class NT8PropertyService {
     $updatedAreas = '';
     $updatedLocations = '';
 
-    $save_status = FALSE;
-
     // Outer Loop For Areas
     foreach($arealoc_data as $area_key => $area_info) {
+      $area_info->name = trim($area_info->name);
+
       $area_term_definition_array = [
         'vid' => $this::AREA_LOC_VOCAB_ID,
         'name' => $area_info->name,
@@ -181,7 +181,7 @@ class NT8PropertyService {
       self::loadTermsByNames(
         $this::AREA_LOC_VOCAB_ID,
         [$area_info->name],
-        function (&$term) use ($area_term_definition_array, &$save_status, &$area_term) {
+        function (&$term) use ($area_term_definition_array, &$area_term) {
           $term->get('field_attribute_code')->setValue($area_term_definition_array['field_attribute_code']);
           $term->get('field_attribute_labl')->setValue($area_term_definition_array['field_attribute_labl']);
           $term->get('field_attribute_brand')->setValue($area_term_definition_array['field_attribute_brand']);
@@ -202,6 +202,8 @@ class NT8PropertyService {
       $locations = $area_info->locations;
       if(isset($locations) && count($locations) > 0) {
         foreach($locations as $location_key => $location_info) {
+          $location_info->name = trim($location_info->name);
+
           $location_term_definition_array = [
             'vid' => $this::AREA_LOC_VOCAB_ID,
             'name' => $location_info->name,
@@ -220,20 +222,16 @@ class NT8PropertyService {
 
           $location_term = Term::create($location_term_definition_array);
 
-          $storage = \Drupal::service('entity_type.manager')->getStorage('taxonomy_term');
-          $parents = $storage ->loadParents($location_term->tid->value);
-
-
-
-
           // Modify terms of the same name if they already exist.
           self::loadTermsByNames(
             $this::AREA_LOC_VOCAB_ID,
             [$location_info->name],
-            function (&$term) use ($location_term_definition_array, &$save_status, &$location_term) {
+            function (&$term) use ($location_term_definition_array, &$location_term) {
+              $storage = \Drupal::service('entity_type.manager')->getStorage('taxonomy_term')->loadParents($term->id());
+              $parent = reset($storage);
+              $parentID = $parent->id();
 
-
-//              if($location_term_definition_array['parent'] != $term->parent) return;
+              if($location_term_definition_array['parent'][0] != $parentID) return;
 
               $term->get('field_attribute_code')->setValue($location_term_definition_array['field_attribute_code']);
               $term->get('field_attribute_labl')->setValue($location_term_definition_array['field_attribute_labl']);
@@ -247,7 +245,7 @@ class NT8PropertyService {
           );
 
           // @codeCoverageIgnoreStart
-          $save_status = $location_term->delete();
+          $save_status = $location_term->save();
           // @codeCoverageIgnoreEnd
 
           if ($save_status) {
