@@ -227,8 +227,9 @@ class NT8PropertyService {
             $this::AREA_LOC_VOCAB_ID,
             [$location_info->name],
             function (&$term) use ($location_term_definition_array, &$location_term) {
-              $storage = \Drupal::service('entity_type.manager')->getStorage('taxonomy_term')->loadParents($term->id());
-              $parent = reset($storage);
+              $tid = $term->id();
+              $parentStorage = $this->getTermParents($tid);
+              $parent = reset($parentStorage);
               $parentID = $parent->id();
 
               if($location_term_definition_array['parent'][0] != $parentID) return;
@@ -257,6 +258,20 @@ class NT8PropertyService {
 
 
     return [$updatedAreas, $updatedLocations];
+  }
+
+  /**
+   * Retrieves the taxonomy_term storage for all the parents of a given Term.
+   *
+   * @param int $tid
+   *   The Term ID of the Term you wish to load the parents of.
+   *
+   * @return TermStorage[]
+   *   An array of loaded parent terms.
+   *
+   */
+  protected function getTermParents(int $tid) {
+    return \Drupal::service('entity_type.manager')->getStorage('taxonomy_term')->loadParents($tid);
   }
 
   /**
