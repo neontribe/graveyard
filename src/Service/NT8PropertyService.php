@@ -770,7 +770,7 @@ class NT8PropertyService {
       self::AREA_LOC_VOCAB_ID,
       [$prop_location_name],
       function($locationTerm, $locationTID) use ($areaData, $areaTID, &$location_build) {
-        $parents = self::getTermParents($locationTID);
+        $parents = static::getTermParents($locationTID);
 
         $matchedParent = FALSE;
         foreach ($parents as $parentIndex => $parentTerm) {

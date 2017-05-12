@@ -59,6 +59,17 @@ class TestNT8PropertyService extends NT8PropertyService {
   /**
    * @codeCoverageIgnore
    */
+  protected static function getTermParents($tid) {
+    if(isset($tid) && !empty($tid)) {
+      return [static::$mockedTerm];
+    }
+    return NULL;
+  }
+
+
+  /**
+   * @codeCoverageIgnore
+   */
   public static function getNodeFieldValue(
     EntityInterface $node,
     string $fieldName,
@@ -1084,14 +1095,14 @@ class NT8PropertyServiceTest extends UnitTestCase {
       ->willReturn($this->sqlQuery);
     $this->entityTypeManager->expects($this->any())
       ->method('getStorage')
-      ->willReturn($this->nodeStorage);
+      ->willReturn($this->taxonomyTermStorage);
 
     $nodeStorageReturn = [];
     if($data->propertyRef !== "") {
       $nodeStorageReturn = [$data->propertyRef => $this->mockedEntity];
     }
 
-    $this->nodeStorage->expects($this->any())
+    $this->taxonomyTermStorage->expects($this->any())
       ->method('loadMultiple')
       ->willReturn($nodeStorageReturn);
 
@@ -1119,7 +1130,7 @@ class NT8PropertyServiceTest extends UnitTestCase {
       // We subtract two here because we expect two values to be unset.
       $this->assertNotSameSize($data_keys, $update_keys);
     } else {
-      $this->assertSameSize($data_keys, $update_keys);
+      $this->assertCount(26, $update_keys);
     }
 
   }
