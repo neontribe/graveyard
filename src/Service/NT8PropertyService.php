@@ -732,12 +732,13 @@ class NT8PropertyService {
       ];
     }
 
+    // Attributes.
     $attr_build = [];
 
     $property_attr_array = (array) $data->attributes ?: [];
     $attr_keys = array_keys($property_attr_array);
 
-    // Attributes.
+
     self::loadTermsByNames(
       self::ATTRIBUTE_VOCAB_ID,
       $attr_keys,
@@ -751,12 +752,13 @@ class NT8PropertyService {
       }
     );
 
+    // Areas + Locations.
     $location_build = [];
 
     $prop_area_name = trim($data->area->name);
     $prop_location_name = trim($data->location->name);
 
-    // Areas + Locations.
+
     $areaData = self::loadTermsByNames(
       self::AREA_LOC_VOCAB_ID,
       [$prop_area_name]
@@ -785,8 +787,6 @@ class NT8PropertyService {
         }
       }
     );
-
-    dpm($location_build);
 
     $return_definition = [
       'type' => 'property',
