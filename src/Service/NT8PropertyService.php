@@ -105,17 +105,19 @@ class NT8PropertyService {
    * @param callable $term_callback
    *   Callback which is fired for each term loaded.
    *   $term_callback($termEntity, $id).
+   * @param int $depth
+   *   The depth to load the child tree. Defaults to 0.
    *
    * @return array
    *   An array of loaded term entities.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    */
-  public static function loadTermsByNames(string $vocab_name, array $term_names = [], callable $term_callback = NULL) {
+  public static function loadTermsByNames(string $vocab_name, array $term_names = [], callable $term_callback = NULL, int $depth = 0) {
     $loaded_terms = NULL;
 
     if (count($term_names) === 0) {
-      $loaded_terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vocab_name, 0, NULL, TRUE);
+      $loaded_terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vocab_name, $depth, NULL, TRUE);
     }
     else {
       foreach ($term_names as $term_name) {
@@ -226,9 +228,8 @@ class NT8PropertyService {
           self::loadTermsByNames(
             $this::AREA_LOC_VOCAB_ID,
             [$location_info->name],
-            function (&$term) use ($location_term_definition_array, &$location_term) {
-              $tid = $term->id();
-              $parentStorage = $this->getTermParents($tid);
+            function (&$term, $id) use ($location_term_definition_array, &$location_term) {
+              $parentStorage = static::getTermParents($id);
               $parent = reset($parentStorage);
               $parentID = $parent->id();
 
@@ -263,14 +264,14 @@ class NT8PropertyService {
   /**
    * Retrieves the taxonomy_term storage for all the parents of a given Term.
    *
-   * @param int $tid
+   * @param mixed $tid
    *   The Term ID of the Term you wish to load the parents of.
    *
    * @return TermStorage[]
    *   An array of loaded parent terms.
    *
    */
-  protected function getTermParents(int $tid) {
+  protected static function getTermParents($tid) {
     return \Drupal::service('entity_type.manager')->getStorage('taxonomy_term')->loadParents($tid);
   }
 
@@ -750,6 +751,43 @@ class NT8PropertyService {
       }
     );
 
+    $location_build = [];
+
+    $prop_area_name = trim($data->area->name);
+    $prop_location_name = trim($data->location->name);
+
+    // Areas + Locations.
+    $areaData = self::loadTermsByNames(
+      self::AREA_LOC_VOCAB_ID,
+      [$prop_area_name]
+    );
+    $propAreaTerm = reset($areaData);
+    $areaTID = $propAreaTerm->id();
+
+    self::loadTermsByNames(
+      self::AREA_LOC_VOCAB_ID,
+      [$prop_location_name],
+      function($locationTerm, $locationTID) use ($areaData, $areaTID, &$location_build) {
+        $parents = self::getTermParents($locationTID);
+
+        $matchedParent = FALSE;
+        foreach ($parents as $parentIndex => $parentTerm) {
+          $parentID = $parentTerm->id();
+
+          if($parentID === $areaTID) {
+            $matchedParent = TRUE;
+            break;
+          }
+        }
+
+        if($matchedParent) {
+          $location_build['target_id'] = (string) $locationTID;
+        }
+      }
+    );
+
+    dpm($location_build);
+
     $return_definition = [
       'type' => 'property',
       'body' => [],
@@ -834,6 +872,7 @@ class NT8PropertyService {
       'field_cottage_featured_image' => self::issetGet($image_links, 0),
       'field_cottage_images' => $image_links,
       'field_cottage_attributes' => $attr_build,
+      'field_cottage_location' => $location_build,
     ];
 
     // If this isn't for a node discard the Drupal node specific keys.
