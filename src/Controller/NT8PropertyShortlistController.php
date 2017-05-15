@@ -3,12 +3,14 @@
 namespace Drupal\nt8propertyshortlist\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Render\HtmlResponse;
 use Drupal\nt8propertyshortlist\Service\NT8PropertyShortlistService;
 use Drupal\nt8search\Service\NT8SearchService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\nt8property\Service\NT8PropertyService;
 use Drupal\nt8tabsio\Service\NT8TabsRestService;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -89,14 +91,13 @@ class NT8PropertyShortlistController extends ControllerBase {
 
   /**
    * @param string $propRef
-   *
-   * @return \Symfony\Component\HttpFoundation\JsonResponse
    */
   public function shortlist_toggle(string $propRef) {
     $splittedPropref = $this->nt8tabsioTabsService->splitPropref($propRef)[0] ?: $propRef;
-    $currentShortlist = $this->nt8propertyshortlist->toggleEntry($splittedPropref);
+    $this->nt8propertyshortlist->toggleEntry($splittedPropref);
+    $previousUrl= \Drupal::request()->server->get('HTTP_REFERER');
 
-    return new JsonResponse($currentShortlist);
+    return new RedirectResponse($previousUrl);
   }
 
 }
