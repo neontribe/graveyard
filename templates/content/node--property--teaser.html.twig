@@ -80,7 +80,13 @@ not node.isPublished() ? 'node--unpublished',
 view_mode ? 'node--view-mode-' ~ view_mode|clean_class,
 ]
 %}
-{{ attach_library('classy/node') }}<article{{ attributes.addClass(classes) }} data-propref="{{ content.field_cottage_reference_code[0]['#context']['value'] }}">
+{%
+    set propRef = content.field_cottage_reference_code[0]['#context']['value']
+%}
+{%
+set shortlistToggleUrl = path('<front>') ~ "shortlist/toggle/" ~ propRef
+%}
+{{ attach_library('classy/node') }}<article{{ attributes.addClass(classes) }} data-propref="{{ propRef }}">
 
     {% if display_submitted %}
         <footer class="node__meta">
@@ -121,9 +127,9 @@ view_mode ? 'node--view-mode-' ~ view_mode|clean_class,
 
           <section class="property-teaser-shortlist">
             {% if(on_shortlist) %}
-              <a href=""><i class="fa fa-heart" aria-hidden="true"></i></a>
+              <a href="{{ shortlistToggleUrl }}"><i class="fa fa-heart" aria-hidden="true"></i></a>
             {% else %}
-              <a href=""><i class="fa fa-heart-o" aria-hidden="true"></i></a>
+              <a href="{{ shortlistToggleUrl }}"><i class="fa fa-heart-o" aria-hidden="true"></i></a>
             {% endif %}
           </section>
         </section>
