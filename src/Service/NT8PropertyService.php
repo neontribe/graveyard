@@ -7,6 +7,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\nt8tabsio\Service\NT8TabsRestService;
 
 use Drupal\taxonomy\Entity\Term;
+use Drupal\taxonomy\TermStorage;
 
 /**
  * Provides the methods necessary to manage properties in Neontabs.
@@ -14,6 +15,9 @@ use Drupal\taxonomy\Entity\Term;
  * @author oliver@neontribe.co.uk
  */
 class NT8PropertyService {
+  const AREA_LOC_VOCAB_ID = 'cottage_areas';
+  const ATTRIBUTE_VOCAB_ID = 'cottage_attributes';
+
   protected $entityTypeManager;
   protected $entityQuery;
   protected $nt8RestService;
@@ -69,6 +73,29 @@ class NT8PropertyService {
   }
 
   /**
+   * Fetches Area/Location data from TABS.
+   *
+   * @param array $areaLimit
+   *   Limit the returned results by Area code.
+   */
+  public function getAreaLocationDataFromTabs(array $areaLimit = []) {
+    $api_area_loc_data = json_decode($this->nt8RestService->get('utility/area'));
+
+    if (count($areaLimit) > 0) {
+      $api_area_loc_data = array_filter($api_area_loc_data, function ($value) use ($areaLimit) {
+        $attr_code = $value->code ?: '';
+        if (in_array($attr_code, $areaLimit)) {
+          return TRUE;
+        }
+
+        return FALSE;
+      });
+    }
+
+    return $api_area_loc_data;
+  }
+
+  /**
    * Loads every term listed in $term_names.
    *
    * @param string $vocab_name
@@ -78,17 +105,19 @@ class NT8PropertyService {
    * @param callable $term_callback
    *   Callback which is fired for each term loaded.
    *   $term_callback($termEntity, $id).
+   * @param int $depth
+   *   The depth to load the child tree. Defaults to 0.
    *
    * @return array
    *   An array of loaded term entities.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    */
-  public static function loadTermsByNames(string $vocab_name, array $term_names = [], callable $term_callback = NULL) {
+  public static function loadTermsByNames(string $vocab_name, array $term_names = [], callable $term_callback = NULL, int $depth = 0) {
     $loaded_terms = NULL;
 
     if (count($term_names) === 0) {
-      $loaded_terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vocab_name, 0, 1, TRUE);
+      $loaded_terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vocab_name, $depth, NULL, TRUE);
     }
     else {
       foreach ($term_names as $term_name) {
@@ -128,6 +157,125 @@ class NT8PropertyService {
   }
 
   /**
+   * @param array $arealoc_data
+   *   The response array retrieved from TABS. e.g getAreaLocationDataFromTabs()
+   */
+  public function createAreaLocTermsFromTabs(array $arealoc_data = []) {
+    $updatedAreas = '';
+    $updatedLocations = '';
+
+    // Outer Loop For Areas
+    foreach($arealoc_data as $area_key => $area_info) {
+      $area_info->name = trim($area_info->name);
+
+      $area_term_definition_array = [
+        'vid' => $this::AREA_LOC_VOCAB_ID,
+        'name' => $area_info->name,
+        'field_attribute_code' => ['value' => $area_info->code],
+        'field_attribute_labl' => ['value' => $area_info->name],
+        'field_attribute_brand' => ['value' => $area_info->brandcode],
+        'field_attribute_description' => ['value' => $area_info->description],
+      ];
+
+      $area_term = Term::create($area_term_definition_array);
+
+      // Modify terms of the same name if they already exist.
+      self::loadTermsByNames(
+        $this::AREA_LOC_VOCAB_ID,
+        [$area_info->name],
+        function (&$term) use ($area_term_definition_array, &$area_term) {
+          $term->get('field_attribute_code')->setValue($area_term_definition_array['field_attribute_code']);
+          $term->get('field_attribute_labl')->setValue($area_term_definition_array['field_attribute_labl']);
+          $term->get('field_attribute_brand')->setValue($area_term_definition_array['field_attribute_brand']);
+          $term->get('field_attribute_description')->setValue($area_term_definition_array['field_attribute_description']);
+
+          $area_term = $term;
+        }
+      );
+
+      // @codeCoverageIgnoreStart
+      $save_status = $area_term->save();
+      // @codeCoverageIgnoreEnd
+
+      if ($save_status) {
+        $updatedAreas .= $area_term_definition_array['field_attribute_code']['value'] . ", ";
+      }
+
+      $locations = $area_info->locations;
+      if(isset($locations) && count($locations) > 0) {
+        foreach($locations as $location_key => $location_info) {
+          $location_info->name = trim($location_info->name);
+
+          $location_term_definition_array = [
+            'vid' => $this::AREA_LOC_VOCAB_ID,
+            'name' => $location_info->name,
+            'parent' => [$area_term->tid->value],
+            'field_attribute_code' => ['value' => $location_info->code],
+            'field_attribute_labl' => ['value' => $location_info->name],
+            'field_attribute_brand' => ['value' => $location_info->brandcode],
+            'field_attribute_description' => ['value' => $location_info->description],
+            'field_attribute_promoted' => ['value' => $location_info->promoted],
+            'field_attribute_coordinates' => [
+              ['value' => $location_info->coordinates->latitude],
+              ['value' => $location_info->coordinates->longitude],
+              ['value' => $location_info->coordinates->radius],
+            ],
+          ];
+
+          $location_term = Term::create($location_term_definition_array);
+
+          // Modify terms of the same name if they already exist.
+          self::loadTermsByNames(
+            $this::AREA_LOC_VOCAB_ID,
+            [$location_info->name],
+            function (&$term, $id) use ($location_term_definition_array, &$location_term) {
+              $parentStorage = static::getTermParents($id);
+              $parent = reset($parentStorage);
+              $parentID = $parent->id();
+
+              if($location_term_definition_array['parent'][0] != $parentID) return;
+
+              $term->get('field_attribute_code')->setValue($location_term_definition_array['field_attribute_code']);
+              $term->get('field_attribute_labl')->setValue($location_term_definition_array['field_attribute_labl']);
+              $term->get('field_attribute_brand')->setValue($location_term_definition_array['field_attribute_brand']);
+              $term->get('field_attribute_description')->setValue($location_term_definition_array['field_attribute_description']);
+              $term->get('field_attribute_promoted')->setValue($location_term_definition_array['field_attribute_promoted']);
+              $term->get('field_attribute_coordinates')->setValue($location_term_definition_array['field_attribute_coordinates']);
+
+              $location_term = $term;
+            }
+          );
+
+          // @codeCoverageIgnoreStart
+          $save_status = $location_term->save();
+          // @codeCoverageIgnoreEnd
+
+          if ($save_status) {
+            $updatedLocations .= $location_term_definition_array['field_attribute_code']['value'] . ", ";
+          }
+        }
+      }
+    }
+
+
+    return [$updatedAreas, $updatedLocations];
+  }
+
+  /**
+   * Retrieves the taxonomy_term storage for all the parents of a given Term.
+   *
+   * @param mixed $tid
+   *   The Term ID of the Term you wish to load the parents of.
+   *
+   * @return TermStorage[]
+   *   An array of loaded parent terms.
+   *
+   */
+  protected static function getTermParents($tid) {
+    return \Drupal::service('entity_type.manager')->getStorage('taxonomy_term')->loadParents($tid);
+  }
+
+  /**
    * Populates the cottage_attributes taxonomy with data from TABS.
    *
    * @param array $attrib_data
@@ -158,14 +306,14 @@ class NT8PropertyService {
       ];
 
       // TODO: make this a configurable option or let the admin specify it.
-      $attr_array['vid'] = 'cottage_attributes';
+      $attr_array['vid'] = $this::ATTRIBUTE_VOCAB_ID;
       // The name is needed by the Drupal Taxonomy API.
       $attr_array['name'] = $attribute->label;
 
       $term = Term::create($attr_array);
 
       // Modify terms of the same name if they already exist.
-      $terms = self::loadTermsByNames('cottage_attributes', [$attr_array['name']], function (&$term) use ($attr_array, &$save_status) {
+      $terms = self::loadTermsByNames($this::ATTRIBUTE_VOCAB_ID, [$attr_array['name']], function (&$term) use ($attr_array, &$save_status) {
         $term->get('field_attribute_code')->setValue($attr_array['field_attribute_code']);
         $term->get('field_attribute_brand')->setValue($attr_array['field_attribute_brand']);
         $term->get('field_attribute_labl')->setValue($attr_array['field_attribute_labl']);
@@ -584,14 +732,15 @@ class NT8PropertyService {
       ];
     }
 
+    // Attributes.
     $attr_build = [];
 
     $property_attr_array = (array) $data->attributes ?: [];
     $attr_keys = array_keys($property_attr_array);
 
-    // Attributes.
+
     self::loadTermsByNames(
-      'cottage_attributes',
+      self::ATTRIBUTE_VOCAB_ID,
       $attr_keys,
       function (&$term, $id) use ($property_attr_array, &$attr_build) {
         $attr_name = static::getNodeFieldValue($term, 'field_attribute_labl', 0);
@@ -600,6 +749,42 @@ class NT8PropertyService {
           'target_id' => (string) $id,
           'value' => json_encode($attr_name_val),
         ];
+      }
+    );
+
+    // Areas + Locations.
+    $location_build = [];
+
+    $prop_area_name = trim($data->area->name);
+    $prop_location_name = trim($data->location->name);
+
+
+    $areaData = self::loadTermsByNames(
+      self::AREA_LOC_VOCAB_ID,
+      [$prop_area_name]
+    );
+    $propAreaTerm = reset($areaData);
+    $areaTID = $propAreaTerm->id();
+
+    self::loadTermsByNames(
+      self::AREA_LOC_VOCAB_ID,
+      [$prop_location_name],
+      function($locationTerm, $locationTID) use ($areaData, $areaTID, &$location_build) {
+        $parents = static::getTermParents($locationTID);
+
+        $matchedParent = FALSE;
+        foreach ($parents as $parentIndex => $parentTerm) {
+          $parentID = $parentTerm->id();
+
+          if($parentID === $areaTID) {
+            $matchedParent = TRUE;
+            break;
+          }
+        }
+
+        if($matchedParent) {
+          $location_build['target_id'] = (string) $locationTID;
+        }
       }
     );
 
@@ -687,6 +872,7 @@ class NT8PropertyService {
       'field_cottage_featured_image' => self::issetGet($image_links, 0),
       'field_cottage_images' => $image_links,
       'field_cottage_attributes' => $attr_build,
+      'field_cottage_location' => $location_build,
     ];
 
     // If this isn't for a node discard the Drupal node specific keys.

@@ -16,6 +16,7 @@ dependencies:
     - field.field.node.property.field_cottage_featured_image
     - field.field.node.property.field_cottage_image_info
     - field.field.node.property.field_cottage_images
+    - field.field.node.property.field_cottage_location
     - field.field.node.property.field_cottage_name
     - field.field.node.property.field_cottage_ownercode
     - field.field.node.property.field_cottage_pets
@@ -34,7 +35,7 @@ dependencies:
     - path
     - text
 _core:
-  default_config_hash: pu9erd2Lu04ZVBegK_4bpzUSUv1kFisrs6orCD7lXsw
+  default_config_hash: 3Mbf5i0gZH4xCz33dEEPnquacD2IjDFz4YcWyBiOI8A
 id: node.property.default
 targetEntityType: node
 bundle: property
@@ -48,11 +49,13 @@ content:
       summary_rows: 3
       placeholder: ''
     third_party_settings: {  }
+    region: content
   created:
     type: datetime_timestamp
     weight: 2
     settings: {  }
     third_party_settings: {  }
+    region: content
   field_cottage_accommo:
     weight: 38
     settings:
@@ -60,18 +63,21 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: text_textarea
+    region: content
   field_cottage_accommodates:
     weight: 12
     settings:
       placeholder: ''
     third_party_settings: {  }
     type: number
+    region: content
   field_cottage_address:
     weight: 22
     settings:
       default_country: null
     third_party_settings: {  }
     type: address_default
+    region: content
   field_cottage_attributes:
     type: entity_reference_with_value_autocomplete
     weight: 28
@@ -80,12 +86,14 @@ content:
       size: '60'
       placeholder: ''
     third_party_settings: {  }
+    region: content
   field_cottage_bedrooms:
     weight: 15
     settings:
       placeholder: ''
     third_party_settings: {  }
     type: number
+    region: content
   field_cottage_booking:
     weight: 20
     settings:
@@ -93,6 +101,7 @@ content:
       placeholder_title: ''
     third_party_settings: {  }
     type: link_default
+    region: content
   field_cottage_brandcode:
     weight: 8
     settings:
@@ -100,6 +109,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+    region: content
   field_cottage_changeover_day:
     weight: 16
     settings:
@@ -107,12 +117,14 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+    region: content
   field_cottage_coordinates:
     weight: 23
     settings:
       placeholder: ''
     third_party_settings: {  }
     type: number
+    region: content
   field_cottage_description:
     weight: 13
     settings:
@@ -121,6 +133,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: text_textarea_with_summary
+    region: content
   field_cottage_featured_image:
     weight: 27
     settings:
@@ -128,6 +141,7 @@ content:
       placeholder_title: ''
     third_party_settings: {  }
     type: link_default
+    region: content
   field_cottage_image_info:
     weight: 25
     settings:
@@ -135,6 +149,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textarea
+    region: content
   field_cottage_images:
     weight: 26
     settings:
@@ -142,6 +157,16 @@ content:
       placeholder_title: ''
     third_party_settings: {  }
     type: link_default
+    region: content
+  field_cottage_location:
+    weight: 39
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
   field_cottage_name:
     weight: 11
     settings:
@@ -149,6 +174,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+    region: content
   field_cottage_ownercode:
     weight: 21
     settings:
@@ -156,12 +182,14 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+    region: content
   field_cottage_pets:
     weight: 18
     settings:
       placeholder: ''
     third_party_settings: {  }
     type: number
+    region: content
   field_cottage_pricing:
     weight: 24
     settings:
@@ -169,18 +197,21 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textarea
+    region: content
   field_cottage_promote:
     weight: 19
     settings:
       display_label: true
     third_party_settings: {  }
     type: boolean_checkbox
+    region: content
   field_cottage_rating:
     weight: 17
     settings:
       placeholder: ''
     third_party_settings: {  }
     type: number
+    region: content
   field_cottage_reference_code:
     weight: 7
     settings:
@@ -188,6 +219,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+    region: content
   field_cottage_slug:
     weight: 10
     settings:
@@ -195,6 +227,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+    region: content
   field_cottage_teaser_description:
     weight: 14
     settings:
@@ -202,6 +235,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: text_textarea
+    region: content
   field_cottage_url:
     weight: 9
     settings:
@@ -209,23 +243,27 @@ content:
       placeholder_title: ''
     third_party_settings: {  }
     type: link_default
+    region: content
   path:
     type: path
     weight: 5
     settings: {  }
     third_party_settings: {  }
+    region: content
   promote:
     type: boolean_checkbox
     settings:
       display_label: true
     weight: 3
     third_party_settings: {  }
+    region: content
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
     weight: 4
     third_party_settings: {  }
+    region: content
   title:
     type: string_textfield
     weight: 0
@@ -233,6 +271,7 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    region: content
   uid:
     type: entity_reference_autocomplete
     weight: 1
@@ -241,4 +280,5 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    region: content
 hidden: {  }
