@@ -102,9 +102,35 @@ view_mode ? 'node--view-mode-' ~ view_mode|clean_class,
   {% endif %}
 
   <div{{ content_attributes.addClass('node__content') }}>
-    <h1>{{ label }}</h1>
+    <div class="cottage-head">
+      <div class="cottage-title">
+        <h1>{{ label }}</h1>
+        <h3>{{ content.field_cottage_reference_code[0] }}</h3>
+      </div>
 
-    {{ content.field_cottage_images }}
+      {{ content.field_cottage_images }}
+
+      <div class="cottage-info">
+        {{ content.field_cottage_rating }}
+
+        <section class="cottage-details">
+          <section class="cottage-pricing">
+              {{ content.field_cottage_pricing }}
+          </section>
+            {{ content.field_cottage_bedrooms }}
+            {{ content.field_cottage_pets }}
+            {{ content.field_cottage_accommodates }}
+        </section>
+      </div>
+
+      <h2>Description</h2>
+      <div class="cottage-description">
+        {{ content.field_cottage_teaser_description }}
+      </div>
+    </div>
+
+
+
   </div>
 
 </article>
