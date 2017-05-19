@@ -40,6 +40,14 @@ function nt8landingpage_entity_view(array &$build, \Drupal\Core\Entity\EntityInt
   if ($view_mode === 'full') {
     switch ($entity_type) {
       case 'landing_page':
+
+        $build['#cache'] = [
+          'contexts' => [
+            'url.path',
+            'url.query_args',
+          ]
+        ];
+
         $filter_string = $property_service->getNodeFieldValue($entity, 'field_tabs_filter_string', 0, 'value');
         $filter_array = [];
         parse_str($filter_string, $filter_array);
