@@ -122,7 +122,8 @@ class NT8MapService {
    *   URL for the images folder.
    */
   public static function getMapImagePath() {
-    return drupal_get_path('module', 'nt8map') . '/vendor/neonmap/dist/images';
+    $base_url = \Drupal::request()->getBaseUrl();
+    return $base_url . '/' . drupal_get_path('module', 'nt8map') . '/vendor/neonmap/dist/images';
   }
 
   /**
