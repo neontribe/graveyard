@@ -33,11 +33,8 @@ function nt8landingpage_entity_view(array &$build, \Drupal\Core\Entity\EntityInt
   $property_service = \Drupal::getContainer()->get('nt8property.property_methods');
   $search_service   = \Drupal::getContainer()->get('nt8search.methods');
 
-  $canGetType = method_exists($entity, 'getType');
-  $entity_type = NULL;
-  if($canGetType) $entity_type = $entity->getType();
-
   if ($view_mode === 'full') {
+    $entity_type = $entity->bundle();
     switch ($entity_type) {
       case 'landing_page':
 
