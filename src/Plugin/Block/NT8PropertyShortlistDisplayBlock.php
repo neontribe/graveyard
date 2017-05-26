@@ -5,6 +5,7 @@ namespace Drupal\nt8propertyshortlist\Plugin\Block;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\node\Entity\Node;
+use Drupal\nt8propertyshortlist\NT8PropertyShortlistLoadEvent;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\nt8property\Service\NT8PropertyService;
 use Drupal\nt8propertyshortlist\Service\NT8PropertyShortlistService;

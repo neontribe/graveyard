@@ -4,6 +4,7 @@ namespace Drupal\nt8propertyshortlist\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Render\HtmlResponse;
+use Drupal\nt8propertyshortlist\NT8PropertyShortlistLoadEvent;
 use Drupal\nt8propertyshortlist\Service\NT8PropertyShortlistService;
 use Drupal\nt8search\Service\NT8SearchService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -77,6 +78,13 @@ class NT8PropertyShortlistController extends ControllerBase {
    * {@inheritdoc}
    */
   public function shortlist() {
+    $currentShortlist = $this->nt8propertyshortlist->getStore();
+
+    $shortlistLoadEvent = new NT8PropertyShortlistLoadEvent($currentShortlist);
+
+    $dispatcher = \Drupal::service('event_dispatcher');
+    $dispatcher->dispatch(NT8PropertyShortlistLoadEvent::NAME, $shortlistLoadEvent);
+
     return [];
   }
 

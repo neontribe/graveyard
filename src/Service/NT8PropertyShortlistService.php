@@ -67,7 +67,7 @@ class NT8PropertyShortlistService {
       $this->sessionManager->start();
     }
 
-    $this->store = $this->tempStoreFactory->get('nt8search.search_results');
+    $this->store = $this->tempStoreFactory->get('nt8propertyshortlist.list');
   }
 
   /**
