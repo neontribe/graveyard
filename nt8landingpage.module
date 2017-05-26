@@ -29,7 +29,7 @@ function nt8landingpage_help($route_name, RouteMatchInterface $route_match) {
 /**
  * Implements hook_entity_view().
  */
-function nt8landingpage_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
+function nt8landingpage_entity_view(array &$build, \Drupal\Core\Entity\EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
   $property_service = \Drupal::getContainer()->get('nt8property.property_methods');
   $search_service   = \Drupal::getContainer()->get('nt8search.methods');
 
@@ -37,6 +37,14 @@ function nt8landingpage_entity_view(array &$build, EntityInterface $entity, Enti
     $entity_type = $entity->bundle();
     switch ($entity_type) {
       case 'landing_page':
+
+        $build['#cache'] = [
+          'contexts' => [
+            'url.path',
+            'url.query_args',
+          ]
+        ];
+
         $filter_string = $property_service->getNodeFieldValue($entity, 'field_tabs_filter_string', 0, 'value');
         $filter_array = [];
         parse_str($filter_string, $filter_array);
