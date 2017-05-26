@@ -57,6 +57,17 @@ function drush_nt8property_nt8_import_all($name = '') {
     sprintf('Updated property attribute taxonomy. Attributes Updated: %s', print_r($status, TRUE))
   );
 
+  // Pull/freshen area location data.
+  $locData = $nt8PropertyMethods->getAreaLocationDataFromTabs();
+  $arealocDataUpdateStatus = $nt8PropertyMethods->createAreaLocTermsFromTabs($locData);
+
+  \Drupal::logger('nt8property.drush')->notice(
+    sprintf('Updated arealoc taxonomy. Areas Updated: %s Locations Updated: %s',
+      print_r($arealocDataUpdateStatus[0], TRUE),
+      print_r($arealocDataUpdateStatus[1], TRUE)
+    )
+  );
+
   $response = $nt8restService->get("property", $searchParams);
 
   $data = json_decode($response);

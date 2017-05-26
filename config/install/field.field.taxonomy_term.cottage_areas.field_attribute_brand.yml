@@ -1,0 +1,19 @@
+uuid: 760e83af-69c6-4dd8-ac2a-ec9e62f14115
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_attribute_brand
+    - taxonomy.vocabulary.cottage_areas
+id: taxonomy_term.cottage_areas.field_attribute_brand
+field_name: field_attribute_brand
+entity_type: taxonomy_term
+bundle: cottage_areas
+label: Brandcode
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
