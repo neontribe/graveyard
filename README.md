@@ -46,7 +46,7 @@ Check the output for the random superadmin password
 
     drush -y en nt8theme
     drush -y config-set system.theme default nt8theme
-    drush -y en nt8property
+    drush -y en nt8property nt8propertyshortlist
     drush -y en nt8map nt8search
     drush -y en nt8propertyshortlist nt8landingpage
     drush -y nt8:ia
