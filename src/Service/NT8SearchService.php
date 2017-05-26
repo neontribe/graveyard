@@ -3,12 +3,11 @@
 namespace Drupal\nt8search\Service;
 
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Session\SessionManagerInterface;
 use Drupal\nt8property\Service\NT8PropertyService;
+use Drupal\nt8search\NT8SearchCompleteEvent;
 use Drupal\nt8tabsio\Service\NT8TabsRestService;
-use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\user\PrivateTempStoreFactory;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
@@ -52,13 +51,14 @@ class NT8SearchService {
   /**
    * Constructor.
    */
-  public function __construct(NT8TabsRestService $nt8tabsio_tabs_service,
-                              $entityQuery,
-                              $entityTypeManager,
-                              NT8PropertyService $nt8propertymethods,
-                              PrivateTempStoreFactory $temp_store_factory,
-                              SessionInterface $session_manager,
-                              AccountInterface $current_user) {
+  public function __construct(
+    NT8TabsRestService $nt8tabsio_tabs_service,
+    $entityQuery,
+    $entityTypeManager,
+    NT8PropertyService $nt8propertymethods,
+    PrivateTempStoreFactory $temp_store_factory,
+    SessionInterface $session_manager,
+    AccountInterface $current_user) {
 
     $this->nt8tabsioTabsService = $nt8tabsio_tabs_service;
     $this->entityQuery = $entityQuery;
@@ -74,18 +74,6 @@ class NT8SearchService {
     }
 
     $this->store = $this->tempStoreFactory->get('nt8search.search_results');
-  }
-
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('nt8tabsio.tabs_service'),
-      $container->get( '@entity.query'),
-      $container->get('entity_type.manager'),
-      $container->get( 'nt8property.property_methods'),
-      $container->get('user.private_tempstore'),
-      $container->get('session'),
-      $container->get('current_user')
-    );
   }
 
 
@@ -131,12 +119,17 @@ class NT8SearchService {
     // If the user has passed an array into $loadNodes fill it.
     if (isset($searchResult->results)) {
       if (isset($loadNodes)) {
-        $loadNodes = self::loadResultIntoNodes($searchResult->results);
+        $loadNodes = self::loadSearchResultIntoNodes($searchResult->results);
       }
 
       if ($setState) {
         // Set the search state.
         $this->store->set('nt8search.results', $searchResult);
+
+        $searchCompleteEvent = new NT8SearchCompleteEvent($searchResult->results);
+
+        $dispatcher = \Drupal::service('event_dispatcher');
+        $dispatcher->dispatch(NT8SearchCompleteEvent::NAME, $searchCompleteEvent);
       }
 
       if (!isset($loadNodes)) {
@@ -254,7 +247,7 @@ class NT8SearchService {
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    */
-  protected function loadResultIntoNodes(array $apiSearchResults) {
+  public function loadSearchResultIntoNodes(array $apiSearchResults) {
     $loadedNodes = NULL;
 
     if (isset($apiSearchResults)) {
