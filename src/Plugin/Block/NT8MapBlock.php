@@ -104,6 +104,7 @@ class NT8MapBlock extends BlockBase implements ContainerFactoryPluginInterface {
   public function build() {
     $build = [
       '#cache' => [
+        'max-age' => 0,
         'contexts' => [
           'url.path',
           'url.query_args',
@@ -111,16 +112,10 @@ class NT8MapBlock extends BlockBase implements ContainerFactoryPluginInterface {
       ],
     ];
 
-    $search_results = $this->nt8searchMethods->getSearchState();
-    if(isset($search_results->results)) {
-      // Map the API search result into a simple array of Proprefs.
-      $mappedResults = array_map(function ($property) {
-        return $property->propertyRef;
-      }, $search_results->results);
+    $map_state_data = $this->nt8mapService->getMapState();
 
-      $loadedResultsAsNodes = $this->nt8propertyMethods->loadNodesFromProprefs($mappedResults);
-
-      $mapData = $this->nt8mapService->initMap($loadedResultsAsNodes);
+    if(is_array($map_state_data) && count($map_state_data) > 0) {
+      $mapData = $this->nt8mapService->initMap($map_state_data);
 
       $build['#attached'] = [
         'library' => [

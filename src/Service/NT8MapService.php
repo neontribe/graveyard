@@ -2,6 +2,10 @@
 
 namespace Drupal\nt8map\Service;
 
+use Drupal\Core\Session\AccountInterface;
+use Drupal\user\PrivateTempStoreFactory;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+
 /**
  * Class NT8MapService.
  *
@@ -9,11 +13,44 @@ namespace Drupal\nt8map\Service;
  */
 class NT8MapService {
 
+  const CONFIG_STORE_NAME = 'nt8map.properties';
+
+  /**
+   * @var \Drupal\user\PrivateTempStoreFactory
+   */
+  protected $tempStoreFactory;
+
+  /**
+   * @var \Symfony\Component\HttpFoundation\Session\SessionInterface
+   */
+  private $sessionManager;
+
+  /**
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  private $currentUser;
+
+  /**
+   * @var \Drupal\user\PrivateTempStore
+   */
+  protected $store;
+
   /**
    * Constructor.
    */
-  public function __construct() {
+  public function __construct(PrivateTempStoreFactory $temp_store_factory,
+                              SessionInterface $session_manager,
+                              AccountInterface $current_user) {
+    $this->tempStoreFactory = $temp_store_factory;
+    $this->sessionManager = $session_manager;
+    $this->currentUser = $current_user;
 
+    if ($this->currentUser->isAnonymous() && !isset($_SESSION['session_started'])) {
+      $_SESSION['session_started'] = true;
+      $this->sessionManager->start();
+    }
+
+    $this->store = $this->tempStoreFactory->get(static::CONFIG_STORE_NAME);
   }
 
   /**
@@ -154,5 +191,27 @@ class NT8MapService {
     }
     return $mapdata;
   }
+
+
+  /**
+   * Returns the current map state as stored by the Session mngr.
+   *
+   * @return mixed
+   *   The stored value, or NULL if no value exists.
+   */
+  public function getMapState() {
+    // Get the current search state.
+    return $this->store->get(static::CONFIG_STORE_NAME);
+  }
+
+  /**
+   * Set the current map state as an array of proprefs stored in Session mngr.
+   *
+   * @param array $propRefs
+   */
+  public function setMapState(array $propRefs) {
+    $this->store->set(static::CONFIG_STORE_NAME, $propRefs);
+  }
+
 
 }
