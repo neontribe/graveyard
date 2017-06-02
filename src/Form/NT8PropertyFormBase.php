@@ -70,7 +70,6 @@ class NT8PropertyFormBase extends FormBase {
       '#submit' => [[$this, 'setupAreaLocTaxonomy']],
     ];
 
-
     /*
      * Single loading.
      */
@@ -193,9 +192,10 @@ class NT8PropertyFormBase extends FormBase {
   /**
    * NT8PropertyFormBase class construct method.
    */
-  public function __construct(Client $httpClient,
-                              NT8PropertyService $propertyMethods,
-                              NT8TabsRestService $nt8RestService) {
+  public function __construct(
+    Client $httpClient,
+    NT8PropertyService $propertyMethods,
+    NT8TabsRestService $nt8RestService) {
     $this->httpClient = $httpClient;
     $this->propertyMethods = $propertyMethods;
     $this->nt8RestService = $nt8RestService;
@@ -225,7 +225,7 @@ class NT8PropertyFormBase extends FormBase {
   public function setupAttributeTaxonomy(array &$form, FormStateInterface $formState) {
     $limit_attrs = $formState->getValue('attribute_code_limit') ?: NULL;
     $new_arr = [];
-    if(isset($limit_attrs)) {
+    if (isset($limit_attrs)) {
       $new_arr = array_map(
         'trim',
         explode(',', $limit_attrs)
@@ -238,11 +238,16 @@ class NT8PropertyFormBase extends FormBase {
     drupal_set_message("Updated The Following Attributes: ${attrib_update_status}");
   }
 
+  /**
+   * Runs the necessary methods in the property service to setup the taxonomy.
+   *
+   * @see ::createAreaLocTermsFromTabs
+   */
   public function setupAreaLocTaxonomy(array &$form, FormStateInterface $formState) {
     $limit_arealocs = $formState->getValue('attribute_code_limit') ?: NULL;
 
     $new_arr = [];
-    if(isset($limit_arealocs)) {
+    if (isset($limit_arealocs)) {
       $new_arr = array_map(
         'trim',
         explode(',', $limit_arealocs)

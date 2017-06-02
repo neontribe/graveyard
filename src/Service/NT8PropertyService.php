@@ -7,7 +7,6 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\nt8tabsio\Service\NT8TabsRestService;
 
 use Drupal\taxonomy\Entity\Term;
-use Drupal\taxonomy\TermStorage;
 
 /**
  * Provides the methods necessary to manage properties in Neontabs.
@@ -150,22 +149,40 @@ class NT8PropertyService {
   }
 
   /**
+   * Loads multiple terms of a certain name from the specified vocabulary.
+   *
+   * @param string $term_name
+   *   The name of the term to check for.
+   * @param string $vocab_name
+   *   The name of the vocabulary to check for terms in.
+   *
+   * @return array|null
+   *   The loaded terms.
+   *
    * @codeCoverageIgnore
    */
-  protected static function loadMultipleTaxonomyTermsByName($term_name, $vocab_name) {
+  protected static function loadMultipleTaxonomyTermsByName(string $term_name, string $vocab_name) {
     return taxonomy_term_load_multiple_by_name($term_name, $vocab_name);
   }
 
   /**
+   * Creates area and locations terms based off of data provided by TABS.
+   *
+   * This method currently supports the data returned by the utility/area endpt.
+   *
    * @param array $arealoc_data
    *   The response array retrieved from TABS. e.g getAreaLocationDataFromTabs()
+   *
+   * @return array
+   *   An array containing a comma delimited string of both updated areas and
+   *   locations.
    */
   public function createAreaLocTermsFromTabs(array $arealoc_data = []) {
     $updatedAreas = '';
     $updatedLocations = '';
 
-    // Outer Loop For Areas
-    foreach($arealoc_data as $area_key => $area_info) {
+    // Outer Loop For Areas.
+    foreach ($arealoc_data as $area_key => $area_info) {
       $area_info->name = trim($area_info->name);
 
       $area_term_definition_array = [
@@ -202,8 +219,8 @@ class NT8PropertyService {
       }
 
       $locations = $area_info->locations;
-      if(isset($locations) && count($locations) > 0) {
-        foreach($locations as $location_key => $location_info) {
+      if (isset($locations) && count($locations) > 0) {
+        foreach ($locations as $location_key => $location_info) {
           $location_info->name = trim($location_info->name);
 
           $location_term_definition_array = [
@@ -233,7 +250,9 @@ class NT8PropertyService {
               $parent = reset($parentStorage);
               $parentID = $parent->id();
 
-              if($location_term_definition_array['parent'][0] != $parentID) return;
+              if ($location_term_definition_array['parent'][0] != $parentID) {
+                return NULL;
+              }
 
               $term->get('field_attribute_code')->setValue($location_term_definition_array['field_attribute_code']);
               $term->get('field_attribute_labl')->setValue($location_term_definition_array['field_attribute_labl']);
@@ -257,7 +276,6 @@ class NT8PropertyService {
       }
     }
 
-
     return [$updatedAreas, $updatedLocations];
   }
 
@@ -267,9 +285,8 @@ class NT8PropertyService {
    * @param mixed $tid
    *   The Term ID of the Term you wish to load the parents of.
    *
-   * @return TermStorage[]
+   * @return \Drupal\taxonomy\Entity\TermStorage[]
    *   An array of loaded parent terms.
-   *
    */
   protected static function getTermParents($tid) {
     return \Drupal::service('entity_type.manager')->getStorage('taxonomy_term')->loadParents($tid);
@@ -738,7 +755,6 @@ class NT8PropertyService {
     $property_attr_array = (array) $data->attributes ?: [];
     $attr_keys = array_keys($property_attr_array);
 
-
     self::loadTermsByNames(
       self::ATTRIBUTE_VOCAB_ID,
       $attr_keys,
@@ -758,7 +774,6 @@ class NT8PropertyService {
     $prop_area_name = trim($data->area->name);
     $prop_location_name = trim($data->location->name);
 
-
     $areaData = self::loadTermsByNames(
       self::AREA_LOC_VOCAB_ID,
       [$prop_area_name]
@@ -769,20 +784,20 @@ class NT8PropertyService {
     self::loadTermsByNames(
       self::AREA_LOC_VOCAB_ID,
       [$prop_location_name],
-      function($locationTerm, $locationTID) use ($areaData, $areaTID, &$location_build) {
+      function ($locationTerm, $locationTID) use ($areaData, $areaTID, &$location_build) {
         $parents = static::getTermParents($locationTID);
 
         $matchedParent = FALSE;
         foreach ($parents as $parentIndex => $parentTerm) {
           $parentID = $parentTerm->id();
 
-          if($parentID === $areaTID) {
+          if ($parentID === $areaTID) {
             $matchedParent = TRUE;
             break;
           }
         }
 
-        if($matchedParent) {
+        if ($matchedParent) {
           $location_build['target_id'] = (string) $locationTID;
         }
       }
