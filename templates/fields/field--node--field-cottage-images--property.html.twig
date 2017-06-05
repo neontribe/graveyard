@@ -6,7 +6,7 @@
 ] %}
 
 <div class="field--name-cottage-images">
-  <ul {{ attributes.addClass(classes) }}>
+  <ul {{ attributes.addClass(classes) }} style="display: none;">
     {% for item in items %}
       <li{{ item.attributes }}>{{ item.content }}</li>
     {% endfor %}

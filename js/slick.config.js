@@ -7,22 +7,28 @@
                 asNavSelector = '.field--name-cottage-images-control ul';
             }
 
-            $(".field--name-cottage-images ul").slick({
-                infinite: true,
-                speed: 1000,
-                autoplay: true,
-                autoplaySpeed: Math.random()*10000 + 2000,
-                slidesToShow: 1,
-                slidesToScroll: 1,
-                prevArrow: '<button type="button" class="slick-prev"></button>',
-                nextArrow: '<button type="button" class="slick-next"></button>',
-                mobileFirst: true,
-                centerMode: false,
-                variableWidth: false,
-                focusOnSelect: true,
-                arrows: true,
-                asNavFor: asNavSelector
-            });
+            $(".field--name-cottage-images ul")
+                .on('init', function(slick) {
+                    // debugger;
+                    $(".field--name-cottage-images ul").fadeIn(3000);
+                })
+                .slick({
+                    infinite: true,
+                    speed: 1000,
+                    autoplay: true,
+                    autoplaySpeed: Math.random()*10000 + 2000,
+                    slidesToShow: 1,
+                    slidesToScroll: 1,
+                    prevArrow: '<button type="button" class="slick-prev"></button>',
+                    nextArrow: '<button type="button" class="slick-next"></button>',
+                    mobileFirst: true,
+                    centerMode: false,
+                    variableWidth: false,
+                    focusOnSelect: true,
+                    arrows: true,
+                    asNavFor: asNavSelector
+                }
+            );
 
             $('.field--name-cottage-images-control ul').slick({
                 focusOnSelect: true,
