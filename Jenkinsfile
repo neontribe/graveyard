@@ -11,8 +11,7 @@ pipeline {
             steps {
                 sh 'rm -rf EntyAte'
                 git branch: 'develop', credentialsId: '59579991-1ec0-4255-96a2-d07d7d7bca73', url: 'https://github.com/neontabs/nt8-installer.git'
-                dir('nt8-installer')
-                sh 'composer composer install --dev --no-interaction'
+                sh 'composer install --dev --no-interaction'
             }
         }
         stage('Tests') {
