@@ -1,0 +1,36 @@
+uuid: fd7c8c4e-040d-4a1e-aea3-603b3a21fc4a
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.landing_page.body
+    - field.field.node.landing_page.field_landing_page_featured_img
+    - field.field.node.landing_page.field_landing_page_featured_prop
+    - field.field.node.landing_page.field_tabs_filter_string
+    - image.style.medium
+    - node.type.landing_page
+  module:
+    - image
+    - user
+_core:
+  default_config_hash: vdrl1fZUIo052zvRvy36xLmzsKy1sH6vvww-SbaV2_8
+id: node.landing_page.teaser
+targetEntityType: node
+bundle: landing_page
+mode: teaser
+content:
+  field_landing_page_featured_img:
+    type: image
+    weight: 0
+    label: hidden
+    settings:
+      image_style: medium
+      image_link: content
+    third_party_settings: {  }
+    region: content
+hidden:
+  body: true
+  field_landing_page_featured_prop: true
+  field_tabs_filter_string: true
+  links: true

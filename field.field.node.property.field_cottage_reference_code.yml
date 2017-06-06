@@ -1,0 +1,21 @@
+uuid: e608d84d-b241-4e8c-9a70-17a612e48036
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_cottage_reference_code
+    - node.type.property
+_core:
+  default_config_hash: T2G_AiD23-b-Ri3VAdw_bCZJOC43duan_dTK-d17sVM
+id: node.property.field_cottage_reference_code
+field_name: field_cottage_reference_code
+entity_type: node
+bundle: property
+label: 'Cottage Reference Code'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

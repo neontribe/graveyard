@@ -1,0 +1,21 @@
+uuid: 218cf3b6-fb22-463e-bdcf-93961c224f22
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_attribute_code
+    - taxonomy.vocabulary.cottage_areas
+_core:
+  default_config_hash: tDhVRsnPAHzUkIcp0S8yYNIvrx-MlZOJ_SdApCIRgos
+id: taxonomy_term.cottage_areas.field_attribute_code
+field_name: field_attribute_code
+entity_type: taxonomy_term
+bundle: cottage_areas
+label: Code
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
