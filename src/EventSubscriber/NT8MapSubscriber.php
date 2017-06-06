@@ -6,7 +6,11 @@
 
 namespace Drupal\nt8map\EventSubscriber;
 
+use Drupal\Core\Entity\EntityTypeEvents;
+use Drupal\Core\Render\RenderEvents;
+use Drupal\Core\Routing\RoutingEvents;
 use Drupal\nt8map\Service\NT8MapService;
+use Drupal\nt8property\NT8PropertyViewEvent;
 use Drupal\nt8property\Service\NT8PropertyService;
 use Drupal\nt8propertyshortlist\NT8PropertyShortlistLoadEvent;
 use Drupal\nt8search\NT8SearchCompleteEvent;
@@ -37,6 +41,7 @@ class NT8MapSubscriber implements EventSubscriberInterface {
   public static function getSubscribedEvents() {
     $events[NT8SearchCompleteEvent::NAME][] = ['onSearchComplete'];
     $events[NT8PropertyShortlistLoadEvent::NAME][] = ['onShortlistPageLoad'];
+    $events[NT8PropertyViewEvent::NAME][] = ['onPropertyPageView'];
     return $events;
   }
 
@@ -48,6 +53,20 @@ class NT8MapSubscriber implements EventSubscriberInterface {
   public function onSearchComplete(NT8SearchCompleteEvent $event) {
     $results = $event->getResults();
     $loadedResultNodes = $this->nt8search->loadSearchResultIntoNodes($results);
+    $this->nt8map->setMapState($loadedResultNodes);
+  }
+
+  /**
+   * Triggered upon property page view.
+   *
+   * @see \Drupal\nt8property\Service\NT8PropertyService
+   */
+  public function onPropertyPageView(NT8PropertyViewEvent $event) {
+    $results = $event->getResult();
+
+    $value = $results[0]['value'] ?? NULL;
+
+    $loadedResultNodes = $this->nt8property->loadNodesFromProprefs([$value]);
     $this->nt8map->setMapState($loadedResultNodes);
   }
 
