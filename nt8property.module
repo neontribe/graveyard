@@ -5,7 +5,9 @@
  * Contains nt8property.module.
  */
 
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\nt8property\NT8PropertyViewEvent;
 
 /**
  * Implements hook_help().
@@ -20,6 +22,27 @@ function nt8property_help($route_name, RouteMatchInterface $route_match) {
       return $output;
 
     default:
+  }
+}
+
+/**
+ * Implements hook_entity_view().
+ */
+function nt8property_node_view(array &$build, \Drupal\Core\Entity\EntityInterface $entity, EntityViewDisplay $display, $view_mode) {
+  if ($view_mode === 'full') {
+    $entity_type = $entity->bundle();
+    switch ($entity_type) {
+      case 'property':
+        $propertyViewEvent = new NT8PropertyViewEvent(
+          $entity->get('field_cottage_reference_code')->getValue()
+        );
+
+        $dispatcher = \Drupal::service('event_dispatcher');
+        $dispatcher->dispatch(NT8PropertyViewEvent::NAME, $propertyViewEvent);
+        break;
+    }
+  } else if($view_mode === 'teaser') {
+    // TODO: Fire event for teasers.
   }
 }
 
