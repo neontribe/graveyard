@@ -549,12 +549,12 @@ class NT8PropertyService {
         // Set the comparison to the value of the current entry.
         // We keep track of current entry by incrementing the `updateIndex` var.
         if ($length_of_update_fields > 1) {
-          $comparisonUpdate = self::issetGet($updatedValue, $updateIndex++) ?: $updatedValue;
+          $comparisonUpdate = $updatedValue[$updateIndex++] ?? $updatedValue;
         }
 
         // Sometimes the data to compare is nested another level deep.
         // This retrieves it and lets us continue as if it were a flat array.
-        $nestedComparison = self::issetGet($comparisonUpdate, 0);
+        $nestedComparison = $comparisonUpdate[0] ?? NULL;
         if ($nestedComparison && is_array($nestedComparison)) {
           // @codeCoverageIgnoreStart
           $comparisonUpdate = $nestedComparison;
@@ -668,6 +668,39 @@ class NT8PropertyService {
   }
 
   /**
+   * Fetches a property from the TABS API under the provided propRef.
+   *
+   * @param string $propRefs
+   *   Array of propRefs to load from the API.
+   *
+   * @return array|null
+   *   An array of JSON decoded API responses.
+   */
+  public function getPropertiesFromApi(array $propRefs) {
+    $searchRequest = [
+      'reference' => implode(',', $propRefs),
+    ];
+
+    $api_response = $this->nt8RestService->get(
+      'property', $searchRequest
+    );
+
+    $decoded_api_response = json_decode($api_response);
+
+    if (isset($decoded_api_response->errorCode)) {
+      \Drupal::logger('NT8PropertyService')->error(
+        "Tabs property search returned an error: \r\n @tabsErrorCode: @tabsErrorMessage.",
+        [
+          '@tabsErrorCode' => $decoded_api_response->errorCode,
+          '@tabsErrorMessage' => $decoded_api_response->errorDescription ?: 'No Description Provided',
+        ]
+      );
+    }
+
+    return $decoded_api_response->results ?? NULL;
+  }
+
+  /**
    * Checks if a value is set in an array and returns the value if is true.
    *
    * @param array $array
@@ -675,10 +708,15 @@ class NT8PropertyService {
    * @param mixed $key
    *   Key to access the passed in array.
    *
+   * @deprecated Use the null coalesce operation (??) instead.
+   *
    * @return bool|mixed
    *   Returns value stored under $key in the array otherwise defaults to FALSE.
    */
   public static function issetGet(array $array, $key) {
+    \Drupal::logger('nt8property')->warning(
+      'The issetGet method is deprecated. Use the "??" operator instd.'
+    );
     return isset($array[$key]) ? $array[$key] : FALSE;
   }
 
@@ -760,7 +798,7 @@ class NT8PropertyService {
       $attr_keys,
       function (&$term, $id) use ($property_attr_array, &$attr_build) {
         $attr_name = static::getNodeFieldValue($term, 'field_attribute_labl', 0);
-        $attr_name_val = self::issetGet($property_attr_array, $attr_name);
+        $attr_name_val = $property_attr_array[$attr_name] ?? FALSE;
         $attr_build[] = [
           'target_id' => (string) $id,
           'value' => json_encode($attr_name_val),
@@ -884,7 +922,7 @@ class NT8PropertyService {
         'family_name' => NULL,
       ],
       'field_cottage_image_info' => $image_data,
-      'field_cottage_featured_image' => self::issetGet($image_links, 0),
+      'field_cottage_featured_image' => $image_links[0] ?? NULL,
       'field_cottage_images' => $image_links,
       'field_cottage_attributes' => $attr_build,
       'field_cottage_location' => $location_build,

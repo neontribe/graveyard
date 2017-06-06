@@ -2,6 +2,7 @@
 
 namespace Drupal\nt8property\Form;
 
+use Drupal\nt8property\Batch\NT8PropertyBatch;
 use GuzzleHttp\Client;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Url;
@@ -75,13 +76,14 @@ class NT8PropertyFormBase extends FormBase {
      */
     $form['nt8_tabsio']['single'] = [
       '#type' => 'fieldset',
-      '#title' => 'Single Property Options',
+      '#title' => 'Single/Multiple Property Options',
     ];
 
     $form['nt8_tabsio']['single']['load_single_prop'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Load a single property into drupal (from propref_brandcode).'),
-      '#default_value' => 'H610_ZZ',
+      '#title' => $this->t('Load comma delimited properties into drupal.'),
+      '#description' => $this->t('Example: V419, H610_ZZ, Y121, G288'),
+      '#default_value' => '',
     ];
 
     $form['nt8_tabsio']['single']['modify_replace_single'] = [
@@ -95,8 +97,8 @@ class NT8PropertyFormBase extends FormBase {
     $form['nt8_tabsio']['single']['actions']['submit_property'] = [
       '#type' => 'submit',
       '#name' => 'submit_property',
-      '#value' => $this->t('Load Property'),
-      '#submit' => [[$this, 'loadProperty']],
+      '#value' => $this->t('Load Properties'),
+      '#submit' => [[$this, 'loadProperties']],
     ];
 
     /*
@@ -105,12 +107,6 @@ class NT8PropertyFormBase extends FormBase {
     $form['nt8_tabsio']['batch'] = [
       '#type' => 'fieldset',
       '#title' => 'Batch Property Options',
-    ];
-
-    $form['nt8_tabsio']['batch']['listed_batch'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Specify a list of proprefs to batch load into Drupal.'),
-      '#default_value' => 'H610_ZZ, V503_ZZ',
     ];
 
     $form['nt8_tabsio']['batch']['batch_size'] = [
@@ -138,15 +134,6 @@ class NT8PropertyFormBase extends FormBase {
     ];
 
     $form['nt8_tabsio']['batch']['actions']['#type'] = 'actions';
-
-    // @TODO: Implement this submit button feature.
-    $form['nt8_tabsio']['batch']['actions']['submit_property_batch_listed'] = [
-      '#type' => 'submit',
-      '#name' => 'submit_property_batch_listed',
-      '#disabled' => TRUE,
-      '#value' => $this->t('Batch Load Listed Properties'),
-      '#submit' => [[$this, 'loadPropertyBatchAll']],
-    ];
 
     $form['nt8_tabsio']['batch']['actions']['submit_property_batch_all'] = [
       '#type' => 'submit',
@@ -264,19 +251,50 @@ class NT8PropertyFormBase extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function loadProperty(array &$form, FormStateInterface $formState) {
-    $propref = $formState->getValue('load_single_prop') ?: '';
+  public function loadProperties(array &$form, FormStateInterface $formState) {
+    $proprefs = $formState->getValue('load_single_prop') ?: '';
+    $modify_replace = $formState->getValue('modify_replace_single') ?: 0;
 
-    $node = $this->propertyMethods->createNodeInstanceFromPropref($propref);
+    $new_arr = [];
+    if (isset($proprefs)) {
+      $new_arr = array_map(
+        function($curr_ref) {
+          $curr_ref = trim($curr_ref);
+          $curr_ref = $this->nt8RestService->splitPropref($curr_ref)[0] ?? '';
 
-    if (isset($node)) {
-      $node_name = $node->get('field_cottage_name')->getValue()[0]['value'];
-      $node_ref = $node->get('field_cottage_reference_code')->getValue()[0]['value'];
-
-      drupal_set_message("New Property Node: [Name: $node_name, Reference: $node_ref] Successfully Created Using Data From The API.");
+          return $curr_ref;
+        },
+        explode(',', $proprefs)
+      );
     }
-    else {
-      drupal_set_message("Node creation unsuccessful: $node");
+
+    $multiple_property_data = $this->propertyMethods->getPropertiesFromApi($new_arr);
+
+    $nodes_updated = '';
+
+    if (isset($multiple_property_data) && count($multiple_property_data) > 0) {
+      foreach($multiple_property_data as $key => $property_data) {
+        $data__propref = $property_data->propertyRef;
+
+        switch ($modify_replace) {
+          case 0:
+            $this->propertyMethods->updateNodeInstancesFromData($property_data);
+            $nodes_updated .= ", $data__propref";
+            break;
+          default:
+            $this->propertyMethods->createNodeInstanceFromData($property_data, TRUE);
+            $nodes_updated .= ", $data__propref";
+        }
+      }
+
+      if($modify_replace) {
+        drupal_set_message("Created the following property nodes: $nodes_updated");
+      } else {
+        drupal_set_message("Updated the following property nodes: $nodes_updated");
+      }
+
+    } else {
+      drupal_set_message('No data provided by API for your search term.');
     }
   }
 
@@ -284,62 +302,10 @@ class NT8PropertyFormBase extends FormBase {
    * Initiates a batch method to load all properties.
    */
   public function loadPropertyBatchAll(array &$form, FormStateInterface $formState) {
-    $batch_mode = $formState->getTriggeringElement()['#name'];
     $batch_size = $formState->getValue('batch_size') ?: 6;
-
-    // 0 => 'Modify'
-    // 1 => 'Replace'.
     $modify_replace = $formState->getValue('modify_replace_batch') ?: 0;
 
-    $batchSizeList = [
-      1 => 1,
-      2 => 2,
-      3 => 4,
-      4 => 8,
-      5 => 16,
-      6 => 32,
-      7 => 64,
-      8 => 128,
-      9 => 256,
-    ];
-    // Get list of properties to reload.
-    $per_page = $batchSizeList[$batch_size];
-
-    // Get page count.
-    $first_page = $this->nt8RestService->get("property", ["page" => 1, "pageSize" => $per_page]);
-
-    $first_page = json_decode($first_page);
-
-    $search_instance_id = $first_page->searchId;
-    $total_results = $first_page->totalResults;
-
-    $batch = [
-      'title' => t('Loading all properties from API.'),
-      'operations' => [],
-      'progress_message' => t('Processed @current out of @total.'),
-      'finished' => '\Drupal\nt8property\Batch\NT8PropertyBatch::propertyBatchLoadFinishedCallback',
-    ];
-
-    $pages = ceil($total_results / $per_page);
-    $last_page = $total_results - ($per_page * ($pages - 1));
-
-    for ($page_counter = 0; $page_counter < $pages; $page_counter++) {
-      $batch["operations"][] = [
-        '\Drupal\nt8property\Batch\NT8PropertyBatch::propertyBatchLoadCallback',
-        [
-          $page_counter,
-          [
-            'per_page' => $per_page,
-            'last_page' => $last_page,
-            'pages' => $pages,
-          ],
-          $search_instance_id,
-          $modify_replace,
-        ],
-      ];
-    }
-
-    batch_set($batch);
+    NT8PropertyBatch::propertyBatchLoad($batch_size, $modify_replace);
   }
 
   /**
