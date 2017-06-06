@@ -32,7 +32,6 @@ dependencies:
     - address
     - imagecache_external
     - link
-    - nt8property
     - text
     - user
 _core:
@@ -51,7 +50,7 @@ content:
     region: content
   field_cottage_accommodates:
     weight: 9
-    label: hidden
+    label: above
     settings:
       thousand_separator: ''
       prefix_suffix: true
@@ -60,14 +59,14 @@ content:
     region: content
   field_cottage_address:
     weight: 20
-    label: hidden
+    label: above
     settings: {  }
     third_party_settings: {  }
     type: address_default
     region: content
   field_cottage_bedrooms:
     weight: 12
-    label: hidden
+    label: above
     settings:
       thousand_separator: ''
       prefix_suffix: true
@@ -76,7 +75,7 @@ content:
     region: content
   field_cottage_booking:
     weight: 17
-    label: hidden
+    label: above
     settings:
       trim_length: 80
       url_only: false
@@ -88,7 +87,7 @@ content:
     region: content
   field_cottage_brandcode:
     weight: 3
-    label: hidden
+    label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
@@ -96,7 +95,7 @@ content:
     region: content
   field_cottage_changeover_day:
     weight: 13
-    label: hidden
+    label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
@@ -104,7 +103,7 @@ content:
     region: content
   field_cottage_coordinates:
     weight: 21
-    label: hidden
+    label: above
     settings:
       thousand_separator: ''
       decimal_separator: .
@@ -115,14 +114,14 @@ content:
     region: content
   field_cottage_description:
     weight: 10
-    label: hidden
+    label: above
     settings: {  }
     third_party_settings: {  }
     type: text_default
     region: content
   field_cottage_featured_image:
     weight: 6
-    label: hidden
+    label: above
     settings:
       imagecache_external_style: property_image
       imagecache_external_link: ''
@@ -131,14 +130,14 @@ content:
     region: content
   field_cottage_image_info:
     weight: 23
-    label: hidden
+    label: above
     settings: {  }
     third_party_settings: {  }
     type: basic_string
     region: content
   field_cottage_images:
     weight: 7
-    label: hidden
+    label: above
     settings:
       imagecache_external_style: property_image
       imagecache_external_link: ''
@@ -147,7 +146,7 @@ content:
     region: content
   field_cottage_name:
     weight: 8
-    label: hidden
+    label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
@@ -155,7 +154,7 @@ content:
     region: content
   field_cottage_ownercode:
     weight: 19
-    label: hidden
+    label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
@@ -163,7 +162,7 @@ content:
     region: content
   field_cottage_pets:
     weight: 15
-    label: hidden
+    label: above
     settings:
       thousand_separator: ''
       prefix_suffix: true
@@ -172,14 +171,14 @@ content:
     region: content
   field_cottage_pricing:
     weight: 22
-    label: hidden
+    label: above
     settings: {  }
     third_party_settings: {  }
-    type: nt8property_field_cottage_pricing_formatter
+    type: basic_string
     region: content
   field_cottage_promote:
     weight: 16
-    label: hidden
+    label: above
     settings:
       format: default
       format_custom_false: ''
@@ -189,14 +188,16 @@ content:
     region: content
   field_cottage_rating:
     weight: 14
-    label: hidden
-    settings: {  }
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
     third_party_settings: {  }
-    type: nt8property_field_cottage_rating_formatter
+    type: number_integer
     region: content
   field_cottage_reference_code:
     weight: 2
-    label: hidden
+    label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
@@ -204,7 +205,7 @@ content:
     region: content
   field_cottage_slug:
     weight: 5
-    label: hidden
+    label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
@@ -212,14 +213,14 @@ content:
     region: content
   field_cottage_teaser_description:
     weight: 11
-    label: hidden
+    label: above
     settings: {  }
     third_party_settings: {  }
     type: text_default
     region: content
   field_cottage_url:
     weight: 4
-    label: hidden
+    label: above
     settings:
       trim_length: 80
       url_only: false
