@@ -78,6 +78,7 @@ class NT8SearchResultsBlock extends BlockBase implements ContainerFactoryPluginI
   public function build() {
     $renderOutput = [
       '#cache' => [
+        'max-age' => 0,
         'contexts' => [
           'url.path',
           'url.query_args',

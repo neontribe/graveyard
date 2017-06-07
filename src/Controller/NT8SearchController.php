@@ -72,6 +72,7 @@ class NT8SearchController extends ControllerBase {
     $search_results = $this->nt8searchMethods->performSearchFromParams($posted_values, TRUE);
 
     $renderOutput['#title'] = $this->t('Search Results (@count)', ['@count' => $search_results->totalResults]);
+    $renderOutput['#cache'] = ['max-age' => 0];
 
     return $renderOutput;
   }
