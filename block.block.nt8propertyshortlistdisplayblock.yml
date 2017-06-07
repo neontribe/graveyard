@@ -7,8 +7,6 @@ dependencies:
     - system
   theme:
     - nt8theme
-_core:
-  default_config_hash: WqUQlrwZ1VTqBjdurqzO9yc4li31aKZgEfqvEvbBol4
 id: nt8propertyshortlistdisplayblock
 theme: nt8theme
 region: content
