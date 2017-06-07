@@ -30,6 +30,7 @@ composer \
 
     echo "Site install using configuration files."
 
+    cd ../../web
     drush \
         -y site-install config_installer config_installer_sync_configure_form.sync_directory=../config/sync \
         --db-url=sqlite://sites/default/files/.ht.sqlite \
