@@ -20,7 +20,25 @@ composer \
 
 ## Run in the local machine
 
-### Create the site
+### Create the site with existing configuration (without content).
+    echo "Clone Drupal Configuration Files"
+
+    cd EntyAte
+    mkdir -p config/sync
+    cd $_
+    git clone git@github.com:neontabs/nt8config.git .
+
+    echo "Site install using configuration files."
+
+    drush \
+        -y site-install config_installer config_installer_sync_configure_form.sync_directory=../config/sync \
+        --db-url=sqlite://sites/default/files/.ht.sqlite \
+        --account-mail=${USER}@neontribe.co.uk \
+        --account-name=superadmin \
+        --site-mail=${USER}@neontribe.co.uk
+
+
+### Create the site from scratch with no configuration.
 
     drush \
         -y site-install \
