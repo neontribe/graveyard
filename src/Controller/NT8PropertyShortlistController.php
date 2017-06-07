@@ -78,6 +78,8 @@ class NT8PropertyShortlistController extends ControllerBase {
    * {@inheritdoc}
    */
   public function shortlist() {
+    $renderOutput = [];
+
     $currentShortlist = $this->nt8propertyshortlist->getStore();
 
     $shortlistLoadEvent = new NT8PropertyShortlistLoadEvent($currentShortlist);
@@ -85,7 +87,8 @@ class NT8PropertyShortlistController extends ControllerBase {
     $dispatcher = \Drupal::service('event_dispatcher');
     $dispatcher->dispatch(NT8PropertyShortlistLoadEvent::NAME, $shortlistLoadEvent);
 
-    return [];
+    $renderOutput['#cache'] = ['max-age' => 0];
+    return $renderOutput;
   }
 
   /**
