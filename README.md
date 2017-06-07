@@ -20,7 +20,26 @@ composer \
 
 ## Run in the local machine
 
-### Create the site
+### Create the site with existing configuration (without content).
+    echo "Clone Drupal Configuration Files"
+
+    cd EntyAte
+    mkdir -p config/sync
+    cd $_
+    git clone git@github.com:neontabs/nt8config.git .
+
+    echo "Site install using configuration files."
+
+    cd ../../web
+    drush \
+        -y site-install config_installer config_installer_sync_configure_form.sync_directory=../config/sync \
+        --db-url=sqlite://sites/default/files/.ht.sqlite \
+        --account-mail=${USER}@neontribe.co.uk \
+        --account-name=superadmin \
+        --site-mail=${USER}@neontribe.co.uk
+
+
+### Create the site from scratch with no configuration.
 
     drush \
         -y site-install \
@@ -44,15 +63,17 @@ Check the output for the random superadmin password
 
 ## Enable nt8 modules
 
-    drush -y en nt8_theme
-    drush -y config-set system.theme default nt8_theme
-    drush -y en nt8property
+    drush -y en nt8theme
+    drush -y config-set system.theme default nt8theme
+    drush -y en nt8property nt8propertyshortlist
     drush -y en nt8map nt8search
-    drush -y nt8-import-all
+    drush -y en nt8propertyshortlist nt8landingpage
+    drush -y nt8:ia
+    drush -y cr
 
 ## Compass compile
 
-    compass compile themes/contrib/nt8_theme/
+    compass compile themes/contrib/nt8theme/
 
 ## Chown files to run as www-data user
 

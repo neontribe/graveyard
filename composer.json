@@ -19,18 +19,21 @@
         "composer/installers": "^1.2",
         "cweagans/composer-patches": "^1.6",
         "drupal-composer/drupal-scaffold": "^2.2",
+        "drupal/config_installer": "^1.4",
         "drupal/console": "~1.0",
         "drupal/core": "~8.0",
         "drush/drush": "~8.0",
-        "webflo/drupal-finder": "^0.2.1",
-        "webmozart/path-util": "^2.3",
+        "neontabs/nt8booking": "dev-develop",
         "neontabs/nt8landingpage": "dev-develop",
         "neontabs/nt8map": "dev-develop",
         "neontabs/nt8property": "dev-develop",
+        "neontabs/nt8propertyshortlist": "dev-develop",
         "neontabs/nt8search": "dev-develop",
         "neontabs/nt8tabsio": "dev-develop",
         "neontabs/nt8booking": "dev-develop",
-        "neontabs/nt8theme": "dev-develop"
+        "neontabs/nt8theme": "dev-develop",
+        "webflo/drupal-finder": "^0.2.1",
+        "webmozart/path-util": "^2.3"
     },
     "require-dev": {
         "behat/mink": "~1.7",
@@ -74,10 +77,8 @@
             "web/libraries/{$name}": ["type:drupal-library"],
             "web/modules/contrib/{$name}": ["type:drupal-module"],
             "web/modules/custom/{$name}": ["type:drupal-custom-module"],
-            "web/modules/custom/nt8/{$name}": ["type:nt8-module"],
             "web/profiles/contrib/{$name}": ["type:drupal-profile"],
             "web/themes/contrib/{$name}": ["type:drupal-theme"],
-            "web/themes/custom/nt8/{$name}": ["type:nt8-theme"],
             "drush/contrib/{$name}": ["type:drupal-drush"]
         }
     }

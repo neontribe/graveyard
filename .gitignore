@@ -24,3 +24,4 @@
 .vagrant/
 ansible/playbook.retry
 ubuntu-xenial-16.04-cloudimg-console.log
+/nbproject/private/

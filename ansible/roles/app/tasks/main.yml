@@ -53,17 +53,17 @@
   when: site_status.rc == 1
 
 - name: Enable the NT8 Theme
-  shell: drush -y en nt8_theme
+  shell: drush -y en nt8theme
   args:
     chdir: "{{ installer_root }}"
 
 - name: Set default theme
-  shell: drush -y config-set system.theme default nt8_theme
+  shell: drush -y config-set system.theme default nt8theme
   args:
     chdir: "{{ installer_root }}"
 
 - name: Compile SASS
-  shell: compass compile /vagrant/web/themes/contrib/nt8_theme/
+  shell: compass compile /vagrant/web/themes/contrib/nt8theme/
   args:
     chdir: "{{ installer_root }}"
 
