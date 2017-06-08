@@ -2,6 +2,8 @@
 
 checkout.sh
 
+composer update -d /opt/nt8
+
 drush \
     -r /opt/nt8/web \
     -y site-install \

@@ -1,0 +1,17 @@
+FROM tobybatch/nt8installer:demo
+MAINTAINER tobias@neontribe.co.uk
+
+RUN composer update -d /opt/nt8
+
+RUN drush -r /opt/nt8/web -y site-install --db-url=sqlite://sites/default/files/.ht.sqlite --account-mail=cottages@neontribe.co.uk --account-name=superadmin --site-mail=cottages@neontribe.co.uk --site-name=EntyAte
+RUN drush -r /opt/nt8/web -y en nt8theme
+RUN drush -r /opt/nt8/web -y config-set system.theme default nt8theme
+RUN drush -r /opt/nt8/web -y en nt8property
+RUN drush -r /opt/nt8/web -y en nt8map nt8search
+RUN drush -r /opt/nt8/web -y nt8-import-all
+RUN compass compile /opt/nt8/web/themes/contrib/nt8theme/
+
+ENV RUNSERVER_BASE_URL='http://localhost:8888'
+ENTRYPOINT ["drush",  "-r",  "/opt/nt8/web", "rs", "0.0.0.0:8888"]
+
+# vim: set filetype=dockerfile expandtab tabstop=2 shiftwidth=2 autoindent smartindent:
