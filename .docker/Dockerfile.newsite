@@ -1,5 +1,5 @@
-FROM tobybatch/nt8installer:demo
-MAINTAINER tobias@neontribe.co.uk
+FROM neontabs/nt8:latest
+LABEL authors="oliver@neontribe.co.uk, toby@neontribe.co.uk"
 
 RUN composer update -d /opt/nt8
 
