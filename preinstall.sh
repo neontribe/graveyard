@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 SCRIPTDIR=$(dirname $0)
 PROJECTRID=$(realpath $SCRIPTDIR/..)
 WEBUSER=www-data
@@ -22,6 +24,7 @@ if [ -z "$DBNAME" ]; then DBNAME=$BRANDCODE"_"$NOW; fi
 if [ -z "$DBUSER" ]; then DBUSER=$BRANDCODE"_"$NOW; fi
 if [ -z "$DBPASS" ]; then DBPASS=$BRANDCODE"_"$NOW; fi
 if [ -z "$DBHOST" ]; then DBHOST=cm-mysql; fi
+if [ -z "$DBFILE" ]; then DBFILE=default/sql/dump.sql; fi
 
 echo SCRIPTDIR=$SCRIPTDIR
 echo PROJECTRID=$PROJECTRID
@@ -35,6 +38,7 @@ echo DBNAME=$DBNAME
 echo DBUSER=$DBUSER
 echo DBPASS=$DBPASS
 echo DBHOST=$DBHOST
+echo DBFILE=$DBFILE
 echo
 echo TARGET=$TARGET
 
@@ -47,9 +51,11 @@ if [ ! -z "$PAUSE" ]; then
   fi
 fi
 
-echo drush make $MAKEFILE $TARGET
+echo "Drush make"
 rm -rf $TARGET
 drush make $MAKEFILE $TARGET
+
+echo "Installing settings"
 cd $TARGET/sites
 rm -rf default
 cp -r $PROJECTRID default
@@ -59,7 +65,10 @@ sed -i "s/DBPASS/$DBPASS/g" default/local_settings.php
 sed -i "s/DBUSER/$DBUSER/g" default/local_settings.php
 sed -i "s/DBHOST/$DBHOST/g" default/local_settings.php
 sed -i "s/DBPORT/$DBPORT/g" default/local_settings.php
+
+echo "Compass compile"
 compass compile default/themes/ntcm_theme
 
-# drush sqlc < default/sql/dump.sql
-# drush cc all
+echo "Install DB"
+drush sql-query --file=default/sql/dump.sql
+drush cc all
