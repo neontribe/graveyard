@@ -70,5 +70,5 @@ echo "Compass compile"
 compass compile default/themes/ntcm_theme
 
 echo "Install DB"
-drush sql-query --file=default/sql/dump.sql
+drush sql-query --file=$TARGET/sites/default/sql/dump.sql
 drush cc all
