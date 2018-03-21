@@ -1,58 +1,44 @@
 ---
-- name: Clear /var/www/html
-  file: path=/var/www/html state=absent
 
-- name: Set ownership on /var/www/html
-  file: path=/var/www owner=vagrant group=vagrant mode=0775
+- name: Ensure .ssh directory exists.
+  file:
+    path: .ssh
+    state: directory
+    mode: 0700
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
 
-- name: Drush make
-  shell: 'drush make /vagrant/nt2.make --working-copy /var/www/html'
+- name: Ensure GitHub deploy key is present on the server.
+  copy:
+    src: "{{ app.ssh_private_key }}"
+    dest: /home/{{ ansible_ssh_user }}/.ssh/id_rsa
+    mode: 0600
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
 
-- name: Set ownership on /var/www/html/sites/default
-  file: path=/var/www/html/sites/default owner=vagrant group=vagrant mode=0775
+# See: https://stackoverflow.com/a/37096534/100134
+- name: Ensure setfacl support is present.
+  package: name=acl
 
-- name: Drush site install
-  shell: 'drush site-install -y standard --db-url="mysql://drupal:drupal@localhost/drupal" --site-name=Neontabs2 --account-name=superadmin --account-pass=b191wkm'
+- name: Clone the code repository to the docroot.
+  git:
+    repo: git@bitbucket.org:neontabs/{{ app.brand }}.git
+    dest: /var/tmp/repo
+    accept_hostkey: yes
+    key_file: /home/{{ ansible_user }}/.ssh/id_rsa
+    force: yes
+    depth: 1
+    recursive: yes
+    update: yes
+  become_user: "{{ ansible_ssh_user }}"
+
+- name: Deploy the site
+  shell: composer --no-ansi deploy
   args:
-    chdir: /var/www/html
-
-- name: Pull the git submodules
-  shell: 'git submodule update --init --recursive'
-  args:
-    chdir: /var/www/html/sites/all/modules/nt2/
-
-- name: Test chown
-  shell: 'chown -R www-data:www-data html'
-  args:
-    chdir: /var/www
-
-  # nt2_landing
-- name: Drush enable modules
-  shell: 'drush -y en nt2_theme nt2 nt2_map nt2_node_type nt2_search nt2_io nt2_behat'
-  args:
-    chdir: /var/www/html
-
-- name: Compile SCSS
-  shell: 'compass compile'
-  args:
-    chdir: /var/www/html/sites/all/themes/nt2_theme/
-
-- name: Drush set ZZ API URL
-  shell: 'drush -y vset tabs_io_config_api_base_url http://zz.api.carltonsoftware.co.uk'
-  args:
-    chdir: /var/www/html
-
-- name: Drush set ZZ API Key
-  shell: 'drush -y vset tabs_io_config_api_api_key mouse'
-  args:
-    chdir: /var/www/html
-
-- name: Drush set ZZ API Secret
-  shell: 'drush -y vset tabs_io_config_api_secret cottage'
-  args:
-    chdir: /var/www/html
-
-- name: Drush set default theme
-  shell: 'drush vset theme_default nt2_theme'
-  args:
-    chdir: /var/www/html
+    chdir: /var/tmp/repo
+  environment:
+    DBNAME: "{{ mysql.database }}"
+    DBUSER: "{{ mysql.user }}"
+    DBHOST: "{{ mysql.host }}"
+    DBPASS: "{{ mysql.password }}"
+    TARGET: "{{ apache.docroot }}"

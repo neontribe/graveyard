@@ -1,14 +1,51 @@
 ---
-  - shell: mkdir --parents /opt/drush-8.x
-  - shell: composer init --require=drush/drush:8.* -n
-    args:
-      chdir: /opt/drush-8.x
-      creates: /opt/drush-8.x/drush
-  - shell: composer config bin-dir /usr/local/bin
-    args:
-      chdir: /opt/drush-8.x
-      creates: /opt/drush-8.x/drush
-  - shell: composer install
-    args:
-      chdir: /opt/drush-8.x
-      creates: /opt/drush-8.x/drush
+
+# Attempt to install via packaged download first if preferred.
+# ------------------------------------------------------------------------------
+
+- name: Prepare install path
+  file:
+    path: "{{ drush_install_path }}"
+    state: directory
+  when: drush_prefer_packaged_download
+  become: true
+
+# [DEPRECATION WARNING]: always_run is deprecated. Use check_mode = no instead..
+# This feature will be removed in version 2.4. Deprecation warnings can be
+# disabled by setting deprecation_warnings=False in ansible.cfg.
+#  [WARNING]: Consider using get_url or uri module rather than running curl 
+
+- name: Check if requested Drush package file exists for download
+  # Returns HTTP status code (string) of dynamically created file path
+  command: curl -s -o /dev/null -w "%{http_code}" https://github.com/drush-ops/drush/releases/download/{{ drush_version }}/drush.phar
+  register: drush_phar_http_code
+  changed_when: false
+  when: drush_prefer_packaged_download
+  always_run: true
+
+- name: Download packaged Drush release
+  get_url:
+    url: https://github.com/drush-ops/drush/releases/download/{{ drush_version }}/drush.phar
+    dest: "{{ drush_install_path }}/drush"
+    mode: "a+x"
+  register: phar_download
+  when: drush_prefer_packaged_download and drush_phar_http_code.stdout == "302"
+  become: true
+
+- name: Create drush symlink
+  file:
+    src: "{{ drush_install_path }}/drush"
+    dest: "{{ drush_path }}"
+    state: link
+  when: >
+    not phar_download.skipped|default(false) and
+    drush_prefer_packaged_download and drush_phar_http_code.stdout == "302"
+  become: true
+
+
+# Install via Composer if a packaged download didn't exist or is not preferred.
+# ------------------------------------------------------------------------------
+
+- include: global_drush_via_composer.yml
+  when: drush_prefer_packaged_download == false or drush_phar_http_code.stdout != "302"
+  become: true

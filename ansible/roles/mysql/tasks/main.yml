@@ -4,12 +4,14 @@
   register: current_hostname
 
 - name: mysql | Install MySQL Packages
-  sudo: yes
+  become: yes
   apt: pkg={{ item }} state=latest
   with_items:
     - mysql-server
     - mysql-client
     - python-mysqldb
+
+- debug: var=mysql.root_password
 
 - name: mysql | Update root password for all root accounts
   mysql_user: name=root host={{ item }} check_implicit_admin=yes password={{ mysql.root_password }} login_user=root login_password={{ mysql.root_password }}
@@ -23,7 +25,7 @@
   mysql_db: name={{ mysql.database }} state=present login_user=root login_password={{ mysql.root_password }}
 
 - name: mysql | Import dump
-  mysql_db: name={{ mysql.database }} state=import login_user=root login_password={{ mysql.root_password }} target=/vagrant/{{ mysql.dump }}
+  mysql_db: name={{ mysql.database }} state=import login_user=root login_password={{ mysql.root_password }} target=/var/tmp/{{ mysql.dump }}
   when: mysql.dump
 
 - name: mysql | Ensure anonymous users are not in the database
