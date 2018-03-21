@@ -5,16 +5,16 @@
     path: .ssh
     state: directory
     mode: 0700
-    owner: "{{ ansible_ssh_user }}"
-    group: "{{ ansible_ssh_user }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
 
 - name: Ensure GitHub deploy key is present on the server.
   copy:
     src: "{{ app.ssh_private_key }}"
     dest: /home/{{ ansible_ssh_user }}/.ssh/id_rsa
     mode: 0600
-    owner: "{{ ansible_ssh_user }}"
-    group: "{{ ansible_ssh_user }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
 
 # See: https://stackoverflow.com/a/37096534/100134
 - name: Ensure setfacl support is present.
@@ -30,7 +30,7 @@
     depth: 1
     recursive: yes
     update: yes
-  become_user: "{{ ansible_ssh_user }}"
+  become_user: "{{ ansible_user }}"
 
 - name: Deploy the site
   shell: composer --no-ansi deploy

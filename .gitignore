@@ -1,3 +1,5 @@
 .vagrant
 web
-ansible/*.log
+*console.log
+.*.swp
+ansible/*.retry
