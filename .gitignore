@@ -1,5 +1,0 @@
-.vagrant
-web
-*console.log
-.*.swp
-ansible/*.retry
