@@ -3,7 +3,7 @@
 set -x
 
 SCRIPTDIR=$(dirname $0)
-PROJECTRID=$(realpath $SCRIPTDIR/..)
+PROJECTRID=$(realpath $SCRIPTDIR)
 WEBUSER=www-data
 
 if [ -z "$BRANDCODE" ]; then
@@ -24,7 +24,7 @@ if [ -z "$DBNAME" ]; then DBNAME=$BRANDCODE"_"$NOW; fi
 if [ -z "$DBUSER" ]; then DBUSER=$BRANDCODE"_"$NOW; fi
 if [ -z "$DBPASS" ]; then DBPASS=$BRANDCODE"_"$NOW; fi
 if [ -z "$DBHOST" ]; then DBHOST=cm-mysql; fi
-if [ -z "$DBFILE" ]; then DBFILE=default/sql/dump.sql; fi
+if [ -z "$DBFILE" ]; then DBFILE=sql/dump.sql; fi
 
 echo SCRIPTDIR=$SCRIPTDIR
 echo PROJECTRID=$PROJECTRID
@@ -67,8 +67,8 @@ sed -i "s/DBHOST/$DBHOST/g" default/local_settings.php
 sed -i "s/DBPORT/$DBPORT/g" default/local_settings.php
 
 echo "Compass compile"
-compass compile default/themes/ntcm_theme
+compass compile themes/ntcm_theme
 
 echo "Install DB"
-drush sql-query --file=$TARGET/sites/default/sql/dump.sql
-drush cc all
+# drush sql-query --file=$TARGET/sites/default/sql/dump.sql
+# drush cc all
