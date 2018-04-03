@@ -23,7 +23,7 @@ NOW=$(date +"%y%m%d_%H%M")
 if [ -z "$DBNAME" ]; then DBNAME=$BRANDCODE"_"$NOW; fi
 if [ -z "$DBUSER" ]; then DBUSER=$BRANDCODE"_"$NOW; fi
 if [ -z "$DBPASS" ]; then DBPASS=$BRANDCODE"_"$NOW; fi
-if [ -z "$DBHOST" ]; then DBHOST=cm-mysql; fi
+if [ -z "$DBHOST" ]; then DBHOST=mysql; fi
 if [ -z "$DBFILE" ]; then DBFILE=sql/dump.sql; fi
 
 echo SCRIPTDIR=$SCRIPTDIR
@@ -67,8 +67,6 @@ sed -i "s/DBHOST/$DBHOST/g" default/local_settings.php
 sed -i "s/DBPORT/$DBPORT/g" default/local_settings.php
 
 echo "Compass compile"
-compass compile themes/ntcm_theme
-
-echo "Install DB"
-# drush sql-query --file=$TARGET/sites/default/sql/dump.sql
-# drush cc all
+for x in default/themes/*; do
+    compass compile $x
+done
