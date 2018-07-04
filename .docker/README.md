@@ -21,20 +21,20 @@ tobybatch/nt8installer:demo
 
 Extends the base image and runs a site install.  The site will be available on http://localhost:8888
 
-    docker -ti -p 8888:8888 tobybatch/nt8installer:demo
+    docker run -ti -p 8888:8888 tobybatch/nt8installer:demo
 
 It does support running custom branches.
 
-    docker -ti -p 8888:8888 -e CHECKOUT="ntnt8property:AB-123 nt8landingpage:CD:456" tobybatch/nt8installer:demo
+    docker run -ti -p 8888:8888 -e CHECKOUT="ntnt8property:AB-123 nt8landingpage:CD:456" tobybatch/nt8installer:demo
 
 tobybatch/nt8installer:tester
 -----------------------------
 
 Extends the base image and runs php unit tetst.  All tests are run unless a group is specified.
 
-    docker -ti -e PHPUNIT_GROUP=ntnt8property tobybatch/nt8installer:tester
+    docker run -ti -e PHPUNIT_GROUP=ntnt8property tobybatch/nt8installer:tester
 
 It also supports the checkout script:
 
-    docker -ti -e PHPUNIT_GROUP=ntnt8property -e CHECKOUT="ntnt8property:AB-123 nt8landingpage:CD:456" tobybatch/nt8installer:tester
+    docker run -ti -e PHPUNIT_GROUP=ntnt8property -e CHECKOUT="ntnt8property:AB-123 nt8landingpage:CD:456" tobybatch/nt8installer:tester
 
