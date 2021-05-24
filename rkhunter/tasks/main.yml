@@ -1,0 +1,19 @@
+---
+
+- name: Install rkhunter packages
+  sudo: yes
+  apt: pkg="rkhunter" state=latest
+  register: rkhunter_install
+
+- name: Update rkhunter
+  sudo: yes
+  command: rkhunter --update
+  command: rkhunter --propupd
+
+- name: Set rkhunter deafults
+  sudo: yes
+  copy: src=rkhunter dest=/etc/default/rkhunter mode=0755 backup=yes
+
+- name: Copy daily virus check
+  sudo: yes
+  template: src=daily.j2 dest="/etc/cron.daily/rkhunter" mode=0755 owner=root group=root
