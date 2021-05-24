@@ -1,9 +1,0 @@
-uuid: c44fb976-472a-44b5-ad7d-9b0beb6bc6cc
-langcode: en
-status: true
-dependencies: {  }
-name: 'Cottage Areas'
-vid: cottage_areas
-description: 'Vocabulary of cottage areas and locations'
-hierarchy: 0
-weight: 0
