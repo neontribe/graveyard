@@ -1,7 +1,0 @@
-nt8booking.admin:
-  path: '/admin/config/neontabs/booking'
-  defaults:
-      _title: 'NT8 Booking Details'
-      _form: 'Drupal\nt8booking\Form\NT8BookingAdminForm'
-  requirements:
-    _permission: 'administer booking path'

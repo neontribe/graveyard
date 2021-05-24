@@ -1,7 +1,0 @@
-nt8booking-json-prettifier:
-  version: 1.x
-  css:
-    theme:
-      css/nt8booking.css: {}
-  js:
-    js/nt8booking.js: {}

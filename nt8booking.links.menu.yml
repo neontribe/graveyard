@@ -1,5 +1,0 @@
-system.admin_neontabs_booking:
-  title: 'Booking Path'
-  parent: system.admin_neontabs
-  description: 'Administer the booking path.'
-  route_name: nt8booking.admin

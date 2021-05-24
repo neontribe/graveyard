@@ -1,8 +1,0 @@
-name: nt8booking_details
-type: module
-description: Booking path details form
-core: 8.x
-package: NT8
-dependencies:
-  - nt8tabsio
-  - nt8booking

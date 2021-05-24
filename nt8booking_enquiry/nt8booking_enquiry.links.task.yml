@@ -1,5 +1,0 @@
-system.admin_neontabs_booking.enquiry:
-  title: 'Enquiry'
-  route_name: nt8booking.admin.enquiry
-  base_route: nt8booking.admin
-  weight: 10
