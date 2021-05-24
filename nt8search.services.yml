@@ -1,4 +1,0 @@
-services:
-  nt8search.methods:
-    class: Drupal\nt8search\Service\NT8SearchService
-    arguments: ['@nt8tabsio.tabs_service', '@entity.query', '@entity_type.manager', '@nt8property.property_methods', '@user.private_tempstore', '@session', '@current_user']
