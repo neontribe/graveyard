@@ -1,0 +1,23 @@
+---
+- name: Update apt
+  sudo: yes
+  apt: update_cache=yes cache_valid_time=3600
+
+- name: Install git
+  sudo: yes
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - git
+
+- name: Fetch shell tools
+  sudo: yes
+  git: dest=/usr/local/share/Shelltools repo=https://github.com/tobybatch/Shell-tools.git
+
+- name: Add shell tools to global path
+  sudo: yes
+  lineinfile: >
+    dest=/etc/environment
+    state=present
+    backrefs=yes
+    regexp='PATH=(["]*)((?!.*?/usr/local/share/Shelltools/).*?)(["]*)$'
+    line="PATH=\1\2:/usr/local/share/Shelltools/\3"
