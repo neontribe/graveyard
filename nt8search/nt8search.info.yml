@@ -1,0 +1,7 @@
+name: nt8search
+type: module
+description: Search module for Neontabs 8
+core: 8.x
+package: nt8
+dependencies:
+  - nt8property
