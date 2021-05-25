@@ -1,0 +1,5 @@
+name: 'NT8 TABS Rest Client'
+type: module
+description: 'Acts as the rest client to access the TABS API.'
+package: 'NT8'
+core: 8.x
