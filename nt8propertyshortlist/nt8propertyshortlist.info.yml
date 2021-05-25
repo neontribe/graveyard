@@ -1,0 +1,7 @@
+name: nt8propertyshortlist
+type: module
+description: Provides shortlist functionality to the nt8property module.
+core: 8.x
+package: NT8
+dependencies:
+  - nt8property

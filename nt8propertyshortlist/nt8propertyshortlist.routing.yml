@@ -1,0 +1,23 @@
+nt8propertyshortlist.nt8_property_shortlist_controller_shortlist:
+  path: '/shortlist'
+  defaults:
+    _controller: '\Drupal\nt8propertyshortlist\Controller\NT8PropertyShortlistController::shortlist'
+    _title: 'Shortlist'
+  requirements:
+    _permission: 'access content'
+
+nt8propertyshortlist.nt8_property_shortlist_controller_shortlist_toggle:
+  path: '/shortlist/toggle/{propRef}'
+  defaults:
+    _controller: '\Drupal\nt8propertyshortlist\Controller\NT8PropertyShortlistController::shortlist_toggle'
+    _title: 'Add Property To Shortlist'
+  requirements:
+    _permission: 'access content'
+
+nt8propertyshortlist.nt8_property_shortlist_controller_shortlist_list:
+  path: '/shortlist/list'
+  defaults:
+    _controller: '\Drupal\nt8propertyshortlist\Controller\NT8PropertyShortlistController::shortlist_list'
+    _title: 'Shortlist'
+  requirements:
+    _permission: 'access content'
