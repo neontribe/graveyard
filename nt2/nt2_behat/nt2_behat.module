@@ -1,0 +1,9 @@
+<?php
+
+/**
+ * @file
+ * Module file for behat tests.
+ *
+ * This file needs to exists else we can't use system_rebuild_module_data() to get the list of core tests.
+ * 
+ */

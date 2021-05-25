@@ -1,0 +1,332 @@
+<?php
+
+/**
+ * @file
+ * Implement hook_install.
+ */
+
+use Drupal\nt2_io\uk\co\neontabs\NeontabsIO;
+
+/**
+ * Implements hook_install.
+ */
+function nt2_node_type_install() {
+  // Setup constants.
+  variable_set('COTTAGE_NODE_TYPE_MACHINE_NAME', 'cottage_entity');
+  variable_set('COTTAGE_VOCAB_MACHINE_NAME', 'cottage_vocab');
+  variable_set('COTTAGE_LOC_VOCAB_MACHINE_NAME', 'cottage_loc_vocab');
+
+  var_dump('===Warning you will need to add your external image server to the whitelisted hosts array===');
+
+  // Set configuration options.
+  $whitelisted_hosts = array(
+    'zz.api.carltonsoftware.co.uk',
+  );
+
+  variable_set('imagecache_external_hosts', implode("\r\n", $whitelisted_hosts));
+
+  variable_set('nt2_node_type_batch_size', 7);
+
+  // Define the cottage entity fields.
+  $cottage_fields = array(
+    'cottage_reference' => array(
+      'field_name' => 'cottage_reference',
+      'type' => 'text',
+      'label' => 'Cottage Reference Code.',
+    ),
+    'cottage_brandcode' => array(
+      'field_name' => 'cottage_brandcode',
+      'type' => 'text',
+      'label' => 'Cottage Brand Code.',
+    ),
+    'cottage_url' => array(
+      'field_name' => 'cottage_url',
+      'type' => 'text',
+      'label' => 'Cottage url.',
+    ),
+    'cottage_slug' => array(
+      'field_name' => 'cottage_slug',
+      'type' => 'text',
+      'label' => 'Cottage slug.',
+    ),
+    'cottage_name' => array(
+      'field_name' => 'cottage_name',
+      'type' => 'text',
+      'label' => 'Cottage Name.',
+    ),
+    'cottage_accomodates' => array(
+      'field_name' => 'cottage_accomodates',
+      'type' => 'number_integer',
+      'label' => 'Cottage accommodation.',
+    ),
+    'cottage_accommodationdescription' => array(
+      'field_name' => 'cottage_accommodationdescription',
+      'type' => 'text',
+      'label' => 'Cottage accommodation description.',
+    ),
+    'cottage_description' => array(
+      'field_name' => 'cottage_description',
+      'type' => 'text_long',
+      'label' => 'Cottage Long Description.',
+    ),
+    'cottage_description_short' => array(
+      'field_name' => 'cottage_description_short',
+      'type' => 'text_long',
+      'label' => 'Cottage Short Description',
+    ),
+    'cottage_description_teaser' => array(
+      'field_name' => 'cottage_description_teaser',
+      'type' => 'text_long',
+      'label' => 'Cottage Teaser Description.',
+    ),
+    'cottage_bedrooms' => array(
+      'field_name' => 'cottage_bedrooms',
+      'type' => 'number_integer',
+      'label' => 'Cottage Bedroom Count.',
+    ),
+    'cottage_changeoverday' => array(
+      'field_name' => 'cottage_changeoverday',
+      'type' => 'text',
+      'label' => 'Cottage Changeover Day.',
+    ),
+    'cottage_rating' => array(
+      'field_name' => 'cottage_rating',
+      'type' => 'number_integer',
+      'label' => 'Cottage Rating.',
+    ),
+    'cottage_pets' => array(
+      'field_name' => 'cottage_pets',
+      'type' => 'number_integer',
+      'label' => 'Cottage Allowed Pets.',
+    ),
+    'cottage_promote' => array(
+      'field_name' => 'cottage_promote',
+      'type' => 'number_integer',
+      'label' => 'TODO',
+    ),
+    'cottage_booking' => array(
+      'field_name' => 'cottage_booking',
+      'type' => 'text',
+      'label' => 'Cottage Booking Url.',
+    ),
+    'cottage_ownercode' => array(
+      'field_name' => 'cottage_ownercode',
+      'type' => 'text',
+      'label' => 'Cottage Owner Code.',
+    ),
+    'cottage_images' => array(
+      'field_name' => 'cottage_images',
+      'type' => 'text',
+      'label' => 'List of cottage image urls.',
+      'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+    ),
+    'cottage_term_reference' => array(
+      'field_name' => 'cottage_term_reference',
+      'type' => 'taxonomy_term_reference',
+      'label' => 'List of cottage term references.',
+      'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+      'settings' => array(
+        'allowed_values' => array(
+          array(
+            'vocabulary' => variable_get("COTTAGE_VOCAB_MACHINE_NAME"),
+            'parent' => 0,
+          ),
+        ),
+      ),
+    ),
+    'cottage_location_reference' => array(
+      'field_name' => 'cottage_location_reference',
+      'type' => 'taxonomy_term_reference',
+      'label' => 'List of cottage location references.',
+      'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+      'settings' => array(
+        'allowed_values' => array(
+          array(
+            'vocabulary' => variable_get("COTTAGE_LOC_VOCAB_MACHINE_NAME"),
+            'parent' => 0,
+          ),
+        ),
+      ),
+    ),
+    'cottage_fieldaddress' => array(
+      'label' => 'Cottage address field.',
+      'active' => 1,
+      'cardinality' => 1,
+      'deleted' => 0,
+      'entity_types' => array(),
+      'field_name' => 'cottage_fieldaddress',
+      'indexes' => array(),
+      'locked' => 0,
+      'module' => 'addressfield',
+      'settings' => array(),
+      'translatable' => 0,
+      'type' => 'addressfield',
+    ),
+    'cottage_coordinates' => array(
+      'field_name' => 'cottage_coordinates',
+      'type' => 'number_float',
+      'label' => 'Cottage coordinates.',
+      'cardinality' => 2,
+      'precision' => 10.0,
+    ),
+    'cottage_pricing' => array(
+      'field_name' => 'cottage_pricing',
+      'label' => 'Cottage pricing info (JSON format).',
+      'type' => 'text',
+      'cardinality' => 1,
+    )
+  );
+
+  $custom_instances = array(
+    'cottage_fieldaddress' => array(
+      'bundle' => 'cottage_entity',
+      'default_value' => NULL,
+      'deleted' => 0,
+      'description' => '',
+      'display' => array(
+        'default' => array(
+          'label' => 'above',
+          'module' => 'addressfield',
+          'settings' => array(
+            'format_handlers' => array(
+              0 => 'address',
+            ),
+            'use_widget_handlers' => 1,
+          ),
+          'type' => 'addressfield_default',
+          'weight' => 17,
+        ),
+        'teaser' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0,
+        ),
+      ),
+      'entity_type' => 'node',
+      'field_name' => 'cottage_fieldaddress',
+      'label' => 'cottage_fieldaddress',
+      'required' => 0,
+      'settings' => array(
+        'user_register_form' => FALSE,
+      ),
+      'widget' => array(
+        'active' => 1,
+        'module' => 'addressfield',
+        'settings' => array(
+          'available_countries' => array(),
+          'default_country' => 'site_default',
+          'format_handlers' => array(
+            'address' => 'address',
+            'address-hide-postal-code' => 0,
+            'address-hide-street' => 0,
+            'address-hide-country' => 0,
+            'organisation' => 0,
+            'name-full' => 0,
+            'name-oneline' => 0,
+            'address-optional' => 0,
+          ),
+        ),
+        'type' => 'addressfield_standard',
+        'weight' => 13,
+      ),
+    )
+  );
+
+  // Register the node type with Drupal.
+  $cottage_type_creation_status = CottageNodeManager::registerCottageNodeTypeEntity(variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"));
+
+  if ($cottage_type_creation_status == FALSE) {
+    // Throw new Exception("Cottage type already exists.");
+    // drupal_set_message(t('Unable to create the new content_type of: `cottage_entity`.'), 'error');.
+    var_dump($cottage_type_creation_status);
+  }
+
+  // Register the requisite fields.
+  $cottage_field_creation_status = CottageNodeManager::registerCottageFieldDefinitionInstances(variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"), $cottage_fields, $custom_instances);
+
+  // Create our custom vocabularies.
+  nt2_node_type_create_vocabs();
+}
+
+/**
+ * Implements hook_disable.
+ */
+function nt2_node_type_disable() {
+  // Delete global variables.
+  variable_del("COTTAGE_NODE_TYPE_MACHINE_NAME");
+  variable_del("COTTAGE_VOCAB_MACHINE_NAME");
+  // Delete the node_type: `COTTAGE_NODE_TYPE_MACHINE_NAME` if it currently exists in the DB.
+  if (CottageNodeManager::nodeTypeExists(variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"))) {
+    // Delete the node_type.
+    node_type_delete(variable_get("COTTAGE_NODE_TYPE_MACHINE_NAME"));
+  }
+
+  $vocab = CottageVocabManager::vocabTypeExists(variable_get("COTTAGE_VOCAB_MACHINE_NAME"));
+
+  if ($vocab) {
+    // Delete each individual term.
+    foreach (taxonomy_get_tree($vocab->vid) as $term) {
+      taxonomy_term_delete($term->tid);
+    }
+    // Delete the vocabulary.
+    taxonomy_vocabulary_delete(variable_get("COTTAGE_VOCAB_MACHINE_NAME"));
+  }
+}
+
+/**
+ * Creates and populates all vocabularies.
+ */
+function nt2_node_type_create_vocabs() {
+
+  $vocab_definition_cottage_tags = (object) array(
+    'name' => 'Cottage Tag Vocab',
+    'machine_name' => variable_get("COTTAGE_VOCAB_MACHINE_NAME"),
+    'description' => 'A vocabulary used to store cottage tags.',
+    'weight' => 0,
+  );
+
+  $vocab_definition_cottage_location = (object) array(
+    'name' => 'Cottage Location Vocab',
+    'machine_name' => variable_get("COTTAGE_LOC_VOCAB_MACHINE_NAME"),
+    'description' => 'A vocabulary used to store cottage location information.',
+    'weight' => 0,
+  );
+
+  $vocab_tag_fields = array(
+    'tag_code' => array(
+      'field_name' => 'tag_code',
+      'data_key_name' => 'code',
+      'type' => 'text',
+    ),
+    'tag_brand' => array(
+      'field_name' => 'tag_brand',
+      'data_key_name' => 'brand',
+      'type' => 'text',
+    ),
+  );
+
+  $vocab_loc_fields = array(
+    'loc_code' => array(
+      'field_name' => 'loc_code',
+      'data_key_name' => 'code',
+      'type' => 'text',
+    ),
+    'loc_name' => array(
+      'field_name' => 'loc_name',
+      'data_key_name' => 'name',
+      'type' => 'text',
+    ),
+    'loc_brand' => array(
+      'field_name' => 'loc_brand',
+      'data_key_name' => 'brand',
+      'type' => 'text',
+    ),
+  );
+
+  // Create the cottage tag vocabulary. (TODO: generalise this function to allow it to create any Vocab we need)
+  $cottage_vocab_tag_creation_status = CottageVocabManager::createCottageTagVocabulary(variable_get("COTTAGE_VOCAB_MACHINE_NAME"), $vocab_definition_cottage_tags, $vocab_tag_fields);
+
+  // Create and populate cottage location vocabulary.
+  $cottage_vocab_location_creation_status = CottageVocabManager::createCottageTagVocabulary(variable_get("COTTAGE_LOC_VOCAB_MACHINE_NAME"), $vocab_definition_cottage_location, $vocab_loc_fields);
+}

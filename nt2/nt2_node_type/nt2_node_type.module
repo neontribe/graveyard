@@ -1,0 +1,88 @@
+<?php
+
+/**
+ * @file
+ * The module file for nt2_node_type.
+ */
+
+/**
+ * Implements hook_menu.
+ */
+function nt2_node_type_menu() {
+  $items = array();
+
+  $items['nt2_node_type_test'] = array(
+    'title' => 'nt2_node_type_test',
+    'page arguments' => array(1, 2),
+    'page callback' => 'nt2_node_type_test_view',
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM
+  );
+
+  $items['nt2_node_type_test/%/node'] = array(
+    'title' => 'nt2_node_type_test',
+    'page callback' => 'nt2_node_type_test_view',
+    'page arguments' => array(1, 2),
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM
+  );
+
+  $items['nt2_node_type_test/%/teaser'] = array(
+    'title' => 'nt2_node_type_test',
+    'page callback' => 'nt2_node_type_test_view',
+    'page arguments' => array(1, 2),
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM
+  );
+
+  // Admin pages.
+  $items['admin/config/nt2/entity'] = array(
+    'title' => 'Property nodes',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('nt2_node_type_admin_form'),
+    'access arguments' => array('access administration pages'),
+    'file' => 'nt2_node_type.admin.inc',
+  );
+
+  $items['admin/config/nt2/entity/reload_atts'] = array(
+    'title' => 'Refresh Attributes',
+    'page callback' => 'nt2_entity_admin_reload_attributes',
+    'access arguments' => array('access administration pages'),
+    'type' => MENU_LOCAL_ACTION,
+    'file' => 'nt2_node_type.admin.inc',
+  );
+
+  $items['admin/config/nt2/entity/reload_locs'] = array(
+    'title' => 'Refresh locations',
+    'page callback' => 'nt2_entity_admin_reload_tax_loc',
+    'access arguments' => array('access administration pages'),
+    'type' => MENU_LOCAL_ACTION,
+    'file' => 'nt2_node_type.admin.inc',
+  );
+
+  $items['admin/config/nt2/entity/reload_props'] = array(
+    'title' => 'Refresh ALL Properties',
+    'page callback' => 'nt2_entity_admin_load_all_prop',
+    'access arguments' => array('access administration pages'),
+    'type' => MENU_LOCAL_ACTION,
+    'file' => 'nt2_node_type.admin.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_menu cron.
+ *
+ * If you use drush to set the variable nt2_node_type_rebuild to 1 then all
+ * terms and properties will be loaded on the next cron cycle.
+ */
+function nt2_node_type_cron() {
+  if (variable_get('nt2_node_type_rebuild', FALSE)) {
+    module_load_include('inc', 'nt2_node_type', 'nt2_node_type.admin');
+    nt2_entity_admin_reload_attributes();
+    nt2_entity_admin_reload_tax_loc();
+    nt2_entity_admin_batch_callback(0, 9999, rand());
+    variable_set('nt2_node_type_rebuild', FALSE);
+  }
+}

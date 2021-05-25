@@ -1,0 +1,8 @@
+name = NT2 base module
+description = A wrapper for cottages
+core = 7.x
+
+; We'll leave this in place while we are developing, but it needs go.
+dependencies[] = devel
+
+package = NT2

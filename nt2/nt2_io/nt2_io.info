@@ -1,0 +1,11 @@
+name = NT2 TABS IO
+description = Rest wrapper for the TABS API
+core = 7.x
+package = NT2
+php = 5.3
+
+dependencies[] = xautoload
+
+; files[] = 
+
+configure = admin/config/nt2/io

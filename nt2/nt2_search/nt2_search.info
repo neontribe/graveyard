@@ -1,0 +1,13 @@
+name = NT2 Search
+description = The API search for NT2
+core = 7.x
+package = NT2
+
+; php = 
+; version =
+
+dependencies[] = nt2_io
+dependencies[] = nt2_node_type
+dependencies[] = xautoload
+
+configure = admin/config/nt2/terms

@@ -1,0 +1,42 @@
+<?php
+
+/**
+ * @file
+ * The nt2_landing install file.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function nt2_landing_install() {
+  $machine_name = "nt2_landing_entity_type";
+  variable_set("COTTAGE_LANDING_PAGE_MACHINE_NAME", $machine_name);
+
+  NT2Landing::registerEntityType($machine_name);
+
+  $landing_fields = array(
+    'landing_body' => array(
+      'field_name' => 'landing_body',
+      'type' => 'text',
+      'label' => 'Body of the landing page.',
+    ),
+    'landing_filter' => array(
+      'field_name' => 'landing_filter',
+      'type' => 'text',
+      'label' => 'Search filter string.',
+    ),
+    'landing_image' => array(
+      'field_name' => 'landing_image',
+      'type' => 'image',
+      'cardinality' => 1,
+      'label' => 'Landing page header image.',
+    ),
+  );
+
+  if ($instance = field_info_instance('node', 'body', $machine_name)) {
+    field_delete_instance($instance, TRUE);
+    field_purge_batch(1);
+  }
+
+  NT2Landing::registerFieldDefinitionInstances($machine_name, $landing_fields);
+}

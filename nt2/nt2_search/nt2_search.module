@@ -1,0 +1,180 @@
+<?php
+
+/**
+ * @file
+ * This file contains most of the hooks necessary for the module to function.
+ */
+
+use Drupal\nt2_search\uk\co\neontabs\SearchUI;
+
+/**
+ * Implements hook_menu().
+ */
+function nt2_search_menu() {
+  $items = array();
+
+  $items['nt2_search'] = array(
+    'title' => 'NT2 Search',
+    'type' => MENU_CALLBACK,
+    'access callback' => TRUE,
+    'page callback' => 'nt2_search_page',
+  );
+
+  $items['admin/config/nt2/search'] = array(
+    'title' => 'Search',
+    'description' => 'Configuration for the types of cottage searches.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('nt2_search_visibility_form'),
+    'access arguments' => array('access administration pages'),
+    'file' => 'nt2_search.admin.inc',
+  );
+
+  $items['admin/config/nt2/search/terms'] = array(
+    'title' => 'Visibility',
+    'access arguments' => array('access administration pages'),
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => 10,
+  );
+
+  $items['admin/config/nt2/search/configuration'] = array(
+    'title' => 'Term Configuration',
+    'type' => MENU_LOCAL_TASK,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('nt2_search_configuration_form'),
+    'access arguments' => array('access administration pages'),
+    'file' => 'nt2_search.admin.inc',
+    'weight' => 20,
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function nt2_search_theme() {
+  $theme = array();
+
+  // Add the theme function for nicely rendering a visibility table.
+  $theme['nt2_search_admin_visibility_form_table'] = array(
+    'render element' => 'element',
+    'file' => 'nt2_search.admin.inc',
+  );
+
+  return $theme;
+}
+
+/**
+ * Implements hook_page().
+ */
+function nt2_search_page() {
+  /* @todo
+   *
+   * When a search form is submitted on the search results page, a search will
+   * be performed twice without the below fix.
+   *
+   * Ideally, there would be a way of setting the search results menu to only
+   * respond to the HTTP 'GET' method in Drupal, if possible.
+   */
+  if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    return SearchUI::page();
+  }
+
+  return array();
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function nt2_search_block_info() {
+  $blocks = array();
+
+  foreach (SearchUI::SEARCH_TYPES as $search_type) {
+    $blocks['nt2_search_' . strtolower($search_type)] = array(
+      'info' => t('NT2: @type search form', array('@type' => $search_type)),
+      'cache' => DRUPAL_NO_CACHE,
+      'region' => 'sidebar_first',
+      // Status of 1 means enabled.
+      'status' => 1,
+    );
+  }
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function nt2_search_block_view($delta) {
+  $block = array();
+
+  foreach (SearchUI::SEARCH_TYPES as $search_type) {
+    if ($delta !== ('nt2_search_' . strtolower($search_type))) {
+      continue;
+    }
+
+    $block['subject'] = t('@type Search', array('@type' => $search_type));
+    $block['content'] = drupal_get_form('nt2_search_' . strtolower($search_type));
+    break;
+  }
+
+  return $block;
+}
+
+/**
+ * Implements hook_forms().
+ */
+function nt2_search_forms($form_id, $args) {
+  $forms = array();
+
+  foreach (SearchUI::SEARCH_TYPES as $search_type) {
+    $forms['nt2_search_' . strtolower($search_type)] = array(
+      'callback' => 'nt2_search_form',
+    );
+  }
+
+  return $forms;
+}
+
+/**
+ * Implements hook_form().
+ */
+function nt2_search_form($node, &$form_state) {
+  // @todo Eww. This should be nicer.
+  foreach (SearchUI::SEARCH_TYPES as $search_type) {
+    if ('nt2_search_' . strtolower($search_type) === $form_state['build_info']['form_id']) {
+      return SearchUI::form($search_type);
+    }
+  }
+
+  return array();
+}
+
+/**
+ * Implements hook_form_validate().
+ */
+function nt2_search_quick_form_validate($form, &$form_state) {
+  // @todo Do validation.
+}
+
+/**
+ * Implements hook_form_submit().
+ */
+function nt2_search_form_submit($form, &$form_state) {
+  // @todo Eww. This should be nicer.
+  foreach (SearchUI::SEARCH_TYPES as $search_type) {
+    if ('nt2_search_' . strtolower($search_type) === $form_state['build_info']['form_id']) {
+      // Do submit.
+      SearchUI::submit($search_type, $form, $form_state);
+    }
+  }
+
+  return array();
+}
+
+/**
+ * Implements hook_form().
+ */
+function nt2_search_advanced_form() {
+  return array();
+}

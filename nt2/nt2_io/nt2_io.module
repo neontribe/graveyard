@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * @file
+ * Main module file for Neontabs Booking.
+ */
+
+use Drupal\nt2_io\uk\co\neontabs\NeontabsIO;
+
+/**
+ * Implements hook_menu.
+ */
+function nt2_io_menu() {
+  $menu = array();
+
+  $menu['admin/config/nt2/io'] = array(
+    'title' => 'Neontabs IO',
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('nt2_io_admin_form'),
+    'access arguments' => array('access administration pages'),
+    'file' => 'nt2_io.admin.inc',
+  );
+
+  $menu['admin/config/nt2/io/default'] = array(
+    'title' => 'Neontabs IO Settings',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('nt2_io_admin_form'),
+    'access arguments' => array('access administration pages'),
+    'file' => 'nt2_io.admin.inc',
+  );
+
+  return $menu;
+}
