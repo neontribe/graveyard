@@ -1,6 +1,0 @@
----
-- hosts: all
-  vars:
-      admin_email: info@neontribe.co.uk
-  roles:
-      - clamav

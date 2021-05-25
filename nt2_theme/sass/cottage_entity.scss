@@ -1,0 +1,230 @@
+/* ===================
+
+   Variables
+
+====================== */
+$info-background-colour-light: #f6f6f2;
+$info-background-colour-dark: #dddddd;
+
+$landing-page-teaser-size: 200px;
+
+/* ===================
+
+   Landing Page Styling
+
+====================== */
+
+.block-nt2-landing {
+	> h2 {
+		border-bottom: 1px solid black;
+	}
+
+	ul.landing-page-list {
+		padding: 0;
+		li.node-nt2-landing-entity-type {
+			margin-right: 10px;
+			padding: 0;
+			border: 1px solid;
+			list-style: none;
+			position: relative;
+			text-align: center;
+			float: left;
+			width: $landing-page-teaser-size;
+			height: $landing-page-teaser-size;
+			a {
+				display: block;
+				position: relative;
+
+				> span {
+				    position:absolute;
+					width: 100%;
+			        padding: 8px 0px;
+				    color: #fff;
+				    word-wrap: break-word;
+				    font-size: 1.1em;
+				    font-weight: 700;
+				    text-decoration: none;
+				    background: rgba(0,0,0,0.6);
+				    display: inline-block;
+				    left: 0;
+				    bottom: 0;
+				}
+
+				> img {
+					display: block;
+					width: $landing-page-teaser-size;
+					height: $landing-page-teaser-size;
+					margin: 0 auto;
+				}
+			}
+		}
+	}
+
+}
+
+
+
+
+/* ===================
+
+   Node Block Styling
+
+====================== */
+
+.cottage-title {
+	.cottage-reference, .cottage-name {
+		display: inline-block;
+
+		> * {
+			margin: 0;
+		}
+	}
+}
+
+.cottage-info {
+	text-align: center;
+	background-color: $info-background-colour-light;
+
+	> div {
+		padding: 0;
+
+		> p {
+			margin: 0;
+			background-color: $info-background-colour-light;
+
+			&:nth-child(even) {	
+				background-color: $info-background-colour-dark;
+			}
+		}
+
+	}
+}
+
+.cottage-details {
+	background-color: $info-background-colour-light;
+	margin-top: 20px;
+
+	// TODO: Add support for older browsers (polyfill or similar).
+	display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
+	display: -ms-flexbox;  /* TWEENER - IE 10 */
+	display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+	display: flex;         /* NEW, Spec - Firefox, Chrome, Opera */
+
+	> div {
+		width: 100%;
+		text-align: center;
+		padding: 0;
+
+		> p {
+			margin: 0;
+			background-color: $info-background-colour-light;
+		}
+
+		> p:nth-child(even) {
+				background-color: $info-background-colour-dark;
+		}
+	}
+}
+
+
+/* ===================
+
+   Property Styling
+
+====================== */
+.node-cottage-entity {
+	clear: both;
+}
+
+.cottage-full {
+	
+	.cottage-header-container {
+		// TODO: Add support for older browsers (polyfill or similar).
+		display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
+		display: -ms-flexbox;  /* TWEENER - IE 10 */
+		display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+		display: flex;         /* NEW, Spec - Firefox, Chrome, Opera */
+
+		.cottage-images {
+			> ul {
+				margin: 0;
+				padding: 0;
+				list-style: none;
+
+				> li {
+					img {
+						display: block;
+					}
+				}
+			}
+		}
+
+		.cottage-info {
+
+			width: 100%;
+		}
+	}
+	
+
+	.cottage-description {
+	
+	}
+
+}
+
+
+
+/* ===================
+
+   Teaser Styling
+
+====================== */
+
+.node-teaser {
+	border: none;
+}
+
+.cottage-teaser {
+	border: 1px solid black;
+	padding: 10px;
+	overflow: hidden;
+	box-sizing: border-box;
+	position: relative;
+	margin: 1em 0;
+
+	.cottage-info {
+		display: inline-block;
+
+		.cottage-bedrooms, .cottage-pets {
+			
+			display: inline-block;
+
+			> * {
+				margin: 0;
+				padding-left: 10px;
+				padding-right: 10px;
+				display: inline-block;
+			}
+		}
+	}
+
+	.cottage-description-teaser {
+		margin-top: 0;
+		font-size: 1.0em;
+		line-height: 145%;
+		overflow: hidden;
+	}
+
+	.cottage-images {
+		float: left;
+		margin: 0;
+		margin-right: 10px;
+		position: static;
+		width: 35%;
+
+		img {
+			display: block;
+		}
+	}
+}
+

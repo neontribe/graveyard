@@ -1,9 +1,0 @@
----
-- hosts: all
-  vars:
-      php_ppa: php5-5.6
-      sys_packages: ["imagemagick","vim","git","htop","mc","ccze","realpath","jpegoptim","optipng","gifsicle","yui-compressor"]
-      timezone: UTC
-      hostname: devserver01
-  roles:
-      - init

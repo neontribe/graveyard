@@ -1,7 +1,0 @@
----
-# test file for postfix
-- hosts: all
-  vars:
-      server_type: desktop
-  roles:
-      - bashrc
