@@ -1,0 +1,22 @@
+uuid: f5974ab8-6c95-43f8-96d2-3dacd5b658c7
+langcode: en
+status: false
+dependencies:
+  module:
+    - help
+  theme:
+    - nt8theme
+_core:
+  default_config_hash: RZso3gqlZMhlOKAGLX9to-1x_6x4beLSdjqJT4PFr5o
+id: nt8theme_help
+theme: nt8theme
+region: header
+weight: 5
+provider: null
+plugin: help_block
+settings:
+  id: help_block
+  label: Help
+  provider: help
+  label_display: '0'
+visibility: {  }

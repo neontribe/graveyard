@@ -1,0 +1,11 @@
+uuid: c238cc21-8d67-4702-bc99-657c8b340220
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: u22saIKpCYn3KITbQzOSIjNSN37c5BsuhSiBR9jXki4
+name: 'Cottage Attributes'
+vid: cottage_attributes
+description: 'Vocabulary of cottage attributes'
+hierarchy: 0
+weight: 0

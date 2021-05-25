@@ -1,0 +1,23 @@
+uuid: 252968f0-7d08-495c-b6e6-b0c4e10823c3
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_cottage_teaser_description
+    - node.type.property
+  module:
+    - text
+_core:
+  default_config_hash: Jqv9rj4enK1c4MohmDxBjByDKGnLv7NTYkuKsBRiGcc
+id: node.property.field_cottage_teaser_description
+field_name: field_cottage_teaser_description
+entity_type: node
+bundle: property
+label: 'Cottage Teaser Description'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text_long

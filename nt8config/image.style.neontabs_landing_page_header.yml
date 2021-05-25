@@ -1,0 +1,16 @@
+uuid: cfa62824-81de-4b1f-942e-bfc929183079
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: Avng2SHGSSLX-9TCZNph11lN6LoZlsbPE5U9JAwaPFg
+name: neontabs_landing_page_header
+label: neontabs_landing_page_header
+effects:
+  7ae377f3-4d05-400c-b2fb-df5064894e6d:
+    uuid: 7ae377f3-4d05-400c-b2fb-df5064894e6d
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 1170
+      height: 450

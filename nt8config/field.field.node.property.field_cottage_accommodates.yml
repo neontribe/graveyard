@@ -1,0 +1,25 @@
+uuid: da64e40d-79b4-4c74-b08c-b948b650b0a9
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_cottage_accommodates
+    - node.type.property
+_core:
+  default_config_hash: JmFqJBFMOX8lnekjx2joLNl3IhfeQO1PdijQsfsvIKA
+id: node.property.field_cottage_accommodates
+field_name: field_cottage_accommodates
+entity_type: node
+bundle: property
+label: 'Cottage Accommodates'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: people
+field_type: integer

@@ -1,0 +1,22 @@
+uuid: 45a8433b-9130-46b4-8e77-45abc5a1d3af
+langcode: en
+status: false
+dependencies:
+  module:
+    - search
+  theme:
+    - nt8theme
+_core:
+  default_config_hash: f3iaIG7oqZ1JTFg5erGMCD2ns4WM8JkOrhpyW9pHHEE
+id: nt8theme_search
+theme: nt8theme
+region: header
+weight: -6
+provider: null
+plugin: search_form_block
+settings:
+  id: search_form_block
+  label: Search
+  provider: search
+  label_display: visible
+visibility: {  }

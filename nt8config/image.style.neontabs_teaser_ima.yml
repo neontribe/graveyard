@@ -1,0 +1,16 @@
+uuid: c890c568-69d0-4fc9-b17a-03d874f43e55
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: Hy1Pwjh9g4F-OTClg_yvss3lUpAeWYCgUjKnn7-A8tQ
+name: neontabs_teaser_ima
+label: neontabs_teaser_image
+effects:
+  34fb5f38-d111-4350-bc3c-dedc4f5b1fa9:
+    uuid: 34fb5f38-d111-4350-bc3c-dedc4f5b1fa9
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 713
+      height: 499
