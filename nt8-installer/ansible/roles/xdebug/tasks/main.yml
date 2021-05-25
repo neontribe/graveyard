@@ -1,0 +1,4 @@
+---
+- name: Install xDebug
+  sudo: yes
+  apt: pkg=php-xdebug state=latest

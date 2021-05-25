@@ -1,0 +1,99 @@
+---
+
+- name: Set up drush
+  file:
+    src: /vagrant/vendor/drush/drush/drush
+    dest: /usr/local/bin/drush
+    state: link
+  when: installer_root == "/vagrant/web"
+
+- name: Check if site is installed
+  shell: 'drush status bootstrap | grep -q Successful'
+  args:
+    chdir: "{{ installer_root }}"
+  register: site_status
+  ignore_errors: yes
+
+- name: Swap apache to run as uid 1000
+  lineinfile:
+    dest: /etc/apache2/envvars
+    regexp: '^export APACHE_RUN_USER='
+    line: 'export APACHE_RUN_USER=ubuntu'
+  when: installer_root == "/vagrant/web"
+
+- name: Swap apache to run as gid 1000
+  lineinfile:
+    dest: /etc/apache2/envvars
+    regexp: '^export APACHE_RUN_GROUP='
+    line: 'export APACHE_RUN_GROUP=ubuntu'
+  when: installer_root == "/vagrant/web"
+
+- name: Slaken settings.php permnissions
+  file:
+    path: "{{ installer_root }}/sites/default/settings.php"
+    mode: 0666
+  when: site_status.rc == 1
+
+- name: Install the default site if in VM
+  shell: drush -y site-install --db-url=mysql://nt8:nt8@localhost/nt8 --account-mail=${USER}@neontribe.co.uk --account-name=superadmin --site-mail=${USER}@neontribe.co.uk --site-name=EntyAte
+  args:
+    chdir: "{{ installer_root }}"
+  when: site_status.rc == 1 and installer_root == "/vagrant/web"
+
+- name: Install the default site if in local machine
+  shell: drush -y site-install --db-url=sqlite://var/tmp/nt8.ht.sqlite --account-mail=${USER}@neontribe.co.uk --account-name=superadmin --site-mail=${USER}@neontribe.co.uk --site-name=EntyAte
+  args:
+    chdir: "{{ installer_root }}"
+  when: site_status.rc == 1 and installer_root != "/vagrant/web"
+
+- name: Tighten settings.php permnissions
+  file:
+    path: "{{ installer_root }}/sites/default/settings.php"
+    mode: 0444
+  when: site_status.rc == 1
+
+- name: Enable the NT8 Theme
+  shell: drush -y en nt8theme
+  args:
+    chdir: "{{ installer_root }}"
+
+- name: Set default theme
+  shell: drush -y config-set system.theme default nt8theme
+  args:
+    chdir: "{{ installer_root }}"
+
+- name: Compile SASS
+  shell: compass compile /vagrant/web/themes/contrib/nt8theme/
+  args:
+    chdir: "{{ installer_root }}"
+
+- name: Enable the NT8 Rest Module
+  shell: drush -y en nt8tabsio
+  args:
+    chdir: "{{ installer_root }}"
+
+- name: Enable the NT8 Property Module
+  shell: drush -y en nt8property
+  args:
+    chdir: "{{ installer_root }}"
+
+- name: Enable the NT8 Search and Map Modules
+  shell: drush -y en nt8map nt8search
+  args:
+    chdir: "{{ installer_root }}"
+
+- name: Clear caches
+  shell: drush cr
+  args:
+    chdir: "{{ installer_root }}"
+
+- name: Import properties
+  shell: drush -y nt8-import-all
+  args:
+    chdir: "{{ installer_root }}"
+
+- name: Restart mysql
+  service: name=mysql state=restarted
+
+- name: Restart apache
+  service: name=apache2 state=restarted
