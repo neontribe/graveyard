@@ -1,0 +1,23 @@
+uuid: f0a4662d-7956-4df5-b576-9d5e7fd9d6a0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_attribute_coordinates
+    - taxonomy.vocabulary.cottage_areas
+id: taxonomy_term.cottage_areas.field_attribute_coordinates
+field_name: field_attribute_coordinates
+entity_type: taxonomy_term
+bundle: cottage_areas
+label: 'Attribute Coordinates'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: float
