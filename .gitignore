@@ -1,2 +1,5 @@
 .vagrant/
 ansible.cfg
+.sass-cache
+css/main.css
+/nbproject/private/

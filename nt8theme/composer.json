@@ -1,0 +1,30 @@
+{
+    "name": "neontabs/nt8theme",
+    "description": "Module Framework For TABS Based Cottage Websites",
+    "license": "GPL-2.0+",
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packages.drupal.org/8"
+        }
+    ],
+    "require": {
+        "php": "^7.0",
+        "drupal/address": "1.*",
+        "drupal/imagecache_external": "1.*"
+    },
+    "require-dev": {
+        "phpmd/phpmd" : "@stable"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "scripts": {
+        "post-install-cmd": [
+            "git submodule update --init --recursive"
+        ],
+        "post-update-cmd": [
+            "git submodule update --init --recursive"
+        ]
+    },
+    "type": "drupal-theme"
+}
