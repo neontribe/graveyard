@@ -1,0 +1,5 @@
+#!/bin/bash
+
+REPO=$(basename $1)
+git remote add $REPO $1
+git pull --allow-unrelated-histories $REPO $2
