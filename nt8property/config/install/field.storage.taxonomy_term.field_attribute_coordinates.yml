@@ -1,0 +1,18 @@
+uuid: 019ec61c-1da7-43cb-8174-68765238fe99
+langcode: en
+status: true
+dependencies:
+  module:
+    - taxonomy
+id: taxonomy_term.field_attribute_coordinates
+field_name: field_attribute_coordinates
+entity_type: taxonomy_term
+type: float
+settings: {  }
+module: core
+locked: false
+cardinality: 3
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

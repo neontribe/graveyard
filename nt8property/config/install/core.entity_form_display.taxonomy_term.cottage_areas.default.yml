@@ -1,0 +1,89 @@
+uuid: 5e18aef3-62a4-42b9-94ec-e084fb206606
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.cottage_areas.field_attribute_brand
+    - field.field.taxonomy_term.cottage_areas.field_attribute_code
+    - field.field.taxonomy_term.cottage_areas.field_attribute_coordinates
+    - field.field.taxonomy_term.cottage_areas.field_attribute_description
+    - field.field.taxonomy_term.cottage_areas.field_attribute_labl
+    - field.field.taxonomy_term.cottage_areas.field_attribute_promoted
+    - taxonomy.vocabulary.cottage_areas
+  module:
+    - path
+    - text
+id: taxonomy_term.cottage_areas.default
+targetEntityType: taxonomy_term
+bundle: cottage_areas
+mode: default
+content:
+  description:
+    type: text_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_attribute_brand:
+    weight: 32
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_attribute_code:
+    weight: 31
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_attribute_coordinates:
+    weight: 36
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+    type: number
+    region: content
+  field_attribute_description:
+    weight: 34
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textarea
+    region: content
+  field_attribute_labl:
+    weight: 33
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_attribute_promoted:
+    weight: 35
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
+  name:
+    type: string_textfield
+    weight: -5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 30
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden: {  }

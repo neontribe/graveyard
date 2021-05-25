@@ -1,0 +1,19 @@
+{
+    "name": "neontabs/nt8property",
+    "description": "TABS Properties",
+    "license": "GPL-2.0+",
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packages.drupal.org/8"
+        }
+    ],
+    "require": {
+        "php": "^7.0",
+        "neontabs/nt8tabsio": "*",
+        "neontabs/nt8map": "*"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "type": "drupal-custom-module"
+}

@@ -1,0 +1,21 @@
+uuid: 76d802b7-6285-49cd-938c-d69eababe67b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_cottage_image_info
+    - node.type.property
+_core:
+  default_config_hash: ez9l6cMsqJRVP00-SbjPyO68b4nO0HjOMQzCX3b5_jQ
+id: node.property.field_cottage_image_info
+field_name: field_cottage_image_info
+entity_type: node
+bundle: property
+label: 'Cottage Image Info'
+description: 'JSON Data Store For Cottage Image Information'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long
