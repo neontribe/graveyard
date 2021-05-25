@@ -1,0 +1,14 @@
+{# Create classes array #}
+{% set classes = [
+'slideshow__slides',
+'js-slick-single-item-center',
+'slick--single-item-center'
+] %}
+
+<div class="field--name-cottage-images">
+  <ul {{ attributes.addClass(classes) }} style="display: none;">
+    {% for item in items %}
+      <li{{ item.attributes }}>{{ item.content }}</li>
+    {% endfor %}
+  </ul>
+</div>

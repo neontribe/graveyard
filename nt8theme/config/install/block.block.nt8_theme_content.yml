@@ -1,0 +1,22 @@
+uuid: 964caade-105f-414a-8aa1-f13f474ff530
+langcode: en
+status: false
+dependencies:
+  module:
+    - system
+  theme:
+    - nt8theme
+_core:
+  default_config_hash: 9EoWV2Lot6FVSr50t4hoKgiz1LIXYWNG-IIPYsWxBqo
+id: nt8theme_content
+theme: nt8theme
+region: '-1'
+weight: 7
+provider: null
+plugin: system_main_block
+settings:
+  id: system_main_block
+  label: 'Main page content'
+  provider: system
+  label_display: '0'
+visibility: {  }

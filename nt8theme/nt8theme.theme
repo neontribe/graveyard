@@ -1,0 +1,7 @@
+<?php
+
+function nt8theme_theme_suggestions_field_alter(&$suggestions, $variables) {
+  $suggestions[] = 'field__' .
+  $variables['element']['#field_name'] . '__' .
+  $variables['element']['#view_mode'];
+}

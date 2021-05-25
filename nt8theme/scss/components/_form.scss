@@ -1,0 +1,59 @@
+/* Form Fields */
+form {
+}
+
+input, textarea, select, button {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  font-weight: 400;
+  text-transform: none;
+  font-size: 1em;
+  line-height: 1.25;
+  width: 100%;
+  padding: .25em;
+  background: transparent;
+  border: .1em solid;
+}
+
+input:focus, textarea:focus, select:focus, button:focus {
+  outline: .15em solid $input_highlight;
+  outline-offset: 0;
+}
+
+label {
+  font-weight: 400;
+  text-transform: none;
+  font-size: 1em;
+  display: block;
+  color: #0b0c0c;
+  line-height: 1.25;
+}
+
+legend {
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+textarea {
+  vertical-align: top;
+}
+
+label + *,
+input + label,
+.details-wrapper {
+  margin-top: .25em;
+}
+
+@media (min-width: 750px) {
+  /* Checkbox specific styles */
+  .form-type-checkbox > label {
+    display: inline-block;
+  }
+
+  [type=checkbox] {
+    width: auto;
+  }
+}
+
