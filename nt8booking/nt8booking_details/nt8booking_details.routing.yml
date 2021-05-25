@@ -1,0 +1,38 @@
+nt8booking_details.details:
+  path: 'nt8booking_details/details'
+  defaults:
+    _controller: '\Drupal\nt8booking_details\Controller\NT8BookingDetailsController::details'
+  requirements:
+    _access: 'TRUE'
+
+nt8booking.admin.primary_traveller:
+  path: '/admin/config/neontabs/booking/primary_traveller'
+  defaults:
+      _title: 'NT8 Booking Path'
+      _form: 'Drupal\nt8booking_details\Form\Admin\NT8BookingDetailsAdminPrimaryTravellerForm'
+  requirements:
+    _permission: 'administer booking details'
+
+nt8booking.admin.party_details:
+  path: '/admin/config/neontabs/booking/party_details'
+  defaults:
+      _title: 'NT8 Booking Path'
+      _form: 'Drupal\nt8booking_details\Form\Admin\NT8BookingDetailsAdminPartyDetailsForm'
+  requirements:
+    _permission: 'administer booking details'
+
+nt8booking.admin.extras:
+  path: '/admin/config/neontabs/booking/extras'
+  defaults:
+      _title: 'NT8 Booking Path'
+      _form: 'Drupal\nt8booking_details\Form\Admin\NT8BookingDetailsAdminExtrasForm'
+  requirements:
+    _permission: 'administer booking details'
+
+nt8booking.admin.finalize:
+  path: '/admin/config/neontabs/booking/finalize'
+  defaults:
+      _title: 'NT8 Booking Path'
+      _form: 'Drupal\nt8booking_details\Form\Admin\NT8BookingDetailsAdminFinalizeForm'
+  requirements:
+    _permission: 'administer booking details'

@@ -1,0 +1,7 @@
+name: nt8booking
+type: module
+description: Booking path
+core: 8.x
+package: NT8
+dependencies:
+  - nt8tabsio

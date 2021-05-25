@@ -1,0 +1,4 @@
+administer booking path:
+  title: 'Administer booking path'
+  description: 'Adminsters the booking path.'
+  restrict access: TRUE

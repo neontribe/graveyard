@@ -1,0 +1,6 @@
+system.admin_neontabs_booking.global:
+  title: 'Booking Path'
+  parent: system.admin_neontabs
+  route_name: nt8booking.admin
+  base_route: nt8booking.admin
+  weight: 00
