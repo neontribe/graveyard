@@ -1,0 +1,7 @@
+nt8propertyshortlist_lib:
+  version: 1.x
+  js:
+    js/nt8propertyshortlist.js: { }
+  dependencies:
+    - core/jquery
+    - core/drupal
