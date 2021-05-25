@@ -1,0 +1,7 @@
+titles_list: "{\r\n    \"Mr\": \"Mr\",\r\n    \"Mrs\": \"Mrs\",\r\n    \"Miss\": \"Miss\",\r\n    \"Ms\": \"Ms\",\r\n    \"Dr\": \"Dr\",\r\n    \"Rev\": \"Rev\",\r\n    \"Prof\": \"Prof\"\r\n}"
+other_code: dfsadfasd
+age_list: "{\r\n\t\"adult\": {\r\n\t\t\"18-35\": \"18-35\",\r\n\t\t\"36-55\": \"36-55\",\r\n\t\t\"56-69\": \"56-69\",\r\n\t\t\"70+\": \"Over 70\"\r\n\t},\r\n\t\"child\": {\r\n\t\t\"2-9\": \"2-9\",\r\n\t\t\"10-17\": \"10-17\"\r\n\t},\r\n\t\"infant\": {\r\n\t\t\"0-2\": \"0-2\"\r\n\t},\r\n\t\"default\": {\r\n\t\t\"adult\": \"36-55\",\r\n\t\t\"child\": \"10-17\",\r\n\t\t\"infant\": \"0-2\"\r\n\t}\r\n}"
+adult_ages: "{\r\n    \"18-35\": \"18-35\",\r\n    \"36-55\": \"36-55\",\r\n    \"56-69\": \"56-69\",\r\n    \"70+\": \"Over 70\"\r\n}"
+child_ages: "{\r\n    \"2-9\": \"2-9\",\r\n    \"10-17\": \"10-17\"\r\n}"
+infant_ages: "{\r\n    \"0-2\": \"0-2\"\r\n}"
+default_age: 70+
