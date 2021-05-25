@@ -1,0 +1,8 @@
+name: nt8landingpage
+type: module
+description: Defines the landing page content type and its' functionality.
+core: 8.x
+package: NT8
+dependencies:
+  - nt8search
+  - nt8property

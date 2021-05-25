@@ -1,0 +1,30 @@
+uuid: b2edeacd-58c4-4aaf-bbed-4002cddeb0c9
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.featured_landing_pages
+  module:
+    - system
+    - views
+  theme:
+    - nt8theme
+id: views_block__featured_landing_pages_block_featured_landing_pages
+theme: nt8theme
+region: sidebar-left
+weight: 0
+provider: null
+plugin: 'views_block:featured_landing_pages-block_featured_landing_pages'
+settings:
+  id: 'views_block:featured_landing_pages-block_featured_landing_pages'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: false
+    context_mapping: {  }
