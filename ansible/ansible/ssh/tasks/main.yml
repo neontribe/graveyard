@@ -1,0 +1,8 @@
+---
+- name: Turn off root login via ssh
+  sudo: yes
+  lineinfile: dest=/etc/ssh/sshd_config regexp=^PermitRootLogin line="PermitRootLogin no"
+
+- name: Update TCP Keep Alive for SSH
+  sudo: yes
+  lineinfile: dest=/etc/ssh/sshd_config regexp=^TCPKeepAlive line="TCPKeepAlive yes"

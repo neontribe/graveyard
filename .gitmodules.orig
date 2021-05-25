@@ -1,0 +1,11 @@
+<<<<<<< HEAD
+[submodule "vendor/neonmap"]
+	path = vendor/neonmap
+=======
+[submodule "contrib"]
+	path = contrib
+	url = https://github.com/neontribe/drupal-commit-hooks.git 
+[submodule "nt2_map/neonmap"]
+	path = nt2_map/neonmap
+>>>>>>> 0776502c102f3f76dbbc76a6f8096a5019c75f8b
+	url = https://github.com/neontribe/neonmap.git

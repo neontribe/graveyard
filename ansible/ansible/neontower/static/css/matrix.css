@@ -1,0 +1,164 @@
+html
+{
+  width: 100%;
+  height: 100%;
+
+  margin: 0;
+  padding: 0;
+}
+
+body
+{
+  max-width: 750px;
+  margin: auto;
+
+  margin-top: 1em;
+  margin-bottom: 1em;
+
+  padding: 1em;
+  border: 1px  dashed;
+
+  font-family: monospace;
+  font-size: 1.2em;
+  color:#00ff00;
+  background-color:#000000;
+}
+
+h1
+{
+  font-size: 1em;
+  text-align: center;
+}
+
+h1::before
+{
+  content: "<<< ";
+}
+
+h1::after
+{
+  content: " >>>";
+}
+
+nav
+{
+	text-align: center;
+}
+
+nav a
+{
+  padding-left: 2em;
+  padding-right: 2em;
+}
+
+nav a::before
+{
+  content: "<< ";
+}
+
+nav a::after
+{
+  content: " >>";
+}
+
+hr
+{
+  border: none;
+  border-bottom: 1px #00ff00 dashed;
+}
+
+label
+{
+  display: inline-block;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+p.error
+{
+  color: red;
+}
+
+.level-fatal{color:red;}
+.level-fail{ color:orange;}
+.level-info{color:#0099FF;}
+.level-status{color:white;}
+.level-same{color:#00FF00;}
+.level-different{color:gold;}
+
+
+button.submit
+{
+  display: block;
+  margin-left: auto;
+}
+
+div.log
+{
+  border: 1px #00ff00 dashed;
+  min-height: 5em;
+  display: table;
+  width: 100%;
+}
+
+div.log .message
+{
+  display: table-row;
+}
+
+div.log .message .part
+{
+  display: table-cell;
+  padding-right: .5em;
+
+  border-bottom: 1px #00ff00 dotted;
+  border-right: 1px #00ff00 dotted;
+}
+
+div.log .message:last-child .part
+{
+  border-bottom: 0;
+}
+
+div.log .message .part:last-child
+{
+  border-right: 0;
+}
+
+a,a:visited{
+  color: #00ff00;
+}
+
+button
+{
+  background-color:#000000;
+  color: #00ff00;
+  border-color: #00ff00;
+  border-style: dotted;
+  border-width: 1px;
+  font-size:18px;
+}
+
+select
+{
+  background-color:#000000;
+  color:#00ff00;
+  font-size: 12px;
+  border-color: #00ff00;
+  border-style: dotted;
+  border-width: 1px;
+  font-family: monospace;
+  font-size: 1.2em;
+}
+
+input
+{
+  background-color:#000000;
+  color:#00ff00;
+  font-size: 12px;
+  border-color: #00ff00;
+  border-style: dotted;
+  border-width: 1px;
+  font-family: monospace;
+  font-size: 1.2em;
+}

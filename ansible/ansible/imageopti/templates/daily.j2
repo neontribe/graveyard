@@ -1,0 +1,6 @@
+#!/bin/bash
+
+00 03 * * * www-data find /var/www/latest/ -name "*.png" -exec optipng {} +
+20 03 * * * www-data find /var/www/latest/ -name "*.jpg" -exec jpegoptim {} +
+38 03 * * * www-data find /var/www/latest/ -name "*.jpeg" -exec jpegoptim {} +
+40 03 * * * www-data find /var/www/latest/ -name "*.gif" -exec gifsicle -i --batch {} +

@@ -1,0 +1,8 @@
+---
+- name: "Setting propmt for {{server_type}} user"
+  copy: src=user.{{ server_type}}.bashrc dest=~/.bashrc mode=0775 backup=yes
+
+- name: "Setting propmt for {{server_type}} {{ cottage_brand_code }}"
+  sudo: true
+  copy: src=user.{{ server_type}}.bashrc dest=/home/neon{{ cottage_brand_code }}/.bashrc mode=0775 backup=yes owner=neon{{ cottage_brand_code }}
+  when: cottage_brand_code is defined

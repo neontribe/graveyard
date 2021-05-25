@@ -1,0 +1,53 @@
+---
+- name: Install ssh public key
+  copy: src=id_rsa.pub dest=/home/{{ neon_user }}/.ssh/id_rsa.pub owner={{ neon_user }} group={{ neon_user }} mode=0600 backup=yes
+  sudo: yes
+
+- name: Install known hosts
+  copy: src=known_hosts dest=/home/{{ neon_user }}/.ssh/known_hosts owner={{ neon_user }} group={{ neon_user }} mode=0600 backup=yes
+  sudo: yes
+
+- name: Install ssh private key
+  copy: src=id_rsa dest=/home/{{ neon_user }}/.ssh/id_rsa owner={{ neon_user }} group={{ neon_user }} mode=0600 backup=yes
+  sudo: yes
+
+- name: Create .drush dir
+  file: path=/home/{{ neon_user }}/.drush state=directory owner={{ neon_user }} group={{ neon_user }} mode=0775
+
+- name: Install cottage alias
+  template: src=sample.alias.drushrc.php dest=/home/{{ neon_user }}/.drush/{{cottage_alias_name}}.alias.drushrc.php owner={{ neon_user }} group={{ neon_user }} mode=600 backup=yes
+  sudo: yes
+
+- name: Check ownership of /var/www
+  file: path=/var/www state=directory owner={{ neon_user }} group={{ neon_user }} mode=0775
+  sudo: yes
+
+- name: Copying cottage files
+  shell: "drush -y rsync @{{cottage_alias_name}} {{ cottage_target }} --progress --include-conf --include-vcs"
+
+- name: (Re) Creating database
+  shell: "drush -y -r {{ cottage_target }} sql-create @self --db-su=root --db-su-pw={{mysql.root_password}}"
+
+- name: Install upstream database
+  shell: "drush -y -r {{ cottage_target }} sql-sync @{{cottage_alias_name}} @self"
+
+- name: Create latest symlink
+  file: src={{ cottage_target }} dest={{ doc_root }} state=link
+  sudo: yes
+  when: cottage_target != doc_root
+
+- name: Fix permissions
+  shell: "/usr/local/share/Shelltools/ntdrchown -u {{ neon_user }}:{{ neon_user }} -w www-data:www-data {{ cottage_target }}"
+  sudo: yes
+
+- name: Clear rewrite bas
+  lineinfile: dest={{ cottage_target }}/.htaccess
+      regexp="((^[ ]+)|^)RewriteBase"
+      state=absent
+      # line="  # RewriteBase /"
+
+# TODO switch this to be a 'handler'
+- name: Restart apache
+  shell: "service apache2 restart"
+  sudo: yes
+
