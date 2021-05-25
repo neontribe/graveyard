@@ -1,0 +1,26 @@
+uuid: 9758da6e-fc3f-47d6-8097-4569320fd790
+langcode: en
+status: true
+dependencies:
+  module:
+    - nt8propertyshortlist
+    - system
+  theme:
+    - nt8theme
+id: nt8propertyshortlistdisplayblock
+theme: nt8theme
+region: content
+weight: 0
+provider: null
+plugin: nt8property_shortlist_display_block
+settings:
+  id: nt8property_shortlist_display_block
+  label: 'NT8PropertyShortlist Display Block'
+  provider: nt8propertyshortlist
+  label_display: '0'
+visibility:
+  request_path:
+    id: request_path
+    pages: /shortlist
+    negate: false
+    context_mapping: {  }

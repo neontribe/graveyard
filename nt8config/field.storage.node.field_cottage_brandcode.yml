@@ -1,0 +1,23 @@
+uuid: 61a3644e-b13d-44c5-ac34-4b1062754e0e
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+_core:
+  default_config_hash: 7jDZCmNPOeJjT0LuqxUOjWAFIXAc03cGiTyvYj3fw5E
+id: node.field_cottage_brandcode
+field_name: field_cottage_brandcode
+entity_type: node
+type: string
+settings:
+  max_length: 255
+  is_ascii: false
+  case_sensitive: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

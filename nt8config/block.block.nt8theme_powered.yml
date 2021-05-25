@@ -1,0 +1,22 @@
+uuid: c1d13b21-5d30-4a0d-9f5b-b7daeab4f982
+langcode: en
+status: false
+dependencies:
+  module:
+    - system
+  theme:
+    - nt8theme
+_core:
+  default_config_hash: MENsTj_2KIwqlI6rr2ijyq-3t8Bk5gTwrZbfeJ9SjOA
+id: nt8theme_powered
+theme: nt8theme
+region: header
+weight: 0
+provider: null
+plugin: system_powered_by_block
+settings:
+  id: system_powered_by_block
+  label: 'Powered by Drupal'
+  provider: system
+  label_display: '0'
+visibility: {  }

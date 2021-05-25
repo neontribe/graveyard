@@ -1,0 +1,6 @@
+property-teaser:
+  placeholder-image:
+    url: 'http://www.placecage.com/300/300'
+langcode: en
+_core:
+  default_config_hash: hJtQyymxWtk1o5QTF_j1Y4KjeqHIhA6M0EqieVa5pS4
