@@ -1,0 +1,31 @@
+FROM neontabs/nt8:latest
+LABEL authors="oliver@neontribe.co.uk, toby@neontribe.co.uk"
+
+WORKDIR /opt/nt8
+
+RUN composer update
+
+COPY config-sync.sh /usr/local/bin/config-sync.sh
+RUN chmod 777 /usr/local/bin/config-sync.sh
+
+ARG runserver_base_url='http://localhost:8888'
+ARG sync_repo="https://github.com/neontabs/nt8config"
+ARG checkout=""
+
+ENV RUNSERVER_BASE_URL=${runserver_base_url}
+ENV BRAND_SYNC_REPO=${sync_repo}
+ENV CHECKOUT=${checkout}
+
+RUN /usr/local/bin/config-sync.sh
+
+RUN checkout.sh
+
+WORKDIR /opt/nt8/web
+
+RUN drush -y site-install config_installer config_installer_sync_configure_form.sync_directory=../config/sync --db-url=sqlite://sites/default/files/.ht.sqlite --account-mail=cottages@neontribe.co.uk --account-name=superadmin --site-mail=cottages@neontribe.co.uk
+
+RUN drush -r /opt/nt8/web -y nt8-import-all
+RUN compass compile /opt/nt8/web/themes/contrib/nt8theme/
+
+ENTRYPOINT ["drush",  "-r",  "/opt/nt8/web", "rs", "0.0.0.0:8888"]
+
